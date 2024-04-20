@@ -1,7 +1,8 @@
-﻿# CMakeList.txt : CMake project for Mandrill, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.13)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -9,13 +10,18 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("Mandrill")
+project("Mandrill" VERSION 2024.04)
 
-# Add source to this project's executable.
-add_executable(Mandrill "Mandrill.cpp" "Mandrill.h")
+set(MANDRILL_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-target_link_libraries(Mandrill glfw)
+function(add_mandrill_executable target)
+    add_executable(${target})
+    target_link_libraries(${target} PRIVATE Mandrill)
+    set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY})
+endfunction()
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Mandrill PROPERTY CXX_STANDARD 20)
-endif()
+include_directories(src)
+
+add_subdirectory(external)
+add_subdirectory(src)
+add_subdirectory(app)
