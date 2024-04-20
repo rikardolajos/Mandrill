@@ -21,4 +21,7 @@ inline std::string getLevelString(Log::Level level)
 void Log::log(Level level, const std::string msg)
 {
     std::string s = std::format("{} {}\n", getLevelString(level), msg);
+    auto& os = level < Log::Level::Error ? std::cout : std::cerr;
+    os << s;
+    os.flush();
 }

@@ -2,8 +2,11 @@
 
 #include "Log.h"
 
+#include "stb_image.h"
+
 //#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
 
 
 namespace Mandrill
@@ -15,17 +18,22 @@ namespace Mandrill
 
     App::App(const std::string& title, uint32_t width, uint32_t height)
     {
-        logInfo("Initializing GLFW\n");
+        logInfo("Initializing GLFW");
 
         if (glfwInit() == GLFW_FALSE) {
-            logError("Failed to initialze GLFW.\n");
+            logError("Failed to initialze GLFW.");
         }
 
         std::string fullTitle = std::format("Mandrill: {}", title);
         mpWindow = glfwCreateWindow(width, height, fullTitle.c_str(), nullptr, nullptr);
         if (!mpWindow) {
-            logError("Failed to create window.\n");
+            logError("Failed to create window.");
         }
+
+        GLFWimage image;
+        int c;
+        image.pixels = stbi_load("icon.png", &image.width, &image.height, &c, 4);
+        glfwSetWindowIcon(static_cast<GLFWwindow*>(mpWindow), 1, &image);
     }
 
 
@@ -41,6 +49,7 @@ namespace Mandrill
 
             execute();
 
+            App::renderUI();
             renderUI();
 
             glfwPollEvents();
@@ -49,7 +58,7 @@ namespace Mandrill
 
     void App::renderUI()
     {
-        logInfo("App render");
+        
     };
 
 } // namespace Mandrill

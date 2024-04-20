@@ -19,7 +19,10 @@ function(add_mandrill_executable target)
 endfunction()
 
 include_directories(src)
+include_directories(external)
 
 add_subdirectory(external)
 add_subdirectory(src)
 add_subdirectory(app)
+
+configure_file(icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)

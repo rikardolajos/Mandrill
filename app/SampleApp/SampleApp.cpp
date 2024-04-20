@@ -24,11 +24,6 @@ public:
 private:
 };
 
-
-
-
-
-
 int main()
 {
     SampleApp app = SampleApp();

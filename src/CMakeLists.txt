@@ -1,4 +1,4 @@
-add_library(Mandrill SHARED "App.cpp" "App.h" "Common.h" "Error.cpp" "Error.h" "Log.cpp" "Log.h" "Mandrill.h")
+add_library(Mandrill SHARED "App.cpp" "App.h" "Common.h" "Error.cpp" "Error.h" "Log.cpp" "Log.h" "Mandrill.h" "Image.cpp")
 
 set_target_properties(Mandrill PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Mandrill PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
