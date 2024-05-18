@@ -1,4 +1,25 @@
-add_library(Mandrill SHARED "App.cpp" "App.h" "Common.h" "Error.cpp" "Error.h" "Log.cpp" "Log.h" "Mandrill.h" "Image.cpp")
+add_library(Mandrill SHARED
+	"App.cpp"
+	"App.h"
+	"Common.h"
+	"Device.cpp"
+	"Device.h"
+	"Error.cpp"
+	"Error.h"
+	"Helpers.h"
+	"Image.cpp"
+	"Image.h"
+	"Log.cpp"
+	"Log.h"
+	"Mandrill.h"
+	"Scene.cpp"
+	"Scene.h"
+	"Shader.cpp"
+	"Shader.h"
+	"StbImage.cpp"
+	"Swapchain.cpp"
+	"Swapchain.h"
+)
 
 set_target_properties(Mandrill PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Mandrill PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
@@ -18,7 +39,9 @@ target_compile_definitions(Mandrill
 
 target_link_libraries(Mandrill
 	PUBLIC
-	PRIVATE
+		${Vulkan_LIBRARIES}
 		glfw
 		imgui
 )
+
+add_subdirectory(Pipelines)

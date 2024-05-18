@@ -1,64 +1,78 @@
 ﻿#include "App.h"
 
+#include "Error.h"
 #include "Log.h"
 
 #include "stb_image.h"
 
-//#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+using namespace Mandrill;
 
-
-
-namespace Mandrill
+static void errorCallback(int errorCode, const char* pDescription)
 {
-    static void errorCallback(int errorCode, const char* pDescription)
-    {
-        logError("GLFW error {}: {}", errorCode, pDescription);
+    Log::error("GLFW error {}: {}", errorCode, pDescription);
+}
+
+App::App(const std::string& title, uint32_t width, uint32_t height)
+{
+    Log::info("=== Mandrill {}.{}.{} ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH);
+
+    Log::info("Initializing GLFW");
+
+    if (glfwInit() == GLFW_FALSE) {
+        Log::error("Failed to initialze GLFW.");
+        Check::GLFW();
     }
 
-    App::App(const std::string& title, uint32_t width, uint32_t height)
-    {
-        logInfo("Initializing GLFW");
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    Check::GLFW();
 
-        if (glfwInit() == GLFW_FALSE) {
-            logError("Failed to initialze GLFW.");
-        }
-
-        std::string fullTitle = std::format("Mandrill: {}", title);
-        mpWindow = glfwCreateWindow(width, height, fullTitle.c_str(), nullptr, nullptr);
-        if (!mpWindow) {
-            logError("Failed to create window.");
-        }
-
-        GLFWimage image;
-        int c;
-        image.pixels = stbi_load("icon.png", &image.width, &image.height, &c, 4);
-        glfwSetWindowIcon(static_cast<GLFWwindow*>(mpWindow), 1, &image);
+    std::string fullTitle = std::format("Mandrill: {}", title);
+    mpWindow = glfwCreateWindow(width, height, fullTitle.c_str(), nullptr, nullptr);
+    if (!mpWindow) {
+        Log::error("Failed to create window.");
+        Check::GLFW();
     }
 
+    GLFWimage image;
+    image.pixels = stbi_load("icon.png", &image.width, &image.height, nullptr, 4);
+    glfwSetWindowIcon(mpWindow, 1, &image);
 
-    App::~App()
-    {
-        glfwDestroyWindow(static_cast<GLFWwindow*>(mpWindow));
+    if (!glfwVulkanSupported()) {
+        Log::error("Failed to find Vulkan.");
+        Check::GLFW();
     }
 
-    void App::run()
-    {
-        while (!glfwWindowShouldClose(static_cast<GLFWwindow*>(mpWindow))) {
-            // Handle inputs
+    glfwSetKeyCallback(mpWindow, keyCallback);
+    Check::GLFW();
+}
 
-            execute();
+App::~App()
+{
+    glfwDestroyWindow(mpWindow);
+    glfwTerminate();
+}
 
-            App::renderUI();
-            renderUI();
+void App::run()
+{
+    while (!glfwWindowShouldClose(mpWindow)) {
+        render();
 
-            glfwPollEvents();
-        }
+        drawUI();
+
+        glfwPollEvents();
     }
 
-    void App::renderUI()
-    {
-        
-    };
+    Log::info("Exiting...");
+}
 
-} // namespace Mandrill
+void App::drawUI(){
+
+};
+
+void App::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, 1);
+    }
+}

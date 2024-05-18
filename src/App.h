@@ -4,6 +4,7 @@
 
 namespace Mandrill
 {
+
     class MANDRILL_API App
     {
     public:
@@ -18,10 +19,13 @@ namespace Mandrill
 
         void run();
 
-        virtual void execute() = 0;
-        virtual void renderUI();
+    protected:
+        virtual void render() = 0;
+        virtual void drawUI();
+        //virtual void onMouseEvent() = 0;
 
-    private:
-        void* mpWindow;
+        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+        GLFWwindow* mpWindow;
     };
 } // namespace Mandrill
