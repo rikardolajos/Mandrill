@@ -20,8 +20,8 @@ namespace Mandrill
         void run();
 
     protected:
+        virtual void update(float delta) = 0;
         virtual void render() = 0;
-        virtual void drawUI();
         //virtual void onMouseEvent() = 0;
 
         static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

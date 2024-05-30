@@ -13,7 +13,7 @@ namespace Mandrill
                                 std::vector<LayoutCreator>& layout, std::shared_ptr<Shader> pShader);
         MANDRILL_API ~Rasterizer();
 
-        MANDRILL_API void frameBegin(VkCommandBuffer cmd, float clearColor[4]) override;
+        MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
         MANDRILL_API void frameEnd(VkCommandBuffer cmd) override;
 
     protected:

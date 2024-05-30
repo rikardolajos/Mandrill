@@ -127,6 +127,7 @@ namespace Mandrill
         void createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex);
         void createCommandPool();
         void createSurface();
+        void createExtensionProcAddrs();
 
         GLFWwindow* mpWindow;
 

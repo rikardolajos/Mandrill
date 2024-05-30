@@ -23,6 +23,8 @@ App::App(const std::string& title, uint32_t width, uint32_t height)
         Check::GLFW();
     }
 
+    glfwSetErrorCallback(errorCallback);
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     Check::GLFW();
@@ -56,19 +58,18 @@ App::~App()
 void App::run()
 {
     while (!glfwWindowShouldClose(mpWindow)) {
-        render();
+        float delta = static_cast<float>(glfwGetTime());
+        glfwSetTime(0.0);
 
-        drawUI();
+        update(delta);
+
+        render();
 
         glfwPollEvents();
     }
 
     Log::info("Exiting...");
 }
-
-void App::drawUI(){
-
-};
 
 void App::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {

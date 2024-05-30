@@ -66,6 +66,7 @@ void Rasterizer::createPipeline()
     };
 
     std::vector<VkDynamicState> dynamicStates = {
+        VK_DYNAMIC_STATE_CULL_MODE,
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,
     };
@@ -87,7 +88,6 @@ void Rasterizer::createPipeline()
         .depthClampEnable = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
         .polygonMode = VK_POLYGON_MODE_FILL,
-        .cullMode = VK_CULL_MODE_BACK_BIT,
         .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
         .lineWidth = 1.0f,
@@ -250,7 +250,7 @@ void Rasterizer::createRenderPass()
     Check::Vk(vkCreateRenderPass(mpDevice->getDevice(), &ci, nullptr, &mRenderPass));
 }
 
-void Rasterizer::frameBegin(VkCommandBuffer cmd, float clearColor[4])
+void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         recreatePipeline();
@@ -293,6 +293,8 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, float clearColor[4])
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
 
     // Set dynamic states
+    vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
+
     VkViewport viewport = {
         .x = 0.0f,
         .y = 0.0f,

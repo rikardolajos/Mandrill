@@ -1,6 +1,7 @@
 #include "Device.h"
 
 #include "Error.h"
+#include "Extension.h"
 #include "Log.h"
 
 using namespace Mandrill;
@@ -12,6 +13,7 @@ Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, 
     createSurface();
     createDevice(extensions, physicalDeviceIndex);
     createCommandPool();
+    createExtensionProcAddrs();
 }
 
 Device::~Device()
@@ -29,6 +31,34 @@ Device::~Device()
         vkDestroyInstance(mInstance, nullptr);
     }
 }
+
+VkSampleCountFlagBits Device::getSampleCount() const
+{
+    VkSampleCountFlags counts = mProperties.physicalDevice.limits.framebufferColorSampleCounts &
+                                mProperties.physicalDevice.limits.framebufferDepthSampleCounts;
+
+    if (counts & VK_SAMPLE_COUNT_64_BIT) {
+        return VK_SAMPLE_COUNT_64_BIT;
+    }
+    if (counts & VK_SAMPLE_COUNT_32_BIT) {
+        return VK_SAMPLE_COUNT_32_BIT;
+    }
+    if (counts & VK_SAMPLE_COUNT_16_BIT) {
+        return VK_SAMPLE_COUNT_16_BIT;
+    }
+    if (counts & VK_SAMPLE_COUNT_8_BIT) {
+        return VK_SAMPLE_COUNT_8_BIT;
+    }
+    if (counts & VK_SAMPLE_COUNT_4_BIT) {
+        return VK_SAMPLE_COUNT_4_BIT;
+    }
+    if (counts & VK_SAMPLE_COUNT_2_BIT) {
+        return VK_SAMPLE_COUNT_2_BIT;
+    }
+
+    return VK_SAMPLE_COUNT_1_BIT;
+}
+
 
 void Device::createInstance()
 {
@@ -170,13 +200,13 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 
 void Device::createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
 {
-    std::array baseExtensions{
+    std::array baseExtensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
         VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     };
 
-    std::vector<const char*> raytracingExtensions{
+    std::vector<const char*> raytracingExtensions = {
         VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
         VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
         VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
@@ -318,29 +348,8 @@ void Device::createSurface()
     Check::Vk(glfwCreateWindowSurface(mInstance, mpWindow, nullptr, &mSurface));
 }
 
-VkSampleCountFlagBits Device::getSampleCount() const
+void Device::createExtensionProcAddrs()
 {
-    VkSampleCountFlags counts = mProperties.physicalDevice.limits.framebufferColorSampleCounts &
-                                mProperties.physicalDevice.limits.framebufferDepthSampleCounts;
-
-    if (counts & VK_SAMPLE_COUNT_64_BIT) {
-        return VK_SAMPLE_COUNT_64_BIT;
-    }
-    if (counts & VK_SAMPLE_COUNT_32_BIT) {
-        return VK_SAMPLE_COUNT_32_BIT;
-    }
-    if (counts & VK_SAMPLE_COUNT_16_BIT) {
-        return VK_SAMPLE_COUNT_16_BIT;
-    }
-    if (counts & VK_SAMPLE_COUNT_8_BIT) {
-        return VK_SAMPLE_COUNT_8_BIT;
-    }
-    if (counts & VK_SAMPLE_COUNT_4_BIT) {
-        return VK_SAMPLE_COUNT_4_BIT;
-    }
-    if (counts & VK_SAMPLE_COUNT_2_BIT) {
-        return VK_SAMPLE_COUNT_2_BIT;
-    }
-
-    return VK_SAMPLE_COUNT_1_BIT;
+    vkCmdPushDescriptorSetKHR =
+        reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(vkGetDeviceProcAddr(mDevice, "vkCmdPushDescriptorSetKHR"));
 }

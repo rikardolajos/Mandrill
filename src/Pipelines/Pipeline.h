@@ -27,8 +27,13 @@ namespace Mandrill
                               std::vector<LayoutCreator>& layout, std::shared_ptr<Shader> pShader);
         MANDRILL_API ~Pipeline();
 
-        MANDRILL_API virtual void frameBegin(VkCommandBuffer cmd, float clearColor[4]) = 0;
+        MANDRILL_API virtual void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) = 0;
         MANDRILL_API virtual void frameEnd(VkCommandBuffer cmd) = 0;
+
+        MANDRILL_API VkPipelineLayout getLayout() const
+        {
+            return mLayout;
+        }
 
     protected:
         virtual void createPipeline() = 0;

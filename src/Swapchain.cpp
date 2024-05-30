@@ -93,7 +93,7 @@ void Swapchain::recreate()
         glfwWaitEvents();
     } while (width == 0 || height == 0);
 
-    uint32_t framesInFlight = mInFlightFences.size();
+    uint32_t framesInFlight = static_cast<uint32_t>(mInFlightFences.size());
     destroySyncObjects();
     destroySwapchain();
     createSwapchain();
@@ -343,7 +343,6 @@ void Swapchain::createSwapchain()
     mExtent = extent;
 
     Check::Vk(vkCreateSwapchainKHR(mpDevice->getDevice(), &ci, nullptr, &mSwapchain));
-
 
     Check::Vk(vkGetSwapchainImagesKHR(mpDevice->getDevice(), mSwapchain, &imageCount, nullptr));
     mImages = std::vector<VkImage>(imageCount);

@@ -2,8 +2,10 @@
 
 #include "Common.h"
 
+#include "Buffer.h"
 #include "Device.h"
 #include "Error.h"
+#include "Image.h"
 #include "Log.h"
 
 namespace Mandrill
@@ -160,8 +162,8 @@ namespace Mandrill
             cmdEnd(pDevice, cmd);
         }
 
-        inline static void copy_buffer_to_image(std::shared_ptr<Device> pDevice, VkBuffer buffer, VkImage image,
-                                                uint32_t width, uint32_t height)
+        inline static void copyBufferToImage(std::shared_ptr<Device> pDevice, const Buffer& buffer, const Image& image,
+                                             uint32_t width, uint32_t height)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);
 
@@ -180,7 +182,8 @@ namespace Mandrill
                 .imageExtent = {width, height, 1},
             };
 
-            vkCmdCopyBufferToImage(cmd, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+            vkCmdCopyBufferToImage(cmd, buffer.getBuffer(), image.getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
+                                   &region);
 
             cmdEnd(pDevice, cmd);
         }

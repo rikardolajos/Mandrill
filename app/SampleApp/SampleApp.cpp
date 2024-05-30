@@ -5,28 +5,64 @@ using namespace Mandrill;
 class SampleApp : public App
 {
 public:
-    void createSampler()
+    void setupVertexBuffers()
     {
-        VkSamplerCreateInfo ci{
-            .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-            .magFilter = VK_FILTER_LINEAR,
-            .minFilter = VK_FILTER_LINEAR,
-            .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-            .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-            .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-            .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-            .mipLodBias = 0.0f,
-            .anisotropyEnable = VK_TRUE,
-            .maxAnisotropy = mpDevice->getProperties().physicalDevice.limits.maxSamplerAnisotropy,
-            .compareEnable = VK_FALSE,
-            .compareOp = VK_COMPARE_OP_ALWAYS,
-            .minLod = 0.0f,
-            .maxLod = 1000.0f,
-            .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-            .unnormalizedCoordinates = VK_FALSE,
+        mVertices.push_back({
+            {-1.0f, -1.0f, 0.0f}, // pos
+            {0.0f, 0.0f, 1.0f},   // normal
+            {0.0f, 0.0f},         // uvCoord
+        });
+
+        mVertices.push_back({
+            {1.0f, -1.0f, 0.0f}, // pos
+            {0.0f, 0.0f, 1.0f},  // normal
+            {1.0f, 0.0f},        // uvCoord
+        });
+
+        mVertices.push_back({
+            {-1.0f, 1.0f, 0.0f}, // pos
+            {0.0f, 0.0f, 1.0f},  // normal
+            {0.0f, 1.0f},        // uvCoord
+        });
+
+        mVertices.push_back({
+            {1.0f, 1.0f, 0.0f}, // pos
+            {0.0f, 0.0f, 1.0f}, // normal
+            {1.0f, 1.0f},       // uvCoord
+        });
+
+        mIndices = {0, 1, 3, 0, 3, 2};
+
+        size_t verticesSize = mVertices.size() * sizeof(mVertices[0]);
+        size_t indicesSize = mIndices.size() * sizeof(mIndices[0]);
+
+        mpVertexBuffer = std::make_shared<Buffer>(mpDevice, verticesSize,
+                                                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        mpIndexBuffer = std::make_shared<Buffer>(mpDevice, indicesSize,
+                                                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        mpVertexBuffer->copyFromHost(mVertices.data(), verticesSize);
+        mpIndexBuffer->copyFromHost(mIndices.data(), indicesSize);
+    }
+
+    VkWriteDescriptorSet getModelDescriptor(uint32_t binding)
+    {
+        std::array<glm::mat4, 1> matrices{mModel};
+
+        mpUniform->copyFromHost(matrices.data(), matrices.size() * sizeof(glm::mat4));
+
+        VkWriteDescriptorSet descriptor = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstBinding = binding,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .pBufferInfo = &mBufferInfo,
         };
 
-        Check::Vk(vkCreateSampler(mpDevice->getDevice(), &ci, nullptr, &mSampler));
+        return descriptor;
     }
 
     SampleApp() : App("Sample App", 1280, 720)
@@ -46,46 +82,76 @@ public:
         // Create rasterizer pipeline with layout matching the shader
         std::vector<LayoutCreator> layout;
         layout.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // Camera matrix
-        layout.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT); // Texture
-        layout.emplace_back(2, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // Mesh model matrix
+        layout.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT); // Texture
+        layout.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // Mesh model matrix
         mpPipeline = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, layout, mpShader);
 
-        createSampler();
+        // Setup camera
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
+        mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
+        mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+        mpCamera->setFov(60.0f);
+
+        // Create a texture and bind a sampler to it
+        mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "icon.png");
+        mpSampler = std::make_shared<Sampler>(mpDevice);
+        mpTexture->setSampler(mpSampler->getSampler());
+
+        // Vertices in scene
+        setupVertexBuffers();
+
+        // Uniform for sending model matrix to shaders
+        mpUniform =
+            std::make_shared<Buffer>(mpDevice, sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        mBufferInfo.buffer = mpUniform->getBuffer();
+        mBufferInfo.offset = 0;
+        mBufferInfo.range = sizeof(glm::mat4);
     }
 
     ~SampleApp()
     {
-        vkDestroySampler(mpDevice->getDevice(), mSampler, nullptr);
-        mpPipeline.reset();
-        mpDevice.reset();
+    }
+
+    void update(float delta)
+    {
+        mpCamera->update(delta);
+
+        mAngle += 0.2f * delta;
+
+        mModel = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
     void render() override
     {
-        float clearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpPipeline->frameBegin(cmd, clearColor);
 
-        // Render by building command buffer
-        //vkCmdDraw(cmd, 3, 1, 0, 0);
+        if (!cmd) {
+            return;
+        }
 
-        //vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0, )
+        mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+
+        vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
+
+        std::array<VkWriteDescriptorSet, 3> descriptors;
+        descriptors[0] = mpCamera->getDescriptor(0);
+        descriptors[1] = mpTexture->getDescriptor(1);
+        descriptors[2] = getModelDescriptor(2);
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+                                  static_cast<uint32_t>(descriptors.size()), descriptors.data());
+
+        std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
+        std::array<VkDeviceSize, 1> offsets = {0};
+        vkCmdBindVertexBuffers(cmd, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data());
+
+        vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+        vkCmdDrawIndexed(cmd, mIndices.size(), 1, 0, 0, 0);
 
         mpPipeline->frameEnd(cmd);
         mpSwapchain->present();
-    }
-
-    void drawUI() override
-    {
-        // Draw common UI in base class
-        App::drawUI();
-    }
-
-    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-    {
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-            Log::info("You pressed space!");
-        }
     }
 
 private:
@@ -94,7 +160,22 @@ private:
     std::shared_ptr<Shader> mpShader;
     std::shared_ptr<Rasterizer> mpPipeline;
 
-    VkSampler mSampler;
+    std::shared_ptr<Camera> mpCamera;
+    // std::shared_ptr<Scene> mpScene;
+
+    std::shared_ptr<Sampler> mpSampler;
+    std::shared_ptr<Texture> mpTexture;
+
+    std::shared_ptr<Buffer> mpVertexBuffer;
+    std::shared_ptr<Buffer> mpIndexBuffer;
+
+    std::vector<Vertex> mVertices;
+    std::vector<uint32_t> mIndices;
+
+    float mAngle = 0;
+    glm::mat4 mModel;
+    std::shared_ptr<Buffer> mpUniform;
+    VkDescriptorBufferInfo mBufferInfo;
 };
 
 int main()
