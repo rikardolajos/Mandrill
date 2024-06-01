@@ -125,16 +125,14 @@ public:
 
     void render() override
     {
+        // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-
-        if (!cmd) {
-            return;
-        }
-
         mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
+        // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
+        // Push descriptors
         std::array<VkWriteDescriptorSet, 3> descriptors;
         descriptors[0] = mpCamera->getDescriptor(0);
         descriptors[1] = mpTexture->getDescriptor(1);
@@ -142,14 +140,16 @@ public:
         vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
                                   static_cast<uint32_t>(descriptors.size()), descriptors.data());
 
+        // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
         std::array<VkDeviceSize, 1> offsets = {0};
         vkCmdBindVertexBuffers(cmd, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data());
-
         vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
+        // Draw mesh
         vkCmdDrawIndexed(cmd, mIndices.size(), 1, 0, 0, 0);
 
+        // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);
         mpSwapchain->present();
     }
@@ -161,7 +161,6 @@ private:
     std::shared_ptr<Rasterizer> mpPipeline;
 
     std::shared_ptr<Camera> mpCamera;
-    // std::shared_ptr<Scene> mpScene;
 
     std::shared_ptr<Sampler> mpSampler;
     std::shared_ptr<Texture> mpTexture;
