@@ -26,6 +26,7 @@ include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(src)
 include_directories(external/stb)
 include_directories(external/tinyobjloader)
+include_directories(external/imgui)
 
 add_subdirectory(external)
 add_subdirectory(src)
