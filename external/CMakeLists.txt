@@ -10,8 +10,3 @@ message(STATUS "Configure GLM")
 set(GLM_BUILD_TESTS OFF)
 set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(glm)
-
-# ImGUI
-message(STATUS "Configure ImGUI")
-add_library(imgui INTERFACE)
-target_include_directories(imgui INTERFACE imgui)
