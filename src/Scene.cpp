@@ -1,8 +1,5 @@
 #include "Scene.h"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
-
 using namespace Mandrill;
 
 Scene::Scene()

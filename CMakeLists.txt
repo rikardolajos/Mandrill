@@ -21,14 +21,12 @@ endfunction()
 
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIRS})
-#link_libraries(${Vulkan_LIBRARIES})
+link_libraries(${Vulkan_LIBRARIES})
 
 include_directories(src)
-include_directories(external/stb)
-include_directories(external/tinyobjloader)
-include_directories(external/imgui)
+include_directories(src/External)
 
-add_subdirectory(external)
+add_subdirectory(submodules)
 add_subdirectory(src)
 add_subdirectory(app)
 

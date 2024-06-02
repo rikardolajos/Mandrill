@@ -24,7 +24,6 @@ add_library(Mandrill SHARED
 	"Scene.h"
 	"Shader.cpp"
 	"Shader.h"
-	"StbImage.cpp"
 	"Swapchain.cpp"
 	"Swapchain.h"
 	"Texture.cpp"
@@ -51,7 +50,11 @@ target_link_libraries(Mandrill
 	PUBLIC
 		${Vulkan_LIBRARIES}
 		glfw
-		imgui
 )
 
+add_subdirectory(External)
 add_subdirectory(Pipelines)
+
+include_directories(External/imgui)
+include_directories(External/stb)
+include_directories(External/tinyobjloader)

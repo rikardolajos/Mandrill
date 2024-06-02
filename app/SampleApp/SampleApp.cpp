@@ -143,11 +143,12 @@ public:
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
         std::array<VkDeviceSize, 1> offsets = {0};
-        vkCmdBindVertexBuffers(cmd, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data());
+        vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
+                               offsets.data());
         vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
         // Draw mesh
-        vkCmdDrawIndexed(cmd, mIndices.size(), 1, 0, 0, 0);
+        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
 
         // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);

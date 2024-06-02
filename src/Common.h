@@ -11,6 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_vulkan.h>
+
 #include <algorithm>
 #include <array>
 #include <filesystem>
