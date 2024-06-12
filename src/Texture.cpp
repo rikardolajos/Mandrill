@@ -12,7 +12,7 @@ using namespace Mandrill;
 
 Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path,
                  bool mipmaps)
-    : mpDevice(pDevice), mFormat(format)
+    : mpDevice(pDevice), mFormat(format), mMipLevels(1), mImageInfo{0}
 {
     Log::info("Loading texture from {}", path.string());
 
@@ -25,8 +25,6 @@ Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, co
         Log::error("Failed to load texture.");
         return;
     }
-
-    mMipLevels = 1;
 
     if (mipmaps) {
         mMipLevels = static_cast<uint32_t>(std::floor(log2(std::max(mWidth, mHeight))) + 1);
