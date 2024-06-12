@@ -33,7 +33,7 @@ Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, u
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memReqs.size,
         .memoryTypeIndex =
-            Helpers::findMemoryType(mpDevice->getProperties().memory, memReqs.memoryTypeBits, properties),
+            Helpers::findMemoryType(mpDevice, memReqs.memoryTypeBits, properties),
     };
 
     Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &allocInfo, nullptr, &mMemory));
@@ -46,7 +46,8 @@ Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, u
 Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
              VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
              VkDeviceMemory memory, VkDeviceSize offset)
-    : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mImageView(VK_NULL_HANDLE), mMemory(memory)
+    : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mTiling(tiling), mImageView(VK_NULL_HANDLE),
+      mMemory(memory)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,

@@ -30,7 +30,7 @@ Buffer::Buffer(std::shared_ptr<Device> pDevice, VkDeviceSize size, VkBufferUsage
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memReqs.size,
         .memoryTypeIndex =
-            Helpers::findMemoryType(mpDevice->getProperties().memory, memReqs.memoryTypeBits, mProperties),
+            Helpers::findMemoryType(mpDevice, memReqs.memoryTypeBits, mProperties),
     };
 
     Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &allocInfo, nullptr, &mMemory));

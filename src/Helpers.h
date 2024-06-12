@@ -51,12 +51,12 @@ namespace Mandrill
             vkFreeCommandBuffers(pDevice->getDevice(), pDevice->getCommandPool(), 1, &cmd);
         }
 
-        inline static uint32_t findMemoryType(VkPhysicalDeviceMemoryProperties memoryProperties, uint32_t typeFilter,
+        inline static uint32_t findMemoryType(std::shared_ptr<Device> pDevice, uint32_t typeFilter,
                                               VkMemoryPropertyFlags properties)
         {
-            for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++) {
+            for (uint32_t i = 0; i < pDevice->getProperties().memory.memoryTypeCount; i++) {
                 if ((typeFilter & (1 << i)) &&
-                    (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+                    (pDevice->getProperties().memory.memoryTypes[i].propertyFlags & properties) == properties) {
                     return i;
                 }
             }
@@ -65,12 +65,12 @@ namespace Mandrill
             return UINT32_MAX;
         }
 
-        inline static VkFormat findSupportedFormat(VkPhysicalDevice physicalDevice, std::vector<VkFormat> candidates,
+        inline static VkFormat findSupportedFormat(std::shared_ptr<Device> pDevice, std::vector<VkFormat> candidates,
                                                    VkImageTiling tiling, VkFormatFeatureFlags features)
         {
             for (auto& c : candidates) {
                 VkFormatProperties properties;
-                vkGetPhysicalDeviceFormatProperties(physicalDevice, c, &properties);
+                vkGetPhysicalDeviceFormatProperties(pDevice->getPhysicalDevice(), c, &properties);
 
                 if (tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures & features) == features) {
                     return c;
@@ -83,14 +83,14 @@ namespace Mandrill
         }
 
 
-        inline static VkFormat findDepthFormat(VkPhysicalDevice physicalDevice)
+        inline static VkFormat findDepthFormat(std::shared_ptr<Device> pDevice)
         {
             std::vector<VkFormat> candidates;
             candidates.push_back(VK_FORMAT_D32_SFLOAT);
             candidates.push_back(VK_FORMAT_D32_SFLOAT_S8_UINT);
             candidates.push_back(VK_FORMAT_D24_UNORM_S8_UINT);
 
-            return findSupportedFormat(physicalDevice, candidates, VK_IMAGE_TILING_OPTIMAL,
+            return findSupportedFormat(pDevice, candidates, VK_IMAGE_TILING_OPTIMAL,
                                        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
 
