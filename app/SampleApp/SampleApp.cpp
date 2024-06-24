@@ -8,27 +8,27 @@ public:
     void setupVertexBuffers()
     {
         mVertices.push_back({
-            {-1.0f, -1.0f, 0.0f}, // pos
+            {-1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},   // normal
-            {0.0f, 0.0f},         // uvCoord
+            {0.0f, 0.0f},         // texcoord
         });
 
         mVertices.push_back({
-            {1.0f, -1.0f, 0.0f}, // pos
+            {1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
-            {1.0f, 0.0f},        // uvCoord
+            {1.0f, 0.0f},        // texcoord
         });
 
         mVertices.push_back({
-            {-1.0f, 1.0f, 0.0f}, // pos
+            {-1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
-            {0.0f, 1.0f},        // uvCoord
+            {0.0f, 1.0f},        // texcoord
         });
 
         mVertices.push_back({
-            {1.0f, 1.0f, 0.0f}, // pos
+            {1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f}, // normal
-            {1.0f, 1.0f},       // uvCoord
+            {1.0f, 1.0f},       // texcoord
         });
 
         mIndices = {0, 1, 3, 0, 3, 2};
