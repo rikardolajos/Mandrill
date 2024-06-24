@@ -25,6 +25,7 @@ link_libraries(${Vulkan_LIBRARIES})
 
 include_directories(src)
 include_directories(src/External)
+include_directories(submodules/glm)
 
 add_subdirectory(submodules)
 add_subdirectory(src)
