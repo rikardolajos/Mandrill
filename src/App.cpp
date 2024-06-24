@@ -38,6 +38,8 @@ void App::run()
         mDelta = static_cast<float>(glfwGetTime());
         glfwSetTime(0.0);
 
+        mDeltaSmooth = kSmoothingFactor * mDelta + (1 - kSmoothingFactor) * mDeltaSmooth;
+
         ImGuiContext* pContext = newFrameGUI();
 
         update(mDelta);
@@ -176,8 +178,8 @@ void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> 
                 mShowMainMenu = !mShowMainMenu;
             }
 
-            if (ImGui::MenuItem("Frametime", "F6", false)) {
-                mShowFrametime = !mShowFrametime;
+            if (ImGui::MenuItem("Frame rate", "F6", false)) {
+                mShowFrameRate = !mShowFrameRate;
             }
 
             ImGui::MenuItem("Take screenshot", "F12", false);
@@ -194,14 +196,14 @@ void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> 
         ImGui::EndMainMenuBar();
     }
 
-    if (mShowFrametime) {
+    if (mShowFrameRate) {
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
                                  ImGuiWindowFlags_NoBackground;
         ImGui::SetNextWindowPos(ImVec2(10.0f, 30.0f), ImGuiCond_Appearing);
-        if (ImGui::Begin("Frametime", &mShowFrametime, flags)) {
+        if (ImGui::Begin("Frame rate", &mShowFrameRate, flags)) {
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
-            ImGui::Text("Frametime: %.2f ms", mDelta * 1000.0f);
-            ImGui::Text("FPS: %.2f ms", 1.0f / mDelta);
+            ImGui::Text("Frametime: %.2f ms", mDeltaSmooth * 1000.0f);
+            ImGui::Text("FPS: %.2f ms", 1.0f / mDeltaSmooth);
             ImGui::PopStyleColor();
         }
         ImGui::End();
@@ -227,7 +229,7 @@ void App::keyCallback(GLFWwindow* window, int key, int scancode, int action, int
     }
 
     if (key == GLFW_KEY_F6 && action == GLFW_PRESS) {
-        // mShowFrametime = !mShowFrametime;
+        // mShowFrameRate = !mShowFrameRate;
     }
 }
 

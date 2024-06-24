@@ -158,12 +158,19 @@ namespace Mandrill
         /// <returns></returns>
         ImGuiContext* newFrameGUI();
 
+        // Time since last frame in seconds
         float mDelta = 0.0f;
+        
+        // Smoothed delta for GUI presentation
+        float mDeltaSmooth = 0.0f;
+
+        // Give new delta sample 5% weight
+        const float kSmoothingFactor = 0.05f;
 
         // GUI
         bool mCreatedGUI = false;
         bool mShowMainMenu = true;
-        bool mShowFrametime = false;
+        bool mShowFrameRate = false;
 
         // Descriptor pool for ImGUI
         VkDescriptorPool mDescriptorPool;
