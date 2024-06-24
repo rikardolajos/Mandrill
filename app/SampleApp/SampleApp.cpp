@@ -122,7 +122,7 @@ public:
     {
         mpCamera->update(delta);
 
-        mAngle += 0.2f * delta;
+        mAngle += mRotationSpeed * delta;
 
         mModel = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     }
@@ -154,8 +154,8 @@ public:
         // Draw mesh
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
 
-        // Draw UI
-        App::presentGUI(cmd);
+        // Draw GUI
+        App::drawGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);
@@ -169,7 +169,8 @@ public:
         App::renderGUI(mpDevice, mpSwapchain);
 
         if (ImGui::Begin("Sample App GUI")) {
-            ImGui::Text("This is an example");
+            ImGui::Text("Rotation speed:");
+            ImGui::SliderFloat("rad/s", &mRotationSpeed, 0.0f, 2.0f, "%.2f");
         }
         
         ImGui::End();
@@ -192,7 +193,8 @@ private:
     std::vector<Vertex> mVertices;
     std::vector<uint32_t> mIndices;
 
-    float mAngle = 0;
+    float mRotationSpeed = 0.2f;
+    float mAngle = 0.0f;
     glm::mat4 mModel;
     std::shared_ptr<Buffer> mpUniform;
     VkDescriptorBufferInfo mBufferInfo;

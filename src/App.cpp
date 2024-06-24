@@ -208,7 +208,7 @@ void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> 
     }
 }
 
-void App::presentGUI(VkCommandBuffer cmd)
+void App::drawGUI(VkCommandBuffer cmd)
 {
     if (!mCreatedGUI) {
         return;
