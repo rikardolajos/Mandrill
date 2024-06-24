@@ -30,7 +30,7 @@ Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, co
         mMipLevels = static_cast<uint32_t>(std::floor(log2(std::max(mWidth, mHeight))) + 1);
     }
 
-    VkDeviceSize size = mWidth * mHeight * mChannels;
+    VkDeviceSize size = mWidth * mHeight * STBI_rgb_alpha;
 
     Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
