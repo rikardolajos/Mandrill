@@ -35,6 +35,15 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get Vulkan instance handle.
+        /// </summary>
+        /// <returns>Vulkan isntance handle</returns>
+        MANDRILL_API VkInstance getInstance() const
+        {
+            return mInstance;
+        }
+
+        /// <summary>
         /// Get Vulkan physical device handle.
         /// </summary>
         /// <returns>Vulkan physical device handle</returns>
@@ -86,6 +95,15 @@ namespace Mandrill
         MANDRILL_API VkQueue getQueue() const
         {
             return mQueue;
+        }
+
+        /// <summary>
+        /// Get the queue family.
+        /// </summary>
+        /// <returns>A Vulkan queue family handle</returns>
+        MANDRILL_API uint32_t getQueueFamily() const
+        {
+            return mQueueFamilyIndex;
         }
 
         /// <summary>

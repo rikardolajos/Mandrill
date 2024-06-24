@@ -35,6 +35,11 @@ namespace Mandrill
             return mLayout;
         }
 
+        MANDRILL_API VkRenderPass getRenderPass() const
+        {
+            return mRenderPass;
+        }
+
     protected:
         virtual void createPipeline() = 0;
         virtual void destroyPipeline() = 0;

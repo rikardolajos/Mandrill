@@ -85,6 +85,8 @@ Swapchain::~Swapchain()
 
 void Swapchain::recreate()
 {
+    Log::debug("Recreating swapchain");
+
     // Handle minimization
     int width = 0;
     int height = 0;
@@ -100,6 +102,7 @@ void Swapchain::recreate()
     createResources();
     createSyncObjects(framesInFlight);
 
+    Log::debug("Done recreating swapchain");
     mRecreated = true;
 }
 
@@ -124,7 +127,7 @@ void Swapchain::createResources()
     VkImageCreateInfo ciDepth = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
-        .format = Helpers::findDepthFormat(mpDevice->getPhysicalDevice()),
+        .format = Helpers::findDepthFormat(mpDevice),
         .extent = {.width = mExtent.width, .height = mExtent.height, .depth = 1},
         .mipLevels = 1,
         .arrayLayers = 1,
@@ -145,7 +148,7 @@ void Swapchain::createResources()
     VkMemoryAllocateInfo ai = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memReqsColor.size + memReqsDepth.size,
-        .memoryTypeIndex = Helpers::findMemoryType(mpDevice->getProperties().memory,
+        .memoryTypeIndex = Helpers::findMemoryType(mpDevice,
                                                    memReqsColor.memoryTypeBits & memReqsDepth.memoryTypeBits,
                                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
     };
@@ -218,9 +221,10 @@ void Swapchain::createFramebuffers(VkRenderPass renderPass)
 
 VkCommandBuffer Swapchain::acquireNextImage()
 {
-    if (mRecreated) {
-        return nullptr;
-    }
+    // if (mRecreated) {
+    //     mRecreated = false;
+    //     return nullptr;
+    // }
 
     // Wait for the current frame to not be in flight
     Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
@@ -243,7 +247,7 @@ void Swapchain::present()
 {
     if (mRecreated) {
         mRecreated = false;
-        return;
+        // return;
     }
 
     std::array<VkSemaphore, 1> waitSemaphores{mImageAvailableSemaphore[mInFlightIndex]};
@@ -350,7 +354,7 @@ void Swapchain::createSwapchain()
     Check::Vk(vkGetSwapchainImagesKHR(mpDevice->getDevice(), mSwapchain, &imageCount, mImages.data()));
 
     for (uint32_t i = 0; i < imageCount; i++) {
-        VkImageViewCreateInfo ci{
+        VkImageViewCreateInfo ci = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .image = mImages[i],
             .viewType = VK_IMAGE_VIEW_TYPE_2D,

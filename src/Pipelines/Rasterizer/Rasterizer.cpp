@@ -176,7 +176,7 @@ void Rasterizer::createRenderPass()
         .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
     };
 
-    VkFormat depthFormat = Helpers::findDepthFormat(mpDevice->getPhysicalDevice());
+    VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkAttachmentDescription depthAttachment = {
         .format = depthFormat,
         .samples = mpDevice->getSampleCount(),
@@ -253,8 +253,10 @@ void Rasterizer::createRenderPass()
 void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
-        recreatePipeline();
-        return;
+        // recreatePipeline();
+        // return;
+        Log::debug("Creating framebuffers");
+        mpSwapchain->createFramebuffers(mRenderPass);
     }
 
     VkCommandBufferBeginInfo bi = {
@@ -314,9 +316,9 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 
 void Rasterizer::frameEnd(VkCommandBuffer cmd)
 {
-    if (mpSwapchain->recreated()) {
-        return;
-    }
+    // if (mpSwapchain->recreated()) {
+    //     return;
+    // }
 
     vkCmdEndRenderPass(cmd);
     Check::Vk(vkEndCommandBuffer(cmd));

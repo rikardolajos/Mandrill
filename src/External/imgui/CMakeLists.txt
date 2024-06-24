@@ -1,4 +1,4 @@
-target_sources(Mandrill PRIVATE
+target_sources(Mandrill PUBLIC
 	"imconfig.h"
 	"imgui.cpp"
 	"imgui.h"

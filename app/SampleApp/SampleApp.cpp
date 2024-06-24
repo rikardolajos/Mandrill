@@ -108,10 +108,14 @@ public:
         mBufferInfo.buffer = mpUniform->getBuffer();
         mBufferInfo.offset = 0;
         mBufferInfo.range = sizeof(glm::mat4);
+
+        // Initialize GUI
+        App::createGUI(mpDevice, mpPipeline->getRenderPass());
     }
 
     ~SampleApp()
     {
+        App::destroyGUI(mpDevice);
     }
 
     void update(float delta)
@@ -150,9 +154,23 @@ public:
         // Draw mesh
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
 
+        // Draw UI
+        App::presentGUI(cmd);
+
         // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);
         mpSwapchain->present();
+    }
+
+    void renderGUI()
+    {
+        App::renderGUI(mpDevice, mpSwapchain);
+
+        //if (ImGui::Begin("Sample App GUI")) {
+        //    ImGui::Text("This is an example");
+        //}
+        //
+        //ImGui::End();
     }
 
 private:
