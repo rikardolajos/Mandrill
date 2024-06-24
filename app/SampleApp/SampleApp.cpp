@@ -162,15 +162,17 @@ public:
         mpSwapchain->present();
     }
 
-    void renderGUI()
+    void renderGUI(ImGuiContext* pContext)
     {
+        ImGui::SetCurrentContext(pContext);
+
         App::renderGUI(mpDevice, mpSwapchain);
 
-        //if (ImGui::Begin("Sample App GUI")) {
-        //    ImGui::Text("This is an example");
-        //}
-        //
-        //ImGui::End();
+        if (ImGui::Begin("Sample App GUI")) {
+            ImGui::Text("This is an example");
+        }
+        
+        ImGui::End();
     }
 
 private:

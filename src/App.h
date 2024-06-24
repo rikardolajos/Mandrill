@@ -25,7 +25,7 @@ namespace Mandrill
     protected:
         virtual void update(float delta) = 0;
         virtual void render() = 0;
-        virtual void renderGUI() = 0;
+        virtual void renderGUI(ImGuiContext* pContext) = 0;
         // virtual void onMouseEvent() = 0;
 
         void createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass);
@@ -41,7 +41,7 @@ namespace Mandrill
         void initGLFW(const std::string& title, uint32_t width, uint32_t height);
         void initImGUI();
 
-        void newFrameGUI();
+        ImGuiContext* newFrameGUI();
 
         float mDelta = 0.0f;
 

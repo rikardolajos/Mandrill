@@ -38,11 +38,11 @@ void App::run()
         mDelta = static_cast<float>(glfwGetTime());
         glfwSetTime(0.0);
 
-        newFrameGUI();
+        ImGuiContext* pContext = newFrameGUI();
 
         update(mDelta);
 
-        renderGUI();
+        renderGUI(pContext);
 
         render();
 
@@ -127,10 +127,10 @@ void App::destroyGUI(std::shared_ptr<Device> pDevice)
     mCreatedGUI = false;
 }
 
-void App::newFrameGUI()
+ImGuiContext* App::newFrameGUI()
 {
     if (!mCreatedGUI) {
-        return;
+        return nullptr;
     }
 
     ImGui_ImplVulkan_NewFrame();
@@ -139,6 +139,8 @@ void App::newFrameGUI()
 
     ImGui::StyleColorsLight();
     ImGui::PushFont(mFont);
+
+    return ImGui::GetCurrentContext();
 }
 
 void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
