@@ -15,6 +15,8 @@ add_library(Mandrill SHARED
 	"Helpers.h"
 	"Image.cpp"
 	"Image.h"
+	"Layout.cpp"
+	"Layout.h"
 	"Log.cpp"
 	"Log.h"
 	"Mandrill.h"

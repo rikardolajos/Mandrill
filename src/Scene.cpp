@@ -8,24 +8,71 @@ using namespace Mandrill;
 
 Scene::Scene(std::shared_ptr<Device> pDevice) : mpDevice(pDevice)
 {
+    // vkGetDescriptorSetLayoutSizeEXT(mpDevice->getDevice(), );
 }
 
 Scene::~Scene()
 {
+    // Deallocate VkDescriptorPool for acceleration structure?
 }
 
-void Scene::render(VkCommandBuffer cmd) const
+std::shared_ptr<Layout> Scene::getLayout(int set) const
 {
+    if (set == 0) {
+        Log::error("Set 0 is reserved for the acceleration structure");
+    }
+
+    std::vector<LayoutDescription> layoutDesc;
+    layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+                            VK_SHADER_STAGE_RAYGEN_BIT_KHR); // Acceleration structure
+    layoutDesc.emplace_back(set, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                            VK_SHADER_STAGE_ALL_GRAPHICS); // Camera matrix
+    layoutDesc.emplace_back(set, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                            VK_SHADER_STAGE_ALL_GRAPHICS); // Model matrix
+    layoutDesc.emplace_back(set, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material colors
+    layoutDesc.emplace_back(set, 3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material textures
+
+    return std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_DESCRIPTOR_BUFFER_BIT_EXT);
 }
 
-Node& Scene::addNode(const std::filesystem::path& path)
+void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera) const
 {
-    Node node;
+    for (auto& node : mNodes) {
+        for (auto& mesh : node.meshes) {
+            //// Push descriptors
+            // std::array<VkWriteDescriptorSet, 3> descriptors;
+            // descriptors[0] = pCamera->getDescriptor(0);
+            // descriptors[1] = mMaterials[mesh.materialIndex].diffuseTexture->getDescriptor(1);
+            // descriptors[2] = node.getTransform();
+            // vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+            //                           static_cast<uint32_t>(descriptors.size()), descriptors.data());
+
+            //// Bind vertex and index buffers
+            // std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
+            // std::array<VkDeviceSize, 1> offsets = {0};
+            // vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
+            //                        offsets.data());
+            // vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+            //// Draw mesh
+            // vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
+        }
+    }
+}
+
+Node& Scene::addNode(const std::filesystem::path& path, const std::filesystem::path& materialPath)
+{
+    Node node = {
+        //.transform = glm::mat4(1.0f),
+    };
 
     Log::info("Loading {}", path.string());
 
     tinyobj::ObjReaderConfig readerConfig;
-    readerConfig.mtl_search_path = "./";
+    readerConfig.mtl_search_path = materialPath.string();
+    readerConfig.triangulate = true;
 
     tinyobj::ObjReader reader;
 
@@ -101,22 +148,76 @@ Node& Scene::addNode(const std::filesystem::path& path)
         mat.specular.g = material.specular[1];
         mat.specular.b = material.specular[2];
 
-        if (!material.ambient_texname.empty()) {
-            mat.ambientTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8_SRGB,
-                                                           material.ambient_texname, true);
-        }
+        auto loadTexture = [path, materialPath](std::shared_ptr<Device> pDevice,
+                                                std::unordered_map<std::string, Texture> loadedTextures,
+                                                std::string textureFile, std::string& texturePath) {
+            if (textureFile.empty()) {
+                return;
+            }
 
-        if (!material.diffuse_texname.empty()) {
-            mat.diffuseTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8_SRGB,
-                                                           material.diffuse_texname, true);
-        }
+            texturePath =
+                std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureFile).string();
+            if (loadedTextures.contains(texturePath)) {
+                return;
+            }
 
-        if (!material.specular_texname.empty()) {
-            mat.specularTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8_SRGB,
-                                                            material.specular_texname, true);
-        }
+            loadedTextures.insert(std::make_pair(
+                texturePath, Texture(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, texturePath, true)));
+        };
+
+        loadTexture(mpDevice, mTextures, material.ambient_texname, mat.ambientTexturePath);
+        loadTexture(mpDevice, mTextures, material.diffuse_texname, mat.diffuseTexturePath);
+        loadTexture(mpDevice, mTextures, material.specular_texname, mat.specularTexturePath);
+
         mMaterials.push_back(mat);
     }
 
     return node;
+}
+
+void Scene::update()
+{
+    // Calculate size of buffers
+    size_t verticesSize = 0;
+    size_t indicesSize = 0;
+    for (auto& n : mNodes) {
+        for (auto& m : n.meshes) {
+            verticesSize += m.vertices.size() * sizeof(m.vertices[0]);
+            indicesSize += m.indices.size() * sizeof(m.indices[0]);
+        }
+    }
+
+    // Allocate device buffers
+    mpVertexBuffer = std::make_shared<Buffer>(mpDevice, verticesSize,
+                                              VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpIndexBuffer = std::make_shared<Buffer>(mpDevice, indicesSize,
+                                             VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    // Copy from host to device
+    VkDeviceSize verticesOffset = 0;
+    VkDeviceSize indicesOffset = 0;
+    for (auto& node : mNodes) {
+        for (auto& mesh : node.meshes) {
+            size_t vertSize = mesh.vertices.size() * sizeof(mesh.vertices[0]);
+            size_t indxSize = mesh.indices.size() * sizeof(mesh.indices[0]);
+
+            mpVertexBuffer->copyFromHost(mesh.vertices.data(), vertSize, verticesOffset);
+            mpIndexBuffer->copyFromHost(mesh.indices.data(), indxSize, indicesOffset);
+
+            mesh.deviceVerticesOffset = verticesOffset;
+            mesh.deviceIndicesOffset = indicesOffset;
+
+            verticesOffset += vertSize;
+            indicesOffset += indxSize;
+        }
+    }
+}
+
+void Scene::setSampler(const std::shared_ptr<Sampler> pSampler)
+{
+    for (auto& texture : mTextures) {
+        texture.second.setSampler(pSampler);
+    }
 }

@@ -187,5 +187,10 @@ namespace Mandrill
 
             cmdEnd(pDevice, cmd);
         }
+
+        inline static VkDeviceSize alignTo(VkDeviceSize value, VkDeviceSize alignment)
+        {
+            return (value + alignment - 1) & ~(alignment - 1);
+        }
     };
 } // namespace Mandrill

@@ -2,7 +2,10 @@
 
 #include "Common.h"
 
+#include "Camera.h"
 #include "Device.h"
+#include "Layout.h"
+#include "Sampler.h"
 #include "Texture.h"
 
 namespace Mandrill
@@ -17,6 +20,10 @@ namespace Mandrill
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
         uint32_t materialIndex;
+
+        // Device offset are set when uploading to device
+        VkDeviceSize deviceVerticesOffset;
+        VkDeviceSize deviceIndicesOffset;
     };
 
     struct Material {
@@ -24,24 +31,15 @@ namespace Mandrill
         glm::vec3 diffuse;
         glm::vec3 specular;
 
-        std::shared_ptr<Texture> ambientTexture;
-        std::shared_ptr<Texture> diffuseTexture;
-        std::shared_ptr<Texture> specularTexture;
+        std::string ambientTexturePath;
+        std::string diffuseTexturePath;
+        std::string specularTexturePath;
     };
 
     struct Node {
-        glm::vec3 translation;
-        glm::mat4 rotation;
-        glm::vec3 scale;
         std::vector<Mesh> meshes;
-
-        glm::mat4 getTransform()
-        {
-            return glm::mat4(rotation[0][0] * scale.x, rotation[0][1] * scale.x, rotation[0][2] * scale.x, 0.0f,
-                             rotation[1][0] * scale.y, rotation[1][1] * scale.y, rotation[1][2] * scale.y, 0.0f,
-                             rotation[2][0] * scale.z, rotation[2][1] * scale.z, rotation[2][2] * scale.z, 0.0f,
-                             translation.x, translation.y, translation.z, 1.0f);
-        }
+        glm::mat4* transform;
+        Node* child;
     };
 
     class Scene
@@ -50,14 +48,38 @@ namespace Mandrill
         MANDRILL_API Scene(std::shared_ptr<Device> pDevice);
         MANDRILL_API ~Scene();
 
-        MANDRILL_API void render(VkCommandBuffer cmd) const;
+        MANDRILL_API std::shared_ptr<Layout> getLayout(int set) const;
 
-        MANDRILL_API Node& addNode(const std::filesystem::path& path);
+        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera) const;
+
+        MANDRILL_API Node& addNode(const std::filesystem::path& path, const std::filesystem::path& materialPath = ".");
+
+        /// <summary>
+        /// Synchronize buffers to device.
+        ///
+        /// Upload all buffers from host to device. This function should be called after nodes have been added or
+        /// removed from the scene.
+        ///
+        /// </summary>
+        /// <returns></returns>
+        MANDRILL_API void update();
+
+        /// <summary>
+        /// Set sampler to use for rendering materials.
+        /// </summary>
+        /// <param name="pSampler">Sampler to be used for all materials</param>
+        /// <returns></returns>
+        MANDRILL_API void setSampler(const std::shared_ptr<Sampler> pSampler);
 
     private:
         std::shared_ptr<Device> mpDevice;
 
         std::vector<Node> mNodes;
         std::vector<Material> mMaterials;
+        std::unordered_map<std::string, Texture> mTextures;
+
+        std::shared_ptr<Buffer> mpVertexBuffer;
+        std::shared_ptr<Buffer> mpIndexBuffer;
+        std::shared_ptr<Buffer> mpUniform;
     };
 }; // namespace Mandrill

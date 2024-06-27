@@ -40,9 +40,9 @@ void App::run()
 
         mDeltaSmooth = kSmoothingFactor * mDelta + (1 - kSmoothingFactor) * mDeltaSmooth;
 
-        ImGuiContext* pContext = newFrameGUI();
-
         update(mDelta);
+
+        ImGuiContext* pContext = newFrameGUI();
 
         renderGUI(pContext);
 
@@ -145,7 +145,8 @@ ImGuiContext* App::newFrameGUI()
     return ImGui::GetCurrentContext();
 }
 
-void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
+void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                    std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
 {
     if (!mCreatedGUI) {
         return;
@@ -166,6 +167,12 @@ void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> 
             bool vsync = pDevice->getVsync();
             if (ImGui::MenuItem("Verical sync", "V", &vsync)) {
                 pDevice->setVsync(vsync);
+                pSwapchain->recreate();
+            }
+
+            if (ImGui::MenuItem("Reload shaders", "R")) {
+                pShader->reload();
+                pPipeline->recreate();
                 pSwapchain->recreate();
             }
 
@@ -255,7 +262,11 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
 
     GLFWimage image;
     image.pixels = stbi_load("icon.png", &image.width, &image.height, nullptr, 4);
-    glfwSetWindowIcon(mpWindow, 1, &image);
+    if (image.pixels) {
+        glfwSetWindowIcon(mpWindow, 1, &image);
+    } else {
+        Log::error("Failed to load icon.png.");
+    }
 
     if (!glfwVulkanSupported()) {
         Log::error("Failed to find Vulkan.");

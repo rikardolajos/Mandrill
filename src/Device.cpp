@@ -151,7 +151,6 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
                 return std::string(p.extensionName) == std::string(e);
             }) != availableExtensions.end()) {
             found = true;
-            break;
         }
 
         if (!found) {
@@ -204,6 +203,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
         VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
+        VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {
@@ -213,7 +213,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
     };
 
-    static std::vector<const char*> deviceExtensions;
+    std::vector<const char*> deviceExtensions;
     deviceExtensions.insert(deviceExtensions.end(), baseExtensions.begin(), baseExtensions.end());
     deviceExtensions.insert(deviceExtensions.end(), extensions.begin(), extensions.end());
 
@@ -229,9 +229,14 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
         };
 
+        VkPhysicalDeviceDescriptorBufferPropertiesEXT descriptorBuffer = {
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT,
+            .pNext = &rtp,
+        };
+
         VkPhysicalDeviceDriverProperties driver = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES,
-            .pNext = &rtp,
+            .pNext = &descriptorBuffer,
         };
 
         VkPhysicalDeviceProperties2 prop = {

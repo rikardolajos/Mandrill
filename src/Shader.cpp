@@ -5,7 +5,6 @@
 
 using namespace Mandrill;
 
-#ifdef _DEBUG
 // Compile GLSL to SPIR-V
 static bool compile(const std::filesystem::path& input, const std::filesystem::path& output)
 {
@@ -13,7 +12,8 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 
 #if MANDRILL_LINUX
 
-    std::string cmd = std::format("glslc --target-env=vulkan1.3 {} -o {}", input.string(), output.string());
+    std::string cmd = std::format("glslc --target-env=vulkan1.3 -MD -MF {}.d {} -o {}", input.string(), input.string(),
+                                  output.string());
 
 #elif MANDRILL_WINDOWS
 
@@ -22,8 +22,8 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
         Log::error("VULKAN_SDK not found");
         return false;
     }
-    std::string cmd =
-        std::format("{}\\Bin\\glslc.exe --target-env=vulkan1.3 {} -o {}", sdk, input.string(), output.string());
+    std::string cmd = std::format("{}\\Bin\\glslc.exe --target-env=vulkan1.3 -MD -MF {}.d {} -o {}", sdk,
+                                  input.string(), input.string(), output.string());
 
 #else
 #error "SHADER: Unsupported target platform"
@@ -37,17 +37,96 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 
     return true;
 }
-#endif
 
 
-// Load shader module from pre-compiled SPIR-V binary
-static VkShaderModule load(VkDevice device, const std::filesystem::path& input)
+// Find dependency file and compile
+static void findDependenciesAndCompile(const std::filesystem::path& input)
+{
+    std::filesystem::path depFile = input;
+    depFile += ".d";
+
+    std::ifstream is(depFile, std::ios::binary);
+    if (!is.is_open()) {
+        Log::error("Unable to open {}", depFile.string());
+    }
+
+    std::string src;
+    std::string dst;
+    is >> dst;
+    is >> src;
+
+    // Remove trailing ":" from dst
+    dst.pop_back();
+
+    compile(src, dst);
+}
+
+
+Shader::Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDescription>& desc) : mpDevice(pDevice)
+{
+    mModules.resize(desc.size());
+    mStages.resize(desc.size());
+    mEntries.resize(desc.size());
+    mSrcFilenames.resize(desc.size());
+    mStageFlags.resize(desc.size());
+
+    for (size_t i = 0; i < desc.size(); i++) {
+        mSrcFilenames[i] = desc[i].filename;
+        mEntries[i] = desc[i].entry;
+        mStageFlags[i] = desc[i].stageFlags;
+    }
+
+    createModulesAndStages();
+}
+
+Shader::~Shader()
+{
+    Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
+
+    for (auto& m : mModules) {
+        vkDestroyShaderModule(mpDevice->getDevice(), m, nullptr);
+    }
+}
+
+
+void Shader::reload()
+{
+    for (size_t i = 0; i < mModules.size(); i++) {
+        findDependenciesAndCompile(mSrcFilenames[i]);
+    }
+
+    Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
+
+    for (auto& m : mModules) {
+        vkDestroyShaderModule(mpDevice->getDevice(), m, nullptr);
+    }
+
+    createModulesAndStages();
+}
+
+void Shader::createModulesAndStages()
+{
+    for (size_t i = 0; i < mModules.size(); i++) {
+        mModules[i] = loadModuleFromFile(mSrcFilenames[i]);
+        mStages[i] = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = mStageFlags[i],
+            .module = mModules[i],
+            .pName = mEntries[i].c_str(),
+        };
+    }
+}
+
+VkShaderModule Shader::loadModuleFromFile(const std::filesystem::path& src)
 {
     VkShaderModule module;
 
-    std::ifstream is(input, std::ios::binary);
+    std::filesystem::path dst = src;
+    dst += ".spv";
+
+    std::ifstream is(dst, std::ios::binary);
     if (!is.is_open()) {
-        Log::error("Unable to open {}", input.string());
+        Log::error("Unable to open {}", dst.string());
     }
 
     is.seekg(0, std::ios_base::end);
@@ -60,54 +139,13 @@ static VkShaderModule load(VkDevice device, const std::filesystem::path& input)
 
     is.close();
 
-    VkShaderModuleCreateInfo ci{
+    VkShaderModuleCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .codeSize = static_cast<size_t>(length),
         .pCode = buffer.data(),
     };
 
-    Check::Vk(vkCreateShaderModule(device, &ci, nullptr, &module));
+    Check::Vk(vkCreateShaderModule(mpDevice->getDevice(), &ci, nullptr, &module));
 
     return module;
-}
-
-
-// Either load pre-compiled SPIR-V or compile and then load
-static VkShaderModule moduleFromFile(VkDevice device, const std::filesystem::path& input)
-{
-    std::filesystem::path output = input;
-    output += ".spv";
-
-#ifdef _DEBUG
-    compile(input, output);
-#endif
-    return load(device, output);
-}
-
-
-Shader::Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderCreator>& creator) : mpDevice(pDevice)
-{
-    mModules.resize(creator.size());
-    mEntries.resize(creator.size());
-    mStages.resize(creator.size());
-
-    for (int i = 0; i < creator.size(); i++) {
-        mModules[i] = moduleFromFile(mpDevice->getDevice(), creator[i].filename);
-        mEntries[i] = creator[i].entry;
-        mStages[i] = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            .stage = creator[i].stageFlags,
-            .module = mModules[i],
-            .pName = mEntries[i].c_str(),
-        };
-    }
-}
-
-Shader::~Shader()
-{
-    Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
-
-    for (auto& m : mModules) {
-        vkDestroyShaderModule(mpDevice->getDevice(), m, nullptr);
-    }
 }

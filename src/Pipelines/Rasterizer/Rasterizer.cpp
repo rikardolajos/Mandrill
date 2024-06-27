@@ -6,13 +6,13 @@
 
 using namespace Mandrill;
 
-static VkVertexInputBindingDescription bindingDescription{
+static VkVertexInputBindingDescription bindingDescription = {
     .binding = 0,
     .stride = sizeof(Vertex),
     .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
 };
 
-static std::array<VkVertexInputAttributeDescription, 3> attributeDescription{{
+static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {{
     {
         .location = 0,
         .binding = 0,
@@ -35,8 +35,8 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription{{
 
 
 Rasterizer::Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       std::vector<LayoutCreator>& layout, std::shared_ptr<Shader> pShader)
-    : Pipeline(pDevice, pSwapchain, layout, pShader)
+                       std::shared_ptr<Layout> pLayout, std::shared_ptr<Shader> pShader)
+    : Pipeline(pDevice, pSwapchain, pLayout, pShader)
 {
     createPipeline();
 }
@@ -130,10 +130,12 @@ void Rasterizer::createPipeline()
         .pAttachments = &colorBlendAttachment,
     };
 
+    auto stages = mpShader->getStages();
+
     VkGraphicsPipelineCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .stageCount = static_cast<uint32_t>(mpShader->mStages.size()),
-        .pStages = mpShader->mStages.data(),
+        .stageCount = static_cast<uint32_t>(stages.size()),
+        .pStages = stages.data(),
         .pVertexInputState = &vertexInputInfo,
         .pInputAssemblyState = &inputAssembly,
         .pViewportState = &viewportState,
@@ -142,7 +144,7 @@ void Rasterizer::createPipeline()
         .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = &dynamicState,
-        .layout = mLayout,
+        .layout = mPipelineLayout,
         .renderPass = mRenderPass,
         .subpass = 0,
     };
@@ -155,12 +157,6 @@ void Rasterizer::destroyPipeline()
     vkDeviceWaitIdle(mpDevice->getDevice());
     vkDestroyRenderPass(mpDevice->getDevice(), mRenderPass, nullptr);
     vkDestroyPipeline(mpDevice->getDevice(), mPipeline, nullptr);
-}
-
-void Rasterizer::recreatePipeline()
-{
-    destroyPipeline();
-    createPipeline();
 }
 
 void Rasterizer::createRenderPass()

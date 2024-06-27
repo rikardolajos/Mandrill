@@ -3,6 +3,8 @@
 #include "Common.h"
 
 #include "Device.h"
+#include "Pipelines/Pipeline.h"
+#include "Shader.h"
 #include "Swapchain.h"
 
 namespace Mandrill
@@ -116,11 +118,15 @@ namespace Mandrill
         /// Draw the base GUI of a Mandrill application.
         ///
         /// This function will draw a menu bar and allow for basic features like showing framerate and taking
-        /// screenshots.
+        /// screenshots. The menu also allows for controlling different aspects of the rendering context and
+        /// therefore needs access to the device, swapchain, pipeline and shaders.
         /// </summary>
-        /// <param name="pDevice"></param>
-        /// <param name="pSwapchain"></param>
-        void renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain);
+        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
+        /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
+        /// <param name="pShader">Shader that should be reloaded</param>
+        void renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                       std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
 
         /// <summary>
         /// Draw the GUI  by writing the state to a command buffer.
@@ -161,7 +167,7 @@ namespace Mandrill
 
         // Time since last frame in seconds
         float mDelta = 0.0f;
-        
+
         // Smoothed delta for GUI presentation
         float mDeltaSmooth = 0.0f;
 

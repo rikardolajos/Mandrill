@@ -6,6 +6,7 @@
 #include "Error.h"
 #include "Extension.h"
 #include "Helpers.h"
+#include "Layout.h"
 #include "Log.h"
 #include "Pipelines/Pipeline.h"
 #include "Pipelines/Rasterizer/Rasterizer.h"

@@ -49,7 +49,7 @@ public:
 
     VkWriteDescriptorSet getModelDescriptor(uint32_t binding)
     {
-        std::array<glm::mat4, 1> matrices{mModel};
+        std::array<glm::mat4, 1> matrices = {mModel};
 
         mpUniform->copyFromHost(matrices.data(), matrices.size() * sizeof(glm::mat4));
 
@@ -74,17 +74,19 @@ public:
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a shader module with vertex and fragment shader
-        std::vector<ShaderCreator> shaderCreator;
-        shaderCreator.emplace_back("VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderCreator.emplace_back("FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = std::make_shared<Shader>(mpDevice, shaderCreator);
+        std::vector<ShaderDescription> shaderDesc;
+        shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer pipeline with layout matching the shader
-        std::vector<LayoutCreator> layout;
-        layout.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // Camera matrix
-        layout.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT); // Texture
-        layout.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // Mesh model matrix
-        mpPipeline = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, layout, mpShader);
+        std::vector<LayoutDescription> layoutDesc;
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        auto pLayout =
+            std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+        mpPipeline = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -95,7 +97,7 @@ public:
         // Create a texture and bind a sampler to it
         mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "icon.png");
         mpSampler = std::make_shared<Sampler>(mpDevice);
-        mpTexture->setSampler(mpSampler->getSampler());
+        mpTexture->setSampler(mpSampler);
 
         // Vertices in scene
         setupVertexBuffers();
@@ -141,7 +143,7 @@ public:
         descriptors[0] = mpCamera->getDescriptor(0);
         descriptors[1] = mpTexture->getDescriptor(1);
         descriptors[2] = getModelDescriptor(2);
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getPipelineLayout(), 0,
                                   static_cast<uint32_t>(descriptors.size()), descriptors.data());
 
         // Bind vertex and index buffers
@@ -166,13 +168,13 @@ public:
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::renderGUI(mpDevice, mpSwapchain);
+        App::renderGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
 
         if (ImGui::Begin("Sample App GUI")) {
             ImGui::Text("Rotation speed:");
             ImGui::SliderFloat("rad/s", &mRotationSpeed, 0.0f, 2.0f, "%.2f");
         }
-        
+
         ImGui::End();
     }
 

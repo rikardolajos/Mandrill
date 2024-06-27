@@ -6,12 +6,12 @@
 
 namespace Mandrill
 {
-    struct ShaderCreator {
+    struct ShaderDescription {
         std::filesystem::path filename;
         std::string entry;
         VkShaderStageFlagBits stageFlags;
 
-        MANDRILL_API ShaderCreator(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags)
+        MANDRILL_API ShaderDescription(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags)
             : filename(filename), entry(entry), stageFlags(stageFlags)
         {
         }
@@ -20,17 +20,32 @@ namespace Mandrill
     class Shader
     {
     public:
-        MANDRILL_API Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderCreator>& creator);
+        MANDRILL_API Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDescription>& desc);
         MANDRILL_API ~Shader();
+
+        MANDRILL_API void reload();
+
+        MANDRILL_API std::vector<VkShaderModule> getModules() const
+        {
+            return mModules;
+        }
+
+        MANDRILL_API std::vector<VkPipelineShaderStageCreateInfo> getStages() const
+        {
+            return mStages;
+        }
+
+    private:
+        void createModulesAndStages();
+        VkShaderModule loadModuleFromFile(const std::filesystem::path& input);
+
+        std::shared_ptr<Device> mpDevice;
 
         std::vector<VkShaderModule> mModules;
         std::vector<VkPipelineShaderStageCreateInfo> mStages;
 
-    private:
-
-
-        std::shared_ptr<Device> mpDevice;
-
         std::vector<std::string> mEntries;
+        std::vector<std::filesystem::path> mSrcFilenames;
+        std::vector<VkShaderStageFlagBits> mStageFlags;
     };
 } // namespace Mandrill

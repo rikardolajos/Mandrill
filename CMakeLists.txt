@@ -13,13 +13,37 @@ project("Mandrill" VERSION 2024.5.0)
 
 set(MANDRILL_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-function(add_mandrill_executable target)
-    add_executable(${target})
-    target_link_libraries(${target} PRIVATE Mandrill)
-    set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY})
+function(add_mandrill_executable TARGET)
+    add_executable(${TARGET})
+    target_link_libraries(${TARGET} PRIVATE Mandrill)
+    set_target_properties(${TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY})
 endfunction()
 
-find_package(Vulkan REQUIRED)
+function(add_shaders TARGET)
+    set(SHADER_SOURCE_FILES ${ARGN})
+
+    set(COMPILE_COMMANDS)
+    set(SHADER_OUTPUTS)
+
+    foreach(SHADER_FILENAME IN LISTS SHADER_SOURCE_FILES)
+        set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILENAME})
+        set(OUTPUT "${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}/${SHADER_FILENAME}.spv")
+        set(DEP "${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}/${SHADER_FILENAME}.d")
+        
+        list(APPEND COMPILE_COMMANDS COMMAND Vulkan::glslc --target-env=vulkan1.3 -MD -MF ${DEP} ${INPUT} -o ${OUTPUT})
+        list(APPEND SHADER_OUTPUTS ${OUTPUT})
+    endforeach()
+
+    add_custom_target(${TARGET}Shaders ALL
+        ${COMPILE_COMMANDS}
+        COMMENT "Compiling shaders for ${TARGET}"
+        SOURCES ${SHADER_SOURCE_FILES}
+        BYPRODUCTS ${SHADER_OUTPUTS}
+        DEPFILE ${DEP}
+    )
+endfunction()
+
+find_package(Vulkan REQUIRED COMPONENTS glslc)
 include_directories(${Vulkan_INCLUDE_DIRS})
 link_libraries(${Vulkan_LIBRARIES})
 
