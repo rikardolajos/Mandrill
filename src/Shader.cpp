@@ -10,9 +10,12 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 {
     Log::debug("Compiling {}", input.string());
 
+    auto depFile = output.parent_path() / output.stem();
+    depFile += ".d";
+
 #if MANDRILL_LINUX
 
-    std::string cmd = std::format("glslc --target-env=vulkan1.3 -MD -MF {}.d {} -o {}", input.string(), input.string(),
+    std::string cmd = std::format("glslc --target-env=vulkan1.3 -MD -MF {} {} -o {}", depFile.string(), input.string(),
                                   output.string());
 
 #elif MANDRILL_WINDOWS
@@ -22,8 +25,8 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
         Log::error("VULKAN_SDK not found");
         return false;
     }
-    std::string cmd = std::format("{}\\Bin\\glslc.exe --target-env=vulkan1.3 -MD -MF {}.d {} -o {}", sdk,
-                                  input.string(), input.string(), output.string());
+    std::string cmd = std::format("{}\\Bin\\glslc.exe --target-env=vulkan1.3 -MD -MF {} {} -o {}", sdk,
+                                  depFile.string(), input.string(), output.string());
 
 #else
 #error "SHADER: Unsupported target platform"
