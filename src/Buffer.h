@@ -13,7 +13,7 @@ namespace Mandrill
                             VkMemoryPropertyFlags properties);
         MANDRILL_API ~Buffer();
 
-        MANDRILL_API void copyFromHost(const void* data, size_t size);
+        MANDRILL_API void copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);
 
         MANDRILL_API VkBuffer getBuffer() const
         {
@@ -42,5 +42,6 @@ namespace Mandrill
         VkBufferUsageFlags mUsage;
         VkMemoryPropertyFlags mProperties;
         VkDeviceSize mSize;
+        void* mpHostMap;
     };
 } // namespace Mandrill
