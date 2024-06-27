@@ -4,6 +4,7 @@
 
 #include "Device.h"
 #include "Image.h"
+#include "Sampler.h"
 
 namespace Mandrill
 {
@@ -21,7 +22,7 @@ namespace Mandrill
                              const std::filesystem::path& path, bool mipmaps = false);
         MANDRILL_API ~Texture();
 
-        MANDRILL_API void setSampler(VkSampler sampler);
+        MANDRILL_API void setSampler(const std::shared_ptr<Sampler> sampler);
 
         MANDRILL_API VkWriteDescriptorSet getDescriptor(uint32_t binding) const;
 

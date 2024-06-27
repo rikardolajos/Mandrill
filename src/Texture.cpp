@@ -41,7 +41,8 @@ Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, co
 
     mpImage = std::make_shared<Image>(
         mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);
@@ -69,9 +70,9 @@ Texture::~Texture()
 {
 }
 
-void Texture::setSampler(VkSampler sampler)
+void Texture::setSampler(const std::shared_ptr<Sampler> pSampler)
 {
-    mImageInfo.sampler = sampler;
+    mImageInfo.sampler = pSampler->getSampler();
 }
 
 VkWriteDescriptorSet Texture::getDescriptor(uint32_t binding) const
