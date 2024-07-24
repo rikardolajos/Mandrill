@@ -44,7 +44,7 @@ void App::run()
 
         ImGuiContext* pContext = newFrameGUI();
 
-        renderGUI(pContext);
+        appGUI(pContext);
 
         render();
 
@@ -145,8 +145,8 @@ ImGuiContext* App::newFrameGUI()
     return ImGui::GetCurrentContext();
 }
 
-void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                    std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
+void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                  std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
 {
     if (!mCreatedGUI) {
         return;
@@ -217,7 +217,7 @@ void App::renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> 
     }
 }
 
-void App::drawGUI(VkCommandBuffer cmd)
+void App::renderGUI(VkCommandBuffer cmd)
 {
     if (!mCreatedGUI) {
         return;

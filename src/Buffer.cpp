@@ -61,11 +61,11 @@ void Buffer::copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize off
     // Check if we need a staging buffer or not
     if (!(mProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
         // Set up staging buffer
-        Buffer staging(mpDevice, mSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
         
         // Copy to staging buffer
-        staging.copyFromHost(pData, size, offset);
+        staging.copyFromHost(pData, size, 0);
 
         // Transfer from staging buffer to this buffer
         VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);

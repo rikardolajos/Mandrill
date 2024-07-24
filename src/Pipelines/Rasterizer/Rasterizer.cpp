@@ -67,6 +67,7 @@ void Rasterizer::createPipeline()
 
     std::vector<VkDynamicState> dynamicStates = {
         VK_DYNAMIC_STATE_CULL_MODE,
+        VK_DYNAMIC_STATE_FRONT_FACE,
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,
     };

@@ -203,7 +203,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
         VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
-        VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
+        //VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {

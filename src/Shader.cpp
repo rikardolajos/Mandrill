@@ -51,6 +51,7 @@ static void findDependenciesAndCompile(const std::filesystem::path& input)
     std::ifstream is(depFile, std::ios::binary);
     if (!is.is_open()) {
         Log::error("Unable to open {}", depFile.string());
+        return;
     }
 
     std::string src;

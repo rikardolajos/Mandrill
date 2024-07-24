@@ -84,23 +84,20 @@ void Camera::update(float delta)
 
     // Direction with arrows
     glm::vec3 newDir(1.0f);
+    const float angle = speedFactor * rotationSpeed * delta;
     if (glfwGetKey(mpWindow, GLFW_KEY_UP) == GLFW_PRESS) {
-        float angle = speedFactor * rotationSpeed * delta;
         newDir = glm::rotate(mDirection, angle, right);
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        float angle = -speedFactor * rotationSpeed * delta;
-        newDir = glm::rotate(mDirection, angle, right);
+        newDir = glm::rotate(mDirection, -angle, right);
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        float angle = -speedFactor * rotationSpeed * delta;
-        newDir = glm::rotate(mDirection, angle, mUp);
+        newDir = glm::rotate(mDirection, -angle, mUp);
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        float angle = speedFactor * rotationSpeed * delta;
         newDir = glm::rotate(mDirection, angle, mUp);
     }
 

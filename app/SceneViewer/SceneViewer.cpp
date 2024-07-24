@@ -12,7 +12,8 @@ public:
     {
         mpScene = std::make_shared<Scene>(mpDevice);
         mpScene->addNode(mScenePath);
-        mpScene->update();
+        mpScene->compile();
+        mpScene->syncToDevice();
         mpScene->setSampler(mpSampler);
     }
 
@@ -26,7 +27,15 @@ public:
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
         mpScene = std::make_shared<Scene>(mpDevice);
-        auto pLayout = mpScene->getLayout(1);
+        auto pLayout = mpScene->getLayout(0);
+
+        // Add push constant to layout so we can set render mode in shader
+        VkPushConstantRange pushConstantRange = {
+            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .offset = 0,
+            .size = sizeof(uint32_t),
+        };
+        pLayout->addPushConstantRange(pushConstantRange);
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDescription> shaderDesc;
@@ -66,22 +75,28 @@ public:
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
+        vkCmdSetFrontFace(cmd, mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
+        vkCmdSetCullMode(cmd, mCullMode);
+
+        vkCmdPushConstants(cmd, mpPipeline->getPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t),
+                           &mRenderMode);
+
         // Render scene
-        mpScene->render(cmd, mpCamera);
+        mpScene->render(cmd, mpPipeline, mpCamera);
 
         // Draw GUI
-        App::drawGUI(cmd);
+        App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);
         mpSwapchain->present();
     }
 
-    void renderGUI(ImGuiContext* pContext)
+    void appGUI(ImGuiContext* pContext)
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::renderGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
@@ -98,17 +113,34 @@ public:
                 ofn.lpstrFileTitle = NULL;
                 ofn.nMaxFileTitle = 0;
                 ofn.lpstrInitialDir = NULL;
-                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
                 if (GetOpenFileNameA(&ofn)) {
                     mScenePath = ofn.lpstrFile;
+                    loadScene();
                 }
             }
 
-            if (mpScene) {
-                ImGui::Text("Scene: %s", mScenePath.string().c_str());
-                const char* modes[] = {"Diffuse", "Ambient ", "Specular", "Normal"};
-                ImGui::Combo("Mode", &mRenderMode, modes, IM_ARRAYSIZE(modes));
+            ImGui::Text("Scene: %s", mScenePath.string().c_str());
+            const char* renderModes[] = {
+                "Diffuse",
+                "Specular",
+                "Ambient",
+                "Emission",
+                "Shininess",
+                "Index of refraction",
+                "Opacity",
+                "Normal",
+                "Texture coordinates",
+            };
+            ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
+            const char* frontFace[] = {"Counter clockwise", "Clockwise"};
+            ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace));
+            const char* cullModes[] = {"None", "Front face", "Back face"};
+            ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes));
+
+            if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
+                mpCamera->setMoveSpeed(mCameraMoveSpeed);
             }
         }
 
@@ -122,6 +154,7 @@ private:
     std::shared_ptr<Rasterizer> mpPipeline;
 
     std::shared_ptr<Camera> mpCamera;
+    float mCameraMoveSpeed = 1.0f;
 
     std::shared_ptr<Sampler> mpSampler;
 
@@ -129,6 +162,8 @@ private:
     std::filesystem::path mScenePath;
 
     int mRenderMode = 0;
+    int mFrontFace = 0;
+    int mCullMode = 0;
 };
 
 int main()

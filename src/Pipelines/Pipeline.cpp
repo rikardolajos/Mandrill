@@ -11,11 +11,14 @@ Pipeline::Pipeline(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> p
       mRenderPass(VK_NULL_HANDLE)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
+    const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
 
     VkPipelineLayoutCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size()),
         .pSetLayouts = descriptorSetLayouts.data(),
+        .pushConstantRangeCount = static_cast<uint32_t>(pushConstantLayout.size()),
+        .pPushConstantRanges = pushConstantLayout.data(),
     };
 
     Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));

@@ -157,18 +157,18 @@ public:
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
 
         // Draw GUI
-        App::drawGUI(cmd);
+        App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
         mpPipeline->frameEnd(cmd);
         mpSwapchain->present();
     }
 
-    void renderGUI(ImGuiContext* pContext)
+    void appGUI(ImGuiContext* pContext)
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::renderGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
 
         if (ImGui::Begin("Sample App GUI")) {
             ImGui::Text("Rotation speed:");

@@ -32,9 +32,20 @@ namespace Mandrill
             return mDescriptorSetLayouts;
         }
 
+        MANDRILL_API const std::vector<VkPushConstantRange>& getPushConstantRanges() const
+        {
+            return mPushConstantRanges;
+        }
+
+        MANDRILL_API void addPushConstantRange(VkPushConstantRange pushConstantRange)
+        {
+            mPushConstantRanges.push_back(pushConstantRange);
+        }
+
     private:
         std::shared_ptr<Device> mpDevice;
 
         std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
+        std::vector<VkPushConstantRange> mPushConstantRanges;
     };
 } // namespace Mandrill

@@ -93,7 +93,7 @@ namespace Mandrill
         /// This function should be overridden.
         /// </summary>
         /// <param name="pContext">Current ImGUI context</param>
-        virtual void renderGUI(ImGuiContext* pContext) = 0;
+        virtual void appGUI(ImGuiContext* pContext) = 0;
 
         // virtual void onMouseEvent() = 0;
 
@@ -125,16 +125,16 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
         /// <param name="pShader">Shader that should be reloaded</param>
-        void renderGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
+        void baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                     std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
 
         /// <summary>
-        /// Draw the GUI  by writing the state to a command buffer.
+        /// Render the GUI by writing the state to a command buffer.
         ///
         /// Call this while populating command buffer.
         /// </summary>
         /// <param name="cmd">Command buffer to write to</param>
-        void drawGUI(VkCommandBuffer cmd);
+        void renderGUI(VkCommandBuffer cmd);
 
         static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 

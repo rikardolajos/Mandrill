@@ -40,6 +40,11 @@ namespace Mandrill
             mFov = fov;
         }
 
+        MANDRILL_API void setMoveSpeed(float speed)
+        {
+            mMoveSpeed = speed;
+        }
+
         MANDRILL_API VkWriteDescriptorSet getDescriptor(uint32_t binding) const;
 
     private:
