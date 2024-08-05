@@ -292,6 +292,7 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
 
     // Set dynamic states
+    vkCmdSetFrontFace(cmd, VK_FRONT_FACE_COUNTER_CLOCKWISE);
     vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
 
     VkViewport viewport = {
