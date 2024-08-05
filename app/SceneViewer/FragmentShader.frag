@@ -24,6 +24,7 @@ layout(set = 0, binding = 7) uniform sampler2D normalTexture;
 
 layout(push_constant) uniform PushConstant {
     uint renderMode;
+    uint discardOnZeroAlpha;
 } pushConstant;
 
 const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;
@@ -36,6 +37,9 @@ void main() {
     // Diffuse (default)
     if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
         fragColor = texture(diffuseTexture, texCoord);
+        if (pushConstant.discardOnZeroAlpha == 1 && fragColor.a == 0.0) {
+            discard;
+        }
     } else {
         fragColor = vec4(materialParams.diffuse, 1.0);
     }

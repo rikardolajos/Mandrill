@@ -33,7 +33,7 @@ public:
         VkPushConstantRange pushConstantRange = {
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
-            .size = sizeof(uint32_t),
+            .size = 2 * sizeof(int),
         };
         pLayout->addPushConstantRange(pushConstantRange);
 
@@ -78,8 +78,15 @@ public:
         vkCmdSetFrontFace(cmd, mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
         vkCmdSetCullMode(cmd, mCullMode);
 
-        vkCmdPushConstants(cmd, mpPipeline->getPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t),
-                           &mRenderMode);
+        struct PushConstants {
+            int renderMode;
+            int discardOnZeroAlpha;
+        } pushConstants = {
+            .renderMode = mRenderMode,
+            .discardOnZeroAlpha = mDiscardOnZeroAlpha,
+        };
+        vkCmdPushConstants(cmd, mpPipeline->getPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
+                           &pushConstants);
 
         // Render scene
         mpScene->render(cmd, mpPipeline, mpCamera);
@@ -123,21 +130,16 @@ public:
 
             ImGui::Text("Scene: %s", mScenePath.string().c_str());
             const char* renderModes[] = {
-                "Diffuse",
-                "Specular",
-                "Ambient",
-                "Emission",
-                "Shininess",
-                "Index of refraction",
-                "Opacity",
-                "Normal",
-                "Texture coordinates",
+                "Diffuse",  "Specular",  "Ambient",
+                "Emission", "Shininess", "Index of refraction",
+                "Opacity",  "Normal",    "Texture coordinates",
             };
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
             const char* frontFace[] = {"Counter clockwise", "Clockwise"};
             ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace));
             const char* cullModes[] = {"None", "Front face", "Back face"};
             ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes));
+            ImGui::Checkbox("Discard pixel if diffuse alpha channel is 0", &mDiscardOnZeroAlpha);
 
             if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
                 mpCamera->setMoveSpeed(mCameraMoveSpeed);
@@ -162,6 +164,7 @@ private:
     std::filesystem::path mScenePath;
 
     int mRenderMode = 0;
+    bool mDiscardOnZeroAlpha = 0;
     int mFrontFace = 0;
     int mCullMode = 0;
 };
