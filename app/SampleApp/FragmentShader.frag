@@ -8,4 +8,8 @@ layout(set = 0, binding = 1) uniform sampler2D diffuseTexture;
 
 void main() {
     fragColor = texture(diffuseTexture, texCoord);
+
+    if (fragColor.a < 0.5) {
+        discard;
+    }
 }

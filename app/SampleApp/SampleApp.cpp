@@ -95,7 +95,7 @@ public:
         mpCamera->setFov(60.0f);
 
         // Create a texture and bind a sampler to it
-        mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "icon.png");
+        mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
         mpSampler = std::make_shared<Sampler>(mpDevice);
         mpTexture->setSampler(mpSampler);
 
