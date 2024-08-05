@@ -317,22 +317,18 @@ void Scene::compile()
 
     // Associate each node with a part of the transforms buffer
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
-    // size_t offset = 0;
     for (size_t i = 0; i < mNodes.size(); i++) {
         mNodes[i].transform = transforms + i;
         *mNodes[i].transform = glm::mat4(1.0f);
-        mNodes[i].transformsOffset = i * sizeof(glm::mat4); // offset;
-        // offset += sizeof(glm::mat4);
+        mNodes[i].transformsOffset = i * sizeof(glm::mat4);
     }
 
     // Associate each material with a part of the material params buffer
     MaterialParams* materialParams = static_cast<MaterialParams*>(mpMaterialParams->getHostMap());
-    // offset = 0;
     for (size_t i = 0; i < mMaterials.size(); i++) {
         mMaterials[i].paramsDevice = materialParams + i;
         *mMaterials[i].paramsDevice = mMaterials[i].params;
         mMaterials[i].paramsOffset = i * sizeof(MaterialParams);
-        // offset += sizeof(MaterialParams);
     }
 }
 
