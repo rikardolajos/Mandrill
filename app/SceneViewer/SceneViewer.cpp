@@ -19,7 +19,7 @@ public:
 
     SceneViewer() : App("SceneViewer", 1920, 1080)
     {
-        // Create a the Vulkan instance and device
+        // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight

@@ -67,7 +67,7 @@ public:
 
     SampleApp() : App("Sample App", 1280, 720)
     {
-        // Create a the Vulkan instance and device
+        // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
