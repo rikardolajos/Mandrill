@@ -31,10 +31,16 @@
 
 #define MANDRILL_NAME "Mandrill"
 
-// Version
-#define MANDRILL_VERSION_MAJOR 2024
-#define MANDRILL_VERSION_MINOR 5
-#define MANDRILL_VERSION_PATCH 0
+// Version (set in CMakeLists.txt)
+#ifndef MANDRILL_VERSION_MAJOR
+#error "Missing major version number"
+#endif
+#ifndef MANDRILL_VERSION_MINOR
+#error "Missing minor version number"
+#endif
+#ifndef MANDRILL_VERSION_PATCH
+#error "Missing patch version number"
+#endif
 
 // Platform
 #define MANDRILL_PLATFORM_WINDOWS 1
