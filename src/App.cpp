@@ -6,6 +6,11 @@
 
 #include "stb_image.h"
 
+#ifdef MANDRILL_WINDOWS
+//#include <shellapi.h>
+#include <windows.h>
+#endif
+
 using namespace Mandrill;
 
 static void errorCallback(int errorCode, const char* pDescription)
@@ -195,7 +200,13 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
         }
 
         if (ImGui::BeginMenu("Help")) {
-            ImGui::MenuItem("Show controls", "F1", false);
+            if (ImGui::MenuItem("Show controls", "F1", false)) {
+                mShowHelp = !mShowHelp;
+            }
+
+            if (ImGui::MenuItem("About", "", false)) {
+                mShowAbout = !mShowAbout;
+            }
 
             ImGui::EndMenu();
         }
@@ -210,8 +221,55 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
         if (ImGui::Begin("Frame rate", &mShowFrameRate, flags)) {
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
             ImGui::Text("Frametime: %.2f ms", mDeltaSmooth * 1000.0f);
-            ImGui::Text("FPS: %.2f ms", 1.0f / mDeltaSmooth);
+            ImGui::Text("FPS: %.2f", 1.0f / mDeltaSmooth);
             ImGui::PopStyleColor();
+        }
+        ImGui::End();
+    }
+
+    if (mShowHelp) {
+        if (ImGui::Begin("Help", &mShowHelp)) {
+            ImGui::Text("Camera movement:");
+            ImGui::Text("\t* W: Move forward");
+            ImGui::Text("\t* S: Move backward");
+            ImGui::Text("\t* A: Strafe left");
+            ImGui::Text("\t* D: Strafe right");
+            ImGui::Text("\t* Arrow keys: Pan");
+            ImGui::Text("\t* Period: Zoom in");
+            ImGui::Text("\t* Comma: Zoom out");
+            ImGui::Text("\t* Shift: Speed up movement");
+            ImGui::Text("\t* Ctrl: Slow down movement");
+            ImGui::Text("\t* Left mouse button: Click and drag to pan");
+            ImGui::Text("\t* Right mouse button: Capture/release mouse for panning");
+        }
+        ImGui::End();
+    }
+
+    if (mShowAbout) {
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+                                 ImGuiWindowFlags_AlwaysAutoResize;
+        int width, height;
+        glfwGetWindowSize(mpWindow, &width, &height);
+        ImGui::SetNextWindowPos(ImVec2(0.5f * width, 0.5f * height), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        if (ImGui::Begin("About", &mShowAbout, flags)) {
+            ImGui::Text("%s v%d.%d.%d", MANDRILL_NAME, MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR,
+                        MANDRILL_VERSION_PATCH);
+            ImGui::Text("This is a graphics platform based on Vulkan, written for educational and research purposes at "
+                        "Lund University.");
+            ImGui::Text(
+                "Latest source code is available from the %s git repository and is released under the MIT License.",
+                MANDRILL_NAME);
+
+#ifdef MANDRILL_WINDOWS
+            if (ImGui::Button("Go to repo")) {
+                //ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
+            }
+            ImGui::SameLine();
+#endif
+
+            if (ImGui::Button("Close")) {
+                mShowAbout = false;
+            }
         }
         ImGui::End();
     }
@@ -229,14 +287,36 @@ void App::renderGUI(VkCommandBuffer cmd)
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
 }
 
-void App::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void App::baseKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods,
+                          std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                          std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, 1);
     }
 
+    if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+        mShowHelp = !mShowHelp;
+    }
+
+    if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
+        mShowMainMenu = !mShowMainMenu;
+    }
+
     if (key == GLFW_KEY_F6 && action == GLFW_PRESS) {
-        // mShowFrameRate = !mShowFrameRate;
+        mShowFrameRate = !mShowFrameRate;
+    }
+
+    if (key == GLFW_KEY_V && action == GLFW_PRESS) {
+        bool vsync = pDevice->getVsync();
+        pDevice->setVsync(!vsync);
+        pSwapchain->recreate();
+    }
+
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        pShader->reload();
+        pPipeline->recreate();
+        pSwapchain->recreate();
     }
 }
 
@@ -273,7 +353,8 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
         Check::GLFW();
     }
 
-    glfwSetKeyCallback(mpWindow, keyCallback);
+    glfwSetWindowUserPointer(mpWindow, this);
+    glfwSetKeyCallback(mpWindow, keyCallbackEntry);
     Check::GLFW();
 }
 
@@ -286,4 +367,11 @@ void App::initImGUI()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
     ImGui_ImplGlfw_InitForVulkan(mpWindow, true);
+}
+
+void App::keyCallbackEntry(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    App* pApp = static_cast<App*>(glfwGetWindowUserPointer(window));
+
+    pApp->appKeyCallback(window, key, scancode, action, mods);
 }

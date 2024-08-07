@@ -207,7 +207,7 @@ Node& Scene::addNode(const std::filesystem::path& path, const std::filesystem::p
                     vert.texcoord.y = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
                 }
 
-                int meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
+                auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
                 shapeMesh[meshIndex].materialIndex = materialIndex;

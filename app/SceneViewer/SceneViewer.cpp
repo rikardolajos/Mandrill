@@ -149,6 +149,12 @@ public:
         ImGui::End();
     }
 
+    void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        // Invoke the base application's keyboard commands
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+    }
+
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;

@@ -136,7 +136,33 @@ namespace Mandrill
         /// <param name="cmd">Command buffer to write to</param>
         void renderGUI(VkCommandBuffer cmd);
 
-        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        /// <summary>
+        /// App keyboard callback function. This will handle keyboard commands associated with the base application
+        /// menus. Read more in the GLFW documentation: https://www.glfw.org/docs/3.3/input_guide.html#input_key
+        /// </summary>
+        /// <param name="window">The window that received the event</param>
+        /// <param name="key">The keyboard key that was pressed or released</param>
+        /// <param name="scancode">The system-specific scancode of the key</param>
+        /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
+        /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
+        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
+        /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
+        /// <param name="pShader">Shader that should be reloaded</param>
+        void baseKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods,
+                             std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                             std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
+
+        /// <summary>
+        /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard
+        /// keybindings. See <code>baseKeyCallback()</code> for more details.
+        /// </summary>
+        /// <param name="window">The window that received the event</param>
+        /// <param name="key">The keyboard key that was pressed or released</param>
+        /// <param name="scancode">The system-specific scancode of the key</param>
+        /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
+        /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
+        virtual void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) = 0;
 
         // GLFW window
         GLFWwindow* mpWindow;
@@ -165,6 +191,16 @@ namespace Mandrill
         /// <returns></returns>
         ImGuiContext* newFrameGUI();
 
+        /// <summary>
+        /// GLFW keyboard callback entry function. This will invoke the apps overriden callback function.
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="key"></param>
+        /// <param name="scancode"></param>
+        /// <param name="action"></param>
+        /// <param name="mods"></param>
+        static void keyCallbackEntry(GLFWwindow* window, int key, int scancode, int action, int mods);
+
         // Time since last frame in seconds
         float mDelta = 0.0f;
 
@@ -178,6 +214,8 @@ namespace Mandrill
         bool mCreatedGUI = false;
         bool mShowMainMenu = true;
         bool mShowFrameRate = false;
+        bool mShowHelp = false;
+        bool mShowAbout = false;
 
         // Descriptor pool for ImGUI
         VkDescriptorPool mDescriptorPool;

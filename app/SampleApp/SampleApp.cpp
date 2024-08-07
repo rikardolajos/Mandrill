@@ -168,14 +168,31 @@ public:
     {
         ImGui::SetCurrentContext(pContext);
 
+        // Render the base GUI, the menu bar with it's subwindows
         App::baseGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
 
+        // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
             ImGui::Text("Rotation speed:");
             ImGui::SliderFloat("rad/s", &mRotationSpeed, 0.0f, 2.0f, "%.2f");
         }
 
         ImGui::End();
+    }
+
+    void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        // Invoke the base application's keyboard commands
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+
+        // Here we can add app-specific keyboard commands
+        if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+            mRotationSpeed -= 0.2f;
+        }
+
+        if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+            mRotationSpeed += 0.2f;
+        }
     }
 
 private:
