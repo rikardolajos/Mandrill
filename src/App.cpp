@@ -291,10 +291,6 @@ void App::baseKeyCallback(GLFWwindow* window, int key, int scancode, int action,
                           std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
                           std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, 1);
-    }
-
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         mShowHelp = !mShowHelp;
     }
