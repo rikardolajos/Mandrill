@@ -7,8 +7,10 @@
 #include "stb_image.h"
 
 #ifdef MANDRILL_WINDOWS
-//#include <shellapi.h>
+// Include windows.h first
 #include <windows.h>
+// Line to stop formatter
+#include <shellapi.h>
 #endif
 
 using namespace Mandrill;
@@ -262,7 +264,7 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
 
 #ifdef MANDRILL_WINDOWS
             if (ImGui::Button("Go to repo")) {
-                //ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
+                ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
             }
             ImGui::SameLine();
 #endif
