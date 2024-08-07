@@ -183,6 +183,10 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
                 pSwapchain->recreate();
             }
 
+            if (ImGui::MenuItem("Take screenshot", "F12", false)) {
+                Log::warning("Taking screenhots is currently not implemented");
+            }
+
             ImGui::EndMenu();
         }
 
@@ -192,11 +196,13 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
                 mShowMainMenu = !mShowMainMenu;
             }
 
-            if (ImGui::MenuItem("Frame rate", "F6", false)) {
+            if (ImGui::MenuItem("Frame rate", "F3", false)) {
                 mShowFrameRate = !mShowFrameRate;
             }
 
-            ImGui::MenuItem("Take screenshot", "F12", false);
+            if (ImGui::MenuItem("Toggle fullscreen", "F11", false)) {
+                Log::warning("Fullscreen is currently not implemented");
+            }
 
             ImGui::EndMenu();
         }
@@ -232,17 +238,17 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
     if (mShowHelp) {
         if (ImGui::Begin("Help", &mShowHelp)) {
             ImGui::Text("Camera movement:");
-            ImGui::Text("\t* W: Move forward");
-            ImGui::Text("\t* S: Move backward");
-            ImGui::Text("\t* A: Strafe left");
-            ImGui::Text("\t* D: Strafe right");
-            ImGui::Text("\t* Arrow keys: Pan");
-            ImGui::Text("\t* Period: Zoom in");
-            ImGui::Text("\t* Comma: Zoom out");
-            ImGui::Text("\t* Shift: Speed up movement");
-            ImGui::Text("\t* Ctrl: Slow down movement");
-            ImGui::Text("\t* Left mouse button: Click and drag to pan");
-            ImGui::Text("\t* Right mouse button: Capture/release mouse for panning");
+            ImGui::Text("\tW: Move forward");
+            ImGui::Text("\tS: Move backward");
+            ImGui::Text("\tA: Strafe left");
+            ImGui::Text("\tD: Strafe right");
+            ImGui::Text("\tArrow keys: Pan");
+            ImGui::Text("\tPeriod: Zoom in");
+            ImGui::Text("\tComma: Zoom out");
+            ImGui::Text("\tShift: Speed up movement");
+            ImGui::Text("\tCtrl: Slow down movement");
+            ImGui::Text("\tLeft mouse button: Click and drag to pan");
+            ImGui::Text("\tRight mouse button: Capture/release mouse for panning");
         }
         ImGui::End();
     }
@@ -256,11 +262,11 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
         if (ImGui::Begin("About", &mShowAbout, flags)) {
             ImGui::Text("%s v%d.%d.%d", MANDRILL_NAME, MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR,
                         MANDRILL_VERSION_PATCH);
-            ImGui::Text("This is a graphics platform based on Vulkan, written for educational and research purposes at "
-                        "Lund University.");
             ImGui::Text(
-                "Latest source code is available from the %s git repository and is released under the MIT License.",
-                MANDRILL_NAME);
+                "This is an education and research graphics framework based on Vulkan, written and used at Lund "
+                "University.");
+            ImGui::Text(
+                "Latest source code is available from the git repository and is released under the MIT License.");
 
 #ifdef MANDRILL_WINDOWS
             if (ImGui::Button("Go to repo")) {
@@ -301,7 +307,7 @@ void App::baseKeyCallback(GLFWwindow* window, int key, int scancode, int action,
         mShowMainMenu = !mShowMainMenu;
     }
 
-    if (key == GLFW_KEY_F6 && action == GLFW_PRESS) {
+    if (key == GLFW_KEY_F3 && action == GLFW_PRESS) {
         mShowFrameRate = !mShowFrameRate;
     }
 
