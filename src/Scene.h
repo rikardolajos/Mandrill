@@ -58,15 +58,33 @@ namespace Mandrill
         MANDRILL_API Node();
         MANDRILL_API ~Node();
 
+        /// <summary>
+        /// Render a node in the scene.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use for rendering</param>
+        /// <param name="pPipeline">Pipeline to use for rendering</param>
+        /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <param name="pScene">Scene which the node belongs to</param>
+        /// <returns></returns>
         MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
                                  const std::shared_ptr<Camera> pCamera,
                                  const std::shared_ptr<const Scene> pScene) const;
 
+        /// <summary>
+        /// Add a mesh to the node.
+        /// </summary>
+        /// <param name="meshIndex">Mesh index that was received during mesh creation</param>
+        /// <returns></returns>
         MANDRILL_API void addMesh(uint32_t meshIndex)
         {
             mMeshIndices.push_back(meshIndex);
         }
 
+        /// <summary>
+        /// Set the TRS transform of the node.
+        /// </summary>
+        /// <param name="transform">Transform to use</param>
+        /// <returns></returns>
         MANDRILL_API void setTransform(glm::mat4 transform)
         {
             if (!mpTransform) {
@@ -76,6 +94,11 @@ namespace Mandrill
             *mpTransform = transform;
         }
 
+        /// <summary>
+        /// Set weather the node should be rendered or not.
+        /// </summary>
+        /// <param name="visible">True to render the node, otherwise false</param>
+        /// <returns></returns>
         MANDRILL_API void setVisible(bool visible)
         {
             mVisible = visible;
@@ -91,7 +114,7 @@ namespace Mandrill
 
         bool mVisible;
 
-        Node* mChild;
+        std::vector<Node> mChildren;
     };
 
     class Scene : public std::enable_shared_from_this<Scene>
