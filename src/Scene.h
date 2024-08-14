@@ -110,18 +110,48 @@ namespace Mandrill
         /// <returns>Layout used by the scene</returns>
         MANDRILL_API std::shared_ptr<Layout> getLayout(int set);
 
+        /// <summary>
+        /// Render all the nodes in the scene.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use for rendering</param>
+        /// <param name="pPipeline">Pipeline to use for rednering</param>
+        /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <returns></returns>
         MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
                                  const std::shared_ptr<Camera> pCamera) const;
 
+        /// <summary>
+        /// Add a node to the scene.
+        /// </summary>
+        /// <returns>A reference to the create node</returns>
         MANDRILL_API Node& addNode();
 
+        /// <summary>
+        /// Add a material to the scene.
+        /// </summary>
+        /// <param name="material">Material struct defining the new material</param>
+        /// <returns>Material index that can be used to create new meshes</returns>
         MANDRILL_API uint32_t addMaterial(Material material);
 
+        /// <summary>
+        /// Add a mesh to the scene.
+        /// </summary>
+        /// <param name="vertices">List of vertices that make up the mesh</param>
+        /// <param name="indices">List of indices that describes how the vertices are connected</param>
+        /// <param name="materialIndex">Which material should be used for the mesh</param>
+        /// <returns>Mesh index that can be added to a node in the scene</returns>
         MANDRILL_API uint32_t addMesh(const std::vector<Vertex> vertices, const std::vector<uint32_t> indices,
-                                   uint32_t materialIndex);
+                                      uint32_t materialIndex);
 
+        /// <summary>
+        /// Add several meshes to a scene by reading them from an OBJ-file.
+        /// </summary>
+        /// <param name="path">Path to the OBJ-file</param>
+        /// <param name="materialPath">Path to where the material files are stored (leave to default if the materials
+        /// are in the same directory as the OBJ-file)</param> <returns>List of mesh indices that can be added to a node
+        /// in the scene</returns>
         MANDRILL_API std::vector<uint32_t> addMeshFromFile(const std::filesystem::path& path,
-                                                        const std::filesystem::path& materialPath = "");
+                                                           const std::filesystem::path& materialPath = "");
 
         /// <summary>
         /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.
