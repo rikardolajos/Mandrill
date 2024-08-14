@@ -10,10 +10,27 @@ class SceneViewer : public App
 public:
     void loadScene()
     {
+        // Create a new scene
         mpScene = std::make_shared<Scene>(mpDevice);
-        mpScene->addNode(mScenePath);
+
+        // Load meshes from the scene path
+        auto meshIndices = mpScene->addMeshFromFile(mScenePath);
+
+        // Add a node to the scene
+        Node& node = mpScene->addNode();
+
+        // Add all the meshes to the node
+        for (auto meshIndex : meshIndices) {
+            node.addMesh(meshIndex);
+        }
+
+        // Calculate and allocate buffers
         mpScene->compile();
+
+        // Sync to GPU
         mpScene->syncToDevice();
+
+        // Indicate which sampler should be used to handle textures
         mpScene->setSampler(mpSampler);
     }
 

@@ -15,6 +15,113 @@ enum MaterialTextureBit {
     NORMAL_TEXTURE_BIT = 1 << 4,
 };
 
+Node::Node()
+{
+}
+
+Node::~Node()
+{
+}
+
+void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline, const std::shared_ptr<Camera> pCamera,
+                  const std::shared_ptr<const Scene> pScene) const
+{
+    if (!mVisible) {
+        return;
+    }
+
+    for (auto meshIndex : mMeshIndices) {
+        const Mesh& mesh = pScene->mMeshes[meshIndex];
+
+        // Descriptor for node
+        VkDescriptorBufferInfo bufferInfoNode = {
+            .buffer = pScene->mpTransforms->getBuffer(),
+            .offset = mTransformsOffset,
+            .range = sizeof(glm::mat4),
+        };
+
+        VkWriteDescriptorSet transformsDescriptor = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstBinding = 1,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .pBufferInfo = &bufferInfoNode,
+        };
+
+        // Descriptor for material params
+        VkDescriptorBufferInfo bufferInfoMaterialParams = {
+            .buffer = pScene->mpMaterialParams->getBuffer(),
+            .offset = pScene->mMaterials[mesh.materialIndex].paramsOffset,
+            .range = sizeof(MaterialParams),
+        };
+
+        VkWriteDescriptorSet materialParamsDescriptor = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstBinding = 2,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .pBufferInfo = &bufferInfoMaterialParams,
+        };
+
+        // Push descriptors
+        std::vector<VkWriteDescriptorSet> descriptors;
+        descriptors.push_back(pCamera->getDescriptor(0));
+        descriptors.push_back(transformsDescriptor);
+        descriptors.push_back(materialParamsDescriptor);
+
+        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & DIFFUSE_TEXTURE_BIT) {
+            descriptors.push_back(
+                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].diffuseTexturePath).getDescriptor(3));
+        } else {
+            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(3));
+        }
+
+        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & SPECULAR_TEXTURE_BIT) {
+            descriptors.push_back(
+                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].specularTexturePath).getDescriptor(4));
+        } else {
+            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(4));
+        }
+
+        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & AMBIENT_TEXTURE_BIT) {
+            descriptors.push_back(
+                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].ambientTexturePath).getDescriptor(5));
+        } else {
+            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(5));
+        }
+
+        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & EMISSION_TEXTURE_BIT) {
+            descriptors.push_back(
+                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].emissionTexturePath).getDescriptor(6));
+        } else {
+            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(6));
+        }
+
+        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & NORMAL_TEXTURE_BIT) {
+            descriptors.push_back(
+                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].normalTexturePath).getDescriptor(7));
+        } else {
+            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(7));
+        }
+
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->getPipelineLayout(),
+                                  pScene->mDescriptorSet, static_cast<uint32_t>(descriptors.size()),
+                                  descriptors.data());
+
+        // Bind vertex and index buffers
+        std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
+        std::array<VkDeviceSize, 1> offsets = {mesh.deviceVerticesOffset};
+        vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
+                               offsets.data());
+        vkCmdBindIndexBuffer(cmd, pScene->mpIndexBuffer->getBuffer(), mesh.deviceIndicesOffset, VK_INDEX_TYPE_UINT32);
+
+        // Draw mesh
+        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mesh.indices.size()), 1, 0, 0, 0);
+    }
+}
+
 Scene::Scene(std::shared_ptr<Device> pDevice) : mpDevice(pDevice)
 {
     mpMissingTexture =
@@ -54,98 +161,43 @@ void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipelin
                    const std::shared_ptr<Camera> pCamera) const
 {
     for (auto& node : mNodes) {
-        for (auto& mesh : node.meshes) {
-            // Descriptor for node
-            VkDescriptorBufferInfo bufferInfoNode = {
-                .buffer = mpTransforms->getBuffer(),
-                .offset = node.transformsOffset,
-                .range = sizeof(glm::mat4),
-            };
-
-            VkWriteDescriptorSet transformsDescriptor = {
-                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                .dstBinding = 1,
-                .dstArrayElement = 0,
-                .descriptorCount = 1,
-                .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                .pBufferInfo = &bufferInfoNode,
-            };
-
-            // Descriptor for material params
-            VkDescriptorBufferInfo bufferInfoMaterialParams = {
-                .buffer = mpMaterialParams->getBuffer(),
-                .offset = mMaterials[mesh.materialIndex].paramsOffset,
-                .range = sizeof(MaterialParams),
-            };
-
-            VkWriteDescriptorSet materialParamsDescriptor = {
-                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                .dstBinding = 2,
-                .dstArrayElement = 0,
-                .descriptorCount = 1,
-                .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                .pBufferInfo = &bufferInfoMaterialParams,
-            };
-
-            // Push descriptors
-            std::vector<VkWriteDescriptorSet> descriptors;
-            descriptors.push_back(pCamera->getDescriptor(0));
-            descriptors.push_back(transformsDescriptor);
-            descriptors.push_back(materialParamsDescriptor);
-
-            if (mMaterials[mesh.materialIndex].params.hasTexture & DIFFUSE_TEXTURE_BIT) {
-                descriptors.push_back(mTextures.at(mMaterials[mesh.materialIndex].diffuseTexturePath).getDescriptor(3));
-            } else {
-                descriptors.push_back(mpMissingTexture->getDescriptor(3));
-            }
-
-            if (mMaterials[mesh.materialIndex].params.hasTexture & SPECULAR_TEXTURE_BIT) {
-                descriptors.push_back(
-                    mTextures.at(mMaterials[mesh.materialIndex].specularTexturePath).getDescriptor(4));
-            } else {
-                descriptors.push_back(mpMissingTexture->getDescriptor(4));
-            }
-
-            if (mMaterials[mesh.materialIndex].params.hasTexture & AMBIENT_TEXTURE_BIT) {
-                descriptors.push_back(mTextures.at(mMaterials[mesh.materialIndex].ambientTexturePath).getDescriptor(5));
-            } else {
-                descriptors.push_back(mpMissingTexture->getDescriptor(5));
-            }
-
-            if (mMaterials[mesh.materialIndex].params.hasTexture & EMISSION_TEXTURE_BIT) {
-                descriptors.push_back(
-                    mTextures.at(mMaterials[mesh.materialIndex].emissionTexturePath).getDescriptor(6));
-            } else {
-                descriptors.push_back(mpMissingTexture->getDescriptor(6));
-            }
-
-            if (mMaterials[mesh.materialIndex].params.hasTexture & NORMAL_TEXTURE_BIT) {
-                descriptors.push_back(mTextures.at(mMaterials[mesh.materialIndex].normalTexturePath).getDescriptor(7));
-            } else {
-                descriptors.push_back(mpMissingTexture->getDescriptor(7));
-            }
-
-            vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->getPipelineLayout(),
-                                      mDescriptorSet, static_cast<uint32_t>(descriptors.size()), descriptors.data());
-
-            // Bind vertex and index buffers
-            std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
-            std::array<VkDeviceSize, 1> offsets = {mesh.deviceVerticesOffset};
-            vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
-                                   offsets.data());
-            vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), mesh.deviceIndicesOffset, VK_INDEX_TYPE_UINT32);
-
-            // Draw mesh
-            vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mesh.indices.size()), 1, 0, 0, 0);
-        }
+        node.render(cmd, pPipeline, pCamera, shared_from_this());
     }
 }
 
-Node& Scene::addNode(const std::filesystem::path& path, const std::filesystem::path& materialPath)
+Node& Scene::addNode()
 {
-    Node node = {
-        //.transform = glm::mat4(1.0f),
+    Node node = {};
+
+    mNodes.push_back(node);
+
+    return *(mNodes.end() - 1);
+}
+
+uint32_t Scene::addMaterial(Material material)
+{
+    mMaterials.push_back(material);
+
+    return static_cast<uint32_t>(mMaterials.size() - 1);
+}
+
+uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<uint32_t> indices, uint32_t materialIndex)
+{
+    Mesh mesh = {
+        .vertices = vertices,
+        .indices = indices,
+        .materialIndex = materialIndex,
     };
+
+    mMeshes.push_back(mesh);
+
+    return mMeshes.size() - 1;
+}
+
+std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
+                                             const std::filesystem::path& materialPath)
+{
+    std::vector<uint32_t> newMeshIndices;
 
     Log::info("Loading {}", path.string());
 
@@ -217,11 +269,10 @@ Node& Scene::addNode(const std::filesystem::path& path, const std::filesystem::p
         }
 
         for (auto& mesh : shapeMesh) {
-            node.meshes.push_back(mesh);
+            mMeshes.push_back(mesh);
+            newMeshIndices.push_back(static_cast<uint32_t>(mMeshes.size() - 1));
         }
     }
-
-    mNodes.push_back(node);
 
     // Load materials
     for (auto& material : materials) {
@@ -286,7 +337,7 @@ Node& Scene::addNode(const std::filesystem::path& path, const std::filesystem::p
         mMaterials.push_back(mat);
     }
 
-    return *(mNodes.end() - 1);
+    return newMeshIndices;
 }
 
 void Scene::compile()
@@ -294,10 +345,11 @@ void Scene::compile()
     // Calculate size of buffers
     size_t verticesSize = 0;
     size_t indicesSize = 0;
-    for (auto& n : mNodes) {
-        for (auto& m : n.meshes) {
-            verticesSize += m.vertices.size() * sizeof(m.vertices[0]);
-            indicesSize += m.indices.size() * sizeof(m.indices[0]);
+    for (auto& node : mNodes) {
+        for (auto meshIndex : node.mMeshIndices) {
+            auto& mesh = mMeshes[meshIndex];
+            verticesSize += mesh.vertices.size() * sizeof(mesh.vertices[0]);
+            indicesSize += mesh.indices.size() * sizeof(mesh.indices[0]);
         }
     }
 
@@ -318,9 +370,9 @@ void Scene::compile()
     // Associate each node with a part of the transforms buffer
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
     for (size_t i = 0; i < mNodes.size(); i++) {
-        mNodes[i].transform = transforms + i;
-        *mNodes[i].transform = glm::mat4(1.0f);
-        mNodes[i].transformsOffset = i * sizeof(glm::mat4);
+        mNodes[i].mpTransform = transforms + i;
+        *mNodes[i].mpTransform = glm::mat4(1.0f);
+        mNodes[i].mTransformsOffset = i * sizeof(glm::mat4);
     }
 
     // Associate each material with a part of the material params buffer
@@ -340,7 +392,9 @@ void Scene::syncToDevice()
     VkDeviceSize indicesOffset = 0;
 
     for (auto& node : mNodes) {
-        for (auto& mesh : node.meshes) {
+        for (auto meshIndex : node.mMeshIndices) {
+            auto& mesh = mMeshes[meshIndex];
+
             size_t vertSize = mesh.vertices.size() * sizeof(mesh.vertices[0]);
             size_t indxSize = mesh.indices.size() * sizeof(mesh.indices[0]);
 

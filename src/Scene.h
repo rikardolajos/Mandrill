@@ -40,8 +40,8 @@ namespace Mandrill
 
     struct Material {
         MaterialParams params;
-        MaterialParams* paramsDevice;
-        VkDeviceSize paramsOffset;
+        MaterialParams* paramsDevice; // This is set during Scene::compile()
+        VkDeviceSize paramsOffset;    // This is set during Scene::compile()
 
         std::string diffuseTexturePath;
         std::string specularTexturePath;
@@ -50,14 +50,51 @@ namespace Mandrill
         std::string normalTexturePath;
     };
 
-    struct Node {
-        std::vector<Mesh> meshes;
-        glm::mat4* transform;
-        VkDeviceSize transformsOffset;
-        Node* child;
+    class Scene; // Forward declare scene so Node can befriend it
+
+    class Node
+    {
+    public:
+        MANDRILL_API Node();
+        MANDRILL_API ~Node();
+
+        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
+                                 const std::shared_ptr<Camera> pCamera,
+                                 const std::shared_ptr<const Scene> pScene) const;
+
+        MANDRILL_API void addMesh(uint32_t meshIndex)
+        {
+            mMeshIndices.push_back(meshIndex);
+        }
+
+        MANDRILL_API void setTransform(glm::mat4 transform)
+        {
+            if (!mpTransform) {
+                Log::error("Cannot set transform. Make sure to compile the scene before setting transforms");
+                return;
+            }
+            *mpTransform = transform;
+        }
+
+        MANDRILL_API void setVisible(bool visible)
+        {
+            mVisible = visible;
+        }
+
+    private:
+        friend Scene;
+
+        std::vector<uint32_t> mMeshIndices;
+
+        glm::mat4* mpTransform;
+        VkDeviceSize mTransformsOffset;
+
+        bool mVisible;
+
+        Node* mChild;
     };
 
-    class Scene
+    class Scene : public std::enable_shared_from_this<Scene>
     {
     public:
         MANDRILL_API Scene(std::shared_ptr<Device> pDevice);
@@ -76,7 +113,15 @@ namespace Mandrill
         MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
                                  const std::shared_ptr<Camera> pCamera) const;
 
-        MANDRILL_API Node& addNode(const std::filesystem::path& path, const std::filesystem::path& materialPath = "");
+        MANDRILL_API Node& addNode();
+
+        MANDRILL_API uint32_t addMaterial(Material material);
+
+        MANDRILL_API uint32_t addMesh(const std::vector<Vertex> vertices, const std::vector<uint32_t> indices,
+                                   uint32_t materialIndex);
+
+        MANDRILL_API std::vector<uint32_t> addMeshFromFile(const std::filesystem::path& path,
+                                                        const std::filesystem::path& materialPath = "");
 
         /// <summary>
         /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.
@@ -102,8 +147,11 @@ namespace Mandrill
         MANDRILL_API void setSampler(const std::shared_ptr<Sampler> pSampler);
 
     private:
+        friend Node;
+
         std::shared_ptr<Device> mpDevice;
 
+        std::vector<Mesh> mMeshes;
         std::vector<Node> mNodes;
         std::vector<Material> mMaterials;
         std::unordered_map<std::string, Texture> mTextures;
