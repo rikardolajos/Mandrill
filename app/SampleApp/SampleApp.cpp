@@ -122,7 +122,7 @@ public:
 
     void update(float delta)
     {
-        if (!keyboardCapturedByGUI && !mouseCapturedByGUI) {
+        if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
             mpCamera->update(delta, getCursorDelta());
         }
 
