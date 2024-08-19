@@ -37,7 +37,7 @@ namespace Mandrill
         /// <summary>
         /// Get Vulkan instance handle.
         /// </summary>
-        /// <returns>Vulkan isntance handle</returns>
+        /// <returns>Vulkan instance handle</returns>
         MANDRILL_API VkInstance getInstance() const
         {
             return mInstance;
