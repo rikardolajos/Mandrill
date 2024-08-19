@@ -165,15 +165,51 @@ namespace Mandrill
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
         virtual void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods) = 0;
 
+        /// <summary>
+        /// App cursor position callback function. This will handle track mouse movements and is required for
+        /// getCursorDelta() to work. Read more in the GLFW documentation:
+        /// https://www.glfw.org/docs/3.3/input_guide.html#input_mouse
+        /// </summary>
+        /// <param name="pWindow">The window that received the event</param>
+        /// <param name="xPos">The new cursor x-coordinate, relative to the left edge of the content area.</param>
+        /// <param name="yPos">The new cursor y-coordinate, relative to the top edge of the content area.</param>
         void baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos);
 
+        /// <summary>
+        /// Virtual function for app to override. Just invoke <code>baseCursorPosCallback()</code> to get standard
+        /// keybindings. See <code>baseCursorPosCallback()</code> for more details.
+        /// </summary>
+        /// <param name="pWindow">The window that received the event</param>
+        /// <param name="xPos">The new cursor x-coordinate, relative to the left edge of the content area.</param>
+        /// <param name="yPos">The new cursor y-coordinate, relative to the top edge of the content area.</param>
         virtual void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos) = 0;
 
+        /// <summary>
+        /// App mouse button callback function. This will handle camera capturing the mouse cursor. Read more in the
+        /// GLFW docutmentation: https://www.glfw.org/docs/3.3/input_guide.html#input_mouse
+        /// </summary>
+        /// <param name="pWindow">The window that received the event</param>
+        /// <param name="button">The mouse button that was pressed or released.</param>
+        /// <param name="action">One of `GLFW_PRESS` or `GLFW_RELEASE`. Future releases may add more actions.</param>
+        /// <param name="mods">Bit field describing which modifier keys were held down.</param>
+        /// <param name="pCamera">Current active camera to handle mouse capture for.</param>
         void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
                                      std::shared_ptr<Camera> pCamera);
 
+        /// <summary>
+        /// Virtual function for app to override. Just invoke <code>baseMouseButtonCallback()</code> to get standard
+        /// keybindings. See <code>baseMouseButtonCallback()</code> for more details.
+        /// </summary>
+        /// <param name="pWindow">The window that received the event</param>
+        /// <param name="button">The mouse button that was pressed or released.</param>
+        /// <param name="action">One of `GLFW_PRESS` or `GLFW_RELEASE`. Future releases may add more actions.</param>
+        /// <param name="mods">Bit field describing which modifier keys were held down.</param>
         virtual void appMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods) = 0;
 
+        /// <summary>
+        /// Get how the mouse cursor moved since last frame.
+        /// </summary>
+        /// <returns>A vec2 containing the change in x and y position since last frame</returns>
         glm::vec2 getCursorDelta() const
         {
             return {mCursorDeltaX, mCursorDeltaY};
