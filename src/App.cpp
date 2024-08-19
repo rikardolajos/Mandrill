@@ -53,6 +53,10 @@ void App::run()
         mCursorPrevX = mCursorX;
         mCursorPrevY = mCursorY;
 
+        auto& io = ImGui::GetIO();
+        mKeyboardCapturedByGUI = io.WantCaptureKeyboard;
+        mMouseCapturedByGUI = io.WantCaptureMouse;
+
         update(mDelta);
 
         ImGuiContext* pContext = newFrameGUI();

@@ -169,13 +169,32 @@ namespace Mandrill
 
         virtual void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos) = 0;
 
-        void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, std::shared_ptr<Camera> pCamera);
+        void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
+                                     std::shared_ptr<Camera> pCamera);
 
         virtual void appMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods) = 0;
 
-        glm::vec2 getCursorDelta()
+        glm::vec2 getCursorDelta() const
         {
             return {mCursorDeltaX, mCursorDeltaY};
+        }
+
+        /// <summary>
+        /// Check if keyboard inputs are currently captured by the GUI.
+        /// </summary>
+        /// <returns>True of keyboard events are intended for GUI, false otherwise</returns>
+        bool keyboardCapturedByGUI() const
+        {
+            return mKeyboardCapturedByGUI;
+        }
+
+        /// <summary>
+        /// Check if mouse inputs are currently captured by the GUI.
+        /// </summary>
+        /// <returns>True if mouse movements are intended for GUI, false otherwise</returns>
+        bool mouseCapturedByGUI() const
+        {
+            return mMouseCapturedByGUI;
         }
 
         // GLFW window
@@ -252,6 +271,10 @@ namespace Mandrill
         bool mShowFrameRate = false;
         bool mShowHelp = false;
         bool mShowAbout = false;
+
+        // Flags for GUI input capture
+        bool mKeyboardCapturedByGUI;
+        bool mMouseCapturedByGUI;
 
         // Descriptor pool for ImGUI
         VkDescriptorPool mDescriptorPool;

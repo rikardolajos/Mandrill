@@ -83,7 +83,9 @@ public:
 
     void update(float delta)
     {
-        mpCamera->update(delta, getCursorDelta());
+        if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
+            mpCamera->update(delta, getCursorDelta());
+        }
     }
 
     void render() override
