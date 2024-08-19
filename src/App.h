@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "Camera.h"
 #include "Device.h"
 #include "Pipelines/Pipeline.h"
 #include "Shader.h"
@@ -140,7 +141,7 @@ namespace Mandrill
         /// App keyboard callback function. This will handle keyboard commands associated with the base application
         /// menus. Read more in the GLFW documentation: https://www.glfw.org/docs/3.3/input_guide.html#input_key
         /// </summary>
-        /// <param name="window">The window that received the event</param>
+        /// <param name="pWindow">The window that received the event</param>
         /// <param name="key">The keyboard key that was pressed or released</param>
         /// <param name="scancode">The system-specific scancode of the key</param>
         /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
@@ -149,7 +150,7 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
         /// <param name="pShader">Shader that should be reloaded</param>
-        void baseKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods,
+        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
                              std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
                              std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
 
@@ -157,12 +158,25 @@ namespace Mandrill
         /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard
         /// keybindings. See <code>baseKeyCallback()</code> for more details.
         /// </summary>
-        /// <param name="window">The window that received the event</param>
+        /// <param name="pWindow">The window that received the event</param>
         /// <param name="key">The keyboard key that was pressed or released</param>
         /// <param name="scancode">The system-specific scancode of the key</param>
         /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
-        virtual void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) = 0;
+        virtual void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods) = 0;
+
+        void baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos);
+
+        virtual void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos) = 0;
+
+        void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, std::shared_ptr<Camera> pCamera);
+
+        virtual void appMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods) = 0;
+
+        glm::vec2 getCursorDelta()
+        {
+            return {mCursorDeltaX, mCursorDeltaY};
+        }
 
         // GLFW window
         GLFWwindow* mpWindow;
@@ -192,14 +206,31 @@ namespace Mandrill
         ImGuiContext* newFrameGUI();
 
         /// <summary>
-        /// GLFW keyboard callback entry function. This will invoke the apps overriden callback function.
+        /// GLFW keyboard callback entry function. This will invoke the app's overriden callback function.
         /// </summary>
         /// <param name="window"></param>
         /// <param name="key"></param>
         /// <param name="scancode"></param>
         /// <param name="action"></param>
         /// <param name="mods"></param>
-        static void keyCallbackEntry(GLFWwindow* window, int key, int scancode, int action, int mods);
+        static void keyCallbackEntry(GLFWwindow* pWindow, int key, int scancode, int action, int mods);
+
+        /// <summary>
+        /// GLFW cursor position callback entry function. This will invoke the app's overridden callback function.
+        /// </summary>
+        /// <param name="pWindow"></param>
+        /// <param name="xPos"></param>
+        /// <param name="yPos"></param>
+        static void cursorPosCallbackEntry(GLFWwindow* pWindow, double xPos, double yPos);
+
+        /// <summary>
+        /// GLFW mouse button callback entry function. This will invoke the app's overridden callback funciton.
+        /// </summary>
+        /// <param name="pWindow"></param>
+        /// <param name="button"></param>
+        /// <param name="action"></param>
+        /// <param name="mods"></param>
+        static void mouseButtonCallbackEntry(GLFWwindow* pWindow, int button, int action, int mods);
 
         // Time since last frame in seconds
         float mDelta = 0.0f;
@@ -209,6 +240,11 @@ namespace Mandrill
 
         // Give new delta sample 5% weight
         const float kSmoothingFactor = 0.05f;
+
+        // Mouse movement
+        float mCursorX, mCursorY;
+        float mCursorDeltaX, mCursorDeltaY;
+        float mCursorPrevX, mCursorPrevY;
 
         // GUI
         bool mCreatedGUI = false;

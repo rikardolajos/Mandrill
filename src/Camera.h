@@ -13,7 +13,18 @@ namespace Mandrill
         MANDRILL_API Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow);
         MANDRILL_API ~Camera();
 
-        MANDRILL_API void update(float delta);
+        MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
+
+        MANDRILL_API void captureMouse(bool capture)
+        {
+            mMouseCaptured = capture;
+        }
+
+        MANDRILL_API bool toggleMouseCapture()
+        {
+            mMouseCaptured = !mMouseCaptured;
+            return mMouseCaptured;
+        }
 
         MANDRILL_API void setPosition(glm::vec3 pos)
         {
@@ -50,6 +61,8 @@ namespace Mandrill
     private:
         std::shared_ptr<Device> mpDevice;
         GLFWwindow* mpWindow;
+
+        bool mMouseCaptured = false;
 
         float mAspect;
         float mNear, mFar;

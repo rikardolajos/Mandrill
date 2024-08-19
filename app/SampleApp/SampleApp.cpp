@@ -122,7 +122,7 @@ public:
 
     void update(float delta)
     {
-        mpCamera->update(delta);
+        mpCamera->update(delta, getCursorDelta());
 
         mAngle += mRotationSpeed * delta;
 
@@ -194,6 +194,17 @@ public:
             mRotationSpeed += 0.2f;
         }
     }
+
+    void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
+    {
+        App::baseCursorPosCallback(pWindow, xPos, yPos);
+    }
+
+    void appMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
+    {
+        App::baseMouseButtonCallback(pWindow, button, action, mods, mpCamera);
+    }
+
 
 private:
     std::shared_ptr<Device> mpDevice;

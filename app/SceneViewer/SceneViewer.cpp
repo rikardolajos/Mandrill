@@ -83,7 +83,7 @@ public:
 
     void update(float delta)
     {
-        mpCamera->update(delta);
+        mpCamera->update(delta, getCursorDelta());
     }
 
     void render() override
@@ -166,10 +166,20 @@ public:
         ImGui::End();
     }
 
-    void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+    }
+
+    void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
+    {
+        App::baseCursorPosCallback(pWindow, xPos, yPos);
+    }
+
+    void appMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
+    {
+        App::baseMouseButtonCallback(pWindow, button, action, mods, mpCamera);
     }
 
 private:

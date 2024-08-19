@@ -42,7 +42,7 @@ Camera::~Camera()
 {
 }
 
-void Camera::update(float delta)
+void Camera::update(float delta, glm::vec2 cursorDelta)
 {
     // Right vector, used for pitch rotations and strafing
     glm::vec3 right = glm::normalize(glm::cross(mDirection, mUp));
@@ -112,13 +112,12 @@ void Camera::update(float delta)
         mFov = std::clamp(mFov, minZoom, maxZoom);
     }
 
-    //// Mouse control
-    // if (cursor_delta.x != 0.0f || cursor_delta.y != 0.0f) {
-    //     mDirection = vec_rotate(mDirection, mUp, cursor_delta.x * mouseSpeed);
-
-    //     newDir = glm::normalize(vec_rotate(mDirection, right, -cursor_delta.y * mouseSpeed));
-
-    //}
+    // Mouse control
+    if ((cursorDelta.x != 0.0f || cursorDelta.y != 0.0f) &&
+        (glfwGetMouseButton(mpWindow, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS || mMouseCaptured)) {
+        mDirection = glm::rotate(mDirection, cursorDelta.x * mouseSpeed, mUp);
+        newDir = glm::normalize(glm::rotate(mDirection, -cursorDelta.y * mouseSpeed, right));
+    }
 
     // Clamp vertical direction change
     if (fabsf(newDir.y) < 0.99f) {

@@ -47,6 +47,12 @@ void App::run()
 
         mDeltaSmooth = kSmoothingFactor * mDelta + (1 - kSmoothingFactor) * mDeltaSmooth;
 
+        // Mouse cursor movement
+        mCursorDeltaX = mCursorX - mCursorPrevX;
+        mCursorDeltaY = mCursorY - mCursorPrevY;
+        mCursorPrevX = mCursorX;
+        mCursorPrevY = mCursorY;
+
         update(mDelta);
 
         ImGuiContext* pContext = newFrameGUI();
@@ -295,7 +301,7 @@ void App::renderGUI(VkCommandBuffer cmd)
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
 }
 
-void App::baseKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods,
+void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
                           std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
                           std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
 {
@@ -321,6 +327,20 @@ void App::baseKeyCallback(GLFWwindow* window, int key, int scancode, int action,
         pShader->reload();
         pPipeline->recreate();
         pSwapchain->recreate();
+    }
+}
+
+void App::baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
+{
+    mCursorX = xPos;
+    mCursorY = yPos;
+}
+
+void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, std::shared_ptr<Camera> pCamera)
+{
+    if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
+        bool captured = pCamera->toggleMouseCapture();
+        glfwSetInputMode(pWindow, GLFW_CURSOR, captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 }
 
@@ -359,6 +379,8 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
 
     glfwSetWindowUserPointer(mpWindow, this);
     glfwSetKeyCallback(mpWindow, keyCallbackEntry);
+    glfwSetCursorPosCallback(mpWindow, cursorPosCallbackEntry);
+    glfwSetMouseButtonCallback(mpWindow, mouseButtonCallbackEntry);
     Check::GLFW();
 }
 
@@ -373,9 +395,20 @@ void App::initImGUI()
     ImGui_ImplGlfw_InitForVulkan(mpWindow, true);
 }
 
-void App::keyCallbackEntry(GLFWwindow* window, int key, int scancode, int action, int mods)
+void App::keyCallbackEntry(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
 {
-    App* pApp = static_cast<App*>(glfwGetWindowUserPointer(window));
+    App* pApp = static_cast<App*>(glfwGetWindowUserPointer(pWindow));
+    pApp->appKeyCallback(pWindow, key, scancode, action, mods);
+}
 
-    pApp->appKeyCallback(window, key, scancode, action, mods);
+void App::cursorPosCallbackEntry(GLFWwindow* pWindow, double xPos, double yPos)
+{
+    App* pApp = static_cast<App*>(glfwGetWindowUserPointer(pWindow));
+    pApp->appCursorPosCallback(pWindow, xPos, yPos);
+}
+
+void App::mouseButtonCallbackEntry(GLFWwindow* pWindow, int button, int action, int mods)
+{
+    App* pApp = static_cast<App*>(glfwGetWindowUserPointer(pWindow));
+    pApp->appMouseButtonCallback(pWindow, button, action, mods);
 }

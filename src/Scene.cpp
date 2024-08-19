@@ -191,7 +191,7 @@ uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<ui
 
     mMeshes.push_back(mesh);
 
-    return mMeshes.size() - 1;
+    return static_cast<uint32_t>(mMeshes.size() - 1);
 }
 
 std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
