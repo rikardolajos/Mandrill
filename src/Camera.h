@@ -13,6 +13,12 @@ namespace Mandrill
         MANDRILL_API Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow);
         MANDRILL_API ~Camera();
 
+        /// <summary>
+        /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
+        /// </summary>
+        /// <returns></returns>
+        MANDRILL_API void updateAspectRatio();
+
         MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
 
         MANDRILL_API void captureMouse(bool capture)

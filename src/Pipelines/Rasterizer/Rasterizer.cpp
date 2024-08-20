@@ -250,9 +250,7 @@ void Rasterizer::createRenderPass()
 void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
-        // recreatePipeline();
-        // return;
-        Log::debug("Creating framebuffers");
+        Log::debug("Recreating framebuffers since swapchain changed");
         mpSwapchain->createFramebuffers(mRenderPass);
     }
 
@@ -314,10 +312,6 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 
 void Rasterizer::frameEnd(VkCommandBuffer cmd)
 {
-    // if (mpSwapchain->recreated()) {
-    //     return;
-    // }
-
     vkCmdEndRenderPass(cmd);
     Check::Vk(vkEndCommandBuffer(cmd));
 }

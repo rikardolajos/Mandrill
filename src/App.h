@@ -261,6 +261,16 @@ namespace Mandrill
         ImGuiContext* newFrameGUI();
 
         /// <summary>
+        /// Toggle between fullscreen and windowed mode.
+        /// </summary>
+        void toggleFullscreen();
+
+        /// <summary>
+        /// Reset to initial framebuffer size.
+        /// </summary>
+        void resetFramebufferSize();
+
+        /// <summary>
         /// GLFW keyboard callback entry function. This will invoke the app's overriden callback function.
         /// </summary>
         /// <param name="window"></param>
@@ -295,6 +305,12 @@ namespace Mandrill
 
         // Give new delta sample 5% weight
         const float kSmoothingFactor = 0.05f;
+
+        // Screen mode
+        uint32_t mWidth, mHeight;
+        GLFWmonitor* mpMonitor;
+        GLFWvidmode mFullscreenMode;
+        bool mFullscreen;
 
         // Mouse movement
         float mCursorX, mCursorY;

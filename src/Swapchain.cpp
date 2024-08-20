@@ -48,7 +48,7 @@ static VkPresentModeKHR choosePresentMode(const std::vector<VkPresentModeKHR>& a
 // Set the resolution of the swapchain images. Use the size of the framebuffer from the window.
 static VkExtent2D chooseExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* pWindow)
 {
-    if (capabilities.currentExtent.width != UINT32_MAX) {
+    if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
         return capabilities.currentExtent;
     } else {
         int width;
@@ -98,11 +98,11 @@ void Swapchain::recreate()
     uint32_t framesInFlight = static_cast<uint32_t>(mInFlightFences.size());
     destroySyncObjects();
     destroySwapchain();
+    querySupport();
     createSwapchain();
     createResources();
     createSyncObjects(framesInFlight);
 
-    Log::debug("Done recreating swapchain");
     mRecreated = true;
 }
 
@@ -221,11 +221,6 @@ void Swapchain::createFramebuffers(VkRenderPass renderPass)
 
 VkCommandBuffer Swapchain::acquireNextImage()
 {
-    // if (mRecreated) {
-    //     mRecreated = false;
-    //     return nullptr;
-    // }
-
     // Wait for the current frame to not be in flight
     Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
 
@@ -247,7 +242,6 @@ void Swapchain::present()
 {
     if (mRecreated) {
         mRecreated = false;
-        // return;
     }
 
     std::array<VkSemaphore, 1> waitSemaphores{mImageAvailableSemaphore[mInFlightIndex]};

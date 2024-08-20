@@ -94,6 +94,11 @@ public:
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
+        // Check if camera matrix needs to be updated
+        if (mpSwapchain->recreated()) {
+            mpCamera->updateAspectRatio();
+        }
+
         vkCmdSetFrontFace(cmd, mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
         vkCmdSetCullMode(cmd, mCullMode);
 

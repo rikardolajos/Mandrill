@@ -20,7 +20,7 @@ static void errorCallback(int errorCode, const char* pDescription)
     Log::error("GLFW error {}: {}", errorCode, pDescription);
 }
 
-App::App(const std::string& title, uint32_t width, uint32_t height)
+App::App(const std::string& title, uint32_t width, uint32_t height) : mWidth(width), mHeight(height)
 {
     Log::info("=== Mandrill {}.{}.{} ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH);
 
@@ -29,6 +29,8 @@ App::App(const std::string& title, uint32_t width, uint32_t height)
 
     Log::info("Initializing ImGUI");
     initImGUI();
+
+    mFullscreen = false;
 }
 
 App::~App()
@@ -211,7 +213,11 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
             }
 
             if (ImGui::MenuItem("Toggle fullscreen", "F11", false)) {
-                Log::warning("Fullscreen is currently not implemented");
+                toggleFullscreen();
+            }
+
+            if (ImGui::MenuItem("Reset to initial framesize", "", false)) {
+                resetFramebufferSize();
             }
 
             ImGui::EndMenu();
@@ -321,6 +327,10 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
         mShowFrameRate = !mShowFrameRate;
     }
 
+    if (key == GLFW_KEY_F11 && action == GLFW_PRESS) {
+        toggleFullscreen();
+    }
+
     if (key == GLFW_KEY_V && action == GLFW_PRESS) {
         bool vsync = pDevice->getVsync();
         pDevice->setVsync(!vsync);
@@ -340,7 +350,8 @@ void App::baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
     mCursorY = yPos;
 }
 
-void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, std::shared_ptr<Camera> pCamera)
+void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
+                                  std::shared_ptr<Camera> pCamera)
 {
     if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
         bool captured = pCamera->toggleMouseCapture();
@@ -357,6 +368,19 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
 
     glfwSetErrorCallback(errorCallback);
 
+    // Save video mode of fullscreen mode
+    mpMonitor = glfwGetPrimaryMonitor();
+    if (!mpMonitor) {
+        Log::error("Failed to find primary monitor");
+        Check::GLFW();
+    }
+    const GLFWvidmode* mode = glfwGetVideoMode(mpMonitor);
+    std::memcpy(&mFullscreenMode, mode, sizeof(GLFWvidmode));
+
+    glfwWindowHint(GLFW_RED_BITS, mFullscreenMode.redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, mFullscreenMode.greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, mFullscreenMode.blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, mFullscreenMode.refreshRate);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     Check::GLFW();
@@ -397,6 +421,33 @@ void App::initImGUI()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
     ImGui_ImplGlfw_InitForVulkan(mpWindow, true);
+}
+
+void App::toggleFullscreen()
+{
+    if (mFullscreen) {
+        // Set windowed
+        int xpos = (mFullscreenMode.width - mWidth) / 2;
+        int ypos = (mFullscreenMode.height - mHeight) / 2;
+        glfwSetWindowMonitor(mpWindow, NULL, xpos, ypos, mWidth, mHeight, mFullscreenMode.refreshRate);
+    } else {
+        // Set fullscreen
+        glfwSetWindowMonitor(mpWindow, mpMonitor, 0, 0, mFullscreenMode.width, mFullscreenMode.height,
+                             mFullscreenMode.refreshRate);
+    }
+    Check::GLFW();
+    mFullscreen = !mFullscreen;
+}
+
+void App::resetFramebufferSize()
+{
+    // Set windowed
+    int xpos = (mFullscreenMode.width - mWidth) / 2;
+    int ypos = (mFullscreenMode.height - mHeight) / 2;
+    glfwSetWindowMonitor(mpWindow, NULL, xpos, ypos, mWidth, mHeight, mFullscreenMode.refreshRate);
+    
+    Check::GLFW();
+    mFullscreen = false;
 }
 
 void App::keyCallbackEntry(GLFWwindow* pWindow, int key, int scancode, int action, int mods)

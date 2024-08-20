@@ -44,11 +44,6 @@ namespace Mandrill
             return mRecreated;
         }
 
-        MANDRILL_API void recreationAcknowledged()
-        {
-            mRecreated = false;
-        }
-
     private:
         void querySupport();
         void createResources();

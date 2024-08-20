@@ -21,9 +21,7 @@ Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow) : mpDevice(
     setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
     mUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    int width, height;
-    glfwGetWindowSize(mpWindow, &width, &height);
-    mAspect = static_cast<float>(width) / static_cast<float>(height);
+    updateAspectRatio();
 
     mFov = 30.0f;
     mNear = 0.01f;
@@ -40,6 +38,13 @@ Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow) : mpDevice(
 
 Camera::~Camera()
 {
+}
+
+void Camera::updateAspectRatio()
+{
+    int width, height;
+    glfwGetFramebufferSize(mpWindow, &width, &height);
+    mAspect = static_cast<float>(width) / static_cast<float>(height);
 }
 
 void Camera::update(float delta, glm::vec2 cursorDelta)
