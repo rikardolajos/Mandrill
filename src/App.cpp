@@ -346,8 +346,8 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
 
 void App::baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
 {
-    mCursorX = xPos;
-    mCursorY = yPos;
+    mCursorX = static_cast<float>(xPos);
+    mCursorY = static_cast<float>(yPos);
 }
 
 void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
