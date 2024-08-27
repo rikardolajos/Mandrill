@@ -58,7 +58,7 @@ target_link_libraries(Mandrill
 )
 
 add_subdirectory(External)
-add_subdirectory(Pipelines)
+add_subdirectory(RenderPasses)
 
 include_directories(External/imgui)
 include_directories(External/stb)

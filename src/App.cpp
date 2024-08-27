@@ -165,7 +165,7 @@ ImGuiContext* App::newFrameGUI()
 }
 
 void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                  std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
+                  std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
 {
     if (!mCreatedGUI) {
         return;
@@ -190,8 +190,10 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
             }
 
             if (ImGui::MenuItem("Reload shaders", "R")) {
-                pShader->reload();
-                pPipeline->recreate();
+                for (auto shader : pShaders) {
+                    shader->reload();
+                }
+                pRenderPass->recreatePipelines();
                 pSwapchain->recreate();
             }
 
@@ -313,7 +315,7 @@ void App::renderGUI(VkCommandBuffer cmd)
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
                           std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                          std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader)
+                          std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
 {
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         mShowHelp = !mShowHelp;
@@ -338,8 +340,10 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
     }
 
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        pShader->reload();
-        pPipeline->recreate();
+        for (auto shader : pShaders) {
+            shader->reload();
+        }
+        pRenderPass->recreatePipelines();
         pSwapchain->recreate();
     }
 }
@@ -445,7 +449,7 @@ void App::resetFramebufferSize()
     int xpos = (mFullscreenMode.width - mWidth) / 2;
     int ypos = (mFullscreenMode.height - mHeight) / 2;
     glfwSetWindowMonitor(mpWindow, NULL, xpos, ypos, mWidth, mHeight, mFullscreenMode.refreshRate);
-    
+
     Check::GLFW();
     mFullscreen = false;
 }

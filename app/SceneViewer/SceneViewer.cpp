@@ -58,10 +58,10 @@ public:
         std::vector<ShaderDescription> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        mpShader.emplace_back(mpDevice, shaderDesc);
 
-        // Create rasterizer pipeline with layout matching the scene
-        mpPipeline = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
+        // Create rasterizer render pass with layout matching the scene
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -73,7 +73,7 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpPipeline->getRenderPass());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass());
     }
 
     ~SceneViewer()
@@ -92,7 +92,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -109,17 +109,17 @@ public:
             .renderMode = mRenderMode,
             .discardOnZeroAlpha = mDiscardOnZeroAlpha,
         };
-        vkCmdPushConstants(cmd, mpPipeline->getPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
-                           &pushConstants);
+        vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(0), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+                           sizeof pushConstants, &pushConstants);
 
         // Render scene
-        mpScene->render(cmd, mpPipeline, mpCamera);
+        mpScene->render(cmd, mpCamera, mpRenderPass->getPipelineLayout(0));
 
         // Draw GUI
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpPipeline->frameEnd(cmd);
+        mpRenderPass->frameEnd(cmd);
         mpSwapchain->present();
     }
 
@@ -127,7 +127,7 @@ public:
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::baseGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShader);
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
@@ -176,7 +176,7 @@ public:
     void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShader);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -192,8 +192,8 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Shader> mpShader;
-    std::shared_ptr<Rasterizer> mpPipeline;
+    std::vector<std::shared_ptr<Shader>> mpShader;
+    std::shared_ptr<Rasterizer> mpRenderPass;
 
     std::shared_ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;

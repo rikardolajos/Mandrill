@@ -23,7 +23,7 @@ Node::~Node()
 {
 }
 
-void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline, const std::shared_ptr<Camera> pCamera,
+void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout,
                   const std::shared_ptr<const Scene> pScene) const
 {
     if (!mVisible) {
@@ -106,9 +106,8 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline
             descriptors.push_back(pScene->mpMissingTexture->getDescriptor(7));
         }
 
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->getPipelineLayout(),
-                                  pScene->mDescriptorSet, static_cast<uint32_t>(descriptors.size()),
-                                  descriptors.data());
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, pScene->mDescriptorSet,
+                                  static_cast<uint32_t>(descriptors.size()), descriptors.data());
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
@@ -157,11 +156,10 @@ std::shared_ptr<Layout> Scene::getLayout(int set)
     return std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
 }
 
-void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
-                   const std::shared_ptr<Camera> pCamera) const
+void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout) const
 {
     for (auto& node : mNodes) {
-        node.render(cmd, pPipeline, pCamera, shared_from_this());
+        node.render(cmd, pCamera, layout, shared_from_this());
     }
 }
 

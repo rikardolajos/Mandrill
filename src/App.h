@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 #include "Device.h"
-#include "Pipelines/Pipeline.h"
+#include "RenderPasses/RenderPass.h"
 #include "Shader.h"
 #include "Swapchain.h"
 
@@ -60,7 +60,7 @@ namespace Mandrill
         ///
         /// This function is called once per <c>run()</c> loop is used to populate the command buffer for rendering.
         /// Typical use case to acquire a frame from the swapchain, populate the command buffer and then present the to
-        /// the screen using a pipeline.
+        /// the screen using a render pass.
         ///
         /// This is an example:
         ///
@@ -68,11 +68,11 @@ namespace Mandrill
         /// void render() override
         /// {
         ///     VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        ///     mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        ///     mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
         ///
         ///     // Populate command buffer using cmd here...
         ///
-        ///     mpPipeline->frameEnd(cmd);
+        ///     mpRenderPass->frameEnd(cmd);
         ///     mpSwapchain->present();
         /// }
         /// </code>
@@ -120,14 +120,14 @@ namespace Mandrill
         ///
         /// This function will draw a menu bar and allow for basic features like showing framerate and taking
         /// screenshots. The menu also allows for controlling different aspects of the rendering context and
-        /// therefore needs access to the device, swapchain, pipeline and shaders.
+        /// therefore needs access to the device, swapchain, render pass and shaders.
         /// </summary>
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
-        /// <param name="pShader">Shader that should be reloaded</param>
+        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
+        /// <param name="pShaders">Shaders that should be reloaded</param>
         void baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                     std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
+                     std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders);
 
         /// <summary>
         /// Render the GUI by writing the state to a command buffer.
@@ -148,11 +148,11 @@ namespace Mandrill
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pPipeline">Pipeline that should be recreated on changes</param>
-        /// <param name="pShader">Shader that should be reloaded</param>
+        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
+        /// <param name="pShaders">Shaders that should be reloaded</param>
         void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
                              std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                             std::shared_ptr<Pipeline> pPipeline, std::shared_ptr<Shader> pShader);
+                             std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders);
 
         /// <summary>
         /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard

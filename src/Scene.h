@@ -5,7 +5,6 @@
 #include "Camera.h"
 #include "Device.h"
 #include "Layout.h"
-#include "Pipelines/Pipeline.h"
 #include "Sampler.h"
 #include "Texture.h"
 
@@ -62,12 +61,11 @@ namespace Mandrill
         /// Render a node in the scene.
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
-        /// <param name="pPipeline">Pipeline to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <param name="pScene">Scene which the node belongs to</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
-                                 const std::shared_ptr<Camera> pCamera,
+        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout,
                                  const std::shared_ptr<const Scene> pScene) const;
 
         /// <summary>
@@ -137,11 +135,11 @@ namespace Mandrill
         /// Render all the nodes in the scene.
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
-        /// <param name="pPipeline">Pipeline to use for rednering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Pipeline> pPipeline,
-                                 const std::shared_ptr<Camera> pCamera) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera,
+                                 VkPipelineLayout layout) const;
 
         /// <summary>
         /// Add a node to the scene.

@@ -1,6 +1,7 @@
 target_sources(Mandrill PRIVATE
-	"Pipeline.cpp"
-	"Pipeline.h"
+	"RenderPass.cpp"
+	"RenderPass.h"
  )
 
+add_subdirectory(Deferred)
 add_subdirectory(Rasterizer)

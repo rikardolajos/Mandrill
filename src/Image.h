@@ -75,6 +75,15 @@ namespace Mandrill
             return mImageView;
         }
 
+        /// <summary>
+        /// Get the format of the image.
+        /// </summary>
+        /// <returns>Image format</returns>
+        MANDRILL_API VkFormat getFormat() const
+        {
+            return mFormat;
+        }
+
     private:
         std::shared_ptr<Device> mpDevice;
 

@@ -35,20 +35,26 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
 
 
 Rasterizer::Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       std::shared_ptr<Layout> pLayout, std::shared_ptr<Shader> pShader)
-    : Pipeline(pDevice, pSwapchain, pLayout, pShader)
+                       std::vector<std::shared_ptr<Layout>> pLayouts, std::vector<std::shared_ptr<Shader>> pShaders)
+    : RenderPass(pDevice, pSwapchain, pLayouts, pShaders)
 {
-    createPipeline();
+    if (mpLayouts.size() != 1 or mpShaders.size() != 1) {
+        Log::error("Rasterizer only supports one render pass and was created with wrong number of layouts and shaders");
+    }
+
+    createRenderPass();
+    createPipelines();
 }
 
 Rasterizer::~Rasterizer()
 {
-    destroyPipeline();
+    vkDeviceWaitIdle(mpDevice->getDevice());
+    destroyPipelines();
+    vkDestroyRenderPass(mpDevice->getDevice(), mRenderPass, nullptr);
 }
 
-void Rasterizer::createPipeline()
+void Rasterizer::createPipelines()
 {
-    createRenderPass();
     mpSwapchain->createFramebuffers(mRenderPass);
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
@@ -131,7 +137,7 @@ void Rasterizer::createPipeline()
         .pAttachments = &colorBlendAttachment,
     };
 
-    auto stages = mpShader->getStages();
+    auto stages = mpShaders[0]->getStages();
 
     VkGraphicsPipelineCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -145,19 +151,20 @@ void Rasterizer::createPipeline()
         .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = &dynamicState,
-        .layout = mPipelineLayout,
+        .layout = mPipelineLayouts[0],
         .renderPass = mRenderPass,
         .subpass = 0,
     };
 
-    Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline));
+    Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipelines[0]));
 }
 
-void Rasterizer::destroyPipeline()
+void Rasterizer::destroyPipelines()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
-    vkDestroyRenderPass(mpDevice->getDevice(), mRenderPass, nullptr);
-    vkDestroyPipeline(mpDevice->getDevice(), mPipeline, nullptr);
+    for (auto pipeline : mPipelines) {
+        vkDestroyPipeline(mpDevice->getDevice(), pipeline, nullptr);
+    }
 }
 
 void Rasterizer::createRenderPass()
@@ -287,7 +294,7 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 
     vkCmdBeginRenderPass(cmd, &rbi, VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
+    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[0]);
 
     // Set dynamic states
     vkCmdSetFrontFace(cmd, VK_FRONT_FACE_COUNTER_CLOCKWISE);

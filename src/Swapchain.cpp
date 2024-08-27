@@ -106,118 +106,118 @@ void Swapchain::recreate()
     mRecreated = true;
 }
 
-void Swapchain::createResources()
-{
-    VkImageCreateInfo ciColor = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
-        .format = mImageFormat,
-        .extent = {.width = mExtent.width, .height = mExtent.height, .depth = 1},
-        .mipLevels = 1,
-        .arrayLayers = 1,
-        .samples = mpDevice->getSampleCount(),
-        .tiling = VK_IMAGE_TILING_OPTIMAL,
-        .usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-    };
+//void Swapchain::createResources()
+//{
+//    VkImageCreateInfo ciColor = {
+//        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+//        .imageType = VK_IMAGE_TYPE_2D,
+//        .format = mImageFormat,
+//        .extent = {.width = mExtent.width, .height = mExtent.height, .depth = 1},
+//        .mipLevels = 1,
+//        .arrayLayers = 1,
+//        .samples = mpDevice->getSampleCount(),
+//        .tiling = VK_IMAGE_TILING_OPTIMAL,
+//        .usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+//        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+//        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+//    };
+//
+//    Check::Vk(vkCreateImage(mpDevice->getDevice(), &ciColor, nullptr, &mColor));
+//
+//    VkImageCreateInfo ciDepth = {
+//        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+//        .imageType = VK_IMAGE_TYPE_2D,
+//        .format = Helpers::findDepthFormat(mpDevice),
+//        .extent = {.width = mExtent.width, .height = mExtent.height, .depth = 1},
+//        .mipLevels = 1,
+//        .arrayLayers = 1,
+//        .samples = mpDevice->getSampleCount(),
+//        .tiling = VK_IMAGE_TILING_OPTIMAL,
+//        .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+//        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+//        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+//    };
+//
+//    Check::Vk(vkCreateImage(mpDevice->getDevice(), &ciDepth, nullptr, &mDepth));
+//
+//    VkMemoryRequirements memReqsColor;
+//    VkMemoryRequirements memReqsDepth;
+//    vkGetImageMemoryRequirements(mpDevice->getDevice(), mColor, &memReqsColor);
+//    vkGetImageMemoryRequirements(mpDevice->getDevice(), mDepth, &memReqsDepth);
+//
+//    VkMemoryAllocateInfo ai = {
+//        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+//        .allocationSize = memReqsColor.size + memReqsDepth.size,
+//        .memoryTypeIndex = Helpers::findMemoryType(mpDevice,
+//                                                   memReqsColor.memoryTypeBits & memReqsDepth.memoryTypeBits,
+//                                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
+//    };
+//
+//    Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &ai, nullptr, &mResourceMemory));
+//
+//    Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mColor, mResourceMemory, 0));
+//    Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mDepth, mResourceMemory, memReqsColor.size));
+//
+//    VkImageViewCreateInfo ciColorView = {
+//        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+//        .image = mColor,
+//        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+//        .format = mImageFormat,
+//        .subresourceRange =
+//            {
+//                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+//                .levelCount = 1,
+//                .layerCount = 1,
+//            },
+//
+//    };
+//
+//    Check::Vk(vkCreateImageView(mpDevice->getDevice(), &ciColorView, nullptr, &mColorView));
+//
+//    VkImageViewCreateInfo ciDepthView = {
+//        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+//        .image = mDepth,
+//        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+//        .format = ciDepth.format,
+//        .subresourceRange =
+//            {
+//                .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+//                .levelCount = 1,
+//                .layerCount = 1,
+//            },
+//
+//    };
+//
+//    Check::Vk(vkCreateImageView(mpDevice->getDevice(), &ciDepthView, nullptr, &mDepthView));
+//
+//    Helpers::transitionImageLayout(mpDevice, mDepth, mImageFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+//                                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+//}
 
-    Check::Vk(vkCreateImage(mpDevice->getDevice(), &ciColor, nullptr, &mColor));
-
-    VkImageCreateInfo ciDepth = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
-        .format = Helpers::findDepthFormat(mpDevice),
-        .extent = {.width = mExtent.width, .height = mExtent.height, .depth = 1},
-        .mipLevels = 1,
-        .arrayLayers = 1,
-        .samples = mpDevice->getSampleCount(),
-        .tiling = VK_IMAGE_TILING_OPTIMAL,
-        .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-    };
-
-    Check::Vk(vkCreateImage(mpDevice->getDevice(), &ciDepth, nullptr, &mDepth));
-
-    VkMemoryRequirements memReqsColor;
-    VkMemoryRequirements memReqsDepth;
-    vkGetImageMemoryRequirements(mpDevice->getDevice(), mColor, &memReqsColor);
-    vkGetImageMemoryRequirements(mpDevice->getDevice(), mDepth, &memReqsDepth);
-
-    VkMemoryAllocateInfo ai = {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .allocationSize = memReqsColor.size + memReqsDepth.size,
-        .memoryTypeIndex = Helpers::findMemoryType(mpDevice,
-                                                   memReqsColor.memoryTypeBits & memReqsDepth.memoryTypeBits,
-                                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
-    };
-
-    Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &ai, nullptr, &mResourceMemory));
-
-    Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mColor, mResourceMemory, 0));
-    Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mDepth, mResourceMemory, memReqsColor.size));
-
-    VkImageViewCreateInfo ciColorView = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .image = mColor,
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
-        .format = mImageFormat,
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .levelCount = 1,
-                .layerCount = 1,
-            },
-
-    };
-
-    Check::Vk(vkCreateImageView(mpDevice->getDevice(), &ciColorView, nullptr, &mColorView));
-
-    VkImageViewCreateInfo ciDepthView = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .image = mDepth,
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
-        .format = ciDepth.format,
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
-                .levelCount = 1,
-                .layerCount = 1,
-            },
-
-    };
-
-    Check::Vk(vkCreateImageView(mpDevice->getDevice(), &ciDepthView, nullptr, &mDepthView));
-
-    Helpers::transitionImageLayout(mpDevice, mDepth, mImageFormat, VK_IMAGE_LAYOUT_UNDEFINED,
-                                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
-}
-
-void Swapchain::createFramebuffers(VkRenderPass renderPass)
-{
-    mFramebuffers = std::vector<VkFramebuffer>(mImages.size());
-
-    for (uint32_t i = 0; i < mFramebuffers.size(); i++) {
-        std::array<VkImageView, 3> attachments{
-            mColorView,
-            mDepthView,
-            mImageViews[i],
-        };
-
-        VkFramebufferCreateInfo ci = {
-            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .renderPass = renderPass,
-            .attachmentCount = static_cast<uint32_t>(attachments.size()),
-            .pAttachments = attachments.data(),
-            .width = mExtent.width,
-            .height = mExtent.height,
-            .layers = 1,
-        };
-
-        Check::Vk(vkCreateFramebuffer(mpDevice->getDevice(), &ci, nullptr, &mFramebuffers[i]));
-    }
-}
+//void Swapchain::createFramebuffers(VkRenderPass renderPass)
+//{
+//    mFramebuffers = std::vector<VkFramebuffer>(mImages.size());
+//
+//    for (uint32_t i = 0; i < mFramebuffers.size(); i++) {
+//        std::array<VkImageView, 3> attachments = {
+//            mColorView,
+//            mDepthView,
+//            mImageViews[i],
+//        };
+//
+//        VkFramebufferCreateInfo ci = {
+//            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+//            .renderPass = renderPass,
+//            .attachmentCount = static_cast<uint32_t>(attachments.size()),
+//            .pAttachments = attachments.data(),
+//            .width = mExtent.width,
+//            .height = mExtent.height,
+//            .layers = 1,
+//        };
+//
+//        Check::Vk(vkCreateFramebuffer(mpDevice->getDevice(), &ci, nullptr, &mFramebuffers[i]));
+//    }
+//}
 
 VkCommandBuffer Swapchain::acquireNextImage()
 {
@@ -372,15 +372,15 @@ void Swapchain::destroySwapchain()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
 
-    vkFreeMemory(mpDevice->getDevice(), mResourceMemory, nullptr);
-    vkDestroyImage(mpDevice->getDevice(), mColor, nullptr);
-    vkDestroyImage(mpDevice->getDevice(), mDepth, nullptr);
-    vkDestroyImageView(mpDevice->getDevice(), mColorView, nullptr);
-    vkDestroyImageView(mpDevice->getDevice(), mDepthView, nullptr);
+    //vkFreeMemory(mpDevice->getDevice(), mResourceMemory, nullptr);
+    //vkDestroyImage(mpDevice->getDevice(), mColor, nullptr);
+    //vkDestroyImage(mpDevice->getDevice(), mDepth, nullptr);
+    //vkDestroyImageView(mpDevice->getDevice(), mColorView, nullptr);
+    //vkDestroyImageView(mpDevice->getDevice(), mDepthView, nullptr);
 
-    for (auto& fb : mFramebuffers) {
-        vkDestroyFramebuffer(mpDevice->getDevice(), fb, nullptr);
-    }
+    //for (auto& fb : mFramebuffers) {
+    //    vkDestroyFramebuffer(mpDevice->getDevice(), fb, nullptr);
+    //}
 
     // Swapchain images are destroyed in vkDestroySwapchainKHR()
     for (auto& iv : mImageViews) {

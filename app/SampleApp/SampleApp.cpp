@@ -77,7 +77,7 @@ public:
         std::vector<ShaderDescription> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        mpShader.emplace_back(mpDevice, shaderDesc);
 
         // Create rasterizer pipeline with layout matching the shader
         std::vector<LayoutDescription> layoutDesc;
@@ -86,7 +86,7 @@ public:
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         auto pLayout =
             std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
-        mpPipeline = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -112,7 +112,7 @@ public:
         mBufferInfo.range = sizeof(glm::mat4);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpPipeline->getRenderPass());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass());
     }
 
     ~SampleApp()
@@ -135,7 +135,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpPipeline->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -150,7 +150,7 @@ public:
         descriptors[0] = mpCamera->getDescriptor(0);
         descriptors[1] = mpTexture->getDescriptor(1);
         descriptors[2] = getModelDescriptor(2);
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getPipelineLayout(), 0,
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
                                   static_cast<uint32_t>(descriptors.size()), descriptors.data());
 
         // Bind vertex and index buffers
@@ -167,7 +167,7 @@ public:
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpPipeline->frameEnd(cmd);
+        mpRenderPass->frameEnd(cmd);
         mpSwapchain->present();
     }
 
@@ -176,7 +176,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShader);
 
         // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
@@ -190,7 +190,7 @@ public:
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline, mpShader);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShader);
 
         // Here we can add app-specific keyboard commands
         if (key == GLFW_KEY_O && action == GLFW_PRESS) {
@@ -216,8 +216,8 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Shader> mpShader;
-    std::shared_ptr<Rasterizer> mpPipeline;
+    std::vector<std::shared_ptr<Shader>> mpShader;
+    std::shared_ptr<Rasterizer> mpRenderPass;
 
     std::shared_ptr<Camera> mpCamera;
 

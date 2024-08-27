@@ -24,6 +24,11 @@ namespace Mandrill
             return mSwapchain;
         }
 
+        MANDRILL_API std::vector<VkImageView> getImageViews() const
+        {
+            return mImageViews;
+        }
+
         MANDRILL_API VkFormat getImageFormat() const
         {
             return mImageFormat;
@@ -62,11 +67,11 @@ namespace Mandrill
         std::vector<VkImage> mImages;
         std::vector<VkImageView> mImageViews;
 
-        VkImage mColor;
-        VkImageView mColorView;
-        VkImage mDepth;
-        VkImageView mDepthView;
-        VkDeviceMemory mResourceMemory;
+        //VkImage mColor;
+        //VkImageView mColorView;
+        //VkImage mDepth;
+        //VkImageView mDepthView;
+        //VkDeviceMemory mResourceMemory;
 
         struct {
             VkSurfaceCapabilitiesKHR capabilities{};
