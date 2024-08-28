@@ -42,7 +42,7 @@ public:
         std::vector<std::shared_ptr<Layout>> layouts;
         layouts.push_back(mpScene->getLayout(0));
 
-        // 3 input attachments: world position, normals, ambient color
+        // 3 input attachments: world position, normal, albedo color
         std::vector<LayoutDescription> layoutDesc;
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -148,7 +148,7 @@ public:
 
         if (ImGui::Begin("Assignemnt 2")) {
             const char* renderModes[] = {
-                "Resolved", "Ambient", "Normal", "Light", "Texture coordinates",
+                "Resolved", "Position", "Ambient", "Normal", "Light", "Texture coordinates",
             };
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
         }

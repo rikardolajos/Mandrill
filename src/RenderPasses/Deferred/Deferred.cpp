@@ -6,7 +6,7 @@
 
 using namespace Mandrill;
 
-static enum {
+enum {
     GBUFFER_PASS = 0,
     RESOLVE_PASS = 1,
 };

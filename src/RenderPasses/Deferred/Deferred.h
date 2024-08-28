@@ -46,6 +46,8 @@ namespace Mandrill
                     .imageView = mAlbedo->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
+            default:
+                return VkDescriptorImageInfo{};
             }
         }
 

@@ -53,15 +53,17 @@ public:
             .size = 2 * sizeof(int),
         };
         pLayout->addPushConstantRange(pushConstantRange);
+        std::vector<std::shared_ptr<Layout>> layouts;
+        layouts.push_back(pLayout);
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDescription> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader.emplace_back(mpDevice, shaderDesc);
+        mpShader.push_back(std::make_shared<Shader>(mpDevice, shaderDesc));
 
         // Create rasterizer render pass with layout matching the scene
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, layouts, mpShader);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
