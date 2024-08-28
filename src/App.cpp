@@ -202,8 +202,8 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
                 for (auto& shader : pShaders) {
                     shader->reload();
                 }
-                pRenderPass->recreatePipelines();
                 pSwapchain->recreate();
+                pRenderPass->recreatePipelines();
             }
 
             if (ImGui::MenuItem("Take screenshot", "F12", false)) {
@@ -361,8 +361,8 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
         for (auto& shader : pShaders) {
             shader->reload();
         }
-        pRenderPass->recreatePipelines();
         pSwapchain->recreate();
+        pRenderPass->recreatePipelines();
     }
 }
 

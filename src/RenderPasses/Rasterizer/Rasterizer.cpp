@@ -107,7 +107,6 @@ void Rasterizer::createPipelines()
         .sampleShadingEnable = VK_FALSE,
     };
 
-    // No blending but discarding fully transparent in fragment shader
     VkPipelineColorBlendAttachmentState colorBlendAttachment = {
         .blendEnable = VK_FALSE,
         .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
@@ -162,8 +161,6 @@ void Rasterizer::createPipelines()
 
 void Rasterizer::destroyPipelines()
 {
-    vkDeviceWaitIdle(mpDevice->getDevice());
-    destroyFramebuffers();
     for (auto pipeline : mPipelines) {
         vkDestroyPipeline(mpDevice->getDevice(), pipeline, nullptr);
     }
@@ -319,6 +316,9 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
+        destroyFramebuffers();
+        destroyAttachments();
+        createAttachments();
         createFramebuffers();
     }
 

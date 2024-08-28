@@ -218,8 +218,6 @@ void Deferred::createPipelines()
 
 void Deferred::destroyPipelines()
 {
-    vkDeviceWaitIdle(mpDevice->getDevice());
-    destroyFramebuffers();
     for (auto pipeline : mPipelines) {
         vkDestroyPipeline(mpDevice->getDevice(), pipeline, nullptr);
     }
@@ -426,6 +424,9 @@ void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
+        destroyFramebuffers();
+        destroyAttachments();
+        createAttachments();
         createFramebuffers();
     }
 
