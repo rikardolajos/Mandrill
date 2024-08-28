@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec2 inUV;
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 4) out vec4 fragColor;
 
 layout(input_attachment_index = 0, set = 0, binding = 0) uniform subpassInput inPosition;
 layout(input_attachment_index = 1, set = 0, binding = 1) uniform subpassInput inNormal;
@@ -27,7 +27,7 @@ void main() {
     if (pushConstant.renderMode == 1) {
         fragColor = subpassLoad(inPosition);
     } else if (pushConstant.renderMode == 2) {
-        fragColor = subpassLoad(inNormal);
+        fragColor = subpassLoad(inNormal) * 0.5 + 0.5;
     } else if (pushConstant.renderMode == 3) {
         fragColor = subpassLoad(inAlbedo);
     } else {

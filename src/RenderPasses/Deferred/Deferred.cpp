@@ -282,11 +282,14 @@ void Deferred::createRenderPass()
         .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
     };
 
-    std::array<VkAttachmentReference, 4> colorAttachmentRefs = {};
+    std::array<VkAttachmentReference, 3> colorAttachmentRefs = {};
     colorAttachmentRefs[0] = {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
     colorAttachmentRefs[1] = {.attachment = 1, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
     colorAttachmentRefs[2] = {.attachment = 2, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
-    colorAttachmentRefs[3] = {.attachment = 4, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+    // colorAttachmentRefs[3] = {.attachment = 4, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+
+    VkAttachmentReference swapchainAttachmentRef = {.attachment = 4,
+                                                    .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
     VkAttachmentReference depthAttachmentRef = {.attachment = 3,
                                                 .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
@@ -307,6 +310,8 @@ void Deferred::createRenderPass()
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .inputAttachmentCount = static_cast<uint32_t>(inputAttachmentRefs.size()),
         .pInputAttachments = inputAttachmentRefs.data(),
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &swapchainAttachmentRef,
     };
 
     std::array<VkSubpassDependency, 3> dependencies = {};
@@ -441,8 +446,8 @@ void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
     clearValues[0].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
     clearValues[1].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
     clearValues[2].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
-    clearValues[3].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
-    clearValues[4].depthStencil = {1.0f, 0};
+    clearValues[3].depthStencil = {1.0f, 0};
+    clearValues[4].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
 
     VkRenderPassBeginInfo rbi = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
