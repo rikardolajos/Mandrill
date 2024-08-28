@@ -28,15 +28,14 @@ public:
         mpScene->setSampler(mpSampler);
 
         // Deferred render pass requires 2 passes (G-buffer and resolve)
-        mpShaders.resize(2);
         std::vector<ShaderDescription> shaderDesc1;
         std::vector<ShaderDescription> shaderDesc2;
         shaderDesc1.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc2.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShaders.emplace_back(mpDevice, shaderDesc1);
-        mpShaders.emplace_back(mpDevice, shaderDesc2);
+        mpShaders.push_back(std::make_shared<Shader>(mpDevice, shaderDesc1));
+        mpShaders.push_back(std::make_shared<Shader>(mpDevice, shaderDesc2));
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
         std::vector<std::shared_ptr<Layout>> layouts;
@@ -47,10 +46,21 @@ public:
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layouts.emplace_back(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+        auto pResolveLayout =
+            std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+
+        // Add push constant to layout so we can set render mode in shader
+        VkPushConstantRange pushConstantRange = {
+            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .offset = 0,
+            .size = 1 * sizeof(int),
+        };
+        pResolveLayout->addPushConstantRange(pushConstantRange);
+        layouts.push_back(pResolveLayout);
 
         // Create render pass
-        mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain, layouts, mpShaders);
+        RenderPassDescription renderPassDesc(mpShaders, layouts);
+        mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -59,7 +69,7 @@ public:
         mpCamera->setFov(60.0f);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT, 1);
     }
 
     ~Assignment2()
@@ -97,11 +107,11 @@ public:
         } pushConstants = {
             .renderMode = mRenderMode,
         };
-        vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(0), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+        vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(1), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstants, &pushConstants);
 
         // Push descriptors
-        std::array<VkWriteDescriptorSet, 3> descriptors;
+        std::array<VkWriteDescriptorSet, 3> descriptors = {};
 
         VkDescriptorImageInfo positionInfo = mpRenderPass->getInputAttachmentInfo(0);
         VkDescriptorImageInfo normalInfo = mpRenderPass->getInputAttachmentInfo(1);

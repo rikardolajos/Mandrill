@@ -14,7 +14,6 @@ namespace Mandrill
         MANDRILL_API ~Swapchain();
 
         MANDRILL_API void recreate();
-        MANDRILL_API void createFramebuffers(VkRenderPass renderPass);
 
         MANDRILL_API VkCommandBuffer acquireNextImage();
         MANDRILL_API void present();
@@ -39,9 +38,9 @@ namespace Mandrill
             return mExtent;
         }
 
-        MANDRILL_API VkFramebuffer getCurrentFramebuffer() const
+        MANDRILL_API uint32_t getImageIndex() const
         {
-            return mFramebuffers[mImageIndex];
+            return mImageIndex;
         }
 
         MANDRILL_API bool recreated() const
@@ -51,7 +50,6 @@ namespace Mandrill
 
     private:
         void querySupport();
-        void createResources();
         void createSwapchain();
         void destroySwapchain();
         void createSyncObjects(uint32_t framesInFlight);
@@ -66,12 +64,6 @@ namespace Mandrill
 
         std::vector<VkImage> mImages;
         std::vector<VkImageView> mImageViews;
-
-        //VkImage mColor;
-        //VkImageView mColorView;
-        //VkImage mDepth;
-        //VkImageView mDepthView;
-        //VkDeviceMemory mResourceMemory;
 
         struct {
             VkSurfaceCapabilitiesKHR capabilities{};

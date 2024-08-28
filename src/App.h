@@ -105,7 +105,10 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device to use for resource allocations</param>
         /// <param name="renderPass">Render pass that will be used for GUI presentation</param>
-        void createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass);
+        /// <param name="samples">MSAA samples to use for rendering</param>
+        /// <param name="subpass">Which subpass to draw the GUI on</param>
+        void createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass,
+                       VkSampleCountFlagBits samples = VK_SAMPLE_COUNT_1_BIT, uint32_t subpass = 0);
 
         /// <summary>
         /// Destroy the GUI for the application.
@@ -114,6 +117,20 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device that was used for resources allocations</param>
         void destroyGUI(std::shared_ptr<Device> pDevice);
+
+        /// <summary>
+        /// Draw the base GUI of a Mandrill application.
+        ///
+        /// This function will draw a menu bar and allow for basic features like showing framerate and taking
+        /// screenshots. The menu also allows for controlling different aspects of the rendering context and
+        /// therefore needs access to the device, swapchain, render pass and shaders.
+        /// </summary>
+        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
+        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
+        /// <param name="pShader">Shader that should be reloaded</param>
+        void baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                     std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader);
 
         /// <summary>
         /// Draw the base GUI of a Mandrill application.
@@ -135,7 +152,24 @@ namespace Mandrill
         /// Call this while populating command buffer.
         /// </summary>
         /// <param name="cmd">Command buffer to write to</param>
-        void renderGUI(VkCommandBuffer cmd);
+        void renderGUI(VkCommandBuffer cmd) const;
+
+        /// <summary>
+        /// App keyboard callback function. This will handle keyboard commands associated with the base application
+        /// menus. Read more in the GLFW documentation: https://www.glfw.org/docs/3.3/input_guide.html#input_key
+        /// </summary>
+        /// <param name="pWindow">The window that received the event</param>
+        /// <param name="key">The keyboard key that was pressed or released</param>
+        /// <param name="scancode">The system-specific scancode of the key</param>
+        /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
+        /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
+        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
+        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
+        /// <param name="pShader">Shader that should be reloaded</param>
+        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
+                             std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                             std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader);
 
         /// <summary>
         /// App keyboard callback function. This will handle keyboard commands associated with the base application

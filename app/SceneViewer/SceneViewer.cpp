@@ -53,17 +53,16 @@ public:
             .size = 2 * sizeof(int),
         };
         pLayout->addPushConstantRange(pushConstantRange);
-        std::vector<std::shared_ptr<Layout>> layouts;
-        layouts.push_back(pLayout);
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDescription> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader.push_back(std::make_shared<Shader>(mpDevice, shaderDesc));
+        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer render pass with layout matching the scene
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, layouts, mpShader);
+        RenderPassDescription renderPassDesc(mpShader, pLayout);
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -75,7 +74,7 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
     }
 
     ~SceneViewer()
@@ -194,7 +193,7 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::vector<std::shared_ptr<Shader>> mpShader;
+    std::shared_ptr<Shader> mpShader;
     std::shared_ptr<Rasterizer> mpRenderPass;
 
     std::shared_ptr<Camera> mpCamera;

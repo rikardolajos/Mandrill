@@ -73,7 +73,8 @@ void App::run()
     Log::info("Exiting...");
 }
 
-void App::createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass)
+void App::createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass, VkSampleCountFlagBits samples,
+                    uint32_t subpass)
 {
     // Create descriptor pool for ImGUI
     std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -101,9 +102,9 @@ void App::createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass)
         .RenderPass = renderPass,
         .MinImageCount = 2,
         .ImageCount = 2,
-        .MSAASamples = pDevice->getSampleCount(),
+        .MSAASamples = samples,
         .PipelineCache = VK_NULL_HANDLE,
-        .Subpass = 0,
+        .Subpass = subpass,
         .Allocator = nullptr,
     };
 
@@ -165,6 +166,14 @@ ImGuiContext* App::newFrameGUI()
 }
 
 void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                  std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader)
+{
+    std::vector<std::shared_ptr<Shader>> shaders;
+    shaders.push_back(pShader);
+    App::baseGUI(pDevice, pSwapchain, pRenderPass, shaders);
+}
+
+void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
                   std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
 {
     if (!mCreatedGUI) {
@@ -190,7 +199,7 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
             }
 
             if (ImGui::MenuItem("Reload shaders", "R")) {
-                for (auto shader : pShaders) {
+                for (auto& shader : pShaders) {
                     shader->reload();
                 }
                 pRenderPass->recreatePipelines();
@@ -301,7 +310,7 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
     }
 }
 
-void App::renderGUI(VkCommandBuffer cmd)
+void App::renderGUI(VkCommandBuffer cmd) const
 {
     if (!mCreatedGUI) {
         return;
@@ -311,6 +320,15 @@ void App::renderGUI(VkCommandBuffer cmd)
 
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+}
+
+void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
+                          std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
+                          std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader)
+{
+    std::vector<std::shared_ptr<Shader>> shaders;
+    shaders.push_back(pShader);
+    App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pRenderPass, shaders);
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
@@ -340,7 +358,7 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
     }
 
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        for (auto shader : pShaders) {
+        for (auto& shader : pShaders) {
             shader->reload();
         }
         pRenderPass->recreatePipelines();
@@ -396,7 +414,7 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
         Check::GLFW();
     }
 
-    GLFWimage image;
+    GLFWimage image = {};
     image.pixels = stbi_load("icon.png", &image.width, &image.height, nullptr, 4);
     if (image.pixels) {
         glfwSetWindowIcon(mpWindow, 1, &image);

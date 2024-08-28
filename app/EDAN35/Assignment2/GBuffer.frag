@@ -8,7 +8,22 @@ layout(location = 0) out vec4 outPosition;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outAlbedo;
 
-layout(set = 0, binding = 1) uniform sampler2D diffuseTexture;
+layout(set = 0, binding = 2) uniform MaterialParams {
+    vec3 diffuse;
+    float shininess;
+    vec3 specular;
+    float indexOfRefraction;
+    vec3 ambient;
+    float opacity;
+    vec3 emission;
+    uint hasTexture;
+} materialParams;
+
+layout(set = 0, binding = 3) uniform sampler2D diffuseTexture;
+layout(set = 0, binding = 4) uniform sampler2D specularTexture;
+layout(set = 0, binding = 5) uniform sampler2D ambientTexture;
+layout(set = 0, binding = 6) uniform sampler2D emissionTexture;
+layout(set = 0, binding = 7) uniform sampler2D normalTexture;
 
 void main() {
     outPosition = vec4(inWorldPos, 1.0);

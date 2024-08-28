@@ -9,12 +9,29 @@
 
 namespace Mandrill
 {
+    struct RenderPassDescription {
+        std::vector<std::shared_ptr<Shader>> shaders;
+        std::vector<std::shared_ptr<Layout>> layouts;
+
+        MANDRILL_API RenderPassDescription(std::vector<std::shared_ptr<Shader>> shaders,
+                                           std::vector<std::shared_ptr<Layout>> layouts)
+            : shaders(shaders), layouts(layouts)
+        {
+        }
+
+        MANDRILL_API RenderPassDescription(std::shared_ptr<Shader> shader,
+                                           std::shared_ptr<Layout> layout)
+        {
+            shaders.push_back(shader);
+            layouts.push_back(layout);
+        }
+    };
+
     class RenderPass
     {
     public:
         MANDRILL_API RenderPass(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                                std::vector<std::shared_ptr<Layout>> pLayouts,
-                                std::vector<std::shared_ptr<Shader>> pShaders);
+                                const RenderPassDescription& desc);
         MANDRILL_API ~RenderPass();
 
         MANDRILL_API void recreatePipelines();
@@ -35,6 +52,12 @@ namespace Mandrill
     protected:
         virtual void createPipelines() = 0;
         virtual void destroyPipelines() = 0;
+
+        virtual void createAttachments() = 0;
+        virtual void destroyAttachments() = 0;
+
+        virtual void createFramebuffers() = 0;
+        virtual void destroyFramebuffers() = 0;
 
         std::shared_ptr<Device> mpDevice;
         std::shared_ptr<Swapchain> mpSwapchain;

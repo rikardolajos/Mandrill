@@ -4,9 +4,9 @@ layout(location = 0) in vec2 inUV;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(input_attachment_index = 0, binding = 0) uniform subpassInput inPosition;
-layout(input_attachment_index = 1, binding = 1) uniform subpassInput inNormal;
-layout(input_attachment_index = 2, binding = 2) uniform subpassInput inAlbedo;
+layout(input_attachment_index = 0, set = 0, binding = 0) uniform subpassInput inPosition;
+layout(input_attachment_index = 1, set = 0, binding = 1) uniform subpassInput inNormal;
+layout(input_attachment_index = 2, set = 0, binding = 2) uniform subpassInput inAlbedo;
 
 layout(push_constant) uniform PushConstant {
     uint renderMode;

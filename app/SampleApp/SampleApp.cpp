@@ -77,7 +77,7 @@ public:
         std::vector<ShaderDescription> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader.emplace_back(mpDevice, shaderDesc);
+        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer pipeline with layout matching the shader
         std::vector<LayoutDescription> layoutDesc;
@@ -86,7 +86,9 @@ public:
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         auto pLayout =
             std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, pLayout, mpShader);
+
+        RenderPassDescription renderPassDesc(mpShader, pLayout);
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -112,7 +114,7 @@ public:
         mBufferInfo.range = sizeof(glm::mat4);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
     }
 
     ~SampleApp()
@@ -146,7 +148,7 @@ public:
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
         // Push descriptors
-        std::array<VkWriteDescriptorSet, 3> descriptors;
+        std::array<VkWriteDescriptorSet, 3> descriptors = {};
         descriptors[0] = mpCamera->getDescriptor(0);
         descriptors[1] = mpTexture->getDescriptor(1);
         descriptors[2] = getModelDescriptor(2);
@@ -216,7 +218,7 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::vector<std::shared_ptr<Shader>> mpShader;
+    std::shared_ptr<Shader> mpShader;
     std::shared_ptr<Rasterizer> mpRenderPass;
 
     std::shared_ptr<Camera> mpCamera;

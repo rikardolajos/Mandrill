@@ -6,14 +6,14 @@
 using namespace Mandrill;
 
 RenderPass::RenderPass(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       std::vector<std::shared_ptr<Layout>> pLayouts, std::vector<std::shared_ptr<Shader>> pShaders)
-    : mpDevice(pDevice), mpSwapchain(pSwapchain), mpLayouts(pLayouts), mpShaders(pShaders), mRenderPass(VK_NULL_HANDLE)
+                       const RenderPassDescription& desc)
+    : mpDevice(pDevice), mpSwapchain(pSwapchain), mpLayouts(desc.layouts), mpShaders(desc.shaders), mRenderPass(VK_NULL_HANDLE)
 {
-    mPipelineLayouts.resize(pLayouts.size());
-    mPipelines.resize(pLayouts.size());
+    mPipelineLayouts.resize(mpLayouts.size());
+    mPipelines.resize(mpLayouts.size());
 
-    for (int i = 0; i < pLayouts.size(); i++) {
-        auto pLayout = pLayouts[i];
+    for (int i = 0; i < mpLayouts.size(); i++) {
+        auto& pLayout = mpLayouts[i];
 
         const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = pLayout->getDescriptorSetLayouts();
         const std::vector<VkPushConstantRange>& pushConstantLayout = pLayout->getPushConstantRanges();
@@ -41,5 +41,9 @@ void RenderPass::recreatePipelines()
 {
     Log::debug("Recreating pipelines");
     destroyPipelines();
+    destroyFramebuffers();
+    destroyAttachments();
+    createAttachments();
+    createFramebuffers();
     createPipelines();
 }

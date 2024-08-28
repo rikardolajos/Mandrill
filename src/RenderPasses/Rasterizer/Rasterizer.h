@@ -10,8 +10,7 @@ namespace Mandrill
     {
     public:
         MANDRILL_API Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                                std::vector<std::shared_ptr<Layout>> pLayouts,
-                                std::vector<std::shared_ptr<Shader>> pShaders);
+                                const RenderPassDescription& desc);
         MANDRILL_API ~Rasterizer();
 
         MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
@@ -21,7 +20,17 @@ namespace Mandrill
         void createPipelines() override;
         void destroyPipelines() override;
 
+        void createAttachments() override;
+        void destroyAttachments() override;
+
+        void createFramebuffers() override;
+        void destroyFramebuffers() override;
+
     private:
         void createRenderPass();
+
+        std::unique_ptr<Image> mColor;
+        std::unique_ptr<Image> mDepth;
+        std::vector<VkFramebuffer> mFramebuffers;
     };
 } // namespace Mandrill

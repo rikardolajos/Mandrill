@@ -10,8 +10,7 @@ namespace Mandrill
     {
     public:
         MANDRILL_API Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                              std::vector<std::shared_ptr<Layout>> pLayouts,
-                              std::vector<std::shared_ptr<Shader>> pShaders);
+                              const RenderPassDescription& desc);
 
         MANDRILL_API ~Deferred();
 
@@ -55,11 +54,14 @@ namespace Mandrill
         void createPipelines() override;
         void destroyPipelines() override;
 
+        void createAttachments() override;
+        void destroyAttachments() override;
+
+        void createFramebuffers() override;
+        void destroyFramebuffers() override;
+
     private:
         void createRenderPass();
-        void createAttachments();
-        void createFramebuffers();
-        void destroyFramebuffers();
 
         // VkImage mColor;
         // VkImageView mColorView;

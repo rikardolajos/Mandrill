@@ -35,14 +35,16 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
 
 
 Rasterizer::Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       std::vector<std::shared_ptr<Layout>> pLayouts, std::vector<std::shared_ptr<Shader>> pShaders)
-    : RenderPass(pDevice, pSwapchain, pLayouts, pShaders)
+                       const RenderPassDescription& desc)
+    : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 1 or mpShaders.size() != 1) {
         Log::error("Rasterizer only supports one render pass and was created with wrong number of layouts and shaders");
     }
 
+    createAttachments();
     createRenderPass();
+    createFramebuffers();
     createPipelines();
 }
 
@@ -50,13 +52,12 @@ Rasterizer::~Rasterizer()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
     destroyPipelines();
+    destroyFramebuffers();
     vkDestroyRenderPass(mpDevice->getDevice(), mRenderPass, nullptr);
 }
 
 void Rasterizer::createPipelines()
 {
-    mpSwapchain->createFramebuffers(mRenderPass);
-
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .vertexBindingDescriptionCount = 1,
@@ -162,6 +163,7 @@ void Rasterizer::createPipelines()
 void Rasterizer::destroyPipelines()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
+    destroyFramebuffers();
     for (auto pipeline : mPipelines) {
         vkDestroyPipeline(mpDevice->getDevice(), pipeline, nullptr);
     }
@@ -254,11 +256,70 @@ void Rasterizer::createRenderPass()
     Check::Vk(vkCreateRenderPass(mpDevice->getDevice(), &ci, nullptr, &mRenderPass));
 }
 
+void Rasterizer::createAttachments()
+{
+    VkFormat format = mpSwapchain->getImageFormat();
+    VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
+    VkExtent2D extent = mpSwapchain->getExtent();
+
+    mColor = std::make_unique<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), format,
+                                     VK_IMAGE_TILING_OPTIMAL,
+                                     VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mDepth = std::make_unique<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), depthFormat,
+                                     VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    Helpers::transitionImageLayout(mpDevice, mDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+                                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+
+    mColor->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+    mDepth->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+}
+
+void Rasterizer::destroyAttachments()
+{
+    mColor = nullptr;
+    mDepth = nullptr;
+}
+
+void Rasterizer::createFramebuffers()
+{
+    auto imageViews = mpSwapchain->getImageViews();
+    mFramebuffers = std::vector<VkFramebuffer>(imageViews.size());
+
+    for (uint32_t i = 0; i < mFramebuffers.size(); i++) {
+        std::array<VkImageView, 3> attachments = {
+            mColor->getImageView(),
+            mDepth->getImageView(),
+            imageViews[i],
+        };
+
+        VkFramebufferCreateInfo ci = {
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = mRenderPass,
+            .attachmentCount = static_cast<uint32_t>(attachments.size()),
+            .pAttachments = attachments.data(),
+            .width = mpSwapchain->getExtent().width,
+            .height = mpSwapchain->getExtent().height,
+            .layers = 1,
+        };
+
+        Check::Vk(vkCreateFramebuffer(mpDevice->getDevice(), &ci, nullptr, &mFramebuffers[i]));
+    }
+}
+
+void Rasterizer::destroyFramebuffers()
+{
+    for (auto& fb : mFramebuffers) {
+        vkDestroyFramebuffer(mpDevice->getDevice(), fb, nullptr);
+    }
+}
+
 void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
-        mpSwapchain->createFramebuffers(mRenderPass);
+        createFramebuffers();
     }
 
     VkCommandBufferBeginInfo bi = {
@@ -268,28 +329,21 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 
     Check::Vk(vkBeginCommandBuffer(cmd, &bi));
 
-    VkClearValue clearValues[] = {
-        {.color =
-             {
-                 clearColor[0],
-                 clearColor[1],
-                 clearColor[2],
-                 clearColor[3],
-             }},
-        {.depthStencil = {1.0f, 0}},
-    };
+    std::array<VkClearValue, 2> clearValues = {};
+    clearValues[0].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
+    clearValues[1].depthStencil = {1.0f, 0};
 
     VkRenderPassBeginInfo rbi = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = mRenderPass,
-        .framebuffer = mpSwapchain->getCurrentFramebuffer(),
+        .framebuffer = mFramebuffers[mpSwapchain->getImageIndex()],
         .renderArea =
             {
                 .offset = {0, 0},
                 .extent = mpSwapchain->getExtent(),
             },
-        .clearValueCount = 2,
-        .pClearValues = clearValues,
+        .clearValueCount = static_cast<uint32_t>(clearValues.size()),
+        .pClearValues = clearValues.data(),
     };
 
     vkCmdBeginRenderPass(cmd, &rbi, VK_SUBPASS_CONTENTS_INLINE);
