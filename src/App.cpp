@@ -184,7 +184,7 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
 
         if (ImGui::BeginMenu("File")) {
 
-            if (ImGui::MenuItem("Exit", "Alt + F4", false)) {
+            if (ImGui::MenuItem("Exit", "ESC / Alt + F4", false)) {
                 glfwSetWindowShouldClose(mpWindow, GLFW_TRUE);
             }
 
@@ -251,7 +251,7 @@ void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pS
 
     if (mShowFrameRate) {
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
-                                 ImGuiWindowFlags_NoBackground;
+                                 ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs;
         ImGui::SetNextWindowPos(ImVec2(10.0f, 30.0f), ImGuiCond_Appearing);
         if (ImGui::Begin("Frame rate", &mShowFrameRate, flags)) {
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
@@ -335,6 +335,10 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
                           std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
                           std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
 {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(mpWindow, 1);
+    }
+
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         mShowHelp = !mShowHelp;
     }
@@ -378,6 +382,12 @@ void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, i
     if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
         bool captured = pCamera->toggleMouseCapture();
         glfwSetInputMode(pWindow, GLFW_CURSOR, captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.SetAppAcceptingEvents(!captured);
+        if (captured) {
+            ImGui::SetWindowFocus();
+        }
     }
 }
 
@@ -439,6 +449,7 @@ void App::initImGUI()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
