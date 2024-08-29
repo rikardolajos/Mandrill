@@ -24,6 +24,8 @@ public:
             node.addMesh(meshIndex);
         }
         mpScene->compile();
+        // Scale down the model
+        node.setTransform(glm::scale(glm::vec3(0.01f)));
         mpScene->syncToDevice();
         mpScene->setSampler(mpSampler);
 
@@ -95,6 +97,10 @@ public:
             mpCamera->updateAspectRatio();
         }
 
+        // Sponza's triangles are clockwise
+        vkCmdSetFrontFace(cmd, VK_FRONT_FACE_CLOCKWISE);
+        vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
+
         // Render scene
         mpScene->render(cmd, mpCamera, mpRenderPass->getPipelineLayout(0));
 
@@ -156,9 +162,12 @@ public:
         // Render the base GUI, the menu bar with it's subwindows
         App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShaders);
 
-        if (ImGui::Begin("Assignemnt 2")) {
+        if (ImGui::Begin("Assignment 2")) {
             const char* renderModes[] = {
-                "Resolved", "Position", "Ambient", "Normal", "Light", "Texture coordinates",
+                "Resolved",
+                "Position",
+                "Normal",
+                "Albedo",
             };
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
         }

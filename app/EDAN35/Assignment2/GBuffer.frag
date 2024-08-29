@@ -2,7 +2,10 @@
 
 layout(location = 0) in vec3 inWorldPos;
 layout(location = 1) in vec3 inNormal;
-layout(location = 2) in vec2 inTexCoord;
+layout(location = 2) in vec3 inTangent;
+layout(location = 3) in vec3 inBinormal;
+layout(location = 4) in vec2 inTexCoord;
+layout(location = 5) in mat3 inNormalMatrix;
 
 layout(location = 0) out vec4 outPosition;
 layout(location = 1) out vec4 outNormal;
@@ -25,8 +28,31 @@ layout(set = 0, binding = 5) uniform sampler2D ambientTexture;
 layout(set = 0, binding = 6) uniform sampler2D emissionTexture;
 layout(set = 0, binding = 7) uniform sampler2D normalTexture;
 
+const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;
+const uint SPECULAR_TEXTURE_BIT = 1 << 1;
+const uint AMBIENT_TEXTURE_BIT = 1 << 2;
+const uint EMISSION_TEXTURE_BIT = 1 << 3;
+const uint NORMAL_TEXTURE_BIT = 1 << 4;
+
 void main() {
+    // Discard transparent parts
+    if (texture(diffuseTexture, inTexCoord).a == 0.0) {
+        discard;
+    }
+
     outPosition = vec4(inWorldPos, 1.0);
-    outNormal = vec4(inNormal, 1.0);
-    outAlbedo = texture(diffuseTexture, inTexCoord);
+
+    if ((materialParams.hasTexture & NORMAL_TEXTURE_BIT) != 0) {
+    mat3 TBN = mat3(normalize(inTangent), normalize(inBinormal), normalize(inNormal));
+        vec3 normal = texture(normalTexture, inTexCoord).rgb * 2.0 - 1.0;
+        outNormal.xyz = inNormalMatrix * TBN * normal;
+    } else {
+        outNormal = vec4(inNormalMatrix * inNormal, 1.0);
+    }
+
+    if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
+        outAlbedo = texture(diffuseTexture, inTexCoord);
+    } else {
+        outAlbedo = vec4(materialParams.diffuse, 1.0);
+    }
 }

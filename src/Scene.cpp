@@ -263,12 +263,46 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                 shapeMesh[meshIndex].materialIndex = materialIndex;
                 indices[meshIndex] += 1;
             }
+
             indexOffset += fv;
         }
 
         for (auto& mesh : shapeMesh) {
             mMeshes.push_back(mesh);
             newMeshIndices.push_back(static_cast<uint32_t>(mMeshes.size() - 1));
+        }
+    }
+
+    // Calculate tangent space for each face (triangle)
+    for (uint32_t i = 0; i < newMeshIndices.size(); i++) {
+        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
+        for (uint32_t j = 0; j < mesh.indices.size(); j += 3) {
+            Vertex& v0 = mesh.vertices[j + 0];
+            Vertex& v1 = mesh.vertices[j + 1];
+            Vertex& v2 = mesh.vertices[j + 2];
+
+            glm::vec3 e1 = v1.position - v0.position;
+            glm::vec3 e2 = v2.position - v0.position;
+
+            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
+            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
+
+            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+
+            glm::vec3 t =
+                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
+                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
+            glm::vec3 b =
+                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
+                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
+
+            mesh.vertices[j + 0].tangent = t;
+            mesh.vertices[j + 1].tangent = t;
+            mesh.vertices[j + 2].tangent = t;
+
+            mesh.vertices[j + 0].binormal = b;
+            mesh.vertices[j + 1].binormal = b;
+            mesh.vertices[j + 2].binormal = b;
         }
     }
 

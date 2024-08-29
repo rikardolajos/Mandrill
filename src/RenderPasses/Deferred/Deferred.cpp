@@ -17,7 +17,7 @@ static VkVertexInputBindingDescription bindingDescription = {
     .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
 };
 
-static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {{
+static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {{
     {
         .location = 0,
         .binding = 0,
@@ -32,6 +32,18 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
     },
     {
         .location = 2,
+        .binding = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(Vertex, tangent),
+    },
+    {
+        .location = 3,
+        .binding = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(Vertex, binormal),
+    },
+    {
+        .location = 4,
         .binding = 0,
         .format = VK_FORMAT_R32G32_SFLOAT,
         .offset = offsetof(Vertex, texcoord),
@@ -152,18 +164,24 @@ void Deferred::createPipelines()
         .maxDepthBounds = 1.0f,
     };
 
-    std::array<VkPipelineColorBlendAttachmentState, 4> colorBlendAttachmentStates = {
-        colorBlendAttachment,
+    std::array<VkPipelineColorBlendAttachmentState, 3> colorBlendAttachmentStates = {
         colorBlendAttachment,
         colorBlendAttachment,
         colorBlendAttachment,
     };
 
-    VkPipelineColorBlendStateCreateInfo colorBlending = {
+    std::array<VkPipelineColorBlendStateCreateInfo, 2> colorBlending = {};
+    colorBlending[GBUFFER_PASS] = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .logicOpEnable = VK_FALSE,
         .attachmentCount = static_cast<uint32_t>(colorBlendAttachmentStates.size()),
         .pAttachments = colorBlendAttachmentStates.data(),
+    };
+    colorBlending[RESOLVE_PASS] = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+        .logicOpEnable = VK_FALSE,
+        .attachmentCount = 1,
+        .pAttachments = &colorBlendAttachment,
     };
 
     std::array<VkGraphicsPipelineCreateInfo, 2> cis = {};
@@ -181,7 +199,7 @@ void Deferred::createPipelines()
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
         .pDepthStencilState = &depthStencils[GBUFFER_PASS],
-        .pColorBlendState = &colorBlending,
+        .pColorBlendState = &colorBlending[GBUFFER_PASS],
         .pDynamicState = &dynamicState,
         .layout = mPipelineLayouts[GBUFFER_PASS],
         .renderPass = mRenderPass,
@@ -205,7 +223,7 @@ void Deferred::createPipelines()
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
         .pDepthStencilState = &depthStencils[RESOLVE_PASS],
-        .pColorBlendState = &colorBlending,
+        .pColorBlendState = &colorBlending[RESOLVE_PASS],
         .pDynamicState = &dynamicState,
         .layout = mPipelineLayouts[RESOLVE_PASS],
         .renderPass = mRenderPass,
@@ -286,7 +304,6 @@ void Deferred::createRenderPass()
     colorAttachmentRefs[0] = {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
     colorAttachmentRefs[1] = {.attachment = 1, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
     colorAttachmentRefs[2] = {.attachment = 2, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
-    // colorAttachmentRefs[3] = {.attachment = 4, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
     VkAttachmentReference swapchainAttachmentRef = {.attachment = 4,
                                                     .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};

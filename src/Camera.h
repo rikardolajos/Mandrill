@@ -21,6 +21,11 @@ namespace Mandrill
 
         MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
 
+        MANDRILL_API bool isMouseCaptured()
+        {
+            return mMouseCaptured;
+        }
+
         MANDRILL_API void captureMouse(bool capture)
         {
             mMouseCaptured = capture;
