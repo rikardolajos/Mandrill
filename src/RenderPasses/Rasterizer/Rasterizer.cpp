@@ -35,7 +35,7 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
 
 
 Rasterizer::Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       const RenderPassDescription& desc)
+                       const RenderPassDesc& desc)
     : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 1 or mpShaders.size() != 1) {

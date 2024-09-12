@@ -30,84 +30,22 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
         return;
     }
 
+    // Bind descriptor set for node
+    std::array<VkDescriptorSet, 1> descriptorSetNode;
+    descriptorSetNode[0] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 1,
+                            static_cast<uint32_t>(descriptorSetNode.size()), descriptorSetNode.data(), 0, nullptr);
+
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
 
-        // Descriptor for node
-        VkDescriptorBufferInfo bufferInfoNode = {
-            .buffer = pScene->mpTransforms->getBuffer(),
-            .offset = mTransformsOffset,
-            .range = sizeof(glm::mat4),
-        };
-
-        VkWriteDescriptorSet transformsDescriptor = {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .dstBinding = 1,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .pBufferInfo = &bufferInfoNode,
-        };
-
-        // Descriptor for material params
-        VkDescriptorBufferInfo bufferInfoMaterialParams = {
-            .buffer = pScene->mpMaterialParams->getBuffer(),
-            .offset = pScene->mMaterials[mesh.materialIndex].paramsOffset,
-            .range = sizeof(MaterialParams),
-        };
-
-        VkWriteDescriptorSet materialParamsDescriptor = {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .dstBinding = 2,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .pBufferInfo = &bufferInfoMaterialParams,
-        };
-
-        // Push descriptors
-        std::vector<VkWriteDescriptorSet> descriptors;
-        descriptors.push_back(pCamera->getDescriptor(0));
-        descriptors.push_back(transformsDescriptor);
-        descriptors.push_back(materialParamsDescriptor);
-
-        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & DIFFUSE_TEXTURE_BIT) {
-            descriptors.push_back(
-                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].diffuseTexturePath).getDescriptor(3));
-        } else {
-            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(3));
-        }
-
-        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & SPECULAR_TEXTURE_BIT) {
-            descriptors.push_back(
-                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].specularTexturePath).getDescriptor(4));
-        } else {
-            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(4));
-        }
-
-        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & AMBIENT_TEXTURE_BIT) {
-            descriptors.push_back(
-                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].ambientTexturePath).getDescriptor(5));
-        } else {
-            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(5));
-        }
-
-        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & EMISSION_TEXTURE_BIT) {
-            descriptors.push_back(
-                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].emissionTexturePath).getDescriptor(6));
-        } else {
-            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(6));
-        }
-
-        if (pScene->mMaterials[mesh.materialIndex].params.hasTexture & NORMAL_TEXTURE_BIT) {
-            descriptors.push_back(
-                pScene->mTextures.at(pScene->mMaterials[mesh.materialIndex].normalTexturePath).getDescriptor(7));
-        } else {
-            descriptors.push_back(pScene->mpMissingTexture->getDescriptor(7));
-        }
-
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, pScene->mDescriptorSet,
-                                  static_cast<uint32_t>(descriptors.size()), descriptors.data());
+        // Bind descriptor set for material
+        std::array<VkDescriptorSet, 1> descriptorSetMaterial;
+        descriptorSetMaterial[0] =
+            pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 2,
+                                static_cast<uint32_t>(descriptorSetMaterial.size()), descriptorSetMaterial.data(), 0,
+                                nullptr);
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
@@ -121,43 +59,27 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
     }
 }
 
-Scene::Scene(std::shared_ptr<Device> pDevice) : mpDevice(pDevice)
+Scene::Scene(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
+    : mpDevice(pDevice), mpSwapchain(pSwapchain)
 {
     mpMissingTexture =
         std::make_shared<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
+
+    createDescriptors();
 }
 
 Scene::~Scene()
 {
 }
 
-std::shared_ptr<Layout> Scene::getLayout(int set)
-{
-    mDescriptorSet = set;
-
-    std::vector<LayoutDescription> layoutDesc;
-    layoutDesc.emplace_back(mDescriptorSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Camera matrix
-    layoutDesc.emplace_back(mDescriptorSet, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Model matrix
-    layoutDesc.emplace_back(mDescriptorSet, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material colors
-    layoutDesc.emplace_back(mDescriptorSet, 3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material diffuse texture
-    layoutDesc.emplace_back(mDescriptorSet, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material specular texture
-    layoutDesc.emplace_back(mDescriptorSet, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material ambient texture
-    layoutDesc.emplace_back(mDescriptorSet, 6, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material emission texture
-    layoutDesc.emplace_back(mDescriptorSet, 7, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                            VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
-
-    return std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
-}
-
 void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout) const
 {
+    // Bind descriptor set for camera matrices
+    std::array<VkDescriptorSet, 1> descriptors;
+    descriptors[0] = pCamera->getDescriptorSet();
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, static_cast<uint32_t>(descriptors.size()),
+                            descriptors.data(), 0, nullptr);
+
     for (auto& node : mNodes) {
         node.render(cmd, pCamera, layout, shared_from_this());
     }
@@ -397,7 +319,7 @@ void Scene::compile()
                                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     mpMaterialParams =
         std::make_shared<Buffer>(mpDevice, sizeof(MaterialParams) * mMaterials.size(),
-                                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+                                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     // Associate each node with a part of the transforms buffer
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
@@ -451,5 +373,66 @@ void Scene::setSampler(const std::shared_ptr<Sampler> pSampler)
 
     for (auto& texture : mTextures) {
         texture.second.setSampler(pSampler);
+    }
+}
+
+
+std::shared_ptr<Layout> Scene::getLayout()
+{
+    std::vector<LayoutDesc> desc;
+    desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Camera matrix
+    desc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Model matrix
+    desc.emplace_back(2, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material colors
+    desc.emplace_back(2, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material diffuse texture
+    desc.emplace_back(2, 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material specular texture
+    desc.emplace_back(2, 3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material ambient texture
+    desc.emplace_back(2, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material emission texture
+    desc.emplace_back(2, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
+
+    return std::make_shared<Layout>(mpDevice, desc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+}
+
+
+void Scene::createDescriptors()
+{
+    std::shared_ptr<Layout> pLayout = getLayout();
+
+    // Node transform
+    for (auto& node : mNodes) {
+        std::vector<DescriptorDesc> desc;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpTransforms);
+
+        // Set layout for set 1
+        auto layout = pLayout->getDescriptorSetLayouts()[1];
+        node.pDescriptor =
+            std::make_unique<Descriptor>(mpDevice, desc, layout, mNodes.size() * mpSwapchain->getFramesInFlightCount());
+    }
+
+    // Materials
+    for (auto& mat : mMaterials) {
+        std::vector<DescriptorDesc> desc;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpMaterialParams);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                          std::make_shared<Texture>(mTextures[mat.diffuseTexturePath]));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                          std::make_shared<Texture>(mTextures[mat.specularTexturePath]));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                          std::make_shared<Texture>(mTextures[mat.ambientTexturePath]));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                          std::make_shared<Texture>(mTextures[mat.emissionTexturePath]));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                          std::make_shared<Texture>(mTextures[mat.normalTexturePath]));
+
+        // Set layout for set 2
+        auto layout = pLayout->getDescriptorSetLayouts()[2];
+        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
     }
 }

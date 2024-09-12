@@ -10,24 +10,32 @@ public:
         mVertices.push_back({
             {-1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},   // normal
+            {1.0f, 0.0f, 0.0f},   // tangent
+            {0.0f, 1.0f, 0.0f},   // binormal
             {0.0f, 0.0f},         // texcoord
         });
 
         mVertices.push_back({
             {1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {1.0f, 0.0f, 0.0f},  // tangent
+            {0.0f, 1.0f, 0.0f},  // binormal
             {1.0f, 0.0f},        // texcoord
         });
 
         mVertices.push_back({
             {-1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {1.0f, 0.0f, 0.0f},  // tangent
+            {0.0f, 1.0f, 0.0f},  // binormal
             {0.0f, 1.0f},        // texcoord
         });
 
         mVertices.push_back({
             {1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f}, // normal
+            {1.0f, 0.0f, 0.0f}, // tangent
+            {0.0f, 1.0f, 0.0f}, // binormal
             {1.0f, 1.0f},       // texcoord
         });
 
@@ -47,24 +55,6 @@ public:
         mpIndexBuffer->copyFromHost(mIndices.data(), indicesSize);
     }
 
-    VkWriteDescriptorSet getModelDescriptor(uint32_t binding)
-    {
-        std::array<glm::mat4, 1> matrices = {mModel};
-
-        mpUniform->copyFromHost(matrices.data(), matrices.size() * sizeof(glm::mat4));
-
-        VkWriteDescriptorSet descriptor = {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .dstBinding = binding,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .pBufferInfo = &mBufferInfo,
-        };
-
-        return descriptor;
-    }
-
     SampleApp() : App("Sample App", 1280, 720)
     {
         // Create a Vulkan instance and device
@@ -74,20 +64,20 @@ public:
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a shader module with vertex and fragment shader
-        std::vector<ShaderDescription> shaderDesc;
+        std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer pipeline with layout matching the shader
-        std::vector<LayoutDescription> layoutDesc;
+        std::vector<LayoutDesc> layoutDesc;
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(1, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         auto pLayout =
             std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
 
-        RenderPassDescription renderPassDesc(mpShader, pLayout);
+        RenderPassDesc renderPassDesc(mpShader, pLayout);
         mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
@@ -105,13 +95,16 @@ public:
         setupVertexBuffers();
 
         // Uniform for sending model matrix to shaders
-        mpUniform =
-            std::make_shared<Buffer>(mpDevice, sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        mpUniform = std::make_shared<Buffer>(
+            mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        mBufferInfo.buffer = mpUniform->getBuffer();
-        mBufferInfo.offset = 0;
-        mBufferInfo.range = sizeof(glm::mat4);
+        // Descriptor set for model matrix and texture
+        std::vector<DescriptorDesc> descriptorDesc;
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniform);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
+        mpDescriptor = std::make_shared<Descriptor>(mpDevice, pLayout->getDescriptorSetLayouts()[1], descriptorDesc,
+                                                    mpSwapchain->getFramesInFlightCount());
 
         // Initialize GUI
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
@@ -130,7 +123,10 @@ public:
 
         mAngle += mRotationSpeed * delta;
 
-        mModel = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 model = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        VkDeviceSize offset = sizeof(glm::mat4) * mpSwapchain->getInFlightIndex();
+        mpUniform->copyFromHost(&model, sizeof(glm::mat4), offset);
     }
 
     void render() override
@@ -147,13 +143,13 @@ public:
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-        // Push descriptors
-        std::array<VkWriteDescriptorSet, 3> descriptors = {};
-        descriptors[0] = mpCamera->getDescriptor(0);
-        descriptors[1] = mpTexture->getDescriptor(1);
-        descriptors[2] = getModelDescriptor(2);
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
-                                  static_cast<uint32_t>(descriptors.size()), descriptors.data());
+        // Bind descriptor sets
+        std::array<VkDescriptorSet, 3> descriptorSets;
+        descriptorSets[0] = mpCamera->getDescriptorSet();
+        descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
+
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
+                                static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
@@ -234,9 +230,9 @@ private:
 
     float mRotationSpeed = 0.2f;
     float mAngle = 0.0f;
-    glm::mat4 mModel;
+
     std::shared_ptr<Buffer> mpUniform;
-    VkDescriptorBufferInfo mBufferInfo;
+    std::shared_ptr<Descriptor> mpDescriptor;
 };
 
 int main()

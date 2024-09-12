@@ -6,11 +6,17 @@
 
 namespace Mandrill
 {
+    enum DeferredInputAttachment {
+        DEFERRED_INPUT_ATTACHMENT_POSITION,
+        DEFERRED_INPUT_ATTACHMENT_NORMAL,
+        DEFERRED_INPUT_ATTACHMENT_ALBEDO,
+    };
+
     class Deferred : public RenderPass
     {
     public:
         MANDRILL_API Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                              const RenderPassDescription& desc);
+                              const RenderPassDesc& desc);
 
         MANDRILL_API ~Deferred();
 
@@ -19,34 +25,17 @@ namespace Mandrill
 
         MANDRILL_API void nextSubpass(VkCommandBuffer cmd);
 
-        /// <summary>
-        /// Get the input attachment image descriptor info. Use this to send descriptors to command buffer.
-        /// </summary>
-        /// <param name="i">0 = Position, 1 = Normal, 2 = Albedo</param>
-        /// <returns>A descriptor image info for the requrested attachment</returns>
-        MANDRILL_API VkDescriptorImageInfo getInputAttachmentInfo(int i)
+        MANDRILL_API std::shared_ptr<Image> getInputAttachmentInfo(DeferredInputAttachment attachment)
         {
-            switch (i) {
-            case 0:
-                return VkDescriptorImageInfo{
-                    .sampler = VK_NULL_HANDLE,
-                    .imageView = mPosition->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                };
-            case 1:
-                return VkDescriptorImageInfo{
-                    .sampler = VK_NULL_HANDLE,
-                    .imageView = mNormal->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                };
-            case 2:
-                return VkDescriptorImageInfo{
-                    .sampler = VK_NULL_HANDLE,
-                    .imageView = mAlbedo->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                };
+            switch (attachment) {
+            case DEFERRED_INPUT_ATTACHMENT_POSITION:
+                return mpPosition;
+            case DEFERRED_INPUT_ATTACHMENT_NORMAL:
+                return mpNormal;
+            case DEFERRED_INPUT_ATTACHMENT_ALBEDO:
+                return mpAlbedo;
             default:
-                return VkDescriptorImageInfo{};
+                return nullptr;
             }
         }
 
@@ -63,15 +52,10 @@ namespace Mandrill
     private:
         void createRenderPass();
 
-        // VkImage mColor;
-        // VkImageView mColorView;
-        // VkImage mDepth;
-        // VkImageView mDepthView;
-        // VkDeviceMemory mResourceMemory;
-        std::unique_ptr<Image> mPosition;
-        std::unique_ptr<Image> mNormal;
-        std::unique_ptr<Image> mAlbedo;
-        std::unique_ptr<Image> mDepth;
+        std::shared_ptr<Image> mpPosition;
+        std::shared_ptr<Image> mpNormal;
+        std::shared_ptr<Image> mpAlbedo;
+        std::shared_ptr<Image> mpDepth;
         std::vector<VkFramebuffer> mFramebuffers;
     };
 } // namespace Mandrill

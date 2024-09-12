@@ -22,9 +22,20 @@ namespace Mandrill
                              const std::filesystem::path& path, bool mipmaps = false);
         MANDRILL_API ~Texture();
 
-        MANDRILL_API void setSampler(const std::shared_ptr<Sampler> sampler);
+        MANDRILL_API void setSampler(const std::shared_ptr<Sampler> pSampler)
+        {
+            mImageInfo.sampler = pSampler->getSampler();
+        }
 
-        MANDRILL_API VkWriteDescriptorSet getDescriptor(uint32_t binding) const;
+        MANDRILL_API VkSampler getSampler()
+        {
+            return mImageInfo.sampler;
+        }
+
+        MANDRILL_API VkImageView getImageView()
+        {
+            return mImageInfo.imageView;
+        }
 
     private:
         void generateMipmaps();

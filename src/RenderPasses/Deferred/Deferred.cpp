@@ -50,13 +50,7 @@ static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {
     },
 }};
 
-static void createGBufferPipeline()
-{
-}
-
-
-Deferred::Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                   const RenderPassDescription& desc)
+Deferred::Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
     : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 2 or mpShaders.size() != 2) {
@@ -246,7 +240,7 @@ void Deferred::createRenderPass()
     std::array<VkAttachmentDescription, 5> attachments = {};
     // Position
     attachments[0] = {
-        .format = mPosition->getFormat(),
+        .format = mpPosition->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -257,7 +251,7 @@ void Deferred::createRenderPass()
     };
     // Normal
     attachments[1] = {
-        .format = mNormal->getFormat(),
+        .format = mpNormal->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -268,7 +262,7 @@ void Deferred::createRenderPass()
     };
     // Albedo
     attachments[2] = {
-        .format = mAlbedo->getFormat(),
+        .format = mpAlbedo->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -279,7 +273,7 @@ void Deferred::createRenderPass()
     };
     // Depth
     attachments[3] = {
-        .format = mDepth->getFormat(),
+        .format = mpDepth->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -381,33 +375,33 @@ void Deferred::createAttachments()
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkExtent2D extent = mpSwapchain->getExtent();
 
-    mPosition = std::make_unique<Image>(
+    mpPosition = std::make_shared<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, gbufferFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mNormal = std::make_unique<Image>(
+    mpNormal = std::make_shared<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, gbufferFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mAlbedo = std::make_unique<Image>(
+    mpAlbedo = std::make_shared<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, albedoFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mDepth = std::make_unique<Image>(mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat,
-                                     VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    Helpers::transitionImageLayout(mpDevice, mDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+    mpDepth = std::make_shared<Image>(mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat,
+                                      VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    Helpers::transitionImageLayout(mpDevice, mpDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 
-    mPosition->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-    mNormal->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-    mAlbedo->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-    mDepth->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+    mpPosition->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+    mpNormal->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+    mpAlbedo->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+    mpDepth->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
 }
 
 void Deferred::destroyAttachments()
 {
-    mPosition = nullptr;
-    mNormal = nullptr;
-    mAlbedo = nullptr;
-    mDepth = nullptr;
+    mpPosition = nullptr;
+    mpNormal = nullptr;
+    mpAlbedo = nullptr;
+    mpDepth = nullptr;
 }
 
 void Deferred::createFramebuffers()
@@ -417,8 +411,11 @@ void Deferred::createFramebuffers()
 
     for (uint32_t i = 0; i < mFramebuffers.size(); i++) {
         std::array<VkImageView, 5> attachments = {
-            mPosition->getImageView(), mNormal->getImageView(), mAlbedo->getImageView(),
-            mDepth->getImageView(),    imageViews[i],
+            mpPosition->getImageView(),
+            mpNormal->getImageView(),
+            mpAlbedo->getImageView(),
+            mpDepth->getImageView(),
+            imageViews[i],
         };
 
         VkFramebufferCreateInfo ci = {

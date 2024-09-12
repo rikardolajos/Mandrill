@@ -43,6 +43,11 @@ namespace Mandrill
             return mpHostMap;
         }
 
+        MANDRILL_API VkDeviceSize getSize() const
+        {
+            return mSize;
+        }
+
     private:
         std::shared_ptr<Device> mpDevice;
 

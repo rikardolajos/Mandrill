@@ -3,14 +3,23 @@
 #include "Common.h"
 
 #include "Buffer.h"
+#include "Descriptor.h"
 #include "Device.h"
+#include "Swapchain.h"
 
 namespace Mandrill
 {
+    struct CameraMatrices {
+        glm::mat4 view;
+        glm::mat4 view_inv;
+        glm::mat4 proj;
+        glm::mat4 proj_inv;
+    };
+
     class Camera
     {
     public:
-        MANDRILL_API Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow);
+        MANDRILL_API Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow, std::shared_ptr<Swapchain> pSwapchain);
         MANDRILL_API ~Camera();
 
         /// <summary>
@@ -67,11 +76,15 @@ namespace Mandrill
             mMoveSpeed = speed;
         }
 
-        MANDRILL_API VkWriteDescriptorSet getDescriptor(uint32_t binding) const;
+        VkDescriptorSet getDescriptorSet() const
+        {
+            return mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
+        }
 
     private:
         std::shared_ptr<Device> mpDevice;
         GLFWwindow* mpWindow;
+        std::shared_ptr<Swapchain> mpSwapchain;
 
         bool mMouseCaptured = false;
 
@@ -82,7 +95,8 @@ namespace Mandrill
         glm::vec3 mDirection;
         glm::vec3 mUp;
         float mMoveSpeed;
+        
         std::shared_ptr<Buffer> mpUniforms;
-        VkDescriptorBufferInfo mBufferInfo;
+        std::shared_ptr<Descriptor> mpDescriptor;
     };
 } // namespace Mandrill

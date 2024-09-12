@@ -3,9 +3,11 @@
 #include "Common.h"
 
 #include "Camera.h"
+#include "Descriptor.h"
 #include "Device.h"
 #include "Layout.h"
 #include "Sampler.h"
+#include "Swapchain.h"
 #include "Texture.h"
 
 namespace Mandrill
@@ -49,6 +51,8 @@ namespace Mandrill
         std::string ambientTexturePath;
         std::string emissionTexturePath;
         std::string normalTexturePath;
+
+        std::shared_ptr<Descriptor> pDescriptor;
     };
 
     class Scene; // Forward declare scene so Node can befriend it
@@ -111,6 +115,7 @@ namespace Mandrill
 
         glm::mat4* mpTransform;
         VkDeviceSize mTransformsOffset;
+        std::shared_ptr<Descriptor> pDescriptor;
 
         bool mVisible;
 
@@ -120,18 +125,25 @@ namespace Mandrill
     class Scene : public std::enable_shared_from_this<Scene>
     {
     public:
-        MANDRILL_API Scene(std::shared_ptr<Device> pDevice);
-        MANDRILL_API ~Scene();
-
         /// <summary>
-        /// Get the layout that the scene uses.
+        /// Create a new scene.
         ///
-        /// Use this layout to create the pipeline that will render the scene.
+        /// The scene will use descriptor sets as follows:
+        ///     Camera matrix (struct CameraMatrices): Set = 0, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Model matrix (mat4): Set = 1, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Material params (struct MaterialParams): Set = 2, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Material diffuse texture: Set = 2, Binding = 1, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Material specular texture: Set = 2, Binding = 2, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Material ambient texture: Set = 2, Binding = 3, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Material emission texture: Set = 2, Binding = 4, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Material normal texture: Set = 2, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///
         /// </summary>
-        /// <param name="set">Which descriptor set to use. This value will be stored internally and reused during
-        /// render().</param>
-        /// <returns>Layout used by the scene</returns>
-        MANDRILL_API std::shared_ptr<Layout> getLayout(int set);
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="pSwapchain">Swapchain is used to determine how many descriptors will be used</param>
+        /// <returns></returns>
+        MANDRILL_API Scene(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain);
+        MANDRILL_API ~Scene();
 
         /// <summary>
         /// Render all the nodes in the scene.
@@ -199,10 +211,19 @@ namespace Mandrill
         /// <returns></returns>
         MANDRILL_API void setSampler(const std::shared_ptr<Sampler> pSampler);
 
+        /// <summary>
+        /// Get the layout used by the scene.
+        /// </summary>
+        /// <returns>Pointer to layout</returns>
+        MANDRILL_API std::shared_ptr<Layout> getLayout();
+
     private:
         friend Node;
 
+        void createDescriptors();
+
         std::shared_ptr<Device> mpDevice;
+        std::shared_ptr<Swapchain> mpSwapchain;
 
         std::vector<Mesh> mMeshes;
         std::vector<Node> mNodes;
@@ -213,8 +234,6 @@ namespace Mandrill
         std::shared_ptr<Buffer> mpIndexBuffer;
         std::shared_ptr<Buffer> mpTransforms;
         std::shared_ptr<Buffer> mpMaterialParams;
-
-        uint32_t mDescriptorSet = 0;
 
         std::shared_ptr<Texture> mpMissingTexture;
     };

@@ -70,25 +70,6 @@ Texture::~Texture()
 {
 }
 
-void Texture::setSampler(const std::shared_ptr<Sampler> pSampler)
-{
-    mImageInfo.sampler = pSampler->getSampler();
-}
-
-VkWriteDescriptorSet Texture::getDescriptor(uint32_t binding) const
-{
-    VkWriteDescriptorSet descriptor = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .dstBinding = binding,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        .pImageInfo = &mImageInfo,
-    };
-
-    return descriptor;
-}
-
 void Texture::generateMipmaps()
 {
     VkFormatProperties props;

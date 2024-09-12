@@ -17,7 +17,7 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Create and load scene
-        mpScene = std::make_shared<Scene>(mpDevice);
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         Node& node = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
@@ -30,8 +30,8 @@ public:
         mpScene->setSampler(mpSampler);
 
         // Deferred render pass requires 2 passes (G-buffer and resolve)
-        std::vector<ShaderDescription> shaderDesc1;
-        std::vector<ShaderDescription> shaderDesc2;
+        std::vector<ShaderDesc> shaderDesc1;
+        std::vector<ShaderDesc> shaderDesc2;
         shaderDesc1.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
@@ -41,10 +41,10 @@ public:
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
         std::vector<std::shared_ptr<Layout>> layouts;
-        layouts.push_back(mpScene->getLayout(0));
+        layouts.push_back(mpScene->getLayout()); // First pass
 
         // 3 input attachments: world position, normal, albedo color
-        std::vector<LayoutDescription> layoutDesc;
+        std::vector<LayoutDesc> layoutDesc;
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -58,11 +58,21 @@ public:
             .size = 1 * sizeof(int),
         };
         pResolveLayout->addPushConstantRange(pushConstantRange);
-        layouts.push_back(pResolveLayout);
+        layouts.push_back(pResolveLayout); // Second pass
 
         // Create render pass
-        RenderPassDescription renderPassDesc(mpShaders, layouts);
+        RenderPassDesc renderPassDesc(mpShaders, layouts);
         mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain, renderPassDesc);
+
+        // Create descriptors for second pass
+        std::vector<DescriptorDesc> descriptorDesc;
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
+            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_POSITION);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
+            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_NORMAL);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
+            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_ALBEDO);
+        mpInputAttachmentDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, layouts[1], 1);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
@@ -116,33 +126,38 @@ public:
         vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(1), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstants, &pushConstants);
 
-        // Push descriptors
-        std::array<VkWriteDescriptorSet, 3> descriptors = {};
+        // Bind descriptors for input attachments
+        auto descriptorSet = mpInputAttachmentDescriptor->getSet(0);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(1), 0, 1,
+                                &descriptorSet, 0, nullptr);
 
-        VkDescriptorImageInfo positionInfo = mpRenderPass->getInputAttachmentInfo(0);
-        VkDescriptorImageInfo normalInfo = mpRenderPass->getInputAttachmentInfo(1);
-        VkDescriptorImageInfo albedoInfo = mpRenderPass->getInputAttachmentInfo(2);
+        //// Push descriptors
+        // std::array<VkWriteDescriptorSet, 3> descriptors = {};
 
-        descriptors[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptors[0].dstBinding = 0;
-        descriptors[0].descriptorCount = 1;
-        descriptors[0].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-        descriptors[0].pImageInfo = &positionInfo;
+        // VkDescriptorImageInfo positionInfo = mpRenderPass->getInputAttachmentInfo(0);
+        // VkDescriptorImageInfo normalInfo = mpRenderPass->getInputAttachmentInfo(1);
+        // VkDescriptorImageInfo albedoInfo = mpRenderPass->getInputAttachmentInfo(2);
 
-        descriptors[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptors[1].dstBinding = 1;
-        descriptors[1].descriptorCount = 1;
-        descriptors[1].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-        descriptors[1].pImageInfo = &normalInfo;
+        // descriptors[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        // descriptors[0].dstBinding = 0;
+        // descriptors[0].descriptorCount = 1;
+        // descriptors[0].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        // descriptors[0].pImageInfo = &positionInfo;
 
-        descriptors[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptors[2].dstBinding = 2;
-        descriptors[2].descriptorCount = 1;
-        descriptors[2].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-        descriptors[2].pImageInfo = &albedoInfo;
+        // descriptors[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        // descriptors[1].dstBinding = 1;
+        // descriptors[1].descriptorCount = 1;
+        // descriptors[1].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        // descriptors[1].pImageInfo = &normalInfo;
 
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(1), 0,
-                                  static_cast<uint32_t>(descriptors.size()), descriptors.data());
+        // descriptors[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        // descriptors[2].dstBinding = 2;
+        // descriptors[2].descriptorCount = 1;
+        // descriptors[2].descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        // descriptors[2].pImageInfo = &albedoInfo;
+
+        // vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(1), 0,
+        //                           static_cast<uint32_t>(descriptors.size()), descriptors.data());
 
         // Render full-screen quad to resolve final composition
         vkCmdDraw(cmd, 3, 1, 0, 0);
@@ -196,6 +211,8 @@ private:
     std::shared_ptr<Swapchain> mpSwapchain;
     std::vector<std::shared_ptr<Shader>> mpShaders;
     std::shared_ptr<Deferred> mpRenderPass;
+
+    std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
 
     std::shared_ptr<Sampler> mpSampler;
     std::shared_ptr<Scene> mpScene;

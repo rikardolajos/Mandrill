@@ -6,7 +6,7 @@
 using namespace Mandrill;
 
 RenderPass::RenderPass(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       const RenderPassDescription& desc)
+                       const RenderPassDesc& desc)
     : mpDevice(pDevice), mpSwapchain(pSwapchain), mpLayouts(desc.layouts), mpShaders(desc.shaders), mRenderPass(VK_NULL_HANDLE)
 {
     mPipelineLayouts.resize(mpLayouts.size());

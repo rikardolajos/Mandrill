@@ -6,13 +6,13 @@
 
 namespace Mandrill
 {
-    struct LayoutDescription {
+    struct LayoutDesc {
         uint32_t set;
         uint32_t binding;
         VkDescriptorType type;
         VkShaderStageFlags stage;
 
-        MANDRILL_API LayoutDescription(uint32_t set, uint32_t binding, VkDescriptorType type,
+        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type,
                                        VkShaderStageFlagBits stage)
             : set(set), binding(binding), type(type), stage(stage)
         {
@@ -23,7 +23,7 @@ namespace Mandrill
     {
     public:
         MANDRILL_API
-        Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDescription>& layoutDesc,
+        Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDesc>& desc,
                VkDescriptorSetLayoutCreateFlags flags);
         MANDRILL_API ~Layout();
 

@@ -15,7 +15,8 @@ namespace
 } // namespace
 
 
-Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow) : mpDevice(pDevice), mpWindow(pWindow)
+Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow, std::shared_ptr<Swapchain> pSwapchain)
+    : mpDevice(pDevice), mpWindow(pWindow), mpSwapchain(pSwapchain)
 {
     mPosition = glm::vec3(1.0f, 1.0f, 1.0f);
     setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -28,12 +29,30 @@ Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow) : mpDevice(
     mFar = 1000.0f;
     mMoveSpeed = 1.0f;
 
-    mpUniforms = std::make_shared<Buffer>(mpDevice, 4 * sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+    mpUniforms = std::make_shared<Buffer>(mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(CameraMatrices),
+                                          VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    mBufferInfo.buffer = mpUniforms->getBuffer();
-    mBufferInfo.offset = 0;
-    mBufferInfo.range = 4 * sizeof(glm::mat4);
+    VkDescriptorSetLayoutBinding binding = {
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS,
+    };
+
+    VkDescriptorSetLayoutCreateInfo ci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
+        .bindingCount = 1,
+        .pBindings = &binding,
+    };
+
+    VkDescriptorSetLayout layout;
+    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &layout));
+
+    std::vector<DescriptorDesc> desc;
+    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniforms);
+    mpDescriptor = std::make_shared<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
 }
 
 Camera::~Camera()
@@ -128,30 +147,13 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     if (fabsf(newDir.y) < 0.99f) {
         mDirection = newDir;
     }
-}
 
-VkWriteDescriptorSet Camera::getDescriptor(uint32_t binding) const
-{
-    glm::mat4 view = glm::lookAt(mPosition, mPosition + mDirection, mUp);
-    glm::mat4 viewInv = glm::inverse(view);
-    glm::mat4 proj = glm::perspective(glm::radians(mFov), mAspect, mNear, mFar);
-
-    proj[1][1] *= -1.0f; // GLM and Vulkan are not using the same coordinate system
-
-    glm::mat4 projInv = glm::inverse(proj);
-
-    std::array<glm::mat4, 4> matrices{view, viewInv, proj, projInv};
-
-    mpUniforms->copyFromHost(matrices.data(), matrices.size() * sizeof(glm::mat4));
-
-    VkWriteDescriptorSet descriptor = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .dstBinding = binding,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .pBufferInfo = &mBufferInfo,
-    };
-
-    return descriptor;
+    // Update uniform buffer
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) +
+                               sizeof(CameraMatrices) * mpSwapchain->getInFlightIndex();
+    matrices->view = glm::lookAt(mPosition, mPosition + mDirection, mUp);
+    matrices->view_inv = glm::inverse(matrices->view);
+    matrices->proj = glm::perspective(glm::radians(mFov), mAspect, mNear, mFar);
+    matrices->proj[1][1] *= -1.0f; // GLM and Vulkan are not using the same coordinate system
+    matrices->proj_inv = glm::inverse(matrices->proj);
 }

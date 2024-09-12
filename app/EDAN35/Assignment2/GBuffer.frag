@@ -36,8 +36,10 @@ const uint NORMAL_TEXTURE_BIT = 1 << 4;
 
 void main() {
     // Discard transparent parts
-    if (texture(diffuseTexture, inTexCoord).a == 0.0) {
-        discard;
+    if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
+        if (texture(diffuseTexture, inTexCoord).a < 0.5) {
+            discard;
+        }
     }
 
     outPosition = vec4(inWorldPos, 1.0);

@@ -44,7 +44,7 @@ public:
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
         mpScene = std::make_shared<Scene>(mpDevice);
-        auto pLayout = mpScene->getLayout(0);
+        auto pLayout = mpScene->getLayout();
 
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
@@ -55,13 +55,13 @@ public:
         pLayout->addPushConstantRange(pushConstantRange);
 
         // Create a shader module with vertex and fragment shader
-        std::vector<ShaderDescription> shaderDesc;
+        std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer render pass with layout matching the scene
-        RenderPassDescription renderPassDesc(mpShader, pLayout);
+        RenderPassDesc renderPassDesc(mpShader, pLayout);
         mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera

@@ -66,7 +66,7 @@ static void findDependenciesAndCompile(const std::filesystem::path& input)
 }
 
 
-Shader::Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDescription>& desc) : mpDevice(pDevice)
+Shader::Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDesc>& desc) : mpDevice(pDevice)
 {
     mModules.resize(desc.size());
     mStages.resize(desc.size());

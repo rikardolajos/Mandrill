@@ -6,6 +6,8 @@ add_library(Mandrill SHARED
 	"Camera.cpp"
 	"Camera.h"
 	"Common.h"
+	"Descriptor.cpp"
+	"Descriptor.h"
 	"Device.cpp"
 	"Device.h"
 	"Error.cpp"

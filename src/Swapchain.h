@@ -43,6 +43,16 @@ namespace Mandrill
             return mImageIndex;
         }
 
+        MANDRILL_API uint32_t getInFlightIndex() const
+        {
+            return mInFlightIndex;
+        }
+
+        MANDRILL_API uint32_t getFramesInFlightCount() const
+        {
+            return static_cast<uint32_t>(mInFlightFences.size());
+        }
+
         MANDRILL_API bool recreated() const
         {
             return mRecreated;

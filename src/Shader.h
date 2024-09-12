@@ -6,12 +6,12 @@
 
 namespace Mandrill
 {
-    struct ShaderDescription {
+    struct ShaderDesc {
         std::filesystem::path filename;
         std::string entry;
         VkShaderStageFlagBits stageFlags;
 
-        MANDRILL_API ShaderDescription(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags)
+        MANDRILL_API ShaderDesc(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags)
             : filename(filename), entry(entry), stageFlags(stageFlags)
         {
         }
@@ -20,7 +20,7 @@ namespace Mandrill
     class Shader
     {
     public:
-        MANDRILL_API Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDescription>& desc);
+        MANDRILL_API Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
         MANDRILL_API ~Shader();
 
         MANDRILL_API void reload();

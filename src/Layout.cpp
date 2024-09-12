@@ -4,20 +4,19 @@
 
 using namespace Mandrill;
 
-Layout::Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDescription>& layoutDesc,
+Layout::Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDesc>& desc,
                VkDescriptorSetLayoutCreateFlags flags)
     : mpDevice(pDevice)
 {
     // Find highest set
-    auto maxSet =
-        std::max_element(layoutDesc.begin(), layoutDesc.end(), [](auto& a, auto& b) { return a.set < b.set; })[0].set;
+    auto maxSet = std::max_element(desc.begin(), desc.end(), [](auto& a, auto& b) { return a.set < b.set; })[0].set;
 
     mDescriptorSetLayouts.resize(maxSet + 1);
 
     // Create bindings for each set
     for (uint32_t set = 0; set < maxSet + 1; set++) {
-        std::vector<LayoutDescription> setLayoutDesc;
-        std::copy_if(layoutDesc.begin(), layoutDesc.end(), std::back_inserter(setLayoutDesc),
+        std::vector<LayoutDesc> setLayoutDesc;
+        std::copy_if(desc.begin(), desc.end(), std::back_inserter(setLayoutDesc),
                      [set](const auto& l) { return l.set == set; });
 
         std::vector<VkDescriptorSetLayoutBinding> bindings;
