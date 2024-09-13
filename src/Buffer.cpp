@@ -80,7 +80,7 @@ void Buffer::copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize off
 
     } else {
         // Transfer directly without staging buffer
-        char* pOffsettedData = (char*)pData + offset;
-        std::memcpy(mpHostMap, pOffsettedData, size);
+        char* pOffsettedHostMap = (char*)mpHostMap + offset;
+        std::memcpy(pOffsettedHostMap, pData, size);
     }
 }
