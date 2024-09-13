@@ -1,12 +1,12 @@
 #include "Descriptor.h"
 
 #include "Error.h"
+#include "Helpers.h"
 
 using namespace Mandrill;
 
-Descriptor::Descriptor(std::shared_ptr<Device> pDevice,
-                       const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout,
-                       uint32_t copies)
+Descriptor::Descriptor(std::shared_ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
+                       VkDescriptorSetLayout layout, uint32_t copies)
     : mpDevice(pDevice)
 {
     allocate(desc, layout, copies);
@@ -28,27 +28,43 @@ Descriptor::Descriptor(std::shared_ptr<Device> pDevice,
             VkDescriptorBufferInfo bi;
             VkDescriptorImageInfo ii;
             // VkWriteDescriptorSetAccelerationStructureKHR asi;
+            VkDeviceSize offset;
 
             switch (desc[d].type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+                offset =
+                    Helpers::alignTo(i * (std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
+                                     mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment);
                 bi = {
-                    .buffer = desc[d].pBuffer->getBuffer(),
-                    .offset = i * (desc[d].pBuffer->getSize() / copies),
-                    .range = desc[d].pBuffer->getSize(),
+                    .buffer = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getBuffer(),
+                    .offset = offset,
+                    .range = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
+                };
+                write.pBufferInfo = &bi;
+                break;
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+                offset =
+                    Helpers::alignTo(i * (std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
+                                     mpDevice->getProperties().physicalDevice.limits.minStorageBufferOffsetAlignment);
+                bi = {
+                    .buffer = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getBuffer(),
+                    .offset = offset,
+                    .range = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
                 };
                 write.pBufferInfo = &bi;
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
                 ii = {
-                    .sampler = desc[d].pTexture->getSampler(),
-                    .imageView = desc[d].pTexture->getImageView(),
+                    .sampler = std::get<std::shared_ptr<Texture>>(desc[d].pResource)->getSampler(),
+                    .imageView = std::get<std::shared_ptr<Texture>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;
                 break;
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+            case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
                 ii = {
-                    .imageView = desc[d].pImage->getImageView(),
+                    .imageView = std::get<std::shared_ptr<Image>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
                 };
                 write.pImageInfo = &ii;
@@ -62,8 +78,8 @@ Descriptor::Descriptor(std::shared_ptr<Device> pDevice,
                 // writes.pNext = &accStructInfos[d];
                 break;
             }
+            vkUpdateDescriptorSets(mpDevice->getDevice(), 1, &write, 0, nullptr);
         }
-        vkUpdateDescriptorSets(mpDevice->getDevice(), 1, &write, 0, nullptr);
     }
 }
 
@@ -93,13 +109,8 @@ void Descriptor::allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorS
 
     Check::Vk(vkCreateDescriptorPool(mpDevice->getDevice(), &poolInfo, nullptr, &mPool));
 
-    // Set layout
+    // Set layout (same for all copies)
     std::vector<VkDescriptorSetLayout> layouts(copies, layout);
-
-    //// Same layout should be used for all descriptor sets
-    // for (uint32_t i = 0; i < copies; i++) {
-    //     std::memcpy(&layouts[i], &layout, sizeof(VkDescriptorSetLayout));
-    // }
 
     VkDescriptorSetAllocateInfo ai = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,

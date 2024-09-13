@@ -4,30 +4,31 @@
 
 #include "Buffer.h"
 #include "Device.h"
+#include "Log.h"
 #include "Texture.h"
 
 namespace Mandrill
 {
     struct DescriptorDesc {
         VkDescriptorType type;
-        union {
-            std::shared_ptr<Buffer> pBuffer;
-            std::shared_ptr<Image> pImage;
-            std::shared_ptr<Texture> pTexture;
-        };
+        std::variant<std::shared_ptr<Buffer>, std::shared_ptr<Image>, std::shared_ptr<Texture>> pResource;
 
         MANDRILL_API DescriptorDesc(VkDescriptorType type, std::shared_ptr<void> pResource) : type(type)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-                pBuffer = std::static_pointer_cast<Buffer>(pResource);
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+                this->pResource = std::static_pointer_cast<Buffer>(pResource);
                 break;
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
-                pImage = std::static_pointer_cast<Image>(pResource);
+            case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
+                this->pResource = std::static_pointer_cast<Image>(pResource);
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-                pTexture = std::static_pointer_cast<Texture>(pResource);
+                this->pResource = std::static_pointer_cast<Texture>(pResource);
                 break;
+            default:
+                Log::error("DescriptorDesc: Resource not supported\n");
             }
         }
 

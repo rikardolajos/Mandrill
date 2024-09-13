@@ -28,6 +28,7 @@
 #include <source_location>
 #include <string>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #define MANDRILL_NAME "Mandrill"

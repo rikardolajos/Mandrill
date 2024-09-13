@@ -71,17 +71,16 @@ public:
 
         // Create rasterizer pipeline with layout matching the shader
         std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(1, 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-        auto pLayout =
-            std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+        auto pLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
 
         RenderPassDesc renderPassDesc(mpShader, pLayout);
         mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -103,7 +102,7 @@ public:
         std::vector<DescriptorDesc> descriptorDesc;
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniform);
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = std::make_shared<Descriptor>(mpDevice, pLayout->getDescriptorSetLayouts()[1], descriptorDesc,
+        mpDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1],
                                                     mpSwapchain->getFramesInFlightCount());
 
         // Initialize GUI
@@ -144,7 +143,7 @@ public:
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
         // Bind descriptor sets
-        std::array<VkDescriptorSet, 3> descriptorSets;
+        std::array<VkDescriptorSet, 2> descriptorSets = {};
         descriptorSets[0] = mpCamera->getDescriptorSet();
         descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
 

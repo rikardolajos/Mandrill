@@ -11,7 +11,7 @@ public:
     void loadScene()
     {
         // Create a new scene
-        mpScene = std::make_shared<Scene>(mpDevice);
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
 
         // Load meshes from the scene path
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
@@ -24,14 +24,14 @@ public:
             node.addMesh(meshIndex);
         }
 
+        // Indicate which sampler should be used to handle textures
+        mpScene->setSampler(mpSampler);
+
         // Calculate and allocate buffers
         mpScene->compile();
 
         // Sync to GPU
         mpScene->syncToDevice();
-
-        // Indicate which sampler should be used to handle textures
-        mpScene->setSampler(mpSampler);
     }
 
     SceneViewer() : App("SceneViewer", 1920, 1080)
@@ -43,7 +43,7 @@ public:
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
-        mpScene = std::make_shared<Scene>(mpDevice);
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
         // Add push constant to layout so we can set render mode in shader
@@ -65,7 +65,7 @@ public:
         mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);

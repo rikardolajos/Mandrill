@@ -30,7 +30,7 @@ namespace Mandrill
 
         MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
 
-        MANDRILL_API bool isMouseCaptured()
+        MANDRILL_API bool isMouseCaptured() const
         {
             return mMouseCaptured;
         }
@@ -98,5 +98,6 @@ namespace Mandrill
         
         std::shared_ptr<Buffer> mpUniforms;
         std::shared_ptr<Descriptor> mpDescriptor;
+        VkDescriptorSetLayout mLayout;
     };
 } // namespace Mandrill

@@ -228,7 +228,7 @@ namespace Mandrill
         std::vector<Mesh> mMeshes;
         std::vector<Node> mNodes;
         std::vector<Material> mMaterials;
-        std::unordered_map<std::string, Texture> mTextures;
+        std::unordered_map<std::string, std::shared_ptr<Texture>> mTextures;
 
         std::shared_ptr<Buffer> mpVertexBuffer;
         std::shared_ptr<Buffer> mpIndexBuffer;

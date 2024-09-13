@@ -11,7 +11,7 @@ layout(location = 0) out vec4 outPosition;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outAlbedo;
 
-layout(set = 0, binding = 2) uniform MaterialParams {
+layout(set = 2, binding = 0) uniform MaterialParams {
     vec3 diffuse;
     float shininess;
     vec3 specular;
@@ -22,11 +22,11 @@ layout(set = 0, binding = 2) uniform MaterialParams {
     uint hasTexture;
 } materialParams;
 
-layout(set = 0, binding = 3) uniform sampler2D diffuseTexture;
-layout(set = 0, binding = 4) uniform sampler2D specularTexture;
-layout(set = 0, binding = 5) uniform sampler2D ambientTexture;
-layout(set = 0, binding = 6) uniform sampler2D emissionTexture;
-layout(set = 0, binding = 7) uniform sampler2D normalTexture;
+layout(set = 2, binding = 1) uniform sampler2D diffuseTexture;
+layout(set = 2, binding = 2) uniform sampler2D specularTexture;
+layout(set = 2, binding = 3) uniform sampler2D ambientTexture;
+layout(set = 2, binding = 4) uniform sampler2D emissionTexture;
+layout(set = 2, binding = 5) uniform sampler2D normalTexture;
 
 const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;
 const uint SPECULAR_TEXTURE_BIT = 1 << 1;

@@ -42,21 +42,21 @@ Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow, std::shared
 
     VkDescriptorSetLayoutCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
         .bindingCount = 1,
         .pBindings = &binding,
     };
 
-    VkDescriptorSetLayout layout;
-    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &layout));
+    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mLayout));
 
     std::vector<DescriptorDesc> desc;
     desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniforms);
-    mpDescriptor = std::make_shared<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+    mpDescriptor = std::make_shared<Descriptor>(mpDevice, desc, mLayout, mpSwapchain->getFramesInFlightCount());
 }
 
 Camera::~Camera()
 {
+    Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
+    vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mLayout, nullptr);
 }
 
 void Camera::updateAspectRatio()
@@ -149,8 +149,7 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     }
 
     // Update uniform buffer
-    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) +
-                               sizeof(CameraMatrices) * mpSwapchain->getInFlightIndex();
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + mpSwapchain->getInFlightIndex();
     matrices->view = glm::lookAt(mPosition, mPosition + mDirection, mUp);
     matrices->view_inv = glm::inverse(matrices->view);
     matrices->proj = glm::perspective(glm::radians(mFov), mAspect, mNear, mFar);

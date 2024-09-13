@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "Extension.h "
+#include "Helpers.h"
 #include "Log.h"
 
 #include "tiny_obj_loader.h"
@@ -31,7 +32,7 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
     }
 
     // Bind descriptor set for node
-    std::array<VkDescriptorSet, 1> descriptorSetNode;
+    std::array<VkDescriptorSet, 1> descriptorSetNode = {};
     descriptorSetNode[0] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
     vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 1,
                             static_cast<uint32_t>(descriptorSetNode.size()), descriptorSetNode.data(), 0, nullptr);
@@ -40,7 +41,7 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
         const Mesh& mesh = pScene->mMeshes[meshIndex];
 
         // Bind descriptor set for material
-        std::array<VkDescriptorSet, 1> descriptorSetMaterial;
+        std::array<VkDescriptorSet, 1> descriptorSetMaterial = {};
         descriptorSetMaterial[0] =
             pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 2,
@@ -64,8 +65,6 @@ Scene::Scene(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapch
 {
     mpMissingTexture =
         std::make_shared<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
-
-    createDescriptors();
 }
 
 Scene::~Scene()
@@ -75,7 +74,7 @@ Scene::~Scene()
 void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout) const
 {
     // Bind descriptor set for camera matrices
-    std::array<VkDescriptorSet, 1> descriptors;
+    std::array<VkDescriptorSet, 1> descriptors = {};
     descriptors[0] = pCamera->getDescriptorSet();
     vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, static_cast<uint32_t>(descriptors.size()),
                             descriptors.data(), 0, nullptr);
@@ -161,7 +160,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
             // Loop over vertices in the face
             for (size_t v = 0; v < fv; v++) {
-                Vertex vert;
+                Vertex vert = {};
 
                 tinyobj::index_t idx = shape.mesh.indices[indexOffset + v];
                 vert.position.x = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
@@ -251,9 +250,10 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
         mat.params.indexOfRefraction = material.ior;
         mat.params.opacity = material.dissolve;
 
-        auto loadTexture = [path, materialPath](std::shared_ptr<Device> pDevice,
-                                                std::unordered_map<std::string, Texture>& loadedTextures,
-                                                std::string textureFile, std::string& texturePath) -> bool {
+        auto loadTexture = [path,
+                            materialPath](std::shared_ptr<Device> pDevice,
+                                          std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTextures,
+                                          std::string textureFile, std::string& texturePath) -> bool {
             if (textureFile.empty()) {
                 return false;
             }
@@ -264,28 +264,44 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                 return false;
             }
 
-            loadedTextures.insert(std::make_pair(
-                texturePath, Texture(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true)));
+            auto pTexture = std::make_shared<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
+                                                      texturePath, true);
+            loadedTextures.insert(std::make_pair(texturePath, pTexture));
 
             return true;
+        };
+
+        auto setMissingTexture = [](std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTextures,
+                                    const std::string& texturePath, std::shared_ptr<Texture> pMissingTexture) {
+            loadedTextures.insert(std::make_pair(texturePath, pMissingTexture));
         };
 
         mat.params.hasTexture = 0;
 
         if (loadTexture(mpDevice, mTextures, material.diffuse_texname, mat.diffuseTexturePath)) {
             mat.params.hasTexture |= DIFFUSE_TEXTURE_BIT;
+        } else {
+            setMissingTexture(mTextures, material.diffuse_texname, mpMissingTexture);
         }
         if (loadTexture(mpDevice, mTextures, material.specular_texname, mat.specularTexturePath)) {
             mat.params.hasTexture |= SPECULAR_TEXTURE_BIT;
+        } else {
+            setMissingTexture(mTextures, material.specular_texname, mpMissingTexture);
         }
         if (loadTexture(mpDevice, mTextures, material.ambient_texname, mat.ambientTexturePath)) {
             mat.params.hasTexture |= AMBIENT_TEXTURE_BIT;
+        } else {
+            setMissingTexture(mTextures, material.ambient_texname, mpMissingTexture);
         }
         if (loadTexture(mpDevice, mTextures, material.emissive_texname, mat.emissionTexturePath)) {
             mat.params.hasTexture |= EMISSION_TEXTURE_BIT;
+        } else {
+            setMissingTexture(mTextures, material.emissive_texname, mpMissingTexture);
         }
         if (loadTexture(mpDevice, mTextures, material.normal_texname, mat.normalTexturePath)) {
             mat.params.hasTexture |= NORMAL_TEXTURE_BIT;
+        } else {
+            setMissingTexture(mTextures, material.normal_texname, mpMissingTexture);
         }
 
         mMaterials.push_back(mat);
@@ -296,6 +312,10 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
 void Scene::compile()
 {
+    if (mpMissingTexture->getSampler() == VK_NULL_HANDLE) {
+        Log::error("Scene: Sampler must be set before calling compile()");
+    }
+
     // Calculate size of buffers
     size_t verticesSize = 0;
     size_t indicesSize = 0;
@@ -315,18 +335,23 @@ void Scene::compile()
                                              VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    mpTransforms = std::make_shared<Buffer>(mpDevice, sizeof(glm::mat4) * mNodes.size(),
-                                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    mpMaterialParams =
-        std::make_shared<Buffer>(mpDevice, sizeof(MaterialParams) * mMaterials.size(),
-                                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    VkDeviceSize transformsSize =
+        Helpers::alignTo(sizeof(glm::mat4) * mNodes.size() * mpSwapchain->getFramesInFlightCount(), alignment);
+    mpTransforms = std::make_shared<Buffer>(mpDevice, transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    VkDeviceSize materialParamsSize =
+        Helpers::alignTo(sizeof(MaterialParams) * mMaterials.size() * mpSwapchain->getFramesInFlightCount(), alignment);
+    mpMaterialParams = std::make_shared<Buffer>(mpDevice, materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                                VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     // Associate each node with a part of the transforms buffer
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
     for (size_t i = 0; i < mNodes.size(); i++) {
         mNodes[i].mpTransform = transforms + i;
         *mNodes[i].mpTransform = glm::mat4(1.0f);
-        mNodes[i].mTransformsOffset = i * sizeof(glm::mat4);
+        mNodes[i].mTransformsOffset = Helpers::alignTo(i * sizeof(glm::mat4), alignment);
     }
 
     // Associate each material with a part of the material params buffer
@@ -334,8 +359,10 @@ void Scene::compile()
     for (size_t i = 0; i < mMaterials.size(); i++) {
         mMaterials[i].paramsDevice = materialParams + i;
         *mMaterials[i].paramsDevice = mMaterials[i].params;
-        mMaterials[i].paramsOffset = i * sizeof(MaterialParams);
+        mMaterials[i].paramsOffset = Helpers::alignTo(i * sizeof(MaterialParams), alignment);
     }
+
+    createDescriptors();
 }
 
 void Scene::syncToDevice()
@@ -372,7 +399,7 @@ void Scene::setSampler(const std::shared_ptr<Sampler> pSampler)
     mpMissingTexture->setSampler(pSampler);
 
     for (auto& texture : mTextures) {
-        texture.second.setSampler(pSampler);
+        texture.second->setSampler(pSampler);
     }
 }
 
@@ -381,11 +408,11 @@ std::shared_ptr<Layout> Scene::getLayout()
 {
     std::vector<LayoutDesc> desc;
     desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                      VK_SHADER_STAGE_ALL_GRAPHICS); // Camera matrix
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Camera matrices
     desc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Model matrix
     desc.emplace_back(2, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material colors
+                      VK_SHADER_STAGE_ALL_GRAPHICS); // Material parameters
     desc.emplace_back(2, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material diffuse texture
     desc.emplace_back(2, 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -397,7 +424,7 @@ std::shared_ptr<Layout> Scene::getLayout()
     desc.emplace_back(2, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
 
-    return std::make_shared<Layout>(mpDevice, desc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
+    return std::make_shared<Layout>(mpDevice, desc);
 }
 
 
@@ -412,24 +439,18 @@ void Scene::createDescriptors()
 
         // Set layout for set 1
         auto layout = pLayout->getDescriptorSetLayouts()[1];
-        node.pDescriptor =
-            std::make_unique<Descriptor>(mpDevice, desc, layout, mNodes.size() * mpSwapchain->getFramesInFlightCount());
+        node.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
     }
 
     // Materials
     for (auto& mat : mMaterials) {
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpMaterialParams);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                          std::make_shared<Texture>(mTextures[mat.diffuseTexturePath]));
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                          std::make_shared<Texture>(mTextures[mat.specularTexturePath]));
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                          std::make_shared<Texture>(mTextures[mat.ambientTexturePath]));
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                          std::make_shared<Texture>(mTextures[mat.emissionTexturePath]));
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                          std::make_shared<Texture>(mTextures[mat.normalTexturePath]));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.diffuseTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.specularTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.ambientTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.emissionTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.normalTexturePath]);
 
         // Set layout for set 2
         auto layout = pLayout->getDescriptorSetLayouts()[2];

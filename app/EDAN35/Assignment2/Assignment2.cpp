@@ -23,11 +23,11 @@ public:
         for (auto meshIndex : meshIndices) {
             node.addMesh(meshIndex);
         }
+        mpScene->setSampler(mpSampler);
         mpScene->compile();
         // Scale down the model
         node.setTransform(glm::scale(glm::vec3(0.01f)));
         mpScene->syncToDevice();
-        mpScene->setSampler(mpSampler);
 
         // Deferred render pass requires 2 passes (G-buffer and resolve)
         std::vector<ShaderDesc> shaderDesc1;
@@ -66,16 +66,17 @@ public:
 
         // Create descriptors for second pass
         std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
-            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_POSITION);
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
-            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_NORMAL);
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT).pImage =
-            mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_ALBEDO);
-        mpInputAttachmentDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, layouts[1], 1);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+                                    mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_POSITION));
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+                                    mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_NORMAL));
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+                                    mpRenderPass->getInputAttachmentInfo(DEFERRED_INPUT_ATTACHMENT_ALBEDO));
+        mpInputAttachmentDescriptor =
+            std::make_shared<Descriptor>(mpDevice, descriptorDesc, layouts[1]->getDescriptorSetLayouts()[0], 1);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);

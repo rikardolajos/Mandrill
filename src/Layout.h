@@ -24,7 +24,7 @@ namespace Mandrill
     public:
         MANDRILL_API
         Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDesc>& desc,
-               VkDescriptorSetLayoutCreateFlags flags);
+               VkDescriptorSetLayoutCreateFlags flags = 0);
         MANDRILL_API ~Layout();
 
         MANDRILL_API const std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() const
