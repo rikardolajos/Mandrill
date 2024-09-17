@@ -394,6 +394,14 @@ void Deferred::createAttachments()
     mpNormal->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
     mpAlbedo->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
     mpDepth->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    // Create descriptors
+    std::vector<DescriptorDesc> descriptorDesc;
+    descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpPosition);
+    descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpNormal);
+    descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpAlbedo);
+    mpInputAttachmentDescriptor =
+        std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpLayouts[1]->getDescriptorSetLayouts()[0], 1);
 }
 
 void Deferred::destroyAttachments()
@@ -512,4 +520,9 @@ void Deferred::nextSubpass(VkCommandBuffer cmd)
     vkCmdNextSubpass(cmd, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[RESOLVE_PASS]);
     vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
+
+    // Bind descriptors for input attachments
+    auto descriptorSet = mpInputAttachmentDescriptor->getSet(0);
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayouts[RESOLVE_PASS], 0, 1, &descriptorSet,
+                            0, nullptr);
 }

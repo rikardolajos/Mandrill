@@ -31,6 +31,8 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
         return;
     }
 
+    std::memcpy(mpTransformDevice + pScene->mpSwapchain->getInFlightIndex(), &mTransform, sizeof(glm::mat4));
+
     // Bind descriptor set for node
     std::array<VkDescriptorSet, 1> descriptorSetNode = {};
     descriptorSetNode[0] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
@@ -42,8 +44,7 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
 
         // Bind descriptor set for material
         std::array<VkDescriptorSet, 1> descriptorSetMaterial = {};
-        descriptorSetMaterial[0] =
-            pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
+        descriptorSetMaterial[0] = pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet();
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 2,
                                 static_cast<uint32_t>(descriptorSetMaterial.size()), descriptorSetMaterial.data(), 0,
                                 nullptr);
@@ -84,13 +85,13 @@ void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, V
     }
 }
 
-Node& Scene::addNode()
+Node* Scene::addNode()
 {
     Node node = {};
 
     mNodes.push_back(node);
 
-    return *(mNodes.end() - 1);
+    return &*(mNodes.end() - 1);
 }
 
 uint32_t Scene::addMaterial(Material material)
@@ -336,22 +337,24 @@ void Scene::compile()
                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    VkDeviceSize transformsSize =
-        Helpers::alignTo(sizeof(glm::mat4) * mNodes.size() * mpSwapchain->getFramesInFlightCount(), alignment);
+    uint32_t copies = mpSwapchain->getFramesInFlightCount();
+
+    // Transforms can change between frames, material parameters can not
+    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4) * mNodes.size() * copies, alignment);
     mpTransforms = std::make_shared<Buffer>(mpDevice, transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    VkDeviceSize materialParamsSize =
-        Helpers::alignTo(sizeof(MaterialParams) * mMaterials.size() * mpSwapchain->getFramesInFlightCount(), alignment);
+    VkDeviceSize materialParamsSize = Helpers::alignTo(sizeof(MaterialParams) * mMaterials.size(), alignment);
     mpMaterialParams = std::make_shared<Buffer>(mpDevice, materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                                 VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    // Associate each node with a part of the transforms buffer
+    // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
     for (size_t i = 0; i < mNodes.size(); i++) {
-        mNodes[i].mpTransform = transforms + i;
-        *mNodes[i].mpTransform = glm::mat4(1.0f);
-        mNodes[i].mTransformsOffset = Helpers::alignTo(i * sizeof(glm::mat4), alignment);
+        mNodes[i].mpTransformDevice = transforms + i * copies;
+        for (size_t c = 0; c < copies; c++) {
+            *(mNodes[i].mpTransformDevice + c) = glm::mat4(1.0f);
+        }
     }
 
     // Associate each material with a part of the material params buffer
@@ -454,6 +457,6 @@ void Scene::createDescriptors()
 
         // Set layout for set 2
         auto layout = pLayout->getDescriptorSetLayouts()[2];
-        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
 }

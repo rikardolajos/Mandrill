@@ -6,13 +6,7 @@
 
 #include <GLFW/glfw3.h>
 
-#if defined(_WIN64)
-static VkPresentModeKHR presentModeNoVsync = VK_PRESENT_MODE_MAILBOX_KHR;
-#elif defined(__linux__)
 static VkPresentModeKHR presentModeNoVsync = VK_PRESENT_MODE_IMMEDIATE_KHR;
-#else
-#error "Unsupported target platform"
-#endif
 
 using namespace Mandrill;
 

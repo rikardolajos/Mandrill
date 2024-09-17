@@ -41,10 +41,10 @@ namespace Mandrill
     {
     public:
         MANDRILL_API Descriptor(std::shared_ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
-                                VkDescriptorSetLayout layout, uint32_t copies);
+                                VkDescriptorSetLayout layout, uint32_t copies = 1);
         MANDRILL_API ~Descriptor();
 
-        MANDRILL_API VkDescriptorSet getSet(uint32_t index) const
+        MANDRILL_API VkDescriptorSet getSet(uint32_t index = 0) const
         {
             return mSets[index];
         }

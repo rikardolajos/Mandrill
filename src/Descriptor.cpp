@@ -65,7 +65,7 @@ Descriptor::Descriptor(std::shared_ptr<Device> pDevice, const std::vector<Descri
             case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
                 ii = {
                     .imageView = std::get<std::shared_ptr<Image>>(desc[d].pResource)->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
+                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;
                 break;

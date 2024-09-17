@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "Descriptor.h"
 #include "RenderPasses/RenderPass.h"
 
 namespace Mandrill
@@ -25,20 +26,6 @@ namespace Mandrill
 
         MANDRILL_API void nextSubpass(VkCommandBuffer cmd);
 
-        MANDRILL_API std::shared_ptr<Image> getInputAttachmentInfo(DeferredInputAttachment attachment)
-        {
-            switch (attachment) {
-            case DEFERRED_INPUT_ATTACHMENT_POSITION:
-                return mpPosition;
-            case DEFERRED_INPUT_ATTACHMENT_NORMAL:
-                return mpNormal;
-            case DEFERRED_INPUT_ATTACHMENT_ALBEDO:
-                return mpAlbedo;
-            default:
-                return nullptr;
-            }
-        }
-
     protected:
         void createPipelines() override;
         void destroyPipelines() override;
@@ -57,5 +44,7 @@ namespace Mandrill
         std::shared_ptr<Image> mpAlbedo;
         std::shared_ptr<Image> mpDepth;
         std::vector<VkFramebuffer> mFramebuffers;
+
+        std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
     };
 } // namespace Mandrill

@@ -91,11 +91,7 @@ namespace Mandrill
         /// <returns></returns>
         MANDRILL_API void setTransform(glm::mat4 transform)
         {
-            if (!mpTransform) {
-                Log::error("Cannot set transform. Make sure to compile the scene before setting transforms");
-                return;
-            }
-            *mpTransform = transform;
+            mTransform = transform;
         }
 
         /// <summary>
@@ -113,8 +109,8 @@ namespace Mandrill
 
         std::vector<uint32_t> mMeshIndices;
 
-        glm::mat4* mpTransform;
-        VkDeviceSize mTransformsOffset;
+        glm::mat4 mTransform;
+        glm::mat4* mpTransformDevice;
         std::shared_ptr<Descriptor> pDescriptor;
 
         bool mVisible;
@@ -158,8 +154,8 @@ namespace Mandrill
         /// <summary>
         /// Add a node to the scene.
         /// </summary>
-        /// <returns>A reference to the create node</returns>
-        MANDRILL_API Node& addNode();
+        /// <returns>A pointer to the created node</returns>
+        MANDRILL_API Node* addNode();
 
         /// <summary>
         /// Add a material to the scene.
