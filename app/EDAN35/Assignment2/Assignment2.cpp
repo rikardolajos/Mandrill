@@ -19,12 +19,12 @@ public:
         // Create and load scene
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        Node* node = mpScene->addNode();
+        Node* pNode = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
-            node->addMesh(meshIndex);
+            pNode->addMesh(meshIndex);
         }
         // Scale down the model
-        node->setTransform(glm::scale(glm::vec3(0.01f)));
+        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->setSampler(mpSampler);
         mpScene->compile();

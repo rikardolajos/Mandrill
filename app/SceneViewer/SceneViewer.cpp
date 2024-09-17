@@ -17,11 +17,11 @@ public:
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
 
         // Add a node to the scene
-        Node& node = mpScene->addNode();
+        Node* pNode = mpScene->addNode();
 
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
-            node.addMesh(meshIndex);
+            pNode->addMesh(meshIndex);
         }
 
         // Indicate which sampler should be used to handle textures
