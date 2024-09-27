@@ -13,11 +13,13 @@
 
 extern "C" {
 extern MANDRILL_API PFN_vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR_;
+extern MANDRILL_API PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR_;
 // Add more extensions here, don't forget the macro below.
 }
 
 // Define macros so we can use the same name as the API
 #define vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR_
+#define vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR_
 
 // Macro for loading a device function pointers as Xvk...()
 #define VK_LOAD(device, func_name)                                                                                     \

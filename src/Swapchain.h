@@ -23,6 +23,11 @@ namespace Mandrill
             return mSwapchain;
         }
 
+        MANDRILL_API VkImage getImage() const
+        {
+            return mImages[mImageIndex];
+        }
+
         MANDRILL_API std::vector<VkImageView> getImageViews() const
         {
             return mImageViews;

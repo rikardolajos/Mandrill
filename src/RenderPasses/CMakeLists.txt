@@ -5,3 +5,4 @@ target_sources(Mandrill PRIVATE
 
 add_subdirectory(Deferred)
 add_subdirectory(Rasterizer)
+add_subdirectory(RayTracer)

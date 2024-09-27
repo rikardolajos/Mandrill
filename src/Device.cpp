@@ -200,10 +200,8 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 void Device::createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
 {
     std::array baseExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
-        VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
-        //VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME, VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
+        // VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {
@@ -357,4 +355,6 @@ void Device::createExtensionProcAddrs()
 {
     vkCmdPushDescriptorSetKHR =
         reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(vkGetDeviceProcAddr(mDevice, "vkCmdPushDescriptorSetKHR"));
+    vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(
+        vkGetDeviceProcAddr(mDevice, "vkCreateRayTracingPipelinesKHR"));
 }
