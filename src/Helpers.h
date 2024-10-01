@@ -13,7 +13,7 @@ namespace Mandrill
     class MANDRILL_API Helpers
     {
     public:
-        inline static VkCommandBuffer cmdBegin(std::shared_ptr<Device> pDevice)
+        inline static VkCommandBuffer cmdBegin(ptr<Device> pDevice)
         {
             VkCommandBufferAllocateInfo ai = {
                 .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -35,7 +35,7 @@ namespace Mandrill
             return cmd;
         }
 
-        inline static void cmdEnd(std::shared_ptr<Device> pDevice, VkCommandBuffer cmd)
+        inline static void cmdEnd(ptr<Device> pDevice, VkCommandBuffer cmd)
         {
             Check::Vk(vkEndCommandBuffer(cmd));
 
@@ -51,7 +51,7 @@ namespace Mandrill
             vkFreeCommandBuffers(pDevice->getDevice(), pDevice->getCommandPool(), 1, &cmd);
         }
 
-        inline static uint32_t findMemoryType(std::shared_ptr<Device> pDevice, uint32_t typeFilter,
+        inline static uint32_t findMemoryType(ptr<Device> pDevice, uint32_t typeFilter,
                                               VkMemoryPropertyFlags properties)
         {
             for (uint32_t i = 0; i < pDevice->getProperties().memory.memoryTypeCount; i++) {
@@ -65,7 +65,7 @@ namespace Mandrill
             return UINT32_MAX;
         }
 
-        inline static VkFormat findSupportedFormat(std::shared_ptr<Device> pDevice, std::vector<VkFormat> candidates,
+        inline static VkFormat findSupportedFormat(ptr<Device> pDevice, std::vector<VkFormat> candidates,
                                                    VkImageTiling tiling, VkFormatFeatureFlags features)
         {
             for (auto& c : candidates) {
@@ -83,7 +83,7 @@ namespace Mandrill
         }
 
 
-        inline static VkFormat findDepthFormat(std::shared_ptr<Device> pDevice)
+        inline static VkFormat findDepthFormat(ptr<Device> pDevice)
         {
             std::vector<VkFormat> candidates;
             candidates.push_back(VK_FORMAT_D32_SFLOAT);
@@ -94,7 +94,7 @@ namespace Mandrill
                                        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
 
-        inline static void transitionImageLayout(std::shared_ptr<Device> pDevice, VkImage image, VkFormat format,
+        inline static void transitionImageLayout(ptr<Device> pDevice, VkImage image, VkFormat format,
                                                  VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);
@@ -162,7 +162,7 @@ namespace Mandrill
             cmdEnd(pDevice, cmd);
         }
 
-        inline static void copyBufferToImage(std::shared_ptr<Device> pDevice, const Buffer& buffer, const Image& image,
+        inline static void copyBufferToImage(ptr<Device> pDevice, const Buffer& buffer, const Image& image,
                                              uint32_t width, uint32_t height)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);

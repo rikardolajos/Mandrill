@@ -11,13 +11,13 @@ public:
     void loadScene()
     {
         // Create a new scene
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
+        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
 
         // Load meshes from the scene path
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
 
         // Add a node to the scene
-        Node* pNode = mpScene->addNode();
+        ptr<Node> pNode = mpScene->addNode();
 
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
@@ -37,13 +37,13 @@ public:
     SceneViewer() : App("SceneViewer", 1920, 1080)
     {
         // Create a Vulkan instance and device
-        mpDevice = std::make_shared<Device>(mpWindow);
+        mpDevice = make_ptr<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
+        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
         // Add push constant to layout so we can set render mode in shader
@@ -58,20 +58,20 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer render pass with layout matching the scene
         RenderPassDesc renderPassDesc(mpShader, pLayout);
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
+        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
         // Create a sampler that will be used to render materials
-        mpSampler = std::make_shared<Sampler>(mpDevice);
+        mpSampler = make_ptr<Sampler>(mpDevice);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
@@ -191,17 +191,17 @@ public:
     }
 
 private:
-    std::shared_ptr<Device> mpDevice;
-    std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Shader> mpShader;
-    std::shared_ptr<Rasterizer> mpRenderPass;
+    ptr<Device> mpDevice;
+    ptr<Swapchain> mpSwapchain;
+    ptr<Shader> mpShader;
+    ptr<Rasterizer> mpRenderPass;
 
-    std::shared_ptr<Camera> mpCamera;
+    ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;
 
-    std::shared_ptr<Sampler> mpSampler;
+    ptr<Sampler> mpSampler;
 
-    std::shared_ptr<Scene> mpScene;
+    ptr<Scene> mpScene;
     std::filesystem::path mScenePath;
 
     int mRenderMode = 0;

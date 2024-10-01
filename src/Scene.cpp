@@ -18,14 +18,17 @@ enum MaterialTextureBit {
 
 Node::Node()
 {
+    mTransform = glm::identity<glm::mat4>();
+    mVisible = true;
+    mpTransformDevice = nullptr;
 }
 
 Node::~Node()
 {
 }
 
-void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout,
-                  const std::shared_ptr<const Scene> pScene) const
+void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout,
+                  const ptr<const Scene> pScene) const
 {
     if (!mVisible) {
         return;
@@ -61,18 +64,17 @@ void Node::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, Vk
     }
 }
 
-Scene::Scene(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
-    : mpDevice(pDevice), mpSwapchain(pSwapchain)
+Scene::Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : mpDevice(pDevice), mpSwapchain(pSwapchain)
 {
     mpMissingTexture =
-        std::make_shared<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
+        make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
 }
 
 Scene::~Scene()
 {
 }
 
-void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout) const
+void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout) const
 {
     // Bind descriptor set for camera matrices
     std::array<VkDescriptorSet, 1> descriptors = {};
@@ -85,13 +87,13 @@ void Scene::render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, V
     }
 }
 
-Node* Scene::addNode()
+ptr<Node> Scene::addNode()
 {
     Node node = {};
 
     mNodes.push_back(node);
 
-    return &*(mNodes.end() - 1);
+    return ptr<Node>(&*(mNodes.end() - 1), [](Node*) {});
 }
 
 uint32_t Scene::addMaterial(Material material)
@@ -251,10 +253,9 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
         mat.params.indexOfRefraction = material.ior;
         mat.params.opacity = material.dissolve;
 
-        auto loadTexture = [path,
-                            materialPath](std::shared_ptr<Device> pDevice,
-                                          std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTextures,
-                                          std::string textureFile, std::string& texturePath) -> bool {
+        auto loadTexture = [path, materialPath](ptr<Device> pDevice,
+                                                std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                                std::string textureFile, std::string& texturePath) -> bool {
             if (textureFile.empty()) {
                 return false;
             }
@@ -265,15 +266,15 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                 return false;
             }
 
-            auto pTexture = std::make_shared<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
-                                                      texturePath, true);
+            auto pTexture =
+                make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true);
             loadedTextures.insert(std::make_pair(texturePath, pTexture));
 
             return true;
         };
 
-        auto setMissingTexture = [](std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTextures,
-                                    const std::string& texturePath, std::shared_ptr<Texture> pMissingTexture) {
+        auto setMissingTexture = [](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                    const std::string& texturePath, ptr<Texture> pMissingTexture) {
             loadedTextures.insert(std::make_pair(texturePath, pMissingTexture));
         };
 
@@ -329,24 +330,24 @@ void Scene::compile()
     }
 
     // Allocate device buffers
-    mpVertexBuffer = std::make_shared<Buffer>(mpDevice, verticesSize,
-                                              VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mpIndexBuffer = std::make_shared<Buffer>(mpDevice, indicesSize,
-                                             VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpVertexBuffer =
+        make_ptr<Buffer>(mpDevice, verticesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpIndexBuffer =
+        make_ptr<Buffer>(mpDevice, indicesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
     uint32_t copies = mpSwapchain->getFramesInFlightCount();
 
     // Transforms can change between frames, material parameters can not
     VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4) * mNodes.size() * copies, alignment);
-    mpTransforms = std::make_shared<Buffer>(mpDevice, transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    mpTransforms = make_ptr<Buffer>(mpDevice, transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                    VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     VkDeviceSize materialParamsSize = Helpers::alignTo(sizeof(MaterialParams) * mMaterials.size(), alignment);
-    mpMaterialParams = std::make_shared<Buffer>(mpDevice, materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                                VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    mpMaterialParams = make_ptr<Buffer>(mpDevice, materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                        VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
@@ -397,7 +398,7 @@ void Scene::syncToDevice()
     mpIndexBuffer->copyFromHost(indices.data(), indices.size() * sizeof(indices[0]), 0);
 }
 
-void Scene::setSampler(const std::shared_ptr<Sampler> pSampler)
+void Scene::setSampler(const ptr<Sampler> pSampler)
 {
     mpMissingTexture->setSampler(pSampler);
 
@@ -407,7 +408,7 @@ void Scene::setSampler(const std::shared_ptr<Sampler> pSampler)
 }
 
 
-std::shared_ptr<Layout> Scene::getLayout()
+ptr<Layout> Scene::getLayout()
 {
     std::vector<LayoutDesc> desc;
     desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -427,13 +428,13 @@ std::shared_ptr<Layout> Scene::getLayout()
     desc.emplace_back(2, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
 
-    return std::make_shared<Layout>(mpDevice, desc);
+    return make_ptr<Layout>(mpDevice, desc);
 }
 
 
 void Scene::createDescriptors()
 {
-    std::shared_ptr<Layout> pLayout = getLayout();
+    ptr<Layout> pLayout = getLayout();
 
     // Node transform
     for (auto& node : mNodes) {

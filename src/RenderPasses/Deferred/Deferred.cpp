@@ -50,7 +50,7 @@ static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {
     },
 }};
 
-Deferred::Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
+Deferred::Deferred(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
     : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 2 or mpShaders.size() != 2) {
@@ -375,18 +375,18 @@ void Deferred::createAttachments()
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkExtent2D extent = mpSwapchain->getExtent();
 
-    mpPosition = std::make_shared<Image>(
+    mpPosition = make_ptr<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, gbufferFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mpNormal = std::make_shared<Image>(
+    mpNormal = make_ptr<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, gbufferFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mpAlbedo = std::make_shared<Image>(
+    mpAlbedo = make_ptr<Image>(
         mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, albedoFormat, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mpDepth = std::make_shared<Image>(mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat,
-                                      VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpDepth = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat,
+                              VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     Helpers::transitionImageLayout(mpDevice, mpDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 
@@ -401,7 +401,7 @@ void Deferred::createAttachments()
     descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpNormal);
     descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpAlbedo);
     mpInputAttachmentDescriptor =
-        std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpLayouts[1]->getDescriptorSetLayouts()[0], 1);
+        make_ptr<Descriptor>(mpDevice, descriptorDesc, mpLayouts[1]->getDescriptorSetLayouts()[0], 1);
 }
 
 void Deferred::destroyAttachments()

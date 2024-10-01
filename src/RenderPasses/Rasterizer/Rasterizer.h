@@ -9,8 +9,7 @@ namespace Mandrill
     class Rasterizer : public RenderPass
     {
     public:
-        MANDRILL_API Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                                const RenderPassDesc& desc);
+        MANDRILL_API Rasterizer(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
         MANDRILL_API ~Rasterizer();
 
         MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
@@ -29,8 +28,8 @@ namespace Mandrill
     private:
         void createRenderPass();
 
-        std::unique_ptr<Image> mColor;
-        std::unique_ptr<Image> mDepth;
+        ptr<Image> mColor;
+        ptr<Image> mDepth;
         std::vector<VkFramebuffer> mFramebuffers;
     };
 } // namespace Mandrill

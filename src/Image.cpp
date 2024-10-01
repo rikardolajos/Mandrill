@@ -5,9 +5,8 @@
 
 using namespace Mandrill;
 
-Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
-             VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-             VkMemoryPropertyFlags properties)
+Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
+             VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
     : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mTiling(tiling), mImageView(VK_NULL_HANDLE)
 {
     VkImageCreateInfo ci = {
@@ -32,8 +31,7 @@ Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, u
     VkMemoryAllocateInfo allocInfo = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .allocationSize = memReqs.size,
-        .memoryTypeIndex =
-            Helpers::findMemoryType(mpDevice, memReqs.memoryTypeBits, properties),
+        .memoryTypeIndex = Helpers::findMemoryType(mpDevice, memReqs.memoryTypeBits, properties),
     };
 
     Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &allocInfo, nullptr, &mMemory));
@@ -43,9 +41,8 @@ Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, u
     Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mImage, mMemory, 0));
 }
 
-Image::Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
-             VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-             VkDeviceMemory memory, VkDeviceSize offset)
+Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
+             VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)
     : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mTiling(tiling), mImageView(VK_NULL_HANDLE),
       mMemory(memory)
 {
@@ -74,8 +71,7 @@ Image::~Image()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
 
-    if (mOwnMemory)
-    {
+    if (mOwnMemory) {
         vkFreeMemory(mpDevice->getDevice(), mMemory, nullptr);
     }
 

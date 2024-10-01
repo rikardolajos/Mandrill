@@ -11,9 +11,9 @@ namespace Mandrill
 {
     struct DescriptorDesc {
         VkDescriptorType type;
-        std::variant<std::shared_ptr<Buffer>, std::shared_ptr<Image>, std::shared_ptr<Texture>> pResource;
+        std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>> pResource;
 
-        MANDRILL_API DescriptorDesc(VkDescriptorType type, std::shared_ptr<void> pResource) : type(type)
+        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource) : type(type)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
@@ -40,7 +40,7 @@ namespace Mandrill
     class Descriptor
     {
     public:
-        MANDRILL_API Descriptor(std::shared_ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
+        MANDRILL_API Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
                                 VkDescriptorSetLayout layout, uint32_t copies = 1);
         MANDRILL_API ~Descriptor();
 
@@ -52,7 +52,7 @@ namespace Mandrill
     private:
         void allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout, uint32_t copies);
 
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         VkDescriptorPool mPool;
         std::vector<VkDescriptorSet> mSets;

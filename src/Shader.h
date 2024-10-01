@@ -20,7 +20,7 @@ namespace Mandrill
     class Shader
     {
     public:
-        MANDRILL_API Shader(std::shared_ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
+        MANDRILL_API Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
         MANDRILL_API ~Shader();
 
         MANDRILL_API void reload();
@@ -39,7 +39,7 @@ namespace Mandrill
         void createModulesAndStages();
         VkShaderModule loadModuleFromFile(const std::filesystem::path& input);
 
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         std::vector<VkShaderModule> mModules;
         std::vector<VkPipelineShaderStageCreateInfo> mStages;

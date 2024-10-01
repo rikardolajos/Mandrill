@@ -52,7 +52,7 @@ namespace Mandrill
         std::string emissionTexturePath;
         std::string normalTexturePath;
 
-        std::shared_ptr<Descriptor> pDescriptor;
+        ptr<Descriptor> pDescriptor;
     };
 
     class Scene; // Forward declare scene so Node can befriend it
@@ -71,8 +71,8 @@ namespace Mandrill
         /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <param name="pScene">Scene which the node belongs to</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera, VkPipelineLayout layout,
-                                 const std::shared_ptr<const Scene> pScene) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout,
+                                 const ptr<const Scene> pScene) const;
 
         /// <summary>
         /// Add a mesh to the node.
@@ -111,7 +111,7 @@ namespace Mandrill
 
         glm::mat4 mTransform;
         glm::mat4* mpTransformDevice;
-        std::shared_ptr<Descriptor> pDescriptor;
+        ptr<Descriptor> pDescriptor;
 
         bool mVisible;
 
@@ -138,7 +138,7 @@ namespace Mandrill
         /// <param name="pDevice">Device to use</param>
         /// <param name="pSwapchain">Swapchain is used to determine how many descriptors will be used</param>
         /// <returns></returns>
-        MANDRILL_API Scene(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain);
+        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
         MANDRILL_API ~Scene();
 
         /// <summary>
@@ -148,14 +148,13 @@ namespace Mandrill
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
         /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const std::shared_ptr<Camera> pCamera,
-                                 VkPipelineLayout layout) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout) const;
 
         /// <summary>
         /// Add a node to the scene.
         /// </summary>
-        /// <returns>A pointer to the created node</returns>
-        MANDRILL_API Node* addNode();
+        /// <returns>A ptr to the created node</returns>
+        MANDRILL_API ptr<Node> addNode();
 
         /// <summary>
         /// Add a material to the scene.
@@ -205,32 +204,32 @@ namespace Mandrill
         /// </summary>
         /// <param name="pSampler">Sampler to be used for all materials</param>
         /// <returns></returns>
-        MANDRILL_API void setSampler(const std::shared_ptr<Sampler> pSampler);
+        MANDRILL_API void setSampler(const ptr<Sampler> pSampler);
 
         /// <summary>
         /// Get the layout used by the scene.
         /// </summary>
         /// <returns>Pointer to layout</returns>
-        MANDRILL_API std::shared_ptr<Layout> getLayout();
+        MANDRILL_API ptr<Layout> getLayout();
 
     private:
         friend Node;
 
         void createDescriptors();
 
-        std::shared_ptr<Device> mpDevice;
-        std::shared_ptr<Swapchain> mpSwapchain;
+        ptr<Device> mpDevice;
+        ptr<Swapchain> mpSwapchain;
 
         std::vector<Mesh> mMeshes;
         std::vector<Node> mNodes;
         std::vector<Material> mMaterials;
-        std::unordered_map<std::string, std::shared_ptr<Texture>> mTextures;
+        std::unordered_map<std::string, ptr<Texture>> mTextures;
 
-        std::shared_ptr<Buffer> mpVertexBuffer;
-        std::shared_ptr<Buffer> mpIndexBuffer;
-        std::shared_ptr<Buffer> mpTransforms;
-        std::shared_ptr<Buffer> mpMaterialParams;
+        ptr<Buffer> mpVertexBuffer;
+        ptr<Buffer> mpIndexBuffer;
+        ptr<Buffer> mpTransforms;
+        ptr<Buffer> mpMaterialParams;
 
-        std::shared_ptr<Texture> mpMissingTexture;
+        ptr<Texture> mpMissingTexture;
     };
 }; // namespace Mandrill

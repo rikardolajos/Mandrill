@@ -12,8 +12,7 @@ namespace Mandrill
         VkDescriptorType type;
         VkShaderStageFlags stage;
 
-        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type,
-                                       VkShaderStageFlagBits stage)
+        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlagBits stage)
             : set(set), binding(binding), type(type), stage(stage)
         {
         }
@@ -23,8 +22,7 @@ namespace Mandrill
     {
     public:
         MANDRILL_API
-        Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDesc>& desc,
-               VkDescriptorSetLayoutCreateFlags flags = 0);
+        Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescriptorSetLayoutCreateFlags flags = 0);
         MANDRILL_API ~Layout();
 
         MANDRILL_API const std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() const
@@ -43,7 +41,7 @@ namespace Mandrill
         }
 
     private:
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
         std::vector<VkPushConstantRange> mPushConstantRanges;

@@ -34,8 +34,7 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
 }};
 
 
-Rasterizer::Rasterizer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                       const RenderPassDesc& desc)
+Rasterizer::Rasterizer(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
     : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 1 or mpShaders.size() != 1) {
@@ -259,13 +258,13 @@ void Rasterizer::createAttachments()
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkExtent2D extent = mpSwapchain->getExtent();
 
-    mColor = std::make_unique<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), format,
-                                     VK_IMAGE_TILING_OPTIMAL,
-                                     VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mDepth = std::make_unique<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), depthFormat,
-                                     VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mColor = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), format,
+                            VK_IMAGE_TILING_OPTIMAL,
+                            VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mDepth = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), depthFormat,
+                            VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     Helpers::transitionImageLayout(mpDevice, mDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 

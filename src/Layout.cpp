@@ -4,8 +4,7 @@
 
 using namespace Mandrill;
 
-Layout::Layout(std::shared_ptr<Device> pDevice, const std::vector<LayoutDesc>& desc,
-               VkDescriptorSetLayoutCreateFlags flags)
+Layout::Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescriptorSetLayoutCreateFlags flags)
     : mpDevice(pDevice)
 {
     // Find highest set

@@ -5,8 +5,8 @@
 
 using namespace Mandrill;
 
-Descriptor::Descriptor(std::shared_ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
-                       VkDescriptorSetLayout layout, uint32_t copies)
+Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout,
+                       uint32_t copies)
     : mpDevice(pDevice)
 {
     allocate(desc, layout, copies);
@@ -33,30 +33,30 @@ Descriptor::Descriptor(std::shared_ptr<Device> pDevice, const std::vector<Descri
             switch (desc[d].type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
                 offset =
-                    Helpers::alignTo(i * (std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
+                    Helpers::alignTo(i * (std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
                                      mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment);
                 bi = {
-                    .buffer = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getBuffer(),
+                    .buffer = std::get<ptr<Buffer>>(desc[d].pResource)->getBuffer(),
                     .offset = offset,
-                    .range = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
+                    .range = std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
                 };
                 write.pBufferInfo = &bi;
                 break;
             case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
                 offset =
-                    Helpers::alignTo(i * (std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
+                    Helpers::alignTo(i * (std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies),
                                      mpDevice->getProperties().physicalDevice.limits.minStorageBufferOffsetAlignment);
                 bi = {
-                    .buffer = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getBuffer(),
+                    .buffer = std::get<ptr<Buffer>>(desc[d].pResource)->getBuffer(),
                     .offset = offset,
-                    .range = std::get<std::shared_ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
+                    .range = std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
                 };
                 write.pBufferInfo = &bi;
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
                 ii = {
-                    .sampler = std::get<std::shared_ptr<Texture>>(desc[d].pResource)->getSampler(),
-                    .imageView = std::get<std::shared_ptr<Texture>>(desc[d].pResource)->getImageView(),
+                    .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
+                    .imageView = std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;
@@ -64,7 +64,7 @@ Descriptor::Descriptor(std::shared_ptr<Device> pDevice, const std::vector<Descri
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
             case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
                 ii = {
-                    .imageView = std::get<std::shared_ptr<Image>>(desc[d].pResource)->getImageView(),
+                    .imageView = std::get<ptr<Image>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;

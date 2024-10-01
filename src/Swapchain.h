@@ -10,7 +10,7 @@ namespace Mandrill
     class Swapchain
     {
     public:
-        MANDRILL_API Swapchain(std::shared_ptr<Device> pDevice, uint32_t framesInFlight = 2);
+        MANDRILL_API Swapchain(ptr<Device> pDevice, uint32_t framesInFlight = 2);
         MANDRILL_API ~Swapchain();
 
         MANDRILL_API void recreate();
@@ -70,7 +70,7 @@ namespace Mandrill
         void createSyncObjects(uint32_t framesInFlight);
         void destroySyncObjects();
 
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         VkSwapchainKHR mSwapchain;
         VkFormat mImageFormat;

@@ -16,8 +16,7 @@ namespace Mandrill
     class Deferred : public RenderPass
     {
     public:
-        MANDRILL_API Deferred(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                              const RenderPassDesc& desc);
+        MANDRILL_API Deferred(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
 
         MANDRILL_API ~Deferred();
 
@@ -39,12 +38,12 @@ namespace Mandrill
     private:
         void createRenderPass();
 
-        std::shared_ptr<Image> mpPosition;
-        std::shared_ptr<Image> mpNormal;
-        std::shared_ptr<Image> mpAlbedo;
-        std::shared_ptr<Image> mpDepth;
+        ptr<Image> mpPosition;
+        ptr<Image> mpNormal;
+        ptr<Image> mpAlbedo;
+        ptr<Image> mpDepth;
         std::vector<VkFramebuffer> mFramebuffers;
 
-        std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
+        ptr<Descriptor> mpInputAttachmentDescriptor;
     };
 } // namespace Mandrill

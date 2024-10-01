@@ -73,8 +73,7 @@ void App::run()
     Log::info("Exiting...");
 }
 
-void App::createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass, VkSampleCountFlagBits samples,
-                    uint32_t subpass)
+void App::createGUI(ptr<Device> pDevice, VkRenderPass renderPass, VkSampleCountFlagBits samples, uint32_t subpass)
 {
     // Create descriptor pool for ImGUI
     std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -135,7 +134,7 @@ void App::createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass, Vk
     mCreatedGUI = true;
 }
 
-void App::destroyGUI(std::shared_ptr<Device> pDevice)
+void App::destroyGUI(ptr<Device> pDevice)
 {
     vkDeviceWaitIdle(pDevice->getDevice());
 
@@ -165,16 +164,15 @@ ImGuiContext* App::newFrameGUI()
     return ImGui::GetCurrentContext();
 }
 
-void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                  std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader)
+void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader)
 {
-    std::vector<std::shared_ptr<Shader>> shaders;
+    std::vector<ptr<Shader>> shaders;
     shaders.push_back(pShader);
     App::baseGUI(pDevice, pSwapchain, pRenderPass, shaders);
 }
 
-void App::baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                  std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
+void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
+                  std::vector<ptr<Shader>> pShaders)
 {
     if (!mCreatedGUI) {
         return;
@@ -322,18 +320,16 @@ void App::renderGUI(VkCommandBuffer cmd) const
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
 }
 
-void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
-                          std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                          std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader)
+void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
+                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader)
 {
-    std::vector<std::shared_ptr<Shader>> shaders;
+    std::vector<ptr<Shader>> shaders;
     shaders.push_back(pShader);
     App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pRenderPass, shaders);
 }
 
-void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
-                          std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                          std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders)
+void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
+                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> pShaders)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mpWindow, 1);
@@ -376,8 +372,7 @@ void App::baseCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
     mCursorY = static_cast<float>(yPos);
 }
 
-void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
-                                  std::shared_ptr<Camera> pCamera)
+void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, ptr<Camera> pCamera)
 {
     if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
         bool captured = pCamera->toggleMouseCapture();

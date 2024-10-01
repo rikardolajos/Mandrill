@@ -10,8 +10,7 @@
 using namespace Mandrill;
 
 
-Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path,
-                 bool mipmaps)
+Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
     : mpDevice(pDevice), mFormat(format), mMipLevels(1), mImageInfo{0}
 {
     Log::info("Loading texture from {}", path.string());
@@ -39,10 +38,10 @@ Texture::Texture(std::shared_ptr<Device> pDevice, Type type, VkFormat format, co
 
     stbi_image_free(pixels);
 
-    mpImage = std::make_shared<Image>(
-        mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpImage =
+        make_ptr<Image>(mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
+                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);

@@ -19,7 +19,7 @@ namespace Mandrill
     class Camera
     {
     public:
-        MANDRILL_API Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow, std::shared_ptr<Swapchain> pSwapchain);
+        MANDRILL_API Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapchain);
         MANDRILL_API ~Camera();
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace Mandrill
         }
 
     private:
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
         GLFWwindow* mpWindow;
-        std::shared_ptr<Swapchain> mpSwapchain;
+        ptr<Swapchain> mpSwapchain;
 
         bool mMouseCaptured = false;
 
@@ -95,9 +95,9 @@ namespace Mandrill
         glm::vec3 mDirection;
         glm::vec3 mUp;
         float mMoveSpeed;
-        
-        std::shared_ptr<Buffer> mpUniforms;
-        std::shared_ptr<Descriptor> mpDescriptor;
+
+        ptr<Buffer> mpUniforms;
+        ptr<Descriptor> mpDescriptor;
         VkDescriptorSetLayout mLayout;
     };
 } // namespace Mandrill

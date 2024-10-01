@@ -63,11 +63,11 @@ static VkExtent2D chooseExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLF
     }
 }
 
-Swapchain::Swapchain(std::shared_ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pDevice)
+Swapchain::Swapchain(ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pDevice)
 {
     querySupport();
     createSwapchain();
-    //createResources();
+    // createResources();
     createSyncObjects(framesInFlight);
 }
 

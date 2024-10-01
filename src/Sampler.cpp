@@ -4,8 +4,8 @@
 
 using namespace Mandrill;
 
-Sampler::Sampler(std::shared_ptr<Device> pDevice, VkFilter magFilter, VkFilter minFilter,
-                 VkSamplerMipmapMode mipmapMode, VkSamplerAddressMode addressModeU, VkSamplerAddressMode addressModeV,
+Sampler::Sampler(ptr<Device> pDevice, VkFilter magFilter, VkFilter minFilter, VkSamplerMipmapMode mipmapMode,
+                 VkSamplerAddressMode addressModeU, VkSamplerAddressMode addressModeV,
                  VkSamplerAddressMode addressModeW)
     : mpDevice(pDevice)
 {

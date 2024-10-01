@@ -8,18 +8,18 @@ public:
     Assignment2() : App("Assignment2: Deferred Shading and Shadow Maps", 1280, 720)
     {
         // Create a Vulkan instance and device
-        mpDevice = std::make_shared<Device>(mpWindow);
+        mpDevice = make_ptr<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
 
         // Create a sampler that will be used to render materials
-        mpSampler = std::make_shared<Sampler>(mpDevice);
+        mpSampler = make_ptr<Sampler>(mpDevice);
 
         // Create and load scene
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
+        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        Node* pNode = mpScene->addNode();
+        ptr<Node> pNode = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
         }
@@ -37,8 +37,8 @@ public:
         shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc2.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShaders.push_back(std::make_shared<Shader>(mpDevice, shaderDesc1));
-        mpShaders.push_back(std::make_shared<Shader>(mpDevice, shaderDesc2));
+        mpShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc1));
+        mpShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc2));
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
         std::vector<std::shared_ptr<Layout>> layouts;
@@ -49,7 +49,7 @@ public:
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
+        auto pResolveLayout = make_ptr<Layout>(mpDevice, layoutDesc);
 
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
@@ -62,10 +62,10 @@ public:
 
         // Create render pass
         RenderPassDesc renderPassDesc(mpShaders, layouts);
-        mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain, renderPassDesc);
+        mpRenderPass = make_ptr<Deferred>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -164,16 +164,16 @@ public:
 
 
 private:
-    std::shared_ptr<Device> mpDevice;
-    std::shared_ptr<Swapchain> mpSwapchain;
-    std::vector<std::shared_ptr<Shader>> mpShaders;
-    std::shared_ptr<Deferred> mpRenderPass;
+    ptr<Device> mpDevice;
+    ptr<Swapchain> mpSwapchain;
+    std::vector<ptr<Shader>> mpShaders;
+    ptr<Deferred> mpRenderPass;
 
-    std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
+    ptr<Descriptor> mpInputAttachmentDescriptor;
 
-    std::shared_ptr<Sampler> mpSampler;
-    std::shared_ptr<Scene> mpScene;
-    std::shared_ptr<Camera> mpCamera;
+    ptr<Sampler> mpSampler;
+    ptr<Scene> mpScene;
+    ptr<Camera> mpCamera;
 
     int mRenderMode = 0;
 };

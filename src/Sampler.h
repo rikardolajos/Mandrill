@@ -9,7 +9,7 @@ namespace Mandrill
     class Sampler
     {
     public:
-        MANDRILL_API Sampler(std::shared_ptr<Device> pDevice, VkFilter magFilter = VK_FILTER_LINEAR,
+        MANDRILL_API Sampler(ptr<Device> pDevice, VkFilter magFilter = VK_FILTER_LINEAR,
                              VkFilter minFilter = VK_FILTER_LINEAR,
                              VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
                              VkSamplerAddressMode addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
@@ -23,7 +23,7 @@ namespace Mandrill
         }
 
     private:
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         VkSampler mSampler;
     };

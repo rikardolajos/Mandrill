@@ -28,6 +28,7 @@
 #include <source_location>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -75,3 +76,14 @@
 #else
 #define MANDRILL_API MANDRILL_API_IMPORT
 #endif
+
+// Shorthand for using shared pointers
+namespace Mandrill
+{
+    template <typename T> using ptr = std::shared_ptr<T>;
+
+    template <typename T, typename... Args> static inline ptr<T> make_ptr(Args&&... args)
+    {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
+} // namespace Mandrill

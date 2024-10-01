@@ -10,16 +10,15 @@
 namespace Mandrill
 {
     struct RenderPassDesc {
-        std::vector<std::shared_ptr<Shader>> shaders;
-        std::vector<std::shared_ptr<Layout>> layouts;
+        std::vector<ptr<Shader>> shaders;
+        std::vector<ptr<Layout>> layouts;
 
-        MANDRILL_API RenderPassDesc(std::vector<std::shared_ptr<Shader>> shaders,
-                                    std::vector<std::shared_ptr<Layout>> layouts)
+        MANDRILL_API RenderPassDesc(std::vector<ptr<Shader>> shaders, std::vector<ptr<Layout>> layouts)
             : shaders(shaders), layouts(layouts)
         {
         }
 
-        MANDRILL_API RenderPassDesc(std::shared_ptr<Shader> shader, std::shared_ptr<Layout> layout)
+        MANDRILL_API RenderPassDesc(ptr<Shader> shader, ptr<Layout> layout)
         {
             shaders.push_back(shader);
             layouts.push_back(layout);
@@ -29,8 +28,7 @@ namespace Mandrill
     class RenderPass
     {
     public:
-        MANDRILL_API RenderPass(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                                const RenderPassDesc& desc);
+        MANDRILL_API RenderPass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
         MANDRILL_API ~RenderPass();
 
         MANDRILL_API void recreatePipelines();
@@ -58,16 +56,16 @@ namespace Mandrill
         virtual void createFramebuffers() = 0;
         virtual void destroyFramebuffers() = 0;
 
-        std::shared_ptr<Device> mpDevice;
-        std::shared_ptr<Swapchain> mpSwapchain;
+        ptr<Device> mpDevice;
+        ptr<Swapchain> mpSwapchain;
 
         VkRenderPass mRenderPass;
 
         std::vector<VkPipeline> mPipelines;
         std::vector<VkPipelineLayout> mPipelineLayouts;
 
-        std::vector<std::shared_ptr<Layout>> mpLayouts;
-        std::vector<std::shared_ptr<Shader>> mpShaders;
+        std::vector<ptr<Layout>> mpLayouts;
+        std::vector<ptr<Shader>> mpShaders;
 
     private:
     };

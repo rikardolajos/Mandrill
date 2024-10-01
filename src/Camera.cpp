@@ -15,7 +15,7 @@ namespace
 } // namespace
 
 
-Camera::Camera(std::shared_ptr<Device> pDevice, GLFWwindow* pWindow, std::shared_ptr<Swapchain> pSwapchain)
+Camera::Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapchain)
     : mpDevice(pDevice), mpWindow(pWindow), mpSwapchain(pSwapchain)
 {
     mPosition = glm::vec3(1.0f, 1.0f, 1.0f);

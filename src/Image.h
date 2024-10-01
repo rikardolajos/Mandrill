@@ -22,7 +22,7 @@ namespace Mandrill
         /// <param name="usage">How the image will be used</param>
         /// <param name="properties">Which memory properties to require</param>
         /// <returns>Image object</returns>
-        MANDRILL_API Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
+        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
 
@@ -40,7 +40,7 @@ namespace Mandrill
         /// <param name="memory">Allocated memory to use for image</param>
         /// <param name="offset">Where in the allocated memory the image should be stored</param>
         /// <returns>Image object</returns>
-        MANDRILL_API Image(std::shared_ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
+        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);
 
@@ -85,7 +85,7 @@ namespace Mandrill
         }
 
     private:
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         VkImage mImage;
         VkImageView mImageView;

@@ -107,7 +107,7 @@ namespace Mandrill
         /// <param name="renderPass">Render pass that will be used for GUI presentation</param>
         /// <param name="samples">MSAA samples to use for rendering</param>
         /// <param name="subpass">Which subpass to draw the GUI on</param>
-        void createGUI(std::shared_ptr<Device> pDevice, VkRenderPass renderPass,
+        void createGUI(ptr<Device> pDevice, VkRenderPass renderPass,
                        VkSampleCountFlagBits samples = VK_SAMPLE_COUNT_1_BIT, uint32_t subpass = 0);
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Mandrill
         /// This will clean-up all the allocated resources of ImGUI.
         /// </summary>
         /// <param name="pDevice">Device that was used for resources allocations</param>
-        void destroyGUI(std::shared_ptr<Device> pDevice);
+        void destroyGUI(ptr<Device> pDevice);
 
         /// <summary>
         /// Draw the base GUI of a Mandrill application.
@@ -129,8 +129,7 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pShader">Shader that should be reloaded</param>
-        void baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                     std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader);
+        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader);
 
         /// <summary>
         /// Draw the base GUI of a Mandrill application.
@@ -143,8 +142,8 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pShaders">Shaders that should be reloaded</param>
-        void baseGUI(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                     std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders);
+        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
+                     std::vector<ptr<Shader>> pShaders);
 
         /// <summary>
         /// Render the GUI by writing the state to a command buffer.
@@ -167,9 +166,8 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pShader">Shader that should be reloaded</param>
-        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
-                             std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                             std::shared_ptr<RenderPass> pRenderPass, std::shared_ptr<Shader> pShader);
+        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
+                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader);
 
         /// <summary>
         /// App keyboard callback function. This will handle keyboard commands associated with the base application
@@ -184,9 +182,8 @@ namespace Mandrill
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pShaders">Shaders that should be reloaded</param>
-        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods,
-                             std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                             std::shared_ptr<RenderPass> pRenderPass, std::vector<std::shared_ptr<Shader>> pShaders);
+        void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
+                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> pShaders);
 
         /// <summary>
         /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard
@@ -227,8 +224,7 @@ namespace Mandrill
         /// <param name="action">One of `GLFW_PRESS` or `GLFW_RELEASE`. Future releases may add more actions.</param>
         /// <param name="mods">Bit field describing which modifier keys were held down.</param>
         /// <param name="pCamera">Current active camera to handle mouse capture for.</param>
-        void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods,
-                                     std::shared_ptr<Camera> pCamera);
+        void baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods, ptr<Camera> pCamera);
 
         /// <summary>
         /// Virtual function for app to override. Just invoke <code>baseMouseButtonCallback()</code> to get standard

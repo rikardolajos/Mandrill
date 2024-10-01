@@ -10,7 +10,7 @@ namespace Mandrill
     class Buffer
     {
     public:
-        MANDRILL_API Buffer(std::shared_ptr<Device> pDevice, VkDeviceSize size, VkBufferUsageFlags usage,
+        MANDRILL_API Buffer(ptr<Device> pDevice, VkDeviceSize size, VkBufferUsageFlags usage,
                             VkMemoryPropertyFlags properties);
         MANDRILL_API ~Buffer();
 
@@ -49,7 +49,7 @@ namespace Mandrill
         }
 
     private:
-        std::shared_ptr<Device> mpDevice;
+        ptr<Device> mpDevice;
 
         VkBuffer mBuffer;
         VkDeviceMemory mMemory;
