@@ -164,6 +164,31 @@ public:
             ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace));
             const char* cullModes[] = {"None", "Front face", "Back face"};
             ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes));
+
+            bool newSampler = false;
+            const char* magFilters[] = {"Linear", "Nearest"};
+            if (ImGui::Combo("Mag filter", &mMagFilter, magFilters, IM_ARRAYSIZE(magFilters))) {
+                newSampler = true;
+            }
+            const char* minFilters[] = {"Linear", "Nearest"};
+            if (ImGui::Combo("Min filter", &mMinFilter, minFilters, IM_ARRAYSIZE(minFilters))) {
+                newSampler = true;
+            }
+            const char* mipModes[] = {"Linear", "Nearest"};
+            if (ImGui::Combo("Mip mode", &mMipMode, mipModes, IM_ARRAYSIZE(mipModes))) {
+                newSampler = true;
+            }
+
+            if (newSampler) {
+                mpSampler =
+                    make_ptr<Sampler>(mpDevice, mMagFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
+                                      mMinFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
+                                      mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST : VK_SAMPLER_MIPMAP_MODE_LINEAR);
+                mpScene->setSampler(mpSampler);
+                mpScene->compile();
+                mpScene->syncToDevice();
+            }
+
             ImGui::Checkbox("Discard pixel if diffuse alpha channel is 0", &mDiscardOnZeroAlpha);
 
             if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
@@ -208,6 +233,9 @@ private:
     bool mDiscardOnZeroAlpha = 0;
     int mFrontFace = 0;
     int mCullMode = 0;
+    int mMagFilter = 0;
+    int mMinFilter = 0;
+    int mMipMode = 0;
 };
 
 int main()
