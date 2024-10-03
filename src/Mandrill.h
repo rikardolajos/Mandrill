@@ -10,6 +10,7 @@
 #include "Log.h"
 #include "RenderPasses/Deferred/Deferred.h"
 #include "RenderPasses/Rasterizer/Rasterizer.h"
+#include "RenderPasses/RayTracer/RayTracer.h"
 #include "RenderPasses/RenderPass.h"
 #include "Sampler.h"
 #include "Scene.h"

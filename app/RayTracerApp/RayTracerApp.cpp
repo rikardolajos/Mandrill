@@ -65,19 +65,19 @@ public:
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDesc> shaderDesc;
-        shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shaderDesc.emplace_back("SampleApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        shaderDesc.emplace_back("SampleApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
+        shaderDesc.emplace_back("SampleApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
 
         // Create rasterizer pipeline with layout matching the shader
         std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-        layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
         auto pLayout = make_ptr<Layout>(mpDevice, layoutDesc);
 
         RenderPassDesc renderPassDesc(mpShader, pLayout);
-        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
+        mpRenderPass = make_ptr<RayTracer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -150,15 +150,15 @@ public:
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
                                 static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
-        // Bind vertex and index buffers
-        std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
-        std::array<VkDeviceSize, 1> offsets = {0};
-        vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
-                               offsets.data());
-        vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+        //// Bind vertex and index buffers
+        //std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
+        //std::array<VkDeviceSize, 1> offsets = {0};
+        //vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
+        //                       offsets.data());
+        //vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-        // Draw mesh
-        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
+        //// Draw mesh
+        //vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
 
         // Draw GUI
         App::renderGUI(cmd);
@@ -214,7 +214,7 @@ private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
     ptr<Shader> mpShader;
-    ptr<Rasterizer> mpRenderPass;
+    ptr<RayTracer> mpRenderPass;
 
     ptr<Camera> mpCamera;
 

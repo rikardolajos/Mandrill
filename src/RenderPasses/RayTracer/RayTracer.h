@@ -2,6 +2,8 @@
 
 #include "Common.h"
 
+#include "Buffer.h"
+#include "Descriptor.h"
 #include "RenderPasses/RenderPass.h"
 
 namespace Mandrill
@@ -9,8 +11,7 @@ namespace Mandrill
     class RayTracer : public RenderPass
     {
     public:
-        MANDRILL_API RayTracer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain,
-                               const RenderPassDesc& desc);
+        MANDRILL_API RayTracer(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
         MANDRILL_API ~RayTracer();
 
         MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
@@ -32,7 +33,7 @@ namespace Mandrill
 
         std::vector<VkRayTracingShaderGroupCreateInfoKHR> mpShaderGroups;
 
-        std::shared_ptr<Buffer> mpShaderBindingTableBuffer;
-        std::shared_ptr<Descriptor> mpAttachmentDescriptor;
+        ptr<Buffer> mpShaderBindingTableBuffer;
+        ptr<Descriptor> mpAttachmentDescriptor;
     };
 } // namespace Mandrill

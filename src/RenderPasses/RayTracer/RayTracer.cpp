@@ -1,12 +1,13 @@
 #include "RayTracer.h"
 
 #include "Error.h"
+#include "Extension.h"
 #include "Helpers.h"
 #include "Scene.h"
 
 using namespace Mandrill;
 
-RayTracer::RayTracer(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
+RayTracer::RayTracer(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc)
     : RenderPass(pDevice, pSwapchain, desc)
 {
     if (mpLayouts.size() != 1 or mpShaders.size() != 1) {
@@ -60,13 +61,13 @@ void RayTracer::createAttachments()
     std::vector<DescriptorDesc> descriptorDesc;
 
     auto imageViews = mpSwapchain->getImageViews();
-
     for (uint32_t i = 0; i < imageViews.size(); i++) {
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, imageViews[i]);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, nullptr);
+        (descriptorDesc.end() - 1)->imageView = imageViews[i];
     }
 
     mpAttachmentDescriptor =
-        std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpLayouts[0]->getDescriptorSetLayouts()[0], 1);
+        make_ptr<Descriptor>(mpDevice, descriptorDesc, mpLayouts[0]->getDescriptorSetLayouts()[0], 1);
 }
 
 void RayTracer::destroyAttachments()
@@ -146,9 +147,8 @@ void RayTracer::frameEnd(VkCommandBuffer cmd)
             },
     };
 
-    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
-                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
+    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
                          nullptr, 0, nullptr, 1, &barrier);
-    
+
     Check::Vk(vkEndCommandBuffer(cmd));
 }
