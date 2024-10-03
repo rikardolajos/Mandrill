@@ -56,7 +56,8 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
                 ii = {
                     .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
-                    .imageView = std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
+                    .imageView = desc[d].imageView ? desc[d].imageView
+                                                   : std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;
@@ -64,7 +65,8 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
             case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
                 ii = {
-                    .imageView = std::get<ptr<Image>>(desc[d].pResource)->getImageView(),
+                    .imageView =
+                        desc[d].imageView ? desc[d].imageView : std::get<ptr<Image>>(desc[d].pResource)->getImageView(),
                     .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 write.pImageInfo = &ii;
