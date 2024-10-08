@@ -215,6 +215,7 @@ namespace Mandrill
     private:
         friend Node;
 
+        void addTexture(std::string texturePath);
         void createDescriptors();
 
         ptr<Device> mpDevice;
