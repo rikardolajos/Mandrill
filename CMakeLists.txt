@@ -11,6 +11,8 @@ endif()
 
 project("Mandrill" VERSION 2024.8.0)
 
+option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)
+
 set(MANDRILL_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 function(add_mandrill_executable TARGET)
@@ -53,7 +55,10 @@ include_directories(submodules/glm)
 
 add_subdirectory(submodules)
 add_subdirectory(src)
-add_subdirectory(app)
+
+if (NOT MANDRILL_EXCLUDE_APPS)
+    add_subdirectory(app)
+endif()
 
 configure_file(res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
 configure_file(res/missing.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/missing.png COPYONLY)
