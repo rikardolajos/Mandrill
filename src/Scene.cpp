@@ -98,6 +98,23 @@ ptr<Node> Scene::addNode()
 
 uint32_t Scene::addMaterial(Material material)
 {
+    auto setTexture = [this](std::unordered_map<std::string, ptr<Texture>>& loadedTextures, std::string texturePath,
+                             enum MaterialTextureBit bit, ptr<Texture> pMissingTexture) {
+        if (!texturePath.empty()) {
+            addTexture(texturePath);
+        } else {
+            loadedTextures.insert(std::make_pair(texturePath, pMissingTexture));
+        }
+    };
+
+    material.params.hasTexture = 0;
+
+    setTexture(mTextures, material.diffuseTexturePath, DIFFUSE_TEXTURE_BIT, mpMissingTexture);
+    setTexture(mTextures, material.specularTexturePath, SPECULAR_TEXTURE_BIT, mpMissingTexture);
+    setTexture(mTextures, material.ambientTexturePath, AMBIENT_TEXTURE_BIT, mpMissingTexture);
+    setTexture(mTextures, material.emissionTexturePath, EMISSION_TEXTURE_BIT, mpMissingTexture);
+    setTexture(mTextures, material.normalTexturePath, NORMAL_TEXTURE_BIT, mpMissingTexture);
+
     mMaterials.push_back(material);
 
     return static_cast<uint32_t>(mMaterials.size() - 1);
@@ -253,58 +270,25 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
         mat.params.indexOfRefraction = material.ior;
         mat.params.opacity = material.dissolve;
 
-        auto loadTexture = [path, materialPath](ptr<Device> pDevice,
-                                                std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                                std::string textureFile, std::string& texturePath) -> bool {
-            if (textureFile.empty()) {
-                return false;
+        auto setTexture = [this, path, materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                                     std::string textureName, enum MaterialTextureBit bit,
+                                                     ptr<Texture> pMissingTexture) {
+            if (!textureName.empty()) {
+                auto fullPath =
+                    std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
+                addTexture(fullPath.string());
+            } else {
+                loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
             }
-
-            texturePath =
-                std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureFile).string();
-            if (loadedTextures.contains(texturePath)) {
-                return false;
-            }
-
-            auto pTexture =
-                make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true);
-            loadedTextures.insert(std::make_pair(texturePath, pTexture));
-
-            return true;
-        };
-
-        auto setMissingTexture = [](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                    const std::string& texturePath, ptr<Texture> pMissingTexture) {
-            loadedTextures.insert(std::make_pair(texturePath, pMissingTexture));
         };
 
         mat.params.hasTexture = 0;
 
-        if (loadTexture(mpDevice, mTextures, material.diffuse_texname, mat.diffuseTexturePath)) {
-            mat.params.hasTexture |= DIFFUSE_TEXTURE_BIT;
-        } else {
-            setMissingTexture(mTextures, material.diffuse_texname, mpMissingTexture);
-        }
-        if (loadTexture(mpDevice, mTextures, material.specular_texname, mat.specularTexturePath)) {
-            mat.params.hasTexture |= SPECULAR_TEXTURE_BIT;
-        } else {
-            setMissingTexture(mTextures, material.specular_texname, mpMissingTexture);
-        }
-        if (loadTexture(mpDevice, mTextures, material.ambient_texname, mat.ambientTexturePath)) {
-            mat.params.hasTexture |= AMBIENT_TEXTURE_BIT;
-        } else {
-            setMissingTexture(mTextures, material.ambient_texname, mpMissingTexture);
-        }
-        if (loadTexture(mpDevice, mTextures, material.emissive_texname, mat.emissionTexturePath)) {
-            mat.params.hasTexture |= EMISSION_TEXTURE_BIT;
-        } else {
-            setMissingTexture(mTextures, material.emissive_texname, mpMissingTexture);
-        }
-        if (loadTexture(mpDevice, mTextures, material.normal_texname, mat.normalTexturePath)) {
-            mat.params.hasTexture |= NORMAL_TEXTURE_BIT;
-        } else {
-            setMissingTexture(mTextures, material.normal_texname, mpMissingTexture);
-        }
+        setTexture(mTextures, material.diffuse_texname, DIFFUSE_TEXTURE_BIT, mpMissingTexture);
+        setTexture(mTextures, material.specular_texname, SPECULAR_TEXTURE_BIT, mpMissingTexture);
+        setTexture(mTextures, material.ambient_texname, AMBIENT_TEXTURE_BIT, mpMissingTexture);
+        setTexture(mTextures, material.emissive_texname, EMISSION_TEXTURE_BIT, mpMissingTexture);
+        setTexture(mTextures, material.normal_texname, NORMAL_TEXTURE_BIT, mpMissingTexture);
 
         mMaterials.push_back(mat);
     }
@@ -429,6 +413,21 @@ ptr<Layout> Scene::getLayout()
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
 
     return make_ptr<Layout>(mpDevice, desc);
+}
+
+
+void Scene::addTexture(std::string texturePath)
+{
+    if (texturePath.empty()) {
+        return;
+    }
+
+    if (mTextures.contains(texturePath)) {
+        return;
+    }
+
+    auto pTexture = make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true);
+    mTextures.insert(std::make_pair(texturePath, pTexture));
 }
 
 
