@@ -271,24 +271,37 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
         mat.params.opacity = material.dissolve;
 
         auto setTexture = [this, path, materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                                     std::string textureName, enum MaterialTextureBit bit,
-                                                     ptr<Texture> pMissingTexture) {
+                                                     std::string textureName, ptr<Texture> pMissingTexture,
+                                                     std::string& textureKey) {
             if (!textureName.empty()) {
                 auto fullPath =
                     std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
-                addTexture(fullPath.string());
-            } else {
-                loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
+                textureKey = fullPath.string();
+                addTexture(textureKey);
+                return true;
             }
+
+            loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
+            return false;
         };
 
         mat.params.hasTexture = 0;
 
-        setTexture(mTextures, material.diffuse_texname, DIFFUSE_TEXTURE_BIT, mpMissingTexture);
-        setTexture(mTextures, material.specular_texname, SPECULAR_TEXTURE_BIT, mpMissingTexture);
-        setTexture(mTextures, material.ambient_texname, AMBIENT_TEXTURE_BIT, mpMissingTexture);
-        setTexture(mTextures, material.emissive_texname, EMISSION_TEXTURE_BIT, mpMissingTexture);
-        setTexture(mTextures, material.normal_texname, NORMAL_TEXTURE_BIT, mpMissingTexture);
+        if (setTexture(mTextures, material.diffuse_texname, mpMissingTexture, mat.diffuseTexturePath)) {
+            mat.params.hasTexture |= DIFFUSE_TEXTURE_BIT;
+        }
+        if (setTexture(mTextures, material.specular_texname, mpMissingTexture, mat.specularTexturePath)) {
+            mat.params.hasTexture |= SPECULAR_TEXTURE_BIT;
+        }
+        if (setTexture(mTextures, material.ambient_texname, mpMissingTexture, mat.ambientTexturePath)) {
+            mat.params.hasTexture |= AMBIENT_TEXTURE_BIT;
+        }
+        if (setTexture(mTextures, material.emissive_texname, mpMissingTexture, mat.emissionTexturePath)) {
+            mat.params.hasTexture |= EMISSION_TEXTURE_BIT;
+        }
+        if (setTexture(mTextures, material.normal_texname, mpMissingTexture, mat.normalTexturePath)) {
+            mat.params.hasTexture |= NORMAL_TEXTURE_BIT;
+        }
 
         mMaterials.push_back(mat);
     }
