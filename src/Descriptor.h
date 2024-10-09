@@ -12,6 +12,7 @@ namespace Mandrill
     struct DescriptorDesc {
         VkDescriptorType type;
         std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>> pResource;
+        VkBufferView bufferView = nullptr;
         VkImageView imageView = nullptr;
 
         MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource) : type(type)

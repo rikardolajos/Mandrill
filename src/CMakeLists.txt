@@ -22,6 +22,8 @@ add_library(Mandrill SHARED
 	"Log.cpp"
 	"Log.h"
 	"Mandrill.h"
+	"Pipeline.cpp"
+	"Pipeline.h"
 	"Sampler.cpp"
 	"Sampler.h"
 	"Scene.cpp"

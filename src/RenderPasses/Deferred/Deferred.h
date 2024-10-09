@@ -16,7 +16,7 @@ namespace Mandrill
     class Deferred : public RenderPass
     {
     public:
-        MANDRILL_API Deferred(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
+        MANDRILL_API Deferred(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
 
         MANDRILL_API ~Deferred();
 
@@ -26,9 +26,6 @@ namespace Mandrill
         MANDRILL_API void nextSubpass(VkCommandBuffer cmd);
 
     protected:
-        void createPipelines() override;
-        void destroyPipelines() override;
-
         void createAttachments() override;
         void destroyAttachments() override;
 

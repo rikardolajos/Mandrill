@@ -9,29 +9,29 @@
 
 namespace Mandrill
 {
-    struct RenderPassDesc {
-        std::vector<ptr<Shader>> shaders;
-        std::vector<ptr<Layout>> layouts;
+    //struct RenderPassDesc {
+    //    std::vector<ptr<Shader>> shaders;
+    //    std::vector<ptr<Layout>> layouts;
 
-        MANDRILL_API RenderPassDesc(std::vector<ptr<Shader>> shaders, std::vector<ptr<Layout>> layouts)
-            : shaders(shaders), layouts(layouts)
-        {
-        }
+    //    MANDRILL_API RenderPassDesc(std::vector<ptr<Shader>> shaders, std::vector<ptr<Layout>> layouts)
+    //        : shaders(shaders), layouts(layouts)
+    //    {
+    //    }
 
-        MANDRILL_API RenderPassDesc(ptr<Shader> shader, ptr<Layout> layout)
-        {
-            shaders.push_back(shader);
-            layouts.push_back(layout);
-        }
-    };
+    //    MANDRILL_API RenderPassDesc(ptr<Shader> shader, ptr<Layout> layout)
+    //    {
+    //        shaders.push_back(shader);
+    //        layouts.push_back(layout);
+    //    }
+    //};
 
     class RenderPass
     {
     public:
-        MANDRILL_API RenderPass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, const RenderPassDesc& desc);
+        MANDRILL_API RenderPass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
         MANDRILL_API ~RenderPass();
 
-        MANDRILL_API void recreatePipelines();
+        MANDRILL_API void recreate();
 
         MANDRILL_API virtual void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) = 0;
         MANDRILL_API virtual void frameEnd(VkCommandBuffer cmd) = 0;
@@ -41,15 +41,12 @@ namespace Mandrill
             return mRenderPass;
         }
 
-        MANDRILL_API VkPipelineLayout getPipelineLayout(uint32_t index) const
+        MANDRILL_API ptr<Swapchain> getSwapchain() const
         {
-            return mPipelineLayouts[index];
+            return mpSwapchain;
         }
 
     protected:
-        virtual void createPipelines() = 0;
-        virtual void destroyPipelines() = 0;
-
         virtual void createAttachments() = 0;
         virtual void destroyAttachments() = 0;
 
@@ -60,12 +57,6 @@ namespace Mandrill
         ptr<Swapchain> mpSwapchain;
 
         VkRenderPass mRenderPass;
-
-        std::vector<VkPipeline> mPipelines;
-        std::vector<VkPipelineLayout> mPipelineLayouts;
-
-        std::vector<ptr<Layout>> mpLayouts;
-        std::vector<ptr<Shader>> mpShaders;
 
     private:
     };

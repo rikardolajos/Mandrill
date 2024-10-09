@@ -27,20 +27,22 @@ Node::~Node()
 {
 }
 
-void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout,
-                  const ptr<const Scene> pScene) const
+void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene) const
 {
-    if (!mVisible) {
+    if (!mVisible || !mpPipeline) {
         return;
     }
 
     std::memcpy(mpTransformDevice + pScene->mpSwapchain->getInFlightIndex(), &mTransform, sizeof(glm::mat4));
 
-    // Bind descriptor set for node
-    std::array<VkDescriptorSet, 1> descriptorSetNode = {};
-    descriptorSetNode[0] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 1,
-                            static_cast<uint32_t>(descriptorSetNode.size()), descriptorSetNode.data(), 0, nullptr);
+    mpPipeline->bind(cmd);
+
+    // Bind descriptor set for camera matrices and node transform
+    std::array<VkDescriptorSet, 2> descriptors = {};
+    descriptors[0] = pCamera->getDescriptorSet();
+    descriptors[1] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+                            static_cast<uint32_t>(descriptors.size()), descriptors.data(), 0, nullptr);
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
@@ -48,7 +50,7 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayo
         // Bind descriptor set for material
         std::array<VkDescriptorSet, 1> descriptorSetMaterial = {};
         descriptorSetMaterial[0] = pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet();
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 2,
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 2,
                                 static_cast<uint32_t>(descriptorSetMaterial.size()), descriptorSetMaterial.data(), 0,
                                 nullptr);
 
@@ -74,16 +76,10 @@ Scene::~Scene()
 {
 }
 
-void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout) const
+void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera) const
 {
-    // Bind descriptor set for camera matrices
-    std::array<VkDescriptorSet, 1> descriptors = {};
-    descriptors[0] = pCamera->getDescriptorSet();
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, static_cast<uint32_t>(descriptors.size()),
-                            descriptors.data(), 0, nullptr);
-
     for (auto& node : mNodes) {
-        node.render(cmd, pCamera, layout, shared_from_this());
+        node.render(cmd, pCamera, shared_from_this());
     }
 }
 
@@ -404,7 +400,6 @@ void Scene::setSampler(const ptr<Sampler> pSampler)
     }
 }
 
-
 ptr<Layout> Scene::getLayout()
 {
     std::vector<LayoutDesc> desc;
@@ -428,7 +423,6 @@ ptr<Layout> Scene::getLayout()
     return make_ptr<Layout>(mpDevice, desc);
 }
 
-
 void Scene::addTexture(std::string texturePath)
 {
     if (texturePath.empty()) {
@@ -442,7 +436,6 @@ void Scene::addTexture(std::string texturePath)
     auto pTexture = make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true);
     mTextures.insert(std::make_pair(texturePath, pTexture));
 }
-
 
 void Scene::createDescriptors()
 {

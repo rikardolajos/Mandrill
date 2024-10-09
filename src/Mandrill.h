@@ -8,6 +8,7 @@
 #include "Helpers.h"
 #include "Layout.h"
 #include "Log.h"
+#include "Pipeline.h"
 #include "RenderPasses/Deferred/Deferred.h"
 #include "RenderPasses/Rasterizer/Rasterizer.h"
 #include "RenderPasses/RayTracer/RayTracer.h"

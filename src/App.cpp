@@ -201,7 +201,7 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
                     shader->reload();
                 }
                 pSwapchain->recreate();
-                pRenderPass->recreatePipelines();
+                pRenderPass->recreate();
             }
 
             if (ImGui::MenuItem("Take screenshot", "F12", false)) {
@@ -362,7 +362,7 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
             shader->reload();
         }
         pSwapchain->recreate();
-        pRenderPass->recreatePipelines();
+        pRenderPass->recreate();
     }
 }
 

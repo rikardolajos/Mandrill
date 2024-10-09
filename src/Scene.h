@@ -6,6 +6,7 @@
 #include "Descriptor.h"
 #include "Device.h"
 #include "Layout.h"
+#include "Pipeline.h"
 #include "Sampler.h"
 #include "Swapchain.h"
 #include "Texture.h"
@@ -68,11 +69,9 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
-        /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <param name="pScene">Scene which the node belongs to</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout,
-                                 const ptr<const Scene> pScene) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene) const;
 
         /// <summary>
         /// Add a mesh to the node.
@@ -82,6 +81,16 @@ namespace Mandrill
         MANDRILL_API void addMesh(uint32_t meshIndex)
         {
             mMeshIndices.push_back(meshIndex);
+        }
+
+        /// <summary>
+        /// Set pipeline to use when rendering node
+        /// </summary>
+        /// <param name="pPipeline">Pipeline to use</param>
+        /// <returns></returns>
+        MANDRILL_API void setPipeline(ptr<Pipeline> pPipeline)
+        {
+            mpPipeline = pPipeline;
         }
 
         /// <summary>
@@ -106,6 +115,8 @@ namespace Mandrill
 
     private:
         friend Scene;
+
+        ptr<Pipeline> mpPipeline;
 
         std::vector<uint32_t> mMeshIndices;
 
@@ -146,9 +157,8 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
-        /// <param name="layout">Pipeline layout that is used to render scene</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, VkPipelineLayout layout) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera) const;
 
         /// <summary>
         /// Add a node to the scene.
@@ -194,6 +204,9 @@ namespace Mandrill
         ///
         /// Upload all buffers from host to device. This function should be called after updates have been done to
         /// the scene.
+        ///
+        /// Node transforms and material parameters are kept host coherent and can be changed without requiring a new
+        /// sync.
         ///
         /// </summary>
         /// <returns></returns>
