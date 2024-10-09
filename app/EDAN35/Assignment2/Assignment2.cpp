@@ -57,9 +57,9 @@ public:
         mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         ptr<Node> pNode = mpScene->addNode();
+        pNode->setPipeline(mPipelines[0]); // Render scene with first pass pipeline
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
-            pNode->setPipeline(mPipelines[0]); // Render scene with first pass pipeline
         }
         // Scale down the model
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
@@ -120,8 +120,8 @@ public:
         } pushConstants = {
             .renderMode = mRenderMode,
         };
-        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-                           sizeof pushConstants, &pushConstants);
+        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
+                           &pushConstants);
 
         // Render full-screen quad to resolve final composition
         vkCmdDraw(cmd, 3, 1, 0, 0);

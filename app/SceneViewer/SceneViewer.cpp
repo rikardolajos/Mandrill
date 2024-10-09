@@ -18,11 +18,11 @@ public:
 
         // Add a node to the scene
         ptr<Node> pNode = mpScene->addNode();
+        pNode->setPipeline(mpPipeline);
 
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
-            pNode->setPipeline(mpPipeline);
         }
 
         // Indicate which sampler should be used to handle textures
