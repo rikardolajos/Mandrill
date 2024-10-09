@@ -63,21 +63,21 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
 
+        // Create a render pass (rasterizer, only needed for ImGUI)
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
+
+        // Create a layout matching the shader inputs
+        std::vector<LayoutDesc> layoutDesc;
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+        auto pLayout = make_ptr<Layout>(mpDevice, layoutDesc);
+
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
         shaderDesc.emplace_back("SampleApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
         shaderDesc.emplace_back("SampleApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
-
-        // Create rasterizer pipeline with layout matching the shader
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        auto pLayout = make_ptr<Layout>(mpDevice, layoutDesc);
-
-        RenderPassDesc renderPassDesc(mpShader, pLayout);
-        mpRenderPass = make_ptr<RayTracer>(mpDevice, mpSwapchain, renderPassDesc);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -132,7 +132,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        //mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -147,8 +147,8 @@ public:
         descriptorSets[0] = mpCamera->getDescriptorSet();
         descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
 
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
-                                static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
+        //vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
+        //                        static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
         //// Bind vertex and index buffers
         //std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
@@ -164,7 +164,7 @@ public:
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->frameEnd(cmd);
+        //mpRenderPass->frameEnd(cmd);
         mpSwapchain->present();
     }
 
@@ -173,7 +173,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, nullptr, mpShader);
 
         // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
@@ -187,7 +187,7 @@ public:
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, nullptr, mpShader);
 
         // Here we can add app-specific keyboard commands
         if (key == GLFW_KEY_O && action == GLFW_PRESS) {
@@ -213,8 +213,9 @@ public:
 private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
+    ptr<RenderPass> mpRenderPass;
     ptr<Shader> mpShader;
-    ptr<RayTracer> mpRenderPass;
+    ptr<Pipeline> mpPipeline;
 
     ptr<Camera> mpCamera;
 

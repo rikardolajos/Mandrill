@@ -22,6 +22,7 @@ public:
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
+            pNode->setPipeline(mpPipeline);
         }
 
         // Indicate which sampler should be used to handle textures
@@ -46,6 +47,9 @@ public:
         mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
+        // Create rasterizer render pass with layout matching the scene
+        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain);
+
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -60,9 +64,8 @@ public:
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
 
-        // Create rasterizer render pass with layout matching the scene
-        RenderPassDesc renderPassDesc(mpShader, pLayout);
-        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
+        // Create a pipeline that will render with the given shader
+        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpShader, pLayout, mpRenderPass);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -100,9 +103,6 @@ public:
             mpCamera->updateAspectRatio();
         }
 
-        vkCmdSetFrontFace(cmd, mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
-        vkCmdSetCullMode(cmd, mCullMode);
-
         struct PushConstants {
             int renderMode;
             int discardOnZeroAlpha;
@@ -110,11 +110,11 @@ public:
             .renderMode = mRenderMode,
             .discardOnZeroAlpha = mDiscardOnZeroAlpha,
         };
-        vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(0), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+        vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstants, &pushConstants);
 
         // Render scene
-        mpScene->render(cmd, mpCamera, mpRenderPass->getPipelineLayout(0));
+        mpScene->render(cmd, mpCamera);
 
         // Draw GUI
         App::renderGUI(cmd);
@@ -161,9 +161,13 @@ public:
             };
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
             const char* frontFace[] = {"Counter clockwise", "Clockwise"};
-            ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace));
+            if (ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace))) {
+                mpPipeline->setFrontFace(mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
+            }
             const char* cullModes[] = {"None", "Front face", "Back face"};
-            ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes));
+            if (ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes))) {
+                mpPipeline->setCullMode(static_cast<VkCullModeFlagBits>(mCullMode));
+            };
 
             bool newSampler = false;
             const char* magFilters[] = {"Linear", "Nearest"};
@@ -218,8 +222,9 @@ public:
 private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
-    ptr<Shader> mpShader;
     ptr<Rasterizer> mpRenderPass;
+    ptr<Shader> mpShader;
+    ptr<Pipeline> mpPipeline;
 
     ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;

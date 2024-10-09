@@ -198,10 +198,14 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
 
             if (ImGui::MenuItem("Reload shaders", "R")) {
                 for (auto& shader : pShaders) {
-                    shader->reload();
+                    if (shader) {
+                        shader->reload();
+                    }
                 }
                 pSwapchain->recreate();
-                pRenderPass->recreate();
+                if (pRenderPass) {
+                    pRenderPass->recreate();
+                }
             }
 
             if (ImGui::MenuItem("Take screenshot", "F12", false)) {
@@ -329,7 +333,7 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> pShaders)
+                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> shaders)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mpWindow, 1);
@@ -358,11 +362,16 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
     }
 
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        for (auto& shader : pShaders) {
-            shader->reload();
+        for (auto& shader : shaders) {
+            if (shader) {
+                shader->reload();
+            }
         }
+
         pSwapchain->recreate();
-        pRenderPass->recreate();
+        if (pRenderPass) {
+            pRenderPass->recreate();
+        }
     }
 }
 

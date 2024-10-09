@@ -63,8 +63,8 @@ void Pipeline::bind(VkCommandBuffer cmd)
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
 
     // Set dynamic states
-    vkCmdSetFrontFace(cmd, VK_FRONT_FACE_COUNTER_CLOCKWISE);
-    vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
+    vkCmdSetFrontFace(cmd, mFrontFace);
+    vkCmdSetCullMode(cmd, mCullMode);
 
     VkViewport viewport = {
         .x = 0.0f,

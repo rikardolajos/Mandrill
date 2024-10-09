@@ -13,35 +13,11 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
 
-        // Create a sampler that will be used to render materials
-        mpSampler = make_ptr<Sampler>(mpDevice);
-
-        // Create and load scene
-        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        ptr<Node> pNode = mpScene->addNode();
-        for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
-        }
-        // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
-
-        mpScene->setSampler(mpSampler);
-        mpScene->compile();
-        mpScene->syncToDevice();
-
-        // Deferred render pass requires 2 passes (G-buffer and resolve)
-        std::vector<ShaderDesc> shaderDesc1;
-        std::vector<ShaderDesc> shaderDesc2;
-        shaderDesc1.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc2.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc1));
-        mpShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc2));
+        // Create render pass
+        mpRenderPass = make_ptr<Deferred>(mpDevice, mpSwapchain);
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
-        std::vector<std::shared_ptr<Layout>> layouts;
+        std::vector<ptr<Layout>> layouts;
         layouts.push_back(mpScene->getLayout()); // First pass
 
         // 3 input attachments: world position, normal, albedo color
@@ -60,9 +36,38 @@ public:
         pResolveLayout->addPushConstantRange(pushConstantRange);
         layouts.push_back(pResolveLayout); // Second pass
 
-        // Create render pass
-        RenderPassDesc renderPassDesc(mpShaders, layouts);
-        mpRenderPass = make_ptr<Deferred>(mpDevice, mpSwapchain, renderPassDesc);
+        // Deferred render pass requires 2 passes (G-buffer and resolve)
+        std::vector<ShaderDesc> shaderDesc1;
+        std::vector<ShaderDesc> shaderDesc2;
+        shaderDesc1.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc2.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        mShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc1));
+        mShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc2));
+
+        // Create pipelines
+        mPipelines.push_back(make_ptr<Pipeline>(mpDevice, mShaders[0], layouts[0], mpRenderPass));
+        mPipelines.push_back(make_ptr<Pipeline>(mpDevice, mShaders[1], layouts[1], mpRenderPass));
+
+        // Create a sampler that will be used to render materials
+        mpSampler = make_ptr<Sampler>(mpDevice);
+
+        // Create and load scene
+        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
+        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        ptr<Node> pNode = mpScene->addNode();
+        for (auto meshIndex : meshIndices) {
+            pNode->addMesh(meshIndex);
+            pNode->setPipeline(mPipelines[0]); // Render scene with first pass pipeline
+        }
+        // Scale down the model
+        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+
+        mpScene->setSampler(mpSampler);
+        mpScene->compile();
+        mpScene->syncToDevice();
+
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -102,10 +107,12 @@ public:
         vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
 
         // Render scene
-        mpScene->render(cmd, mpCamera, mpRenderPass->getPipelineLayout(0));
+        mpScene->render(cmd, mpCamera);
 
         // Go to next subpass
-        mpRenderPass->nextSubpass(cmd);
+        vkCmdNextSubpass(cmd, VK_SUBPASS_CONTENTS_INLINE);
+        mPipelines[1]->bind(cmd);
+        vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
         // Push constants
         struct PushConstants {
@@ -113,7 +120,7 @@ public:
         } pushConstants = {
             .renderMode = mRenderMode,
         };
-        vkCmdPushConstants(cmd, mpRenderPass->getPipelineLayout(1), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstants, &pushConstants);
 
         // Render full-screen quad to resolve final composition
@@ -132,7 +139,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShaders);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mShaders);
 
         if (ImGui::Begin("Assignment 2")) {
             const char* renderModes[] = {
@@ -149,7 +156,7 @@ public:
 
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShaders);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mShaders);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -166,8 +173,9 @@ public:
 private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
-    std::vector<ptr<Shader>> mpShaders;
     ptr<Deferred> mpRenderPass;
+    std::vector<ptr<Shader>> mShaders;
+    std::vector<ptr<Pipeline>> mPipelines;
 
     ptr<Descriptor> mpInputAttachmentDescriptor;
 

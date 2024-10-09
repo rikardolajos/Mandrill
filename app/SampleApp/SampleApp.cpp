@@ -44,10 +44,10 @@ public:
         size_t verticesSize = mVertices.size() * sizeof(mVertices[0]);
         size_t indicesSize = mIndices.size() * sizeof(mIndices[0]);
 
-        mpVertexBuffer = make_ptr<Buffer>(mpDevice, verticesSize,
+        mpVertexBuffer = std::make_shared<Buffer>(mpDevice, verticesSize,
                                                   VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-        mpIndexBuffer = make_ptr<Buffer>(mpDevice, indicesSize,
+        mpIndexBuffer = std::make_shared<Buffer>(mpDevice, indicesSize,
                                                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
@@ -58,43 +58,46 @@ public:
     SampleApp() : App("Sample App", 1280, 720)
     {
         // Create a Vulkan instance and device
-        mpDevice = make_ptr<Device>(mpWindow);
+        mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
+        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+
+        // Create a rasterizer render pass
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
+
+        // Create a layout matching the shader inputs
+        std::vector<LayoutDesc> layoutDesc;
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        auto pLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
+        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
-        // Create rasterizer pipeline with layout matching the shader
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-        layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pLayout = make_ptr<Layout>(mpDevice, layoutDesc);
-
-        RenderPassDesc renderPassDesc(mpShader, pLayout);
-        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain, renderPassDesc);
+        // Create a pipeline for rendering using the shader
+        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpShader, pLayout, mpRenderPass);
 
         // Setup camera
-        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
         // Create a texture and bind a sampler to it
-        mpTexture = make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
-        mpSampler = make_ptr<Sampler>(mpDevice);
+        mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
+        mpSampler = std::make_shared<Sampler>(mpDevice);
         mpTexture->setSampler(mpSampler);
 
         // Vertices in scene
         setupVertexBuffers();
 
         // Uniform for sending model matrix to shaders
-        mpUniform = make_ptr<Buffer>(
+        mpUniform = std::make_shared<Buffer>(
             mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -102,7 +105,7 @@ public:
         std::vector<DescriptorDesc> descriptorDesc;
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniform);
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = make_ptr<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1],
+        mpDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1],
                                                     mpSwapchain->getFramesInFlightCount());
 
         // Initialize GUI
@@ -134,6 +137,9 @@ public:
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
+        // Bind the pipeline for rendering
+        mpPipeline->bind(cmd);
+
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
@@ -147,7 +153,7 @@ public:
         descriptorSets[0] = mpCamera->getDescriptorSet();
         descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
 
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
                                 static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
 
         // Bind vertex and index buffers
@@ -213,8 +219,9 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Shader> mpShader;
     std::shared_ptr<Rasterizer> mpRenderPass;
+    std::shared_ptr<Shader> mpShader;
+    std::shared_ptr<Pipeline> mpPipeline;
 
     std::shared_ptr<Camera> mpCamera;
 
