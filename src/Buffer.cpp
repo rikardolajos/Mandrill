@@ -31,6 +31,10 @@ Buffer::Buffer(ptr<Device> pDevice, VkDeviceSize size, VkBufferUsageFlags usage,
         .memoryTypeIndex = Helpers::findMemoryType(mpDevice, memReqs.memoryTypeBits, mProperties),
     };
 
+    if (mUsage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
+        allocInfo.pNext = &allocFlagInfo;
+    }
+
     Check::Vk(vkAllocateMemory(mpDevice->getDevice(), &allocInfo, nullptr, &mMemory));
 
     Check::Vk(vkBindBufferMemory(mpDevice->getDevice(), mBuffer, mMemory, 0));
