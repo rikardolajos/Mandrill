@@ -51,6 +51,11 @@ Camera::Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapcha
     std::vector<DescriptorDesc> desc;
     desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniforms);
     mpDescriptor = std::make_shared<Descriptor>(mpDevice, desc, mLayout, mpSwapchain->getFramesInFlightCount());
+
+    // The buffer info allows for using this as push descriptor too
+    mBufferInfo.buffer = mpUniforms->getBuffer();
+    mBufferInfo.offset = 0;
+    mBufferInfo.range = 4 * sizeof(glm::mat4);
 }
 
 Camera::~Camera()
@@ -155,4 +160,18 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     matrices->proj = glm::perspective(glm::radians(mFov), mAspect, mNear, mFar);
     matrices->proj[1][1] *= -1.0f; // GLM and Vulkan are not using the same coordinate system
     matrices->proj_inv = glm::inverse(matrices->proj);
+}
+
+VkWriteDescriptorSet Camera::getWriteDescriptor(uint32_t binding) const
+{
+    VkWriteDescriptorSet write = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .dstBinding = binding,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .pBufferInfo = &mBufferInfo,
+    };
+
+    return write;
 }
