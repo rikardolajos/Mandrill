@@ -10,33 +10,33 @@ public:
         mVertices.push_back({
             {-1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},   // normal
+            {0.0f, 0.0f},         // texcoord
             {1.0f, 0.0f, 0.0f},   // tangent
             {0.0f, 1.0f, 0.0f},   // binormal
-            {0.0f, 0.0f},         // texcoord
         });
 
         mVertices.push_back({
             {1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {1.0f, 0.0f},        // texcoord
             {1.0f, 0.0f, 0.0f},  // tangent
             {0.0f, 1.0f, 0.0f},  // binormal
-            {1.0f, 0.0f},        // texcoord
         });
 
         mVertices.push_back({
             {-1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {0.0f, 1.0f},        // texcoord
             {1.0f, 0.0f, 0.0f},  // tangent
             {0.0f, 1.0f, 0.0f},  // binormal
-            {0.0f, 1.0f},        // texcoord
         });
 
         mVertices.push_back({
             {1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f}, // normal
+            {1.0f, 1.0f},       // texcoord
             {1.0f, 0.0f, 0.0f}, // tangent
             {0.0f, 1.0f, 0.0f}, // binormal
-            {1.0f, 1.0f},       // texcoord
         });
 
         mIndices = {0, 1, 3, 0, 3, 2};
@@ -77,10 +77,10 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create a pipeline for rendering using the shader
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpShader, pLayout, mpRenderPass);
+        mpPipeline = std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -179,7 +179,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
 
         // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
@@ -193,7 +193,7 @@ public:
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
 
         // Here we can add app-specific keyboard commands
         if (key == GLFW_KEY_O && action == GLFW_PRESS) {
@@ -220,7 +220,6 @@ private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<Rasterizer> mpRenderPass;
-    std::shared_ptr<Shader> mpShader;
     std::shared_ptr<Pipeline> mpPipeline;
 
     std::shared_ptr<Camera> mpCamera;

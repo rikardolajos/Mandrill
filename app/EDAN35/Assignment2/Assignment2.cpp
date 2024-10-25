@@ -5,6 +5,10 @@ using namespace Mandrill;
 class Assignment2 : public App
 {
 public:
+    struct PushConstants {
+        int renderMode;
+    };
+
     Assignment2() : App("Assignment2: Deferred Shading and Shadow Maps", 1280, 720)
     {
         // Create a Vulkan instance and device
@@ -27,11 +31,11 @@ public:
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         auto pResolveLayout = make_ptr<Layout>(mpDevice, layoutDesc);
 
-        // Add push constant to layout so we can set render mode in shader
+        // Add push constant to layout so we can set render mode in resolve pipeline
         VkPushConstantRange pushConstantRange = {
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
-            .size = 1 * sizeof(int),
+            .size = sizeof(PushConstants),
         };
         pResolveLayout->addPushConstantRange(pushConstantRange);
         layouts.push_back(pResolveLayout); // Second pass
@@ -68,6 +72,9 @@ public:
         mpScene->compile();
         mpScene->syncToDevice();
 
+        // Sponza's triangles are clockwise
+        mPipelines[0]->setFrontFace(VK_FRONT_FACE_CLOCKWISE);
+        mPipelines[0]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -102,25 +109,18 @@ public:
             mpCamera->updateAspectRatio();
         }
 
-        // Sponza's triangles are clockwise
-        vkCmdSetFrontFace(cmd, VK_FRONT_FACE_CLOCKWISE);
-        vkCmdSetCullMode(cmd, VK_CULL_MODE_BACK_BIT);
-
         // Render scene
         mpScene->render(cmd, mpCamera);
 
-        // Go to next subpass
+        // Go to next subpass and resolve pipeline
         vkCmdNextSubpass(cmd, VK_SUBPASS_CONTENTS_INLINE);
         mPipelines[1]->bind(cmd);
-        vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
         // Push constants
-        struct PushConstants {
-            int renderMode;
-        } pushConstants = {
+        PushConstants pushConstants = {
             .renderMode = mRenderMode,
         };
-        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
+        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants),
                            &pushConstants);
 
         // Render full-screen quad to resolve final composition

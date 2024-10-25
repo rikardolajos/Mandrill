@@ -164,15 +164,15 @@ ImGuiContext* App::newFrameGUI()
     return ImGui::GetCurrentContext();
 }
 
-void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader)
+void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline)
 {
-    std::vector<ptr<Shader>> shaders;
-    shaders.push_back(pShader);
-    App::baseGUI(pDevice, pSwapchain, pRenderPass, shaders);
+    std::vector<ptr<Pipeline>> pipelines;
+    pipelines.push_back(pPipeline);
+    App::baseGUI(pDevice, pSwapchain, pRenderPass, pipelines);
 }
 
 void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                  std::vector<ptr<Shader>> pShaders)
+                  std::vector<ptr<Pipeline>> pPipelines)
 {
     if (!mCreatedGUI) {
         return;
@@ -197,9 +197,9 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
             }
 
             if (ImGui::MenuItem("Reload shaders", "R")) {
-                for (auto& shader : pShaders) {
-                    if (shader) {
-                        shader->reload();
+                for (auto& pipeline : pPipelines) {
+                    if (pipeline) {
+                        pipeline->recreate();
                     }
                 }
                 pSwapchain->recreate();
@@ -325,15 +325,15 @@ void App::renderGUI(VkCommandBuffer cmd) const
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader)
+                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline)
 {
-    std::vector<ptr<Shader>> shaders;
-    shaders.push_back(pShader);
-    App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pRenderPass, shaders);
+    std::vector<ptr<Pipeline>> pipelines;
+    pipelines.push_back(pPipeline);
+    App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pRenderPass, pipelines);
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> shaders)
+                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Pipeline>> pipelines)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mpWindow, 1);
@@ -362,9 +362,9 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
     }
 
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        for (auto& shader : shaders) {
-            if (shader) {
-                shader->reload();
+        for (auto& pipeline : pipelines) {
+            if (pipeline) {
+                pipeline->recreate();
             }
         }
 

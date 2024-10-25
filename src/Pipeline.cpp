@@ -11,7 +11,7 @@ static VkVertexInputBindingDescription bindingDescription = {
     .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
 };
 
-static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {{
+static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {{
     {
         .location = 0,
         .binding = 0,
@@ -29,6 +29,18 @@ static std::array<VkVertexInputAttributeDescription, 3> attributeDescription = {
         .binding = 0,
         .format = VK_FORMAT_R32G32_SFLOAT,
         .offset = offsetof(Vertex, texcoord),
+    },
+    {
+        .location = 3,
+        .binding = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(Vertex, tangent),
+    },
+    {
+        .location = 4,
+        .binding = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(Vertex, binormal),
     },
 }};
 
@@ -53,8 +65,7 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout
 
 Pipeline::~Pipeline()
 {
-    vkDeviceWaitIdle(mpDevice->getDevice());
-    vkDestroyPipeline(mpDevice->getDevice(), mPipeline, nullptr);
+    destroyPipeline();
     vkDestroyPipelineLayout(mpDevice->getDevice(), mPipelineLayout, nullptr);
 }
 
@@ -81,6 +92,13 @@ void Pipeline::bind(VkCommandBuffer cmd)
         .extent = mpRenderPass->getSwapchain()->getExtent(),
     };
     vkCmdSetScissor(cmd, 0, 1, &scissor);
+}
+
+void Pipeline::recreate()
+{
+    destroyPipeline();
+    mpShader->reload();
+    createPipeline();
 }
 
 void Pipeline::createPipeline()
@@ -184,4 +202,10 @@ void Pipeline::createPipeline()
     };
 
     Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline));
+}
+
+void Pipeline::destroyPipeline()
+{
+    vkDeviceWaitIdle(mpDevice->getDevice());
+    vkDestroyPipeline(mpDevice->getDevice(), mPipeline, nullptr);
 }

@@ -62,10 +62,10 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
+        ptr<Shader> pShader = make_ptr<Shader>(mpDevice, shaderDesc);
 
         // Create a pipeline that will render with the given shader
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpShader, pLayout, mpRenderPass);
+        mpPipeline = std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -128,7 +128,7 @@ public:
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
@@ -206,7 +206,7 @@ public:
     void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpShader);
+        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -223,7 +223,6 @@ private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
     ptr<Rasterizer> mpRenderPass;
-    ptr<Shader> mpShader;
     ptr<Pipeline> mpPipeline;
 
     ptr<Camera> mpCamera;

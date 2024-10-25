@@ -4,8 +4,8 @@
 
 #include "Camera.h"
 #include "Device.h"
+#include "Pipeline.h"
 #include "RenderPasses/RenderPass.h"
-#include "Shader.h"
 #include "Swapchain.h"
 
 namespace Mandrill
@@ -123,27 +123,28 @@ namespace Mandrill
         ///
         /// This function will draw a menu bar and allow for basic features like showing framerate and taking
         /// screenshots. The menu also allows for controlling different aspects of the rendering context and
-        /// therefore needs access to the device, swapchain, render pass and shaders.
+        /// therefore needs access to the device, swapchain, render pass and pipelines.
         /// </summary>
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
-        /// <param name="pShader">Shader that should be reloaded</param>
-        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader);
+        /// <param name="pPipline">Pipeline that should be recreated</param>
+        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
+                     ptr<Pipeline> pPipeline);
 
         /// <summary>
         /// Draw the base GUI of a Mandrill application.
         ///
         /// This function will draw a menu bar and allow for basic features like showing framerate and taking
         /// screenshots. The menu also allows for controlling different aspects of the rendering context and
-        /// therefore needs access to the device, swapchain, render pass and shaders.
+        /// therefore needs access to the device, swapchain, render pass and pipelines.
         /// </summary>
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
-        /// <param name="pShaders">Shaders that should be reloaded</param>
+        /// <param name="pPipelines">Pipelines that should be recreated</param>
         void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                     std::vector<ptr<Shader>> pShaders);
+                     std::vector<ptr<Pipeline>> pPipelines);
 
         /// <summary>
         /// Render the GUI by writing the state to a command buffer.
@@ -165,9 +166,9 @@ namespace Mandrill
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
-        /// <param name="pShader">Shader that should be reloaded</param>
+        /// <param name="pPipeline">Pipeline that should be recreated</param>
         void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Shader> pShader);
+                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline);
 
         /// <summary>
         /// App keyboard callback function. This will handle keyboard commands associated with the base application
@@ -181,9 +182,10 @@ namespace Mandrill
         /// <param name="pDevice">Device to toggle vertical sync</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
-        /// <param name="pShaders">Shaders that should be reloaded</param>
+        /// <param name="pPipelines">Pipelines that should be recreated</param>
         void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Shader>> pShaders);
+                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
+                             std::vector<ptr<Pipeline>> pPipelines);
 
         /// <summary>
         /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard

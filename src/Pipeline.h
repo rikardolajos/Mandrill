@@ -18,6 +18,8 @@ namespace Mandrill
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
+        MANDRILL_API void recreate();
+
         MANDRILL_API VkPipeline getPipeline() const
         {
             return mPipeline;
@@ -40,6 +42,7 @@ namespace Mandrill
 
     private:
         void createPipeline();
+        void destroyPipeline();
 
         ptr<Device> mpDevice;
         ptr<RenderPass> mpRenderPass;
