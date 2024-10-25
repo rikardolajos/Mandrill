@@ -23,7 +23,20 @@ namespace Mandrill
         MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
         MANDRILL_API void frameEnd(VkCommandBuffer cmd) override;
 
-        MANDRILL_API void nextSubpass(VkCommandBuffer cmd);
+        MANDRILL_API ptr<Image> getPositionImage() const
+        {
+            return mpPosition;
+        }
+
+        MANDRILL_API ptr<Image> getNormalImage() const
+        {
+            return mpNormal;
+        }
+
+        MANDRILL_API ptr<Image> getAlbedoImage() const
+        {
+            return mpAlbedo;
+        }
 
     protected:
         void createAttachments() override;
@@ -40,7 +53,5 @@ namespace Mandrill
         ptr<Image> mpAlbedo;
         ptr<Image> mpDepth;
         std::vector<VkFramebuffer> mFramebuffers;
-
-        ptr<Descriptor> mpInputAttachmentDescriptor;
     };
 } // namespace Mandrill

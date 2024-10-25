@@ -44,8 +44,10 @@ static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {
     },
 }};
 
-Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass)
+Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass,
+                   VkBool32 depthTest, uint32_t subpass, uint32_t attachmentCount)
+    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass), mDepthTest(depthTest),
+      mSubpass(subpass), mAttachmentCount(attachmentCount)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
     const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
@@ -148,7 +150,7 @@ void Pipeline::createPipeline()
 
     VkPipelineMultisampleStateCreateInfo multisampling = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        .rasterizationSamples = mpDevice->getSampleCount(),
+        .rasterizationSamples = mpRenderPass->getSampleCount(),
         .sampleShadingEnable = VK_FALSE,
     };
 
@@ -166,7 +168,7 @@ void Pipeline::createPipeline()
 
     VkPipelineDepthStencilStateCreateInfo depthStencil = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        .depthTestEnable = VK_TRUE,
+        .depthTestEnable = mDepthTest,
         .depthWriteEnable = VK_TRUE,
         .depthCompareOp = VK_COMPARE_OP_LESS,
         .depthBoundsTestEnable = VK_FALSE,
@@ -175,11 +177,16 @@ void Pipeline::createPipeline()
         .maxDepthBounds = 1.0f,
     };
 
+    std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
+    for (uint32_t i = 0; i < mAttachmentCount; i++) {
+        colorBlendAttachmentStates.push_back(colorBlendAttachment);
+    }
+
     VkPipelineColorBlendStateCreateInfo colorBlending = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .logicOpEnable = VK_FALSE,
-        .attachmentCount = 1,
-        .pAttachments = &colorBlendAttachment,
+        .attachmentCount = static_cast<uint32_t>(colorBlendAttachmentStates.size()),
+        .pAttachments = colorBlendAttachmentStates.data(),
     };
 
     auto stages = mpShader->getStages();
@@ -198,7 +205,7 @@ void Pipeline::createPipeline()
         .pDynamicState = &dynamicState,
         .layout = mPipelineLayout,
         .renderPass = mpRenderPass->getRenderPass(),
-        .subpass = 0,
+        .subpass = mSubpass,
     };
 
     Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline));

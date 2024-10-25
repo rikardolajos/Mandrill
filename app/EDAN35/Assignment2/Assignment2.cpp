@@ -5,31 +5,48 @@ using namespace Mandrill;
 class Assignment2 : public App
 {
 public:
+    enum {
+        GBUFFER_PASS = 0,
+        RESOLVE_PASS = 1,
+    };
+
     struct PushConstants {
         int renderMode;
     };
 
+    void createInputAttachmentDescriptor()
+    {
+        std::vector<DescriptorDesc> descriptorDesc;
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getPositionImage());
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getNormalImage());
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getAlbedoImage());
+        mpInputAttachmentDescriptor =
+            std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpResolveLayout->getDescriptorSetLayouts()[0]);
+    }
+
     Assignment2() : App("Assignment2: Deferred Shading and Shadow Maps", 1280, 720)
     {
         // Create a Vulkan instance and device
-        mpDevice = make_ptr<Device>(mpWindow);
+        mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
+        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create render pass
-        mpRenderPass = make_ptr<Deferred>(mpDevice, mpSwapchain);
+        mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain);
+
+        // Create scene
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
-        std::vector<ptr<Layout>> layouts;
-        layouts.push_back(mpScene->getLayout()); // First pass
+        auto pGBufferLayout = mpScene->getLayout();
 
         // 3 input attachments: world position, normal, albedo color
         std::vector<LayoutDesc> layoutDesc;
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pResolveLayout = make_ptr<Layout>(mpDevice, layoutDesc);
+        mpResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
 
         // Add push constant to layout so we can set render mode in resolve pipeline
         VkPushConstantRange pushConstantRange = {
@@ -37,31 +54,32 @@ public:
             .offset = 0,
             .size = sizeof(PushConstants),
         };
-        pResolveLayout->addPushConstantRange(pushConstantRange);
-        layouts.push_back(pResolveLayout); // Second pass
+        mpResolveLayout->addPushConstantRange(pushConstantRange);
 
-        // Deferred render pass requires 2 passes (G-buffer and resolve)
-        std::vector<ShaderDesc> shaderDesc1;
-        std::vector<ShaderDesc> shaderDesc2;
-        shaderDesc1.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc1.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        shaderDesc2.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc2.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        mShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc1));
-        mShaders.push_back(make_ptr<Shader>(mpDevice, shaderDesc2));
+        // Create two shaders (and pipelines) for G-buffer and resolve pass respectively
+        std::vector<ShaderDesc> shaderDesc;
+        shaderDesc.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        auto pGBufferShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+
+        shaderDesc.clear();
+        shaderDesc.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create pipelines
-        mPipelines.push_back(make_ptr<Pipeline>(mpDevice, mShaders[0], layouts[0], mpRenderPass));
-        mPipelines.push_back(make_ptr<Pipeline>(mpDevice, mShaders[1], layouts[1], mpRenderPass));
+        mPipelines.emplace_back(
+            std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass, VK_TRUE, 0, 3));
+        mPipelines.emplace_back(
+            std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass, VK_FALSE, 1, 1));
 
         // Create a sampler that will be used to render materials
-        mpSampler = make_ptr<Sampler>(mpDevice);
+        mpSampler = std::make_shared<Sampler>(mpDevice);
 
-        // Create and load scene
-        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
+        // Load scene
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        ptr<Node> pNode = mpScene->addNode();
-        pNode->setPipeline(mPipelines[0]); // Render scene with first pass pipeline
+        std::shared_ptr<Node> pNode = mpScene->addNode();
+        pNode->setPipeline(mPipelines[GBUFFER_PASS]); // Render scene with first pass pipeline
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
         }
@@ -73,14 +91,17 @@ public:
         mpScene->syncToDevice();
 
         // Sponza's triangles are clockwise
-        mPipelines[0]->setFrontFace(VK_FRONT_FACE_CLOCKWISE);
-        mPipelines[0]->setCullMode(VK_CULL_MODE_BACK_BIT);
+        mPipelines[GBUFFER_PASS]->setFrontFace(VK_FRONT_FACE_CLOCKWISE);
+        mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
-        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+
+        // Create descriptor for resolve pass input attachments
+        createInputAttachmentDescriptor();
 
         // Initialize GUI
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT, 1);
@@ -107,21 +128,29 @@ public:
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
+            createInputAttachmentDescriptor();
         }
 
         // Render scene
         mpScene->render(cmd, mpCamera);
 
-        // Go to next subpass and resolve pipeline
+        // Go to next subpass of the render pass
         vkCmdNextSubpass(cmd, VK_SUBPASS_CONTENTS_INLINE);
-        mPipelines[1]->bind(cmd);
+
+        // Bind the pipeline for the full-screen quad
+        mPipelines[RESOLVE_PASS]->bind(cmd);
+
+        // Bind descriptors for input attachments
+        auto descriptorSet = mpInputAttachmentDescriptor->getSet(0);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[RESOLVE_PASS]->getLayout(), 0, 1,
+                                &descriptorSet, 0, nullptr);
 
         // Push constants
         PushConstants pushConstants = {
             .renderMode = mRenderMode,
         };
-        vkCmdPushConstants(cmd, mPipelines[1]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants),
-                           &pushConstants);
+        vkCmdPushConstants(cmd, mPipelines[RESOLVE_PASS]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+                           sizeof(PushConstants), &pushConstants);
 
         // Render full-screen quad to resolve final composition
         vkCmdDraw(cmd, 3, 1, 0, 0);
@@ -139,7 +168,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mShaders);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mPipelines);
 
         if (ImGui::Begin("Assignment 2")) {
             const char* renderModes[] = {
@@ -156,7 +185,7 @@ public:
 
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mShaders);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mPipelines);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -171,17 +200,17 @@ public:
 
 
 private:
-    ptr<Device> mpDevice;
-    ptr<Swapchain> mpSwapchain;
-    ptr<Deferred> mpRenderPass;
-    std::vector<ptr<Shader>> mShaders;
-    std::vector<ptr<Pipeline>> mPipelines;
+    std::shared_ptr<Device> mpDevice;
+    std::shared_ptr<Swapchain> mpSwapchain;
+    std::shared_ptr<Deferred> mpRenderPass;
+    std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
-    ptr<Descriptor> mpInputAttachmentDescriptor;
+    std::shared_ptr<Layout> mpResolveLayout;
+    std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
 
-    ptr<Sampler> mpSampler;
-    ptr<Scene> mpScene;
-    ptr<Camera> mpCamera;
+    std::shared_ptr<Sampler> mpSampler;
+    std::shared_ptr<Scene> mpScene;
+    std::shared_ptr<Camera> mpCamera;
 
     int mRenderMode = 0;
 };

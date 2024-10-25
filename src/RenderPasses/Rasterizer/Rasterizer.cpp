@@ -9,6 +9,8 @@ using namespace Mandrill;
 
 Rasterizer::Rasterizer(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : RenderPass(pDevice, pSwapchain)
 {
+    mSampleCount = mpDevice->getSampleCount();
+
     createAttachments();
     createRenderPass();
     createFramebuffers();
@@ -25,7 +27,7 @@ void Rasterizer::createRenderPass()
 {
     VkAttachmentDescription colorAttachment = {
         .format = mpSwapchain->getImageFormat(),
-        .samples = mpDevice->getSampleCount(),
+        .samples = mSampleCount,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
         .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -37,7 +39,7 @@ void Rasterizer::createRenderPass()
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkAttachmentDescription depthAttachment = {
         .format = depthFormat,
-        .samples = mpDevice->getSampleCount(),
+        .samples = mSampleCount,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -114,11 +116,11 @@ void Rasterizer::createAttachments()
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
     VkExtent2D extent = mpSwapchain->getExtent();
 
-    mColor = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), format,
+    mColor = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mSampleCount, format,
                              VK_IMAGE_TILING_OPTIMAL,
                              VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mDepth = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mpDevice->getSampleCount(), depthFormat,
+    mDepth = make_ptr<Image>(mpDevice, extent.width, extent.height, 1, mSampleCount, depthFormat,
                              VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     Helpers::transitionImageLayout(mpDevice, mDepth->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,

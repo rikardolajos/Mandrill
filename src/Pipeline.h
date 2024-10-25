@@ -13,7 +13,8 @@ namespace Mandrill
     {
     public:
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
-                              ptr<RenderPass> pRenderPass);
+                              ptr<RenderPass> pRenderPass, VkBool32 depthTest = VK_TRUE, uint32_t subpass = 0,
+                              uint32_t attachmentCount = 1);
         MANDRILL_API ~Pipeline();
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
@@ -52,6 +53,10 @@ namespace Mandrill
 
         VkPipeline mPipeline;
         VkPipelineLayout mPipelineLayout;
+
+        VkBool32 mDepthTest;
+        uint32_t mSubpass;
+        uint32_t mAttachmentCount;
 
         VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;
         VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;

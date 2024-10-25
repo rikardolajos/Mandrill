@@ -10,33 +10,33 @@ public:
         mVertices.push_back({
             {-1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},   // normal
+            {0.0f, 0.0f},         // texcoord
             {1.0f, 0.0f, 0.0f},   // tangent
             {0.0f, 1.0f, 0.0f},   // binormal
-            {0.0f, 0.0f},         // texcoord
         });
 
         mVertices.push_back({
             {1.0f, -1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {1.0f, 0.0f},        // texcoord
             {1.0f, 0.0f, 0.0f},  // tangent
             {0.0f, 1.0f, 0.0f},  // binormal
-            {1.0f, 0.0f},        // texcoord
         });
 
         mVertices.push_back({
             {-1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f},  // normal
+            {0.0f, 1.0f},        // texcoord
             {1.0f, 0.0f, 0.0f},  // tangent
             {0.0f, 1.0f, 0.0f},  // binormal
-            {0.0f, 1.0f},        // texcoord
         });
 
         mVertices.push_back({
             {1.0f, 1.0f, 0.0f}, // position
             {0.0f, 0.0f, 1.0f}, // normal
+            {1.0f, 1.0f},       // texcoord
             {1.0f, 0.0f, 0.0f}, // tangent
             {0.0f, 1.0f, 0.0f}, // binormal
-            {1.0f, 1.0f},       // texcoord
         });
 
         mIndices = {0, 1, 3, 0, 3, 2};
@@ -77,7 +77,7 @@ public:
         shaderDesc.emplace_back("SampleApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
         shaderDesc.emplace_back("SampleApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
         shaderDesc.emplace_back("SampleApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        mpShader = make_ptr<Shader>(mpDevice, shaderDesc);
+        auto pShader = make_ptr<Shader>(mpDevice, shaderDesc);
 
         // Setup camera
         mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -173,7 +173,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, nullptr, mpShader);
+        App::baseGUI(mpDevice, mpSwapchain, nullptr, mpPipeline);
 
         // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
@@ -187,7 +187,7 @@ public:
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, nullptr, mpShader);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, nullptr, mpPipeline);
 
         // Here we can add app-specific keyboard commands
         if (key == GLFW_KEY_O && action == GLFW_PRESS) {
@@ -214,7 +214,6 @@ private:
     ptr<Device> mpDevice;
     ptr<Swapchain> mpSwapchain;
     ptr<RenderPass> mpRenderPass;
-    ptr<Shader> mpShader;
     ptr<Pipeline> mpPipeline;
 
     ptr<Camera> mpCamera;

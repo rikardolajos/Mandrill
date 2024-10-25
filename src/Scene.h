@@ -24,11 +24,11 @@ namespace Mandrill
     struct Mesh {
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
-        uint32_t materialIndex;
+        uint32_t materialIndex{};
 
         // Device offset are set when uploading to device
-        VkDeviceSize deviceVerticesOffset;
-        VkDeviceSize deviceIndicesOffset;
+        VkDeviceSize deviceVerticesOffset{};
+        VkDeviceSize deviceIndicesOffset{};
     };
 
     struct MaterialParams {
@@ -43,9 +43,9 @@ namespace Mandrill
     };
 
     struct Material {
-        MaterialParams params;
-        MaterialParams* paramsDevice; // This is set during Scene::compile()
-        VkDeviceSize paramsOffset;    // This is set during Scene::compile()
+        MaterialParams params{};
+        MaterialParams* paramsDevice{}; // This is set during Scene::compile()
+        VkDeviceSize paramsOffset{};    // This is set during Scene::compile()
 
         std::string diffuseTexturePath;
         std::string specularTexturePath;

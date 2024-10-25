@@ -9,22 +9,6 @@
 
 namespace Mandrill
 {
-    //struct RenderPassDesc {
-    //    std::vector<ptr<Shader>> shaders;
-    //    std::vector<ptr<Layout>> layouts;
-
-    //    MANDRILL_API RenderPassDesc(std::vector<ptr<Shader>> shaders, std::vector<ptr<Layout>> layouts)
-    //        : shaders(shaders), layouts(layouts)
-    //    {
-    //    }
-
-    //    MANDRILL_API RenderPassDesc(ptr<Shader> shader, ptr<Layout> layout)
-    //    {
-    //        shaders.push_back(shader);
-    //        layouts.push_back(layout);
-    //    }
-    //};
-
     class RenderPass
     {
     public:
@@ -46,6 +30,11 @@ namespace Mandrill
             return mpSwapchain;
         }
 
+        MANDRILL_API VkSampleCountFlagBits getSampleCount() const
+        {
+            return mSampleCount;
+        }
+
     protected:
         virtual void createAttachments() = 0;
         virtual void destroyAttachments() = 0;
@@ -58,6 +47,7 @@ namespace Mandrill
 
         VkRenderPass mRenderPass;
 
+        VkSampleCountFlagBits mSampleCount;
     private:
     };
 } // namespace Mandrill
