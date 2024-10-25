@@ -43,6 +43,8 @@ function(add_shaders TARGET)
         BYPRODUCTS ${SHADER_OUTPUTS}
         DEPFILE ${DEP}
     )
+
+    add_dependencies(${TARGET} ${TARGET}Shaders)
 endfunction()
 
 find_package(Vulkan REQUIRED COMPONENTS glslc)
