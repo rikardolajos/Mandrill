@@ -11,13 +11,13 @@ public:
     void loadScene()
     {
         // Create a new scene
-        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
 
         // Load meshes from the scene path
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
 
         // Add a node to the scene
-        ptr<Node> pNode = mpScene->addNode();
+        std::shared_ptr<Node> pNode = mpScene->addNode();
         pNode->setPipeline(mpPipeline);
 
         // Add all the meshes to the node
@@ -38,17 +38,17 @@ public:
     SceneViewer() : App("SceneViewer", 1920, 1080)
     {
         // Create a Vulkan instance and device
-        mpDevice = make_ptr<Device>(mpWindow);
+        mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
+        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
-        mpScene = make_ptr<Scene>(mpDevice, mpSwapchain);
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
         // Create rasterizer render pass with layout matching the scene
-        mpRenderPass = make_ptr<Rasterizer>(mpDevice, mpSwapchain);
+        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
 
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
@@ -62,19 +62,19 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        ptr<Shader> pShader = make_ptr<Shader>(mpDevice, shaderDesc);
+        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create a pipeline that will render with the given shader
         mpPipeline = std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass);
 
         // Setup camera
-        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
         // Create a sampler that will be used to render materials
-        mpSampler = make_ptr<Sampler>(mpDevice);
+        mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
@@ -110,8 +110,8 @@ public:
             .renderMode = mRenderMode,
             .discardOnZeroAlpha = mDiscardOnZeroAlpha,
         };
-        vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-                           sizeof pushConstants, &pushConstants);
+        vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
+                           &pushConstants);
 
         // Render scene
         mpScene->render(cmd, mpCamera);
@@ -184,10 +184,10 @@ public:
             }
 
             if (newSampler) {
-                mpSampler =
-                    make_ptr<Sampler>(mpDevice, mMagFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
-                                      mMinFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
-                                      mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST : VK_SAMPLER_MIPMAP_MODE_LINEAR);
+                mpSampler = std::make_shared<Sampler>(mpDevice, mMagFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
+                                                      mMinFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
+                                                      mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST
+                                                               : VK_SAMPLER_MIPMAP_MODE_LINEAR);
                 mpScene->setSampler(mpSampler);
                 mpScene->compile();
                 mpScene->syncToDevice();
@@ -220,17 +220,17 @@ public:
     }
 
 private:
-    ptr<Device> mpDevice;
-    ptr<Swapchain> mpSwapchain;
-    ptr<Rasterizer> mpRenderPass;
-    ptr<Pipeline> mpPipeline;
+    std::shared_ptr<Device> mpDevice;
+    std::shared_ptr<Swapchain> mpSwapchain;
+    std::shared_ptr<Rasterizer> mpRenderPass;
+    std::shared_ptr<Pipeline> mpPipeline;
 
-    ptr<Camera> mpCamera;
+    std::shared_ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;
 
-    ptr<Sampler> mpSampler;
+    std::shared_ptr<Sampler> mpSampler;
 
-    ptr<Scene> mpScene;
+    std::shared_ptr<Scene> mpScene;
     std::filesystem::path mScenePath;
 
     int mRenderMode = 0;
