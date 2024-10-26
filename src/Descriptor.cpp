@@ -37,8 +37,9 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                                      mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment);
                 bi = {
                     .buffer = std::get<ptr<Buffer>>(desc[d].pResource)->getBuffer(),
-                    .offset = offset,
-                    .range = std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
+                    .offset = desc[d].offset ? desc[d].offset : offset,
+                    .range =
+                        desc[d].range ? desc[d].range : std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
                 };
                 write.pBufferInfo = &bi;
                 break;
@@ -48,8 +49,9 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                                      mpDevice->getProperties().physicalDevice.limits.minStorageBufferOffsetAlignment);
                 bi = {
                     .buffer = std::get<ptr<Buffer>>(desc[d].pResource)->getBuffer(),
-                    .offset = offset,
-                    .range = std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
+                    .offset = desc[d].offset ? desc[d].offset : offset,
+                    .range =
+                        desc[d].range ? desc[d].range : std::get<ptr<Buffer>>(desc[d].pResource)->getSize() / copies,
                 };
                 write.pBufferInfo = &bi;
                 break;

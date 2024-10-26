@@ -455,6 +455,9 @@ void Scene::createDescriptors()
     for (auto& mat : mMaterials) {
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpMaterialParams);
+        desc.back().offset = mat.paramsOffset;
+        desc.back().range = sizeof(MaterialParams);
+
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.diffuseTexturePath]);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.specularTexturePath]);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.ambientTexturePath]);
@@ -463,6 +466,6 @@ void Scene::createDescriptors()
 
         // Set layout for set 2
         auto layout = pLayout->getDescriptorSetLayouts()[2];
-        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
+        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
     }
 }

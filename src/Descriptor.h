@@ -12,10 +12,14 @@ namespace Mandrill
     struct DescriptorDesc {
         VkDescriptorType type;
         std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>> pResource;
+        VkDeviceSize offset;
+        VkDeviceSize range;
         VkBufferView bufferView = nullptr;
         VkImageView imageView = nullptr;
 
-        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource) : type(type)
+        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource, VkDeviceSize offset = 0,
+                                    VkDeviceSize range = 0)
+            : type(type), offset(offset), range(range)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
