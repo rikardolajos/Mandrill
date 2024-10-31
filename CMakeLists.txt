@@ -55,6 +55,7 @@ include_directories(src)
 include_directories(src/External)
 include_directories(submodules/glm)
 
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 add_subdirectory(submodules)
 add_subdirectory(src)
 
