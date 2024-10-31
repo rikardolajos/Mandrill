@@ -48,9 +48,19 @@ namespace Mandrill
             return mMouseCaptured;
         }
 
+        MANDRILL_API glm::vec3 getPosition() const
+        {
+            return mPosition;
+        }
+
         MANDRILL_API void setPosition(glm::vec3 pos)
         {
             mPosition = pos;
+        }
+
+        MANDRILL_API glm::vec3 getDirection() const
+        {
+            return mDirection;
         }
 
         MANDRILL_API void setDirection(glm::vec3 dir)
@@ -78,7 +88,21 @@ namespace Mandrill
             mMoveSpeed = speed;
         }
 
-        VkDescriptorSet getDescriptorSet() const
+        MANDRILL_API glm::mat4 getViewMatrix() const
+        {
+            CameraMatrices* matrices =
+                static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + mpSwapchain->getInFlightIndex();
+            return matrices->view;
+        }
+
+        MANDRILL_API glm::mat4 getProjectionMatrix() const
+        {
+            CameraMatrices* matrices =
+                static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + mpSwapchain->getInFlightIndex();
+            return matrices->proj;
+        }
+
+        MANDRILL_API VkDescriptorSet getDescriptorSet() const
         {
             return mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
         }
