@@ -95,11 +95,11 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_A) == GLFW_PRESS) {
-        mPosition += speedFactor * mMoveSpeed * delta * right;
+        mPosition -= speedFactor * mMoveSpeed * delta * right;
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_D) == GLFW_PRESS) {
-        mPosition -= speedFactor * mMoveSpeed * delta * right;
+        mPosition += speedFactor * mMoveSpeed * delta * right;
     }
 
     // Up and down with Q and E
@@ -123,11 +123,11 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        newDir = glm::rotate(mDirection, -angle, mUp);
+        newDir = glm::rotate(mDirection, angle, mUp);
     }
 
     if (glfwGetKey(mpWindow, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        newDir = glm::rotate(mDirection, angle, mUp);
+        newDir = glm::rotate(mDirection, -angle, mUp);
     }
 
     // Zoom with PERIOD and COMMA
@@ -144,7 +144,7 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     // Mouse control
     if ((cursorDelta.x != 0.0f || cursorDelta.y != 0.0f) &&
         (glfwGetMouseButton(mpWindow, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS || mMouseCaptured)) {
-        mDirection = glm::rotate(mDirection, cursorDelta.x * mouseSpeed, mUp);
+        mDirection = glm::rotate(mDirection, -cursorDelta.x * mouseSpeed, mUp);
         newDir = glm::normalize(glm::rotate(mDirection, -cursorDelta.y * mouseSpeed, right));
     }
 
