@@ -129,6 +129,26 @@ uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<ui
     return static_cast<uint32_t>(mMeshes.size() - 1);
 }
 
+template <typename T, typename... Rest> inline void hashCombine(std::size_t& seed, T const& v, Rest&&... rest)
+{
+    std::hash<T> hasher;
+    seed ^= (hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2));
+    int i[] = {0, (hashCombine(seed, std::forward<Rest>(rest)), 0)...};
+    (void)(i);
+}
+
+namespace std
+{
+    template <> struct hash<Vertex> {
+        size_t operator()(Vertex const& vertex) const
+        {
+            size_t h = 0;
+            hashCombine(h, vertex.position, vertex.normal, vertex.texcoord, vertex.tangent, vertex.binormal);
+            return h;
+        }
+    };
+} // namespace std
+
 std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                                              const std::filesystem::path& materialPath)
 {
@@ -241,6 +261,29 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
             mesh.vertices[j + 1].binormal = b;
             mesh.vertices[j + 2].binormal = b;
         }
+    }
+
+    // Remove duplicates
+    for (uint32_t i = 0; i < newMeshIndices.size(); i++) {
+        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
+        std::unordered_map<Vertex, uint32_t> uniqueVertices;
+        std::vector<Vertex> newVertices;
+        std::vector<uint32_t> newIndices;
+        uint32_t index = 0;
+        for (uint32_t j = 0; j < mesh.indices.size(); j++) {
+            Vertex v = mesh.vertices[j];
+
+            if (uniqueVertices.count(v) == 0) {
+                uniqueVertices[v] = index;
+                newVertices.push_back(v);
+                index += 1;
+            }
+
+            newIndices.push_back(uniqueVertices[v]);
+        }
+
+        mesh.vertices = newVertices;
+        mesh.indices = newIndices;
     }
 
     // Load materials

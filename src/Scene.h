@@ -19,6 +19,12 @@ namespace Mandrill
         glm::vec2 texcoord;
         glm::vec3 tangent;
         glm::vec3 binormal;
+
+        bool operator==(const Vertex& other) const
+        {
+            return position == other.position && normal == other.normal && texcoord == other.texcoord &&
+                   tangent == other.tangent && binormal == other.binormal;
+        }
     };
 
     struct Mesh {
