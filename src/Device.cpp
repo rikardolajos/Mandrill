@@ -289,6 +289,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         .features =
             {
                 .fillModeNonSolid = VK_TRUE,
+                .wideLines = VK_TRUE,
                 .samplerAnisotropy = VK_TRUE,
             },
     };

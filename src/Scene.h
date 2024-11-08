@@ -132,7 +132,7 @@ namespace Mandrill
 
         bool mVisible;
 
-        std::vector<Node> mChildren;
+        std::vector<Node*> mChildren;
     };
 
     class Scene : public std::enable_shared_from_this<Scene>
@@ -230,6 +230,15 @@ namespace Mandrill
         /// </summary>
         /// <returns>Pointer to layout</returns>
         MANDRILL_API ptr<Layout> getLayout();
+
+        /// <summary>
+        /// Get the list of all nodes in the scene
+        /// </summary>
+        /// <returns>Vector of nodes</returns>
+        MANDRILL_API std::vector<Node>& getNodes()
+        {
+            return mNodes;
+        }
 
     private:
         friend Node;

@@ -8,6 +8,17 @@ using namespace Mandrill;
 class SceneViewer : public App
 {
 public:
+    enum PipelineType {
+        PIPELINE_FILL,
+        PIPELINE_LINE,
+    };
+
+    struct PushConstants {
+        int renderMode;
+        int discardOnZeroAlpha;
+        alignas(16) glm::vec3 lineColor;
+    };
+
     void loadScene()
     {
         // Create a new scene
@@ -18,7 +29,7 @@ public:
 
         // Add a node to the scene
         std::shared_ptr<Node> pNode = mpScene->addNode();
-        pNode->setPipeline(mpPipeline);
+        pNode->setPipeline(mPipelines[PIPELINE_FILL]);
 
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
@@ -54,7 +65,7 @@ public:
         VkPushConstantRange pushConstantRange = {
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
-            .size = 2 * sizeof(int),
+            .size = sizeof(PushConstants),
         };
         pLayout->addPushConstantRange(pushConstantRange);
 
@@ -64,8 +75,12 @@ public:
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
-        // Create a pipeline that will render with the given shader
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass);
+        // Create a pipeline filled polygon rendering
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass));
+
+        // Create a pipeline for line rendering
+        mPipelines.emplace_back(
+            std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass, PipelineDesc(VK_POLYGON_MODE_LINE)));
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -103,18 +118,40 @@ public:
             mpCamera->updateAspectRatio();
         }
 
-        struct PushConstants {
-            int renderMode;
-            int discardOnZeroAlpha;
-        } pushConstants = {
+        PushConstants pushConstants = {
             .renderMode = mRenderMode,
             .discardOnZeroAlpha = mDiscardOnZeroAlpha,
         };
-        vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof pushConstants,
-                           &pushConstants);
+        vkCmdPushConstants(cmd, mPipelines[PIPELINE_FILL]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+                           sizeof pushConstants, &pushConstants);
 
         // Render scene
         mpScene->render(cmd, mpCamera);
+
+        // Render lines
+        if (mDrawPolygonLines) {
+            // Switch to line rendering
+            for (auto& node : mpScene->getNodes()) {
+                node.setPipeline(mPipelines[PIPELINE_LINE]);
+            }
+
+            PushConstants pushConstants = {
+                .renderMode = 9,
+                .discardOnZeroAlpha = mDiscardOnZeroAlpha,
+                .lineColor = mLineColor,
+            };
+            vkCmdPushConstants(cmd, mPipelines[PIPELINE_LINE]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+                               sizeof pushConstants, &pushConstants);
+
+            mPipelines[PIPELINE_LINE]->setLineWidth(mLineWidth);
+
+            mpScene->render(cmd, mpCamera);
+
+            // Reset pipeline
+            for (auto& node : mpScene->getNodes()) {
+                node.setPipeline(mPipelines[PIPELINE_FILL]);
+            }
+        }
 
         // Draw GUI
         App::renderGUI(cmd);
@@ -128,7 +165,7 @@ public:
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
+        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mPipelines);
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
@@ -162,12 +199,18 @@ public:
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
             const char* frontFace[] = {"Counter clockwise", "Clockwise"};
             if (ImGui::Combo("Front face", &mFrontFace, frontFace, IM_ARRAYSIZE(frontFace))) {
-                mpPipeline->setFrontFace(mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
+                mPipelines[PIPELINE_FILL]->setFrontFace(mFrontFace == 0 ? VK_FRONT_FACE_COUNTER_CLOCKWISE
+                                                                        : VK_FRONT_FACE_CLOCKWISE);
             }
             const char* cullModes[] = {"None", "Front face", "Back face"};
             if (ImGui::Combo("Cull mode", &mCullMode, cullModes, IM_ARRAYSIZE(cullModes))) {
-                mpPipeline->setCullMode(static_cast<VkCullModeFlagBits>(mCullMode));
+                mPipelines[PIPELINE_FILL]->setCullMode(static_cast<VkCullModeFlagBits>(mCullMode));
             };
+            ImGui::Checkbox("Draw polyon lines", &mDrawPolygonLines);
+            if (mDrawPolygonLines) {
+                ImGui::ColorEdit3("Line color", &mLineColor.x);
+                ImGui::SliderFloat("Line width", &mLineWidth, 1.0f, 10.0f);
+            }
 
             bool newSampler = false;
             const char* magFilters[] = {"Linear", "Nearest"};
@@ -206,7 +249,7 @@ public:
     void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
+        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mPipelines);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -223,7 +266,7 @@ private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<Rasterizer> mpRenderPass;
-    std::shared_ptr<Pipeline> mpPipeline;
+    std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
     std::shared_ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;
@@ -234,7 +277,10 @@ private:
     std::filesystem::path mScenePath;
 
     int mRenderMode = 0;
-    bool mDiscardOnZeroAlpha = 0;
+    bool mDiscardOnZeroAlpha = false;
+    bool mDrawPolygonLines = false;
+    glm::vec3 mLineColor = glm::vec3(0.0f, 1.0f, 0.0f);
+    float mLineWidth = 1.0f;
     int mFrontFace = 0;
     int mCullMode = 0;
     int mMagFilter = 0;

@@ -79,6 +79,7 @@ void Pipeline::bind(VkCommandBuffer cmd)
     // Set dynamic states
     vkCmdSetFrontFace(cmd, mFrontFace);
     vkCmdSetCullMode(cmd, mCullMode);
+    vkCmdSetLineWidth(cmd, mLineWidth);
 
     VkViewport viewport = {
         .x = 0.0f,
@@ -121,10 +122,8 @@ void Pipeline::createPipeline()
     };
 
     std::vector<VkDynamicState> dynamicStates = {
-        VK_DYNAMIC_STATE_CULL_MODE,
-        VK_DYNAMIC_STATE_FRONT_FACE,
-        VK_DYNAMIC_STATE_VIEWPORT,
-        VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_CULL_MODE, VK_DYNAMIC_STATE_FRONT_FACE, VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,   VK_DYNAMIC_STATE_LINE_WIDTH,
     };
 
     VkPipelineDynamicStateCreateInfo dynamicState = {
@@ -146,7 +145,6 @@ void Pipeline::createPipeline()
         .polygonMode = mPolygonMode,
         .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
-        .lineWidth = 1.0f,
     };
 
     VkPipelineMultisampleStateCreateInfo multisampling = {

@@ -16,7 +16,7 @@ namespace Mandrill
         uint32_t attachmentCount;
 
         MANDRILL_API PipelineDesc(VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE,
-                     uint32_t subpass = 0, uint32_t attachmentCount = 1)
+                                  uint32_t subpass = 0, uint32_t attachmentCount = 1)
             : polygonMode(polygonMode), depthTest(depthTest), subpass(subpass), attachmentCount(attachmentCount)
         {
         }
@@ -53,6 +53,11 @@ namespace Mandrill
             mFrontFace = frontFace;
         }
 
+        MANDRILL_API void setLineWidth(float lineWidth)
+        {
+            mLineWidth = lineWidth;
+        }
+
     private:
         void createPipeline();
         void destroyPipeline();
@@ -73,5 +78,6 @@ namespace Mandrill
 
         VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;
         VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+        float mLineWidth = 1.0f;
     };
 } // namespace Mandrill

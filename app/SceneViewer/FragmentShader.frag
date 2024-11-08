@@ -25,6 +25,7 @@ layout(set = 2, binding = 5) uniform sampler2D normalTexture;
 layout(push_constant) uniform PushConstant {
     uint renderMode;
     uint discardOnZeroAlpha;
+    vec3 lineColor;
 } pushConstant;
 
 const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;
@@ -99,5 +100,10 @@ void main() {
     // Texture coordinates
     if (pushConstant.renderMode == 8) {
         fragColor = vec4(texCoord, 0.0, 1.0);
+    }
+
+    // Line render
+    if (pushConstant.renderMode == 9) {
+        fragColor = vec4(pushConstant.lineColor, 1.0);
     }
 }
