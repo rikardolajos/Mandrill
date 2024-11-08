@@ -45,9 +45,10 @@ static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {
 }};
 
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass,
-                   VkBool32 depthTest, uint32_t subpass, uint32_t attachmentCount)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass), mDepthTest(depthTest),
-      mSubpass(subpass), mAttachmentCount(attachmentCount)
+                   const PipelineDesc& desc)
+    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass),
+      mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mSubpass(desc.subpass),
+      mAttachmentCount(desc.attachmentCount)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
     const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
@@ -142,7 +143,7 @@ void Pipeline::createPipeline()
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
         .depthClampEnable = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
-        .polygonMode = VK_POLYGON_MODE_FILL,
+        .polygonMode = mPolygonMode,
         .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
         .lineWidth = 1.0f,

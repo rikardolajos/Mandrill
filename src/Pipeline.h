@@ -9,12 +9,24 @@
 
 namespace Mandrill
 {
+    struct PipelineDesc {
+        VkPolygonMode polygonMode;
+        VkBool32 depthTest;
+        uint32_t subpass;
+        uint32_t attachmentCount;
+
+        MANDRILL_API PipelineDesc(VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE,
+                     uint32_t subpass = 0, uint32_t attachmentCount = 1)
+            : polygonMode(polygonMode), depthTest(depthTest), subpass(subpass), attachmentCount(attachmentCount)
+        {
+        }
+    };
+
     class Pipeline
     {
     public:
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
-                              ptr<RenderPass> pRenderPass, VkBool32 depthTest = VK_TRUE, uint32_t subpass = 0,
-                              uint32_t attachmentCount = 1);
+                              ptr<RenderPass> pRenderPass, const PipelineDesc& desc = PipelineDesc());
         MANDRILL_API ~Pipeline();
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
@@ -54,6 +66,7 @@ namespace Mandrill
         VkPipeline mPipeline;
         VkPipelineLayout mPipelineLayout;
 
+        VkPolygonMode mPolygonMode;
         VkBool32 mDepthTest;
         uint32_t mSubpass;
         uint32_t mAttachmentCount;

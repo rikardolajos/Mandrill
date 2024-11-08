@@ -286,7 +286,11 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
     // Default features
     VkPhysicalDeviceFeatures2 features2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-        .features = {.samplerAnisotropy = VK_TRUE},
+        .features =
+            {
+                .fillModeNonSolid = VK_TRUE,
+                .samplerAnisotropy = VK_TRUE,
+            },
     };
 
     // Ray-tracing features

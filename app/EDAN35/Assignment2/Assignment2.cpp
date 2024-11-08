@@ -68,10 +68,10 @@ public:
         auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create pipelines
-        mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass, VK_TRUE, 0, 3));
-        mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass, VK_FALSE, 1, 1));
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass,
+                                                           PipelineDesc(VK_POLYGON_MODE_FILL, VK_TRUE, 0, 3)));
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass,
+                                                           PipelineDesc(VK_POLYGON_MODE_FILL, VK_FALSE, 1, 1)));
 
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
@@ -90,8 +90,7 @@ public:
         mpScene->compile();
         mpScene->syncToDevice();
 
-        // Sponza's triangles are clockwise
-        mPipelines[GBUFFER_PASS]->setFrontFace(VK_FRONT_FACE_CLOCKWISE);
+        // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
