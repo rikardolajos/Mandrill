@@ -14,12 +14,26 @@
 extern "C" {
 extern MANDRILL_API PFN_vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR_;
 extern MANDRILL_API PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR_;
+extern MANDRILL_API PFN_vkCmdBuildAccelerationStructuresKHR vkCmdBuildAccelerationStructuresKHR_;
+extern MANDRILL_API PFN_vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR_;
+extern MANDRILL_API PFN_vkDestroyAccelerationStructureKHR vkDestroyAccelerationStructureKHR_;
+extern MANDRILL_API PFN_vkGetAccelerationStructureBuildSizesKHR vkGetAccelerationStructureBuildSizesKHR_;
+extern MANDRILL_API PFN_vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR_;
+extern MANDRILL_API PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR_;
+
+
 // Add more extensions here, don't forget the macro below.
 }
 
 // Define macros so we can use the same name as the API
 #define vkCmdPushDescriptorSetKHR vkCmdPushDescriptorSetKHR_
 #define vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR_
+#define vkCmdBuildAccelerationStructuresKHR vkCmdBuildAccelerationStructuresKHR_
+#define vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR_
+#define vkDestroyAccelerationStructureKHR vkDestroyAccelerationStructureKHR_
+#define vkGetAccelerationStructureBuildSizesKHR vkGetAccelerationStructureBuildSizesKHR_
+#define vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR_
+#define vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR_
 
 // Macro for loading a device function pointers as Xvk...()
 #define VK_LOAD(device, func_name)                                                                                     \

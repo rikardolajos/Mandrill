@@ -107,10 +107,10 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Check if the given context support ray tracing.
+        /// Check if the given context supports ray tracing.
         /// </summary>
         /// <returns>True if ray tracing is supported, otherwise false.</returns>
-        MANDRILL_API bool supportRayTracing() const
+        MANDRILL_API bool supportsRayTracing() const
         {
             return mRayTracingSupport;
         }
