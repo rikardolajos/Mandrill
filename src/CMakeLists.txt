@@ -1,4 +1,6 @@
 add_library(Mandrill SHARED
+	"AccelerationStructure.cpp"
+	"AccelerationStructure.h"
 	"App.cpp"
 	"App.h"
 	"Buffer.cpp"
@@ -24,6 +26,8 @@ add_library(Mandrill SHARED
 	"Mandrill.h"
 	"Pipeline.cpp"
 	"Pipeline.h"
+	"RayTracingPipeline.cpp"
+	"RayTracingPipeline.h"
 	"Sampler.cpp"
 	"Sampler.h"
 	"Scene.cpp"
