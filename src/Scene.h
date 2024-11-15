@@ -100,6 +100,15 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the TRS transform of the node.
+        /// </summary>
+        /// <returns>4x4 matrix containing transform</returns>
+        MANDRILL_API glm::mat4 getTransform() const
+        {
+            return mTransform;
+        }
+
+        /// <summary>
         /// Set the TRS transform of the node.
         /// </summary>
         /// <param name="transform">Transform to use</param>
@@ -117,6 +126,15 @@ namespace Mandrill
         MANDRILL_API void setVisible(bool visible)
         {
             mVisible = visible;
+        }
+
+        /// <summary>
+        /// Get the mesh indices
+        /// </summary>
+        /// <returns>Vector of mesh indices</returns>
+        MANDRILL_API std::vector<uint32_t>& getMeshIndices()
+        {
+            return mMeshIndices;
         }
 
     private:
@@ -232,12 +250,61 @@ namespace Mandrill
         MANDRILL_API ptr<Layout> getLayout();
 
         /// <summary>
-        /// Get the list of all nodes in the scene
+        /// Get the list of all nodes in the scene.
         /// </summary>
         /// <returns>Vector of nodes</returns>
         MANDRILL_API std::vector<Node>& getNodes()
         {
             return mNodes;
+        }
+
+        /// <summary>
+        /// Get the number of meshes in the scene.
+        /// </summary>
+        /// <returns>Number of meshes</returns>
+        MANDRILL_API uint32_t getMeshCount()
+        {
+            return static_cast<uint32_t>(mMeshes.size());
+        }
+
+        /// <summary>
+        /// Get the number of vertices in a mesh.
+        /// </summary>
+        /// <param name="meshIndex">Index of mesh to get the vertices from</param>
+        /// <returns>Number of vertices</returns>
+        MANDRILL_API uint32_t getMeshVertexCount(uint32_t meshIndex) const
+        {
+            return static_cast<uint32_t>(mMeshes[meshIndex].vertices.size());
+        }
+
+        /// <summary>
+        /// Get the number of indices in a mesh.
+        /// </summary>
+        /// <param name="meshIndex">Index of mesh to get the vertices from</param>
+        /// <returns>Number of indices</returns>
+        MANDRILL_API uint32_t getMeshIndexCount(uint32_t meshIndex) const
+        {
+            return static_cast<uint32_t>(mMeshes[meshIndex].indices.size());
+        }
+
+        /// <summary>
+        /// Get the address of a mesh's vertices buffer.
+        /// </summary>
+        /// <param name="meshIndex">Index of mesh to look up</param>
+        /// <returns>Device address</returns>
+        MANDRILL_API VkDeviceAddress getMeshVertexAddress(uint32_t meshIndex) const
+        {
+            return mpVertexBuffer->getDeviceAddress() + mMeshes[meshIndex].deviceVerticesOffset;
+        }
+
+        /// <summary>
+        /// Get the address of a mesh's indices buffer.
+        /// </summary>
+        /// <param name="meshIndex">Index of the mesh to look up</param>
+        /// <returns>Device address</returns>
+        MANDRILL_API VkDeviceAddress getMeshIndexAddress(uint32_t meshIndex) const
+        {
+            return mpIndexBuffer->getDeviceAddress() + mMeshes[meshIndex].deviceIndicesOffset;
         }
 
     private:

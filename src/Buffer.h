@@ -26,6 +26,16 @@ namespace Mandrill
             return mMemory;
         }
 
+        MANDRILL_API VkBufferUsageFlags getUsage() const
+        {
+            return mUsage;
+        }
+
+        MANDRILL_API VkMemoryPropertyFlags getProperties() const
+        {
+            return mProperties;
+        }
+
         MANDRILL_API VkDeviceAddress getDeviceAddress() const
         {
             VkBufferDeviceAddressInfo ai = {
