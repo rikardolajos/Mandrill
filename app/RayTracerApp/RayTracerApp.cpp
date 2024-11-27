@@ -2,114 +2,54 @@
 
 using namespace Mandrill;
 
-class SampleApp : public App
+class RayTracerApp : public App
 {
 public:
-    void setupVertexBuffers()
-    {
-        mVertices.push_back({
-            {-1.0f, -1.0f, 0.0f}, // position
-            {0.0f, 0.0f, 1.0f},   // normal
-            {0.0f, 0.0f},         // texcoord
-            {1.0f, 0.0f, 0.0f},   // tangent
-            {0.0f, 1.0f, 0.0f},   // binormal
-        });
-
-        mVertices.push_back({
-            {1.0f, -1.0f, 0.0f}, // position
-            {0.0f, 0.0f, 1.0f},  // normal
-            {1.0f, 0.0f},        // texcoord
-            {1.0f, 0.0f, 0.0f},  // tangent
-            {0.0f, 1.0f, 0.0f},  // binormal
-        });
-
-        mVertices.push_back({
-            {-1.0f, 1.0f, 0.0f}, // position
-            {0.0f, 0.0f, 1.0f},  // normal
-            {0.0f, 1.0f},        // texcoord
-            {1.0f, 0.0f, 0.0f},  // tangent
-            {0.0f, 1.0f, 0.0f},  // binormal
-        });
-
-        mVertices.push_back({
-            {1.0f, 1.0f, 0.0f}, // position
-            {0.0f, 0.0f, 1.0f}, // normal
-            {1.0f, 1.0f},       // texcoord
-            {1.0f, 0.0f, 0.0f}, // tangent
-            {0.0f, 1.0f, 0.0f}, // binormal
-        });
-
-        mIndices = {0, 1, 3, 0, 3, 2};
-
-        size_t verticesSize = mVertices.size() * sizeof(mVertices[0]);
-        size_t indicesSize = mIndices.size() * sizeof(mIndices[0]);
-
-        mpVertexBuffer = make_ptr<Buffer>(mpDevice, verticesSize,
-                                                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-        mpIndexBuffer = make_ptr<Buffer>(mpDevice, indicesSize,
-                                                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-        mpVertexBuffer->copyFromHost(mVertices.data(), verticesSize);
-        mpIndexBuffer->copyFromHost(mIndices.data(), indicesSize);
-    }
-
-    SampleApp() : App("Sample App", 1280, 720)
+    RayTracerApp() : App("Ray Tracer App", 1920, 1080)
     {
         // Create a Vulkan instance and device
-        mpDevice = make_ptr<Device>(mpWindow);
+        mpDevice = std::make_shared<Device>(mpWindow);
 
         // Create a swapchain with 2 frames in flight
-        mpSwapchain = make_ptr<Swapchain>(mpDevice, 2);
+        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a render pass (rasterizer, only needed for ImGUI)
         mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
 
-        // Create a layout matching the shader inputs
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        auto pLayout = make_ptr<Layout>(mpDevice, layoutDesc);
+        // Create a scene so we can access the layout, the actual scene will be loaded later
+        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
+        auto pLayout = mpScene->getLayout();
 
-        // Create a shader module with vertex and fragment shader
+        // Create a shader module with ray-tracing stages
         std::vector<ShaderDesc> shaderDesc;
-        shaderDesc.emplace_back("SampleApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        shaderDesc.emplace_back("SampleApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
-        shaderDesc.emplace_back("SampleApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        auto pShader = make_ptr<Shader>(mpDevice, shaderDesc);
+        shaderDesc.emplace_back("RayTracerApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        shaderDesc.emplace_back("RayTracerApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
+        shaderDesc.emplace_back("RayTracerApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        auto pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+
+        // Create pipeline description with recursion depth and shader groups
+        RayTracingPipelineDesc pipelineDesc(1, 1, 1);
+        pipelineDesc.setRayGen(0);
+        pipelineDesc.setMissGroup(0, 1);
+        pipelineDesc.setHitGroup(0, 2);
+
+        // Create ray-tracing pipeline
+        mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pShader, pLayout, pipelineDesc);
 
         // Setup camera
-        mpCamera = make_ptr<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Create a texture and bind a sampler to it
-        mpTexture = make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
-        mpSampler = make_ptr<Sampler>(mpDevice);
-        mpTexture->setSampler(mpSampler);
-
-        // Vertices in scene
-        setupVertexBuffers();
-
-        // Uniform for sending model matrix to shaders
-        mpUniform = make_ptr<Buffer>(
-            mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-        // Descriptor set for model matrix and texture
-        std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniform);
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = make_ptr<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1],
-                                                    mpSwapchain->getFramesInFlightCount());
+        // Create a sampler that will be used to render materials
+        mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
     }
 
-    ~SampleApp()
+    ~RayTracerApp()
     {
         App::destroyGUI(mpDevice);
     }
@@ -120,51 +60,43 @@ public:
             mpCamera->update(delta, getCursorDelta());
         }
 
-        mAngle += mRotationSpeed * delta;
-
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        VkDeviceSize offset = sizeof(glm::mat4) * mpSwapchain->getInFlightIndex();
-        mpUniform->copyFromHost(&model, sizeof(glm::mat4), offset);
+        // Rebuild acceleration structure
+        mpScene->buildAccelerationStructure();
     }
 
     void render() override
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        //mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
         }
 
-        // Turn off back-face culling
-        vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
+        // Bind pipeline
+        mpPipeline->bind(cmd);
 
-        // Bind descriptor sets
-        std::array<VkDescriptorSet, 2> descriptorSets = {};
-        descriptorSets[0] = mpCamera->getDescriptorSet();
-        descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
+        // Prepare image for writing
+        mpPipeline->write(cmd, mpSwapchain->getImage());
 
-        //vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRenderPass->getPipelineLayout(0), 0,
-        //                        static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
-
-        //// Bind vertex and index buffers
-        //std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
-        //std::array<VkDeviceSize, 1> offsets = {0};
-        //vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
-        //                       offsets.data());
-        //vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
-        //// Draw mesh
-        //vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mIndices.size()), 1, 0, 0, 0);
+        // Trace rays
+        auto rayGenSBT = mpPipeline->getRayGenSBT();
+        auto missSBT = mpPipeline->getMissSBT();
+        auto hitSBT = mpPipeline->getHitSBT();
+        auto callSBT = mpPipeline->getCallSBT();
+        vkCmdTraceRaysKHR(cmd, &rayGenSBT, &missSBT, &hitSBT, &callSBT, mpSwapchain->getExtent().width,
+                          mpSwapchain->getExtent().height, 1);
 
         // Draw GUI
         App::renderGUI(cmd);
 
+        // Prepare image for presenting
+        mpPipeline->present(cmd, mpSwapchain->getImage());
+
         // Submit command buffer to rasterizer and present swapchain frame
-        //mpRenderPass->frameEnd(cmd);
+        mpRenderPass->frameEnd(cmd);
         mpSwapchain->present();
     }
 
@@ -175,10 +107,8 @@ public:
         // Render the base GUI, the menu bar with it's subwindows
         App::baseGUI(mpDevice, mpSwapchain, nullptr, mpPipeline);
 
-        // Here we can add app-specific GUI elements
-        if (ImGui::Begin("Sample App GUI")) {
-            ImGui::Text("Rotation speed:");
-            ImGui::SliderFloat("rad/s", &mRotationSpeed, 0.0f, 2.0f, "%.2f");
+        // App-specific GUI elements
+        if (ImGui::Begin("Ray Tracer App")) {
         }
 
         ImGui::End();
@@ -188,15 +118,6 @@ public:
     {
         // Invoke the base application's keyboard commands
         App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, nullptr, mpPipeline);
-
-        // Here we can add app-specific keyboard commands
-        if (key == GLFW_KEY_O && action == GLFW_PRESS) {
-            mRotationSpeed -= 0.2f;
-        }
-
-        if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-            mRotationSpeed += 0.2f;
-        }
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -211,32 +132,21 @@ public:
 
 
 private:
-    ptr<Device> mpDevice;
-    ptr<Swapchain> mpSwapchain;
-    ptr<RenderPass> mpRenderPass;
-    ptr<Pipeline> mpPipeline;
+    std::shared_ptr<Device> mpDevice;
+    std::shared_ptr<Swapchain> mpSwapchain;
+    std::shared_ptr<RenderPass> mpRenderPass;
+    std::shared_ptr<RayTracingPipeline> mpPipeline;
 
-    ptr<Camera> mpCamera;
+    std::shared_ptr<Scene> mpScene;
+    std::shared_ptr<Camera> mpCamera;
 
-    ptr<Sampler> mpSampler;
-    ptr<Texture> mpTexture;
-
-    ptr<Buffer> mpVertexBuffer;
-    ptr<Buffer> mpIndexBuffer;
-
-    std::vector<Vertex> mVertices;
-    std::vector<uint32_t> mIndices;
-
-    float mRotationSpeed = 0.2f;
-    float mAngle = 0.0f;
-
-    ptr<Buffer> mpUniform;
-    ptr<Descriptor> mpDescriptor;
+    std::shared_ptr<Sampler> mpSampler;
+    std::shared_ptr<Texture> mpTexture;
 };
 
 int main()
 {
-    SampleApp app = SampleApp();
+    RayTracerApp app = RayTracerApp();
     app.run();
     return 0;
 }

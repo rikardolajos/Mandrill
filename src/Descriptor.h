@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "AccelerationStructure.h"
 #include "Buffer.h"
 #include "Device.h"
 #include "Log.h"
@@ -11,7 +12,7 @@ namespace Mandrill
 {
     struct DescriptorDesc {
         VkDescriptorType type;
-        std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>> pResource;
+        std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>, ptr<AccelerationStructure>> pResource;
         VkDeviceSize offset;
         VkDeviceSize range;
         VkBufferView bufferView = nullptr;
@@ -32,6 +33,9 @@ namespace Mandrill
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
                 this->pResource = std::static_pointer_cast<Texture>(pResource);
+                break;
+            case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
+                this->pResource = std::static_pointer_cast<AccelerationStructure>(pResource);
                 break;
             default:
                 Log::error("DescriptorDesc: Resource not supported\n");

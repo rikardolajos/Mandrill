@@ -1,5 +1,6 @@
 #include "Descriptor.h"
 
+#include "AccelerationStructure.h"
 #include "Error.h"
 #include "Helpers.h"
 
@@ -27,7 +28,8 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
 
             VkDescriptorBufferInfo bi;
             VkDescriptorImageInfo ii;
-            // VkWriteDescriptorSetAccelerationStructureKHR asi;
+            VkWriteDescriptorSetAccelerationStructureKHR asi;
+            VkAccelerationStructureKHR as;
             VkDeviceSize offset;
 
             switch (desc[d].type) {
@@ -74,12 +76,13 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                 write.pImageInfo = &ii;
                 break;
             case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
-                // asi = {
-                //     .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
-                //     .accelerationStructureCount = 1,
-                //     .pAccelerationStructures = desc[d].pAccelerationStructure.get(),
-                // };
-                // writes.pNext = &accStructInfos[d];
+                as = std::get<ptr<AccelerationStructure>>(desc[d].pResource)->getAccelerationStructure();
+                asi = {
+                    .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
+                    .accelerationStructureCount = 1,
+                    .pAccelerationStructures = &as,
+                };
+                write.pNext = &asi;
                 break;
             }
             vkUpdateDescriptorSets(mpDevice->getDevice(), 1, &write, 0, nullptr);

@@ -66,7 +66,8 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
     }
 }
 
-Scene::Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : mpDevice(pDevice), mpSwapchain(pSwapchain)
+Scene::Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool prepareForRayTracing)
+    : mpDevice(pDevice), mpSwapchain(pSwapchain), mSupportRayTracing(prepareForRayTracing)
 {
     mpMissingTexture =
         make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
@@ -434,6 +435,23 @@ void Scene::syncToDevice()
     mpIndexBuffer->copyFromHost(indices.data(), indices.size() * sizeof(indices[0]), 0);
 }
 
+void Scene::buildAccelerationStructure(VkBuildAccelerationStructureFlagsKHR flags)
+{
+    if (!mSupportRayTracing) {
+        Log::error("Cannot build acceleration structure for a scene that was not initiated to support ray tracing. Set "
+                   "prepareForRayTracing to TRUE during scene creation.");
+        return;
+    }
+
+    if (!mpAccelerationStructure) {
+        mpAccelerationStructure = make_ptr<AccelerationStructure>(mpDevice, shared_from_this(), flags);
+        // The acceleration structure will be built during the creation so we can return here
+        return;
+    }
+
+    mpAccelerationStructure->rebuild(flags);
+}
+
 void Scene::setSampler(const ptr<Sampler> pSampler)
 {
     mpMissingTexture->setSampler(pSampler);
@@ -462,6 +480,11 @@ ptr<Layout> Scene::getLayout()
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material emission texture
     desc.emplace_back(2, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_ALL_GRAPHICS); // Material normal texture
+
+    if (mSupportRayTracing) {
+        desc.emplace_back(3, 0, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_ALL_GRAPHICS);
+        desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
+    }
 
     return make_ptr<Layout>(mpDevice, desc);
 }
@@ -510,5 +533,15 @@ void Scene::createDescriptors()
         // Set layout for set 2
         auto layout = pLayout->getDescriptorSetLayouts()[2];
         mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+    }
+
+    // Acceleration structure and storage image
+    if (mSupportRayTracing) {
+        std::vector<DescriptorDesc> desc;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, mpAccelerationStructure);
+
+        auto layout = pLayout->getDescriptorSetLayouts()[3];
+        mpAccelerationStructureDescriptor =
+            std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
     }
 }

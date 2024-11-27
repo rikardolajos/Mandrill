@@ -13,3 +13,4 @@ PFN_vkDestroyAccelerationStructureKHR vkDestroyAccelerationStructureKHR = nullpt
 PFN_vkGetAccelerationStructureBuildSizesKHR vkGetAccelerationStructureBuildSizesKHR = nullptr;
 PFN_vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR = nullptr;
 PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR = nullptr;
+PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR = nullptr;

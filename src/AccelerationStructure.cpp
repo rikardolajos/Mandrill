@@ -1,18 +1,27 @@
 #include "AccelerationStructure.h"
 
+#include "Descriptor.h"
 #include "Error.h"
+#include "Extension.h"
 #include "Helpers.h"
+#include "Scene.h"
 
 using namespace Mandrill;
 
 
-AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene)
+AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
+                                             VkBuildAccelerationStructureFlagsKHR flags)
     : mpDevice(pDevice), mpScene(pScene)
 {
+    if (mpScene->getNodes().empty()) {
+        Log::error("Cannot build acceleration structure of empty scene");
+        return;
+    }
+
     mBLASes.resize(mpScene->getNodes().size());
 
-    createBLASes();
-    createTLAS();
+    createBLASes(flags);
+    createTLAS(flags);
 }
 
 AccelerationStructure::~AccelerationStructure()
@@ -24,7 +33,7 @@ AccelerationStructure::~AccelerationStructure()
     vkDestroyAccelerationStructureKHR(mpDevice->getDevice(), mTLAS, nullptr);
 }
 
-void AccelerationStructure::rebuild()
+void AccelerationStructure::rebuild(VkBuildAccelerationStructureFlagsKHR flags)
 {
 }
 
@@ -32,7 +41,7 @@ void AccelerationStructure::refit()
 {
 }
 
-void AccelerationStructure::createBLASes()
+void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR flags)
 {
     VkDeviceSize scratchSize = 0;
 
@@ -79,7 +88,7 @@ void AccelerationStructure::createBLASes()
                     {
                         .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
                         .type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-                        .flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+                        .flags = flags,
                         .mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
                         .srcAccelerationStructure = VK_NULL_HANDLE,
                         .geometryCount = 1,
@@ -168,7 +177,7 @@ void AccelerationStructure::createBLASes()
     }
 }
 
-void AccelerationStructure::createTLAS()
+void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flags)
 {
     auto instances = std::vector<VkAccelerationStructureInstanceKHR>(mBLASes.size());
     for (uint32_t i = 0; i < static_cast<uint32_t>(mBLASes.size()); i++) {
@@ -216,8 +225,7 @@ void AccelerationStructure::createTLAS()
     mBuildInfo.geometry = {
         .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
         .type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
-        .flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
-                 VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR,
+        .flags = flags | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR,
         .mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
         .srcAccelerationStructure = VK_NULL_HANDLE,
         .geometryCount = 1,

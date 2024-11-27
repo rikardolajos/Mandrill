@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "AccelerationStructure.h"
 #include "Camera.h"
 #include "Descriptor.h"
 #include "Device.h"
@@ -172,8 +173,9 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="pSwapchain">Swapchain is used to determine how many descriptors will be used</param>
+        /// <param name="prepareForRayTracing">Prepare scene for handling acceleration sturctures</param>
         /// <returns></returns>
-        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
+        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool prepareForRayTracing = false);
         MANDRILL_API ~Scene();
 
         /// <summary>
@@ -235,6 +237,14 @@ namespace Mandrill
         /// </summary>
         /// <returns></returns>
         MANDRILL_API void syncToDevice();
+
+        /// <summary>
+        /// Build acceleration structure of the scene. This is needed for ray tracing the scene.
+        /// </summary>
+        /// <param name="flags">Flags used for building acceleration structure</param>
+        /// <returns></returns>
+        MANDRILL_API void buildAccelerationStructure(
+            VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
         /// <summary>
         /// Set sampler to use for rendering materials.
@@ -327,5 +337,9 @@ namespace Mandrill
         ptr<Buffer> mpMaterialParams;
 
         ptr<Texture> mpMissingTexture;
+
+        bool mSupportRayTracing;
+        ptr<AccelerationStructure> mpAccelerationStructure;
+        ptr<Descriptor> mpAccelerationStructureDescriptor;
     };
 }; // namespace Mandrill
