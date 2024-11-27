@@ -73,11 +73,13 @@ Shader::Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc) : mpDev
     mEntries.resize(desc.size());
     mSrcFilenames.resize(desc.size());
     mStageFlags.resize(desc.size());
+    mSpecializationInfos.resize(desc.size());
 
     for (size_t i = 0; i < desc.size(); i++) {
         mSrcFilenames[i] = desc[i].filename;
         mEntries[i] = desc[i].entry;
         mStageFlags[i] = desc[i].stageFlags;
+        mSpecializationInfos[i] = desc[i].pSpecializationInfo;
     }
 
     createModulesAndStages();
@@ -117,6 +119,7 @@ void Shader::createModulesAndStages()
             .stage = mStageFlags[i],
             .module = mModules[i],
             .pName = mEntries[i].c_str(),
+            .pSpecializationInfo = mSpecializationInfos[i],
         };
     }
 }
