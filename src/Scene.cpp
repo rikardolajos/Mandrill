@@ -3,6 +3,7 @@
 #include "Extension.h "
 #include "Helpers.h"
 #include "Log.h"
+#include "Pipeline.h"
 
 #include "tiny_obj_loader.h"
 

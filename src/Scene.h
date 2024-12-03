@@ -7,7 +7,6 @@
 #include "Descriptor.h"
 #include "Device.h"
 #include "Layout.h"
-#include "Pipeline.h"
 #include "Sampler.h"
 #include "Swapchain.h"
 #include "Texture.h"
@@ -64,6 +63,7 @@ namespace Mandrill
     };
 
     class Scene; // Forward declare scene so Node can befriend it
+    class Pipeline;
 
     class Node
     {

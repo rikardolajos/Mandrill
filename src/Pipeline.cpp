@@ -1,52 +1,13 @@
 #include "Pipeline.h"
 
 #include "Error.h"
-#include "Scene.h"
 
 using namespace Mandrill;
-
-static VkVertexInputBindingDescription bindingDescription = {
-    .binding = 0,
-    .stride = sizeof(Vertex),
-    .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-};
-
-static std::array<VkVertexInputAttributeDescription, 5> attributeDescription = {{
-    {
-        .location = 0,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
-        .offset = offsetof(Vertex, position),
-    },
-    {
-        .location = 1,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
-        .offset = offsetof(Vertex, normal),
-    },
-    {
-        .location = 2,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32_SFLOAT,
-        .offset = offsetof(Vertex, texcoord),
-    },
-    {
-        .location = 3,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
-        .offset = offsetof(Vertex, tangent),
-    },
-    {
-        .location = 4,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
-        .offset = offsetof(Vertex, binormal),
-    },
-}};
 
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass,
                    const PipelineDesc& desc)
     : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass),
+      mBindingDescription(desc.bindingDescription), mAttributeDescriptions(desc.attributeDescriptions),
       mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mSubpass(desc.subpass),
       mAttachmentCount(desc.attachmentCount)
 {
@@ -110,9 +71,9 @@ void Pipeline::createPipeline()
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .vertexBindingDescriptionCount = 1,
-        .pVertexBindingDescriptions = &bindingDescription,
-        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescription.size()),
-        .pVertexAttributeDescriptions = attributeDescription.data(),
+        .pVertexBindingDescriptions = &mBindingDescription,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size()),
+        .pVertexAttributeDescriptions = mAttributeDescriptions.data(),
     };
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
