@@ -10,9 +10,11 @@ namespace Mandrill
         std::filesystem::path filename;
         std::string entry;
         VkShaderStageFlagBits stageFlags;
+        VkSpecializationInfo* pSpecializationInfo;
 
-        MANDRILL_API ShaderDesc(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags)
-            : filename(filename), entry(entry), stageFlags(stageFlags)
+        MANDRILL_API ShaderDesc(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags,
+                                VkSpecializationInfo* pSpecializationInfo = nullptr)
+            : filename(filename), entry(entry), stageFlags(stageFlags), pSpecializationInfo(pSpecializationInfo)
         {
         }
     };
@@ -47,5 +49,6 @@ namespace Mandrill
         std::vector<std::string> mEntries;
         std::vector<std::filesystem::path> mSrcFilenames;
         std::vector<VkShaderStageFlagBits> mStageFlags;
+        std::vector<VkSpecializationInfo*> mSpecializationInfos;
     };
 } // namespace Mandrill
