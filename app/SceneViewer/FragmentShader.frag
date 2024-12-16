@@ -1,7 +1,10 @@
 #version 460
 
-layout(location = 0) in vec3 normal;
-layout(location = 1) in vec2 texCoord;
+layout(location = 0) in vec3 inNormal;
+layout(location = 1) in vec2 inTexCoord;
+layout(location = 2) in vec3 inTangent;
+layout(location = 3) in vec3 inBinormal;
+layout(location = 4) in mat3 inNormalMatrix;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -37,7 +40,7 @@ const uint NORMAL_TEXTURE_BIT = 1 << 4;
 void main() {
     // Diffuse (default)
     if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
-        fragColor = texture(diffuseTexture, texCoord);
+        fragColor = texture(diffuseTexture, inTexCoord);
         if (pushConstant.discardOnZeroAlpha == 1 && fragColor.a == 0.0) {
             discard;
         }
@@ -48,7 +51,7 @@ void main() {
     // Specular
     if (pushConstant.renderMode == 1) {
         if ((materialParams.hasTexture & SPECULAR_TEXTURE_BIT) != 0) {
-            fragColor = texture(specularTexture, texCoord);
+            fragColor = texture(specularTexture, inTexCoord);
         } else {
             fragColor = vec4(materialParams.specular, 1.0);
         }
@@ -57,7 +60,7 @@ void main() {
     // Ambient
     if (pushConstant.renderMode == 2) {
         if ((materialParams.hasTexture & AMBIENT_TEXTURE_BIT) != 0) {
-            fragColor = texture(ambientTexture, texCoord);
+            fragColor = texture(ambientTexture, inTexCoord);
         } else {
             fragColor = vec4(materialParams.ambient, 1.0);
         }
@@ -66,7 +69,7 @@ void main() {
     // Emission
     if (pushConstant.renderMode == 3) {
         if ((materialParams.hasTexture & EMISSION_TEXTURE_BIT) != 0) {
-            fragColor = texture(emissionTexture, texCoord);
+            fragColor = texture(emissionTexture, inTexCoord);
         } else {
             fragColor = vec4(materialParams.emission, 1.0);
         }
@@ -90,16 +93,18 @@ void main() {
     // Normal
     if (pushConstant.renderMode == 7) {
         if ((materialParams.hasTexture & NORMAL_TEXTURE_BIT) != 0) {
-            fragColor = texture(normalTexture, texCoord);
+            mat3 TBN = mat3(normalize(inTangent), normalize(inBinormal), normalize(inNormal));
+            vec3 normal = texture(normalTexture, inTexCoord).rgb * 2.0 - 1.0;
+            fragColor.rgb = normalize(inNormalMatrix * TBN * normal);
         } else {
-            fragColor = vec4(normal, 1.0);
+            fragColor = vec4(inNormal, 1.0);
         }
         fragColor.rgb = fragColor.rgb * 0.5 + 0.5;
     }
 
     // Texture coordinates
     if (pushConstant.renderMode == 8) {
-        fragColor = vec4(texCoord, 0.0, 1.0);
+        fragColor = vec4(inTexCoord, 0.0, 1.0);
     }
 
     // Line render

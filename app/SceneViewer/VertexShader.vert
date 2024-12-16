@@ -14,12 +14,22 @@ layout(set = 1, binding = 0) uniform MeshUniforms {
 layout(location = 0) in vec3 vertexPosition;
 layout(location = 1) in vec3 vertexNormal;
 layout(location = 2) in vec2 vertexTextureCoord;
+layout(location = 3) in vec3 vertexTangent;
+layout(location = 4) in vec3 vertexBinormal;
 
-layout(location = 0) out vec3 normal;
-layout(location = 1) out vec2 texCoord;
+layout(location = 0) out vec3 outNormal;
+layout(location = 1) out vec2 outTexCoord;
+layout(location = 2) out vec3 outTangent;
+layout(location = 3) out vec3 outBinormal;
+layout(location = 4) out mat3 outNormalMatrix;
 
 void main() {
-    normal = vertexNormal;
-    texCoord = vertexTextureCoord;
+    outNormalMatrix = transpose(inverse(mat3(mesh.model)));
+    outTexCoord = vertexTextureCoord;
+
+    outNormal = normalize(vertexNormal);
+    outTangent = normalize(vertexTangent);
+    outBinormal = normalize(vertexBinormal);
+
     gl_Position = camera.proj * camera.view * mesh.model * vec4(vertexPosition, 1.0);
 }
