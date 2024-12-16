@@ -68,10 +68,18 @@ public:
         auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create pipelines
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass,
-                                                           PipelineDesc(VK_POLYGON_MODE_FILL, VK_TRUE, 0, 3)));
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass,
-                                                           PipelineDesc(VK_POLYGON_MODE_FILL, VK_FALSE, 1, 1)));
+        PipelineDesc pipelineDesc;
+        pipelineDesc.subpass = 0;
+        pipelineDesc.depthTest = VK_TRUE;
+        pipelineDesc.attachmentCount = 3;
+        mPipelines.emplace_back(
+            std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass, pipelineDesc));
+
+        pipelineDesc.subpass = 1;
+        pipelineDesc.depthTest = VK_FALSE;
+        pipelineDesc.attachmentCount = 1;
+        mPipelines.emplace_back(
+            std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass, pipelineDesc));
 
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
