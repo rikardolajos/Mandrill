@@ -80,15 +80,24 @@ namespace Mandrill
     public:
         MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
-        MANDRILL_API ~RayTracingPipeline();
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
         MANDRILL_API void write(VkCommandBuffer cmd, VkImage image);
 
-        MANDRILL_API void present(VkCommandBuffer cmd, VkImage image);
+        MANDRILL_API void read(VkCommandBuffer cmd, VkImage image);
 
         MANDRILL_API void recreate();
+
+        //MANDRILL_API VkPipeline getPipeline() const
+        //{
+        //    return mPipeline;
+        //}
+
+        //MANDRILL_API VkPipelineLayout getLayout() const
+        //{
+        //    return mPipelineLayout;
+        //}
 
         MANDRILL_API VkStridedDeviceAddressRegionKHR getRayGenSBT() const
         {
@@ -132,18 +141,9 @@ namespace Mandrill
 
     private:
         void createPipeline();
-        void destroyPipeline();
 
         void createShaderBindingTable();
         void createDescriptor();
-
-        ptr<Device> mpDevice;
-
-        ptr<Shader> mpShader;
-        ptr<Layout> mpLayout;
-
-        VkPipeline mPipeline;
-        VkPipelineLayout mPipelineLayout;
 
         std::vector<VkRayTracingShaderGroupCreateInfoKHR> mShaderGroups;
 

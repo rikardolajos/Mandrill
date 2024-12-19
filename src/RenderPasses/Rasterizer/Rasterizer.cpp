@@ -179,13 +179,6 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
         createFramebuffers();
     }
 
-    VkCommandBufferBeginInfo bi = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-    };
-
-    Check::Vk(vkBeginCommandBuffer(cmd, &bi));
-
     std::array<VkClearValue, 2> clearValues = {};
     clearValues[0].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
     clearValues[1].depthStencil = {1.0f, 0};
@@ -209,5 +202,4 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 void Rasterizer::frameEnd(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
-    Check::Vk(vkEndCommandBuffer(cmd));
 }

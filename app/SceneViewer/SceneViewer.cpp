@@ -160,7 +160,7 @@ public:
 
         // Submit command buffer to rasterizer and present swapchain frame
         mpRenderPass->frameEnd(cmd);
-        mpSwapchain->present();
+        mpSwapchain->present(cmd);
     }
 
     void appGUI(ImGuiContext* pContext)

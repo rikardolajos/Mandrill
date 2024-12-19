@@ -16,7 +16,7 @@ namespace Mandrill
         MANDRILL_API void recreate();
 
         MANDRILL_API VkCommandBuffer acquireNextImage();
-        MANDRILL_API void present();
+        MANDRILL_API void present(VkCommandBuffer cmd);
 
         MANDRILL_API VkSwapchainKHR getSwapchain() const
         {
@@ -26,6 +26,11 @@ namespace Mandrill
         MANDRILL_API VkImage getImage() const
         {
             return mImages[mImageIndex];
+        }
+
+        MANDRILL_API VkImageView getImageView() const
+        {
+            return mImageViews[mImageIndex];
         }
 
         MANDRILL_API std::vector<VkImageView> getImageViews() const

@@ -7,6 +7,10 @@ using namespace Mandrill;
 Layout::Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescriptorSetLayoutCreateFlags flags)
     : mpDevice(pDevice)
 {
+    if (desc.empty()) {
+        return;
+    }
+
     // Find highest set
     auto maxSet = std::max_element(desc.begin(), desc.end(), [](auto& a, auto& b) { return a.set < b.set; })[0].set;
 

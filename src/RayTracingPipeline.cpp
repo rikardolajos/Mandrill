@@ -15,34 +15,29 @@ enum ShaderGroupType {
 
 RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                                        const RayTracingPipelineDesc& desc)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mMaxRecursionDepth(desc.maxRecursionDepth),
+    : Pipeline(pDevice, pShader, pLayout, nullptr), mMaxRecursionDepth(desc.maxRecursionDepth),
       mMissGroupCount(desc.missGroupCount), mHitGroupCount(desc.hitGroupCount), mShaderGroups(desc.shaderGroups)
 {
     if (!mpDevice->supportsRayTracing()) {
-        Log::error("Trying to create a ray tracing pipeline for a device that does not support it");
+        Log::error("Trying to create a ray-tracing pipeline for a device that does not support it");
         return;
     }
 
-    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
-    const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
+    // const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
+    // const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
 
-    VkPipelineLayoutCreateInfo ci = {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size()),
-        .pSetLayouts = descriptorSetLayouts.data(),
-        .pushConstantRangeCount = static_cast<uint32_t>(pushConstantLayout.size()),
-        .pPushConstantRanges = pushConstantLayout.data(),
-    };
+    // VkPipelineLayoutCreateInfo ci = {
+    //     .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+    //     .setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size()),
+    //     .pSetLayouts = descriptorSetLayouts.data(),
+    //     .pushConstantRangeCount = static_cast<uint32_t>(pushConstantLayout.size()),
+    //     .pPushConstantRanges = pushConstantLayout.data(),
+    // };
 
-    Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
+    // Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
 
     createPipeline();
     createShaderBindingTable();
-}
-
-RayTracingPipeline::~RayTracingPipeline()
-{
-    destroyPipeline();
 }
 
 void RayTracingPipeline::bind(VkCommandBuffer cmd)
@@ -74,13 +69,15 @@ void RayTracingPipeline::write(VkCommandBuffer cmd, VkImage image)
                          nullptr, 0, nullptr, 1, &barrier);
 }
 
-void RayTracingPipeline::present(VkCommandBuffer cmd, VkImage image)
+void RayTracingPipeline::read(VkCommandBuffer cmd, VkImage image)
 {
-    // Transition storage image to format for presenting
+    // Barrier to ensure writes are done before using rendered output as color attachment
     VkImageMemoryBarrier barrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+        .srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
         .oldLayout = VK_IMAGE_LAYOUT_GENERAL,
-        .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .image = image,
@@ -94,8 +91,8 @@ void RayTracingPipeline::present(VkCommandBuffer cmd, VkImage image)
             },
     };
 
-    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
-                         nullptr, 0, nullptr, 1, &barrier);
+    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
+                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 }
 
 void RayTracingPipeline::recreate()
@@ -122,11 +119,6 @@ void RayTracingPipeline::createPipeline()
     vkCreateRayTracingPipelinesKHR(mpDevice->getDevice(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline);
 }
 
-void RayTracingPipeline::destroyPipeline()
-{
-    vkDeviceWaitIdle(mpDevice->getDevice());
-    vkDestroyPipeline(mpDevice->getDevice(), mPipeline, nullptr);
-}
 
 void RayTracingPipeline::createShaderBindingTable()
 {
@@ -154,13 +146,4 @@ void RayTracingPipeline::createShaderBindingTable()
         uint8_t* map = static_cast<uint8_t*>(mpShaderBindingTableBuffer->getHostMap());
         std::memcpy(map, shaderHandleStorage.data() + i * groupSize, groupSize);
     }
-}
-
-void RayTracingPipeline::createDescriptor()
-{
-    //DescriptorDesc desc;
-    //desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpSwapchain->getImage());
-    //desc.back().imageView = mpSwapchain->getImageViews()[0];
-
-    //mpStorageImageDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getImageCount());
 }

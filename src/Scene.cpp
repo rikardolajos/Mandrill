@@ -368,12 +368,16 @@ void Scene::compile()
     }
 
     // Allocate device buffers
-    mpVertexBuffer =
-        make_ptr<Buffer>(mpDevice, verticesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    mpIndexBuffer =
-        make_ptr<Buffer>(mpDevice, indicesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpVertexBuffer = make_ptr<Buffer>(mpDevice, verticesSize,
+                                      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+                                          VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+                                          VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+                                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpIndexBuffer = make_ptr<Buffer>(mpDevice, indicesSize,
+                                     VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+                                         VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+                                         VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
     uint32_t copies = mpSwapchain->getFramesInFlightCount();
@@ -536,13 +540,13 @@ void Scene::createDescriptors()
         mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
     }
 
-    // Acceleration structure and storage image
-    if (mSupportRayTracing) {
-        std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, mpAccelerationStructure);
+    //// Acceleration structure and storage image
+    // if (mSupportRayTracing) {
+    //     std::vector<DescriptorDesc> desc;
+    //     desc.emplace_back(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, mpAccelerationStructure);
 
-        auto layout = pLayout->getDescriptorSetLayouts()[3];
-        mpAccelerationStructureDescriptor =
-            std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
-    }
+    //    auto layout = pLayout->getDescriptorSetLayouts()[3];
+    //    mpAccelerationStructureDescriptor =
+    //        std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+    //}
 }

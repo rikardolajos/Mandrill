@@ -72,11 +72,15 @@ namespace Mandrill
     class Pipeline
     {
     public:
-        MANDRILL_API Pipeline()
-            : mPipeline(nullptr), mPipelineLayout(nullptr), mPolygonMode(VK_POLYGON_MODE_FILL), mDepthTest(VK_FALSE),
-              mSubpass(0), mAttachmentCount(1)
-        {
-        }
+        ///// <summary>
+        ///// Default constructor so RayTracingPipeline can inherit. Use other constructor for regular usage.
+        ///// </summary>
+        ///// <returns></returns>
+        //MANDRILL_API Pipeline()
+        //    : mPipeline(nullptr), mPipelineLayout(nullptr), mPolygonMode(VK_POLYGON_MODE_FILL), mDepthTest(VK_FALSE),
+        //      mSubpass(0), mAttachmentCount(1)
+        //{
+        //}
 
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                               ptr<RenderPass> pRenderPass, const PipelineDesc& desc = PipelineDesc());
@@ -111,7 +115,7 @@ namespace Mandrill
             mLineWidth = lineWidth;
         }
 
-    private:
+    protected:
         void createPipeline();
         void destroyPipeline();
 
@@ -124,6 +128,7 @@ namespace Mandrill
         VkPipeline mPipeline;
         VkPipelineLayout mPipelineLayout;
 
+    private:
         VkPolygonMode mPolygonMode;
         VkBool32 mDepthTest;
         uint32_t mSubpass;

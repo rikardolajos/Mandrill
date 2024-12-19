@@ -161,17 +161,3 @@ void Camera::update(float delta, glm::vec2 cursorDelta)
     matrices->proj[1][1] *= -1.0f; // GLM and Vulkan are not using the same coordinate system
     matrices->proj_inv = glm::inverse(matrices->proj);
 }
-
-VkWriteDescriptorSet Camera::getWriteDescriptor(uint32_t binding) const
-{
-    VkWriteDescriptorSet write = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .dstBinding = binding,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .pBufferInfo = &mBufferInfo,
-    };
-
-    return write;
-}

@@ -317,6 +317,15 @@ namespace Mandrill
             return mpIndexBuffer->getDeviceAddress() + mMeshes[meshIndex].deviceIndicesOffset;
         }
 
+        /// <summary>
+        /// Get the acceleration structure of the scene.
+        /// </summary>
+        /// <returns>Pointer to acceleration structure or nullptr</returns>
+        MANDRILL_API ptr<AccelerationStructure> getAccelerationStructure() const
+        {
+            return mpAccelerationStructure;
+        }
+
     private:
         friend Node;
 

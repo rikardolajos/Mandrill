@@ -18,7 +18,7 @@ AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pSc
         return;
     }
 
-    mBLASes.resize(mpScene->getNodes().size());
+    mBLASes.resize(mpScene->getMeshCount());
 
     createBLASes(flags);
     createTLAS(flags);
@@ -179,27 +179,41 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
 
 void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flags)
 {
-    auto instances = std::vector<VkAccelerationStructureInstanceKHR>(mBLASes.size());
-    for (uint32_t i = 0; i < static_cast<uint32_t>(mBLASes.size()); i++) {
-        VkAccelerationStructureDeviceAddressInfoKHR addressInfo = {
-            .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
-            .accelerationStructure = mBLASes[i].accelerationStructure,
-        };
+    uint32_t instanceCount = 0;
+    for (auto& node : mpScene->getNodes()) {
+        instanceCount += static_cast<uint32_t>(node.getMeshIndices().size());
+    }
 
-        VkDeviceAddress address = vkGetAccelerationStructureDeviceAddressKHR(mpDevice->getDevice(), &addressInfo);
+    auto instances = std::vector<VkAccelerationStructureInstanceKHR>(instanceCount);
+    uint32_t instanceIndex = 0;
+    for (auto& node : mpScene->getNodes()) {
+        for (auto& meshIndex : node.getMeshIndices()) {
+            VkAccelerationStructureDeviceAddressInfoKHR addressInfo = {
+                .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
+                .accelerationStructure = mBLASes[meshIndex].accelerationStructure,
+            };
 
-        VkTransformMatrixKHR transform = {0};
-        transform.matrix[0][0] = 1.0f;
-        transform.matrix[1][1] = 1.0f;
-        transform.matrix[2][2] = 1.0f;
-        instances[i] = {
-            .transform = transform,
-            .instanceCustomIndex = i,
-            .mask = 0xff,
-            .instanceShaderBindingTableRecordOffset = 0,
-            .flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
-            .accelerationStructureReference = address,
-        };
+            VkDeviceAddress address = vkGetAccelerationStructureDeviceAddressKHR(mpDevice->getDevice(), &addressInfo);
+
+            glm::mat4 nodeTransform = node.getTransform();
+            VkTransformMatrixKHR transform;
+            for (int i = 0; i < 4; i++) {
+                transform.matrix[0][i] = nodeTransform[i].x;
+                transform.matrix[1][i] = nodeTransform[i].y;
+                transform.matrix[2][i] = nodeTransform[i].z;
+            }
+
+            instances[instanceIndex] = {
+                .transform = transform,
+                .instanceCustomIndex = instanceIndex,
+                .mask = 0xff,
+                .instanceShaderBindingTableRecordOffset = 0,
+                .flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
+                .accelerationStructureReference = address,
+            };
+
+            instanceIndex += 1;
+        }
     }
 
     VkDeviceSize size = instances.size() * sizeof(VkAccelerationStructureInstanceKHR);
@@ -237,7 +251,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
     };
 
     vkGetAccelerationStructureBuildSizesKHR(mpDevice->getDevice(), VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
-                                            &mBuildInfo.geometry, &mBuildRange.primitiveCount, &mBuildInfo.size);
+                                            &mBuildInfo.geometry, &instanceCount, &mBuildInfo.size);
 
     // Allocate buffer for the TLAS
     mpBuffer = make_ptr<Buffer>(mpDevice, mBuildInfo.size.accelerationStructureSize,
@@ -267,7 +281,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
     mBuildInfo.geometry.scratchData.deviceAddress = mpScratch->getDeviceAddress();
 
     mBuildRange = {
-        .primitiveCount = static_cast<uint32_t>(mBLASes.size()),
+        .primitiveCount = instanceCount,
         .primitiveOffset = 0,
         .firstVertex = 0,
         .transformOffset = 0,

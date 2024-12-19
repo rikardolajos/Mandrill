@@ -5,6 +5,31 @@ using namespace Mandrill;
 class RayTracerApp : public App
 {
 public:
+    // void createRayTracingImage()
+    //{
+    //     mpImage = std::make_shared<Image>(mpDevice, mWidth, mHeight, 1, mpDevice->getSampleCount(),
+    //                                       VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+    //                                       VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    // }
+
+    VkWriteDescriptorSet getRayTracingImageDescriptor(uint32_t binding)
+    {
+        static VkDescriptorImageInfo ii;
+        ii.imageView = mpSwapchain->getImageView();
+        ii.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+        VkWriteDescriptorSet descriptor = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstBinding = binding,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+            .pImageInfo = &ii,
+        };
+
+        return descriptor;
+    }
+
     RayTracerApp() : App("Ray Tracer App", 1920, 1080)
     {
         // Create a Vulkan instance and device
@@ -13,12 +38,17 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a render pass (rasterizer, only needed for ImGUI)
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
+        // Create a render pass (only needed for ImGUI)
+        mpRenderPass = std::make_shared<RayTracing>(mpDevice, mpSwapchain);
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
-        auto pLayout = mpScene->getLayout();
+
+        std::vector<LayoutDesc> layoutDesc;
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        auto pLayout = std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
 
         // Create a shader module with ray-tracing stages
         std::vector<ShaderDesc> shaderDesc;
@@ -36,6 +66,20 @@ public:
         // Create ray-tracing pipeline
         mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pShader, pLayout, pipelineDesc);
 
+        // Create shader module for resolve pass (fullscreen quad)
+        //shaderDesc.clear();
+        //shaderDesc.emplace_back("RayTracerApp/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        //shaderDesc.emplace_back("RayTracerApp/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        //auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+
+        // Create layout for resolve pass
+        //layoutDesc.clear();
+        //layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
+        //auto pResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
+
+        // Create pipeline for resolve pass
+        //mpResolvePipeline = std::make_shared<Pipeline>(mpDevice, pResolveShader, pResolveLayout, mpRenderPass);
+
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
@@ -45,8 +89,22 @@ public:
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
+        // Load scene
+        //auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\cornell\\cornell.obj");
+        std::shared_ptr<Node> pNode = mpScene->addNode();
+        for (auto meshIndex : meshIndices) {
+            pNode->addMesh(meshIndex);
+        }
+        // Scale down the model
+        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+
+        mpScene->setSampler(mpSampler);
+        mpScene->compile();
+        mpScene->syncToDevice();
+
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT);//  mpDevice->getSampleCount());
     }
 
     ~RayTracerApp()
@@ -66,12 +124,12 @@ public:
 
     void render() override
     {
-        // Acquire frame from swapchain and prepare rasterizer
+        // Acquire frame from swapchain
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
+            // createRayTracingImage();
             mpCamera->updateAspectRatio();
         }
 
@@ -79,7 +137,17 @@ public:
         mpPipeline->bind(cmd);
 
         // Prepare image for writing
+        // mpPipeline->write(cmd, mpImage->getImage());
         mpPipeline->write(cmd, mpSwapchain->getImage());
+
+        // Push descriptor with image
+        std::vector<VkWriteDescriptorSet> writes = {
+            mpCamera->getWriteDescriptor(0),
+            mpScene->getAccelerationStructure()->getWriteDescriptor(1),
+            getRayTracingImageDescriptor(2),
+        };
+        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 0,
+                                  static_cast<uint32_t>(writes.size()), writes.data());
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -89,15 +157,22 @@ public:
         vkCmdTraceRaysKHR(cmd, &rayGenSBT, &missSBT, &hitSBT, &callSBT, mpSwapchain->getExtent().width,
                           mpSwapchain->getExtent().height, 1);
 
+        // Prepare image for reading
+        // mpPipeline->read(cmd, mpImage->getImage());
+        mpPipeline->read(cmd, mpSwapchain->getImage());
+
+        // Render full-screen quad to resolve final composition
+        //vkCmdDraw(cmd, 3, 1, 0, 0);
+
+        // Start rasterization render pass for ImGUI
+        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+
         // Draw GUI
         App::renderGUI(cmd);
 
-        // Prepare image for presenting
-        mpPipeline->present(cmd, mpSwapchain->getImage());
-
         // Submit command buffer to rasterizer and present swapchain frame
         mpRenderPass->frameEnd(cmd);
-        mpSwapchain->present();
+        mpSwapchain->present(cmd);
     }
 
     void appGUI(ImGuiContext* pContext)
@@ -136,6 +211,9 @@ private:
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<RenderPass> mpRenderPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
+    //std::shared_ptr<Pipeline> mpResolvePipeline;
+
+    // std::shared_ptr<Image> mpImage;
 
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;

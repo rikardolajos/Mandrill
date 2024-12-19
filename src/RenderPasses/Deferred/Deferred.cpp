@@ -242,13 +242,6 @@ void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
         createFramebuffers();
     }
 
-    VkCommandBufferBeginInfo bi = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-    };
-
-    Check::Vk(vkBeginCommandBuffer(cmd, &bi));
-
     std::array<VkClearValue, 5> clearValues = {};
     clearValues[0].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
     clearValues[1].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
@@ -275,5 +268,4 @@ void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
 void Deferred::frameEnd(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
-    Check::Vk(vkEndCommandBuffer(cmd));
 }
