@@ -6,13 +6,6 @@
 
 using namespace Mandrill;
 
-enum ShaderGroupType {
-    SHADER_GROUP_RAYGEN,
-    SHADER_GROUP_MISS,
-    SHADER_GROUP_HIT,
-    SHADER_GROUP_COUNT,
-};
-
 RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                                        const RayTracingPipelineDesc& desc)
     : Pipeline(pDevice, pShader, pLayout, nullptr), mMaxRecursionDepth(desc.maxRecursionDepth),
@@ -22,19 +15,6 @@ RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader,
         Log::error("Trying to create a ray-tracing pipeline for a device that does not support it");
         return;
     }
-
-    // const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
-    // const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
-
-    // VkPipelineLayoutCreateInfo ci = {
-    //     .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-    //     .setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size()),
-    //     .pSetLayouts = descriptorSetLayouts.data(),
-    //     .pushConstantRangeCount = static_cast<uint32_t>(pushConstantLayout.size()),
-    //     .pPushConstantRanges = pushConstantLayout.data(),
-    // };
-
-    // Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
 
     createPipeline();
     createShaderBindingTable();
@@ -144,6 +124,6 @@ void RayTracingPipeline::createShaderBindingTable()
     // Write the handles at the aligned positions
     for (uint32_t i = 0; i < static_cast<uint32_t>(mShaderGroups.size()); i++) {
         uint8_t* map = static_cast<uint8_t*>(mpShaderBindingTableBuffer->getHostMap());
-        std::memcpy(map, shaderHandleStorage.data() + i * groupSize, groupSize);
+        std::memcpy(map + i * mGroupSizeAligned, shaderHandleStorage.data() + i * groupSize, groupSize);
     }
 }

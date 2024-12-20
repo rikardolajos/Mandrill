@@ -112,7 +112,7 @@ void Pipeline::createPipeline()
 
     VkPipelineMultisampleStateCreateInfo multisampling = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        .rasterizationSamples = mpRenderPass ? mpRenderPass->getSampleCount() : VK_SAMPLE_COUNT_1_BIT,
+        .rasterizationSamples = mpRenderPass->getSampleCount(),
         .sampleShadingEnable = VK_FALSE,
     };
 

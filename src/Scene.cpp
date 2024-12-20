@@ -537,16 +537,6 @@ void Scene::createDescriptors()
 
         // Set layout for set 2
         auto layout = pLayout->getDescriptorSetLayouts()[2];
-        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+        mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
-
-    //// Acceleration structure and storage image
-    // if (mSupportRayTracing) {
-    //     std::vector<DescriptorDesc> desc;
-    //     desc.emplace_back(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, mpAccelerationStructure);
-
-    //    auto layout = pLayout->getDescriptorSetLayouts()[3];
-    //    mpAccelerationStructureDescriptor =
-    //        std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
-    //}
 }

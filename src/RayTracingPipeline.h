@@ -56,7 +56,10 @@ namespace Mandrill
             shaderGroups[1 + missGroup] = ci;
         }
 
-        MANDRILL_API void setHitGroup(uint32_t hitGroup, uint32_t stage)
+        MANDRILL_API void
+        setHitGroup(uint32_t hitGroup, uint32_t closestHitStage, uint32_t anyHitStage = VK_SHADER_UNUSED_KHR,
+                    uint32_t intersectionStage = VK_SHADER_UNUSED_KHR,
+                    VkRayTracingShaderGroupTypeKHR type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR)
         {
             if (hitGroup >= hitGroupCount) {
                 Log::error("Hit group {} exceeds hitGroupCount {}", hitGroup, hitGroupCount);
@@ -65,11 +68,11 @@ namespace Mandrill
 
             VkRayTracingShaderGroupCreateInfoKHR ci = {
                 .sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-                .type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR,
+                .type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR,
                 .generalShader = VK_SHADER_UNUSED_KHR,
-                .closestHitShader = VK_SHADER_UNUSED_KHR,
-                .anyHitShader = VK_SHADER_UNUSED_KHR,
-                .intersectionShader = VK_SHADER_UNUSED_KHR,
+                .closestHitShader = closestHitStage,
+                .anyHitShader = anyHitStage,
+                .intersectionShader = intersectionStage,
             };
             shaderGroups[1 + missGroupCount + hitGroup] = ci;
         }
@@ -88,16 +91,6 @@ namespace Mandrill
         MANDRILL_API void read(VkCommandBuffer cmd, VkImage image);
 
         MANDRILL_API void recreate();
-
-        //MANDRILL_API VkPipeline getPipeline() const
-        //{
-        //    return mPipeline;
-        //}
-
-        //MANDRILL_API VkPipelineLayout getLayout() const
-        //{
-        //    return mPipelineLayout;
-        //}
 
         MANDRILL_API VkStridedDeviceAddressRegionKHR getRayGenSBT() const
         {

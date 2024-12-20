@@ -72,16 +72,6 @@ namespace Mandrill
     class Pipeline
     {
     public:
-        ///// <summary>
-        ///// Default constructor so RayTracingPipeline can inherit. Use other constructor for regular usage.
-        ///// </summary>
-        ///// <returns></returns>
-        //MANDRILL_API Pipeline()
-        //    : mPipeline(nullptr), mPipelineLayout(nullptr), mPolygonMode(VK_POLYGON_MODE_FILL), mDepthTest(VK_FALSE),
-        //      mSubpass(0), mAttachmentCount(1)
-        //{
-        //}
-
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                               ptr<RenderPass> pRenderPass, const PipelineDesc& desc = PipelineDesc());
         MANDRILL_API ~Pipeline();
@@ -116,8 +106,8 @@ namespace Mandrill
         }
 
     protected:
-        void createPipeline();
-        void destroyPipeline();
+        virtual void createPipeline();
+        virtual void destroyPipeline();
 
         ptr<Device> mpDevice;
         ptr<RenderPass> mpRenderPass;

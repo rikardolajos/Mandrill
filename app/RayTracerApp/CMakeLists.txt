@@ -9,6 +9,4 @@ add_shaders(RayTracerApp
 	"RayGen.rgen"
 	"RayMiss.rmiss"
 	"RayClosestHit.rchit"
-	"Resolve.vert"
-	"Resolve.frag"
 )

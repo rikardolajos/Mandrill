@@ -5,13 +5,6 @@ using namespace Mandrill;
 class RayTracerApp : public App
 {
 public:
-    // void createRayTracingImage()
-    //{
-    //     mpImage = std::make_shared<Image>(mpDevice, mWidth, mHeight, 1, mpDevice->getSampleCount(),
-    //                                       VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
-    //                                       VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    // }
-
     VkWriteDescriptorSet getRayTracingImageDescriptor(uint32_t binding)
     {
         static VkDescriptorImageInfo ii;
@@ -66,20 +59,6 @@ public:
         // Create ray-tracing pipeline
         mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pShader, pLayout, pipelineDesc);
 
-        // Create shader module for resolve pass (fullscreen quad)
-        //shaderDesc.clear();
-        //shaderDesc.emplace_back("RayTracerApp/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        //shaderDesc.emplace_back("RayTracerApp/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        //auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
-
-        // Create layout for resolve pass
-        //layoutDesc.clear();
-        //layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
-        //auto pResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
-
-        // Create pipeline for resolve pass
-        //mpResolvePipeline = std::make_shared<Pipeline>(mpDevice, pResolveShader, pResolveLayout, mpRenderPass);
-
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
@@ -91,20 +70,21 @@ public:
 
         // Load scene
         //auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\cornell\\cornell.obj");
+        //auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
+        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\box\\box.obj");
         std::shared_ptr<Node> pNode = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
         }
         // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+        //pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->setSampler(mpSampler);
         mpScene->compile();
         mpScene->syncToDevice();
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT);//  mpDevice->getSampleCount());
+        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT);
     }
 
     ~RayTracerApp()
@@ -129,7 +109,6 @@ public:
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
-            // createRayTracingImage();
             mpCamera->updateAspectRatio();
         }
 
@@ -137,7 +116,6 @@ public:
         mpPipeline->bind(cmd);
 
         // Prepare image for writing
-        // mpPipeline->write(cmd, mpImage->getImage());
         mpPipeline->write(cmd, mpSwapchain->getImage());
 
         // Push descriptor with image
@@ -158,11 +136,7 @@ public:
                           mpSwapchain->getExtent().height, 1);
 
         // Prepare image for reading
-        // mpPipeline->read(cmd, mpImage->getImage());
         mpPipeline->read(cmd, mpSwapchain->getImage());
-
-        // Render full-screen quad to resolve final composition
-        //vkCmdDraw(cmd, 3, 1, 0, 0);
 
         // Start rasterization render pass for ImGUI
         mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
@@ -211,9 +185,6 @@ private:
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<RenderPass> mpRenderPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
-    //std::shared_ptr<Pipeline> mpResolvePipeline;
-
-    // std::shared_ptr<Image> mpImage;
 
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
