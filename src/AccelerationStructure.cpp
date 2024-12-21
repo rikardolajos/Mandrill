@@ -46,88 +46,82 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
     VkDeviceSize scratchSize = 0;
 
     // Loop over the meshes in the scene
-    uint32_t i = 0;
-    for (auto& node : mpScene->getNodes()) {
-        for (auto& meshIndex : node.getMeshIndices()) {
-            BLAS* blas = &mBLASes[i];
+    for (uint32_t meshIndex = 0; meshIndex < mpScene->getMeshCount(); meshIndex++) {
+        BLAS* blas = &mBLASes[meshIndex];
 
-            VkDeviceOrHostAddressConstKHR vertexAddress = {.deviceAddress = mpScene->getMeshVertexAddress(meshIndex)};
-            VkDeviceOrHostAddressConstKHR indexAddress = {.deviceAddress = mpScene->getMeshIndexAddress(meshIndex)};
+        VkDeviceOrHostAddressConstKHR vertexAddress = {.deviceAddress = mpScene->getMeshVertexAddress(meshIndex)};
+        VkDeviceOrHostAddressConstKHR indexAddress = {.deviceAddress = mpScene->getMeshIndexAddress(meshIndex)};
 
-            VkAccelerationStructureGeometryTrianglesDataKHR triangles = {
-                .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
-                .vertexFormat = VK_FORMAT_R32G32B32_SFLOAT,
-                .vertexData = vertexAddress,
-                .vertexStride = sizeof(Vertex),
-                .maxVertex = mpScene->getMeshVertexCount(meshIndex) - 1,
-                .indexType = VK_INDEX_TYPE_UINT32,
-                .indexData = indexAddress,
-                .transformData = {0}, // Identity transform
-            };
+        VkAccelerationStructureGeometryTrianglesDataKHR triangles = {
+            .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
+            .vertexFormat = VK_FORMAT_R32G32B32_SFLOAT,
+            .vertexData = vertexAddress,
+            .vertexStride = sizeof(Vertex),
+            .maxVertex = mpScene->getMeshVertexCount(meshIndex) - 1,
+            .indexType = VK_INDEX_TYPE_UINT32,
+            .indexData = indexAddress,
+            .transformData = {0}, // Identity transform
+        };
 
-            VkAccelerationStructureGeometryDataKHR geometry = {
-                .triangles = triangles,
-            };
+        VkAccelerationStructureGeometryDataKHR geometry = {
+            .triangles = triangles,
+        };
 
-            blas->geometry = {
-                .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
-                .geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
-                .geometry = geometry,
-                .flags = VK_GEOMETRY_OPAQUE_BIT_KHR,
-            };
+        blas->geometry = {
+            .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
+            .geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
+            .geometry = geometry,
+            .flags = VK_GEOMETRY_OPAQUE_BIT_KHR,
+        };
 
-            blas->buildRange = {
-                .primitiveCount = mpScene->getMeshIndexCount(meshIndex),
-                .primitiveOffset = 0,
-                .firstVertex = 0,
-                .transformOffset = 0,
-            };
+        blas->buildRange = {
+            .primitiveCount = mpScene->getMeshIndexCount(meshIndex),
+            .primitiveOffset = 0,
+            .firstVertex = 0,
+            .transformOffset = 0,
+        };
 
-            blas->buildInfo = {
-                .geometry =
-                    {
-                        .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
-                        .type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-                        .flags = flags,
-                        .mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
-                        .srcAccelerationStructure = VK_NULL_HANDLE,
-                        .geometryCount = 1,
-                        .pGeometries = &blas->geometry,
-                    },
-            };
+        blas->buildInfo = {
+            .geometry =
+                {
+                    .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
+                    .type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+                    .flags = flags,
+                    .mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+                    .srcAccelerationStructure = VK_NULL_HANDLE,
+                    .geometryCount = 1,
+                    .pGeometries = &blas->geometry,
+                },
+            .size =
+                {
+                    .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
+                },
+        };
 
-            blas->buildInfo.size = {
-                .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
-            };
+        vkGetAccelerationStructureBuildSizesKHR(mpDevice->getDevice(), VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+                                                &blas->buildInfo.geometry, &blas->buildRange.primitiveCount,
+                                                &blas->buildInfo.size);
 
-            vkGetAccelerationStructureBuildSizesKHR(
-                mpDevice->getDevice(), VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, &blas->buildInfo.geometry,
-                &blas->buildRange.primitiveCount, &blas->buildInfo.size);
+        scratchSize = std::max(scratchSize, blas->buildInfo.size.accelerationStructureSize);
 
-            scratchSize = std::max(scratchSize, blas->buildInfo.size.accelerationStructureSize);
+        blas->buildInfo.range = &blas->buildRange;
 
-            blas->buildInfo.range = &blas->buildRange;
+        // Allocate buffer for the BLAS
+        blas->pBuffer =
+            make_ptr<Buffer>(mpDevice, blas->buildInfo.size.accelerationStructureSize,
+                             VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+                                 VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-            // Allocate buffer for the BLAS
-            blas->pBuffer =
-                make_ptr<Buffer>(mpDevice, blas->buildInfo.size.accelerationStructureSize,
-                                 VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
-                                     VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        VkAccelerationStructureCreateInfoKHR ci = {
+            .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+            .buffer = blas->pBuffer->getBuffer(),
+            .offset = 0,
+            .size = blas->buildInfo.size.accelerationStructureSize,
+            .type = blas->buildInfo.geometry.type,
+        };
 
-            VkAccelerationStructureCreateInfoKHR ci = {
-                .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-                .buffer = blas->pBuffer->getBuffer(),
-                .offset = 0,
-                .size = blas->buildInfo.size.accelerationStructureSize,
-                .type = blas->buildInfo.geometry.type,
-            };
-
-            Check::Vk(
-                vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &blas->accelerationStructure));
-
-            i += 1;
-        }
+        Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &blas->accelerationStructure));
     }
 
     // Allocate scratch buffer
