@@ -104,12 +104,10 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
                                                 &blas->buildInfo.size);
 
         scratchSize = std::max(scratchSize, blas->buildInfo.size.buildScratchSize);
-        totalAccelerationStructureSize += blas->buildInfo.size.accelerationStructureSize;
+        totalAccelerationStructureSize += Helpers::alignTo(blas->buildInfo.size.accelerationStructureSize, 256);
 
         blas->buildInfo.range = &blas->buildRange;
     }
-
-    totalAccelerationStructureSize = Helpers::alignTo(totalAccelerationStructureSize, 256);
 
     // Allocate buffer for BLASes
     mpBLASBuffer = make_ptr<Buffer>(mpDevice, totalAccelerationStructureSize,
