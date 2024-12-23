@@ -43,6 +43,8 @@ void AccelerationStructure::refit()
 
 void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR flags)
 {
+    const uint32_t ACCELERATION_STRUCTURE_ALIGNMENT = 256;
+
     VkDeviceSize scratchSize = 0;
     VkDeviceSize totalAccelerationStructureSize = 0;
 
@@ -104,7 +106,8 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
                                                 &blas->buildInfo.size);
 
         scratchSize = std::max(scratchSize, blas->buildInfo.size.buildScratchSize);
-        totalAccelerationStructureSize += Helpers::alignTo(blas->buildInfo.size.accelerationStructureSize, 256);
+        totalAccelerationStructureSize +=
+            Helpers::alignTo(blas->buildInfo.size.accelerationStructureSize, ACCELERATION_STRUCTURE_ALIGNMENT);
 
         blas->buildInfo.range = &blas->buildRange;
     }
@@ -126,7 +129,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
             .type = blas.buildInfo.geometry.type,
         };
 
-        offset += Helpers::alignTo(blas.buildInfo.size.accelerationStructureSize, 256);
+        offset += Helpers::alignTo(blas.buildInfo.size.accelerationStructureSize, ACCELERATION_STRUCTURE_ALIGNMENT);
 
         Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &blas.accelerationStructure));
     }
