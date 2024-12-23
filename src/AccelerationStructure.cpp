@@ -44,6 +44,7 @@ void AccelerationStructure::refit()
 void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR flags)
 {
     VkDeviceSize scratchSize = 0;
+    VkDeviceSize totalAccelerationStructureSize = 0;
 
     // Loop over the meshes in the scene
     for (uint32_t meshIndex = 0; meshIndex < mpScene->getMeshCount(); meshIndex++) {
@@ -75,7 +76,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
         };
 
         blas->buildRange = {
-            .primitiveCount = mpScene->getMeshIndexCount(meshIndex),
+            .primitiveCount = mpScene->getMeshIndexCount(meshIndex) / 3,
             .primitiveOffset = 0,
             .firstVertex = 0,
             .transformOffset = 0,
@@ -102,26 +103,34 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
                                                 &blas->buildInfo.geometry, &blas->buildRange.primitiveCount,
                                                 &blas->buildInfo.size);
 
-        scratchSize = std::max(scratchSize, blas->buildInfo.size.accelerationStructureSize);
+        scratchSize = std::max(scratchSize, blas->buildInfo.size.buildScratchSize);
+        totalAccelerationStructureSize += blas->buildInfo.size.accelerationStructureSize;
 
         blas->buildInfo.range = &blas->buildRange;
+    }
 
-        // Allocate buffer for the BLAS
-        blas->pBuffer =
-            make_ptr<Buffer>(mpDevice, blas->buildInfo.size.accelerationStructureSize,
-                             VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
-                                 VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    totalAccelerationStructureSize = Helpers::alignTo(totalAccelerationStructureSize, 256);
 
+    // Allocate buffer for BLASes
+    mpBLASBuffer = make_ptr<Buffer>(mpDevice, totalAccelerationStructureSize,
+                                    VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+                                        VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    // Create acceleration structures
+    VkDeviceSize offset = 0;
+    for (auto& blas : mBLASes) {
         VkAccelerationStructureCreateInfoKHR ci = {
             .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-            .buffer = blas->pBuffer->getBuffer(),
-            .offset = 0,
-            .size = blas->buildInfo.size.accelerationStructureSize,
-            .type = blas->buildInfo.geometry.type,
+            .buffer = mpBLASBuffer->getBuffer(),
+            .offset = offset,
+            .size = blas.buildInfo.size.accelerationStructureSize,
+            .type = blas.buildInfo.geometry.type,
         };
 
-        Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &blas->accelerationStructure));
+        offset += Helpers::alignTo(blas.buildInfo.size.accelerationStructureSize, 256);
+
+        Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &blas.accelerationStructure));
     }
 
     // Allocate scratch buffer
@@ -130,7 +139,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     VkDeviceAddress scratchAddress = mpScratch->getDeviceAddress();
 
-    // Build in batches of 256 MB
+    // Build acceleration structures in batches of 256 MB
     uint32_t batchStart = 0;
     uint32_t batchLength = 0;
     VkDeviceSize batchSize = 0;
@@ -199,7 +208,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
 
             instances[instanceIndex] = {
                 .transform = transform,
-                .instanceCustomIndex = instanceIndex,
+                .instanceCustomIndex = meshIndex,
                 .mask = 0xff,
                 .instanceShaderBindingTableRecordOffset = 0,
                 .flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
@@ -248,14 +257,14 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
                                             &mBuildInfo.geometry, &instanceCount, &mBuildInfo.size);
 
     // Allocate buffer for the TLAS
-    mpBuffer = make_ptr<Buffer>(mpDevice, mBuildInfo.size.accelerationStructureSize,
-                                VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
-                                    VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpTLASBuffer = make_ptr<Buffer>(mpDevice, mBuildInfo.size.accelerationStructureSize,
+                                    VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+                                        VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     VkAccelerationStructureCreateInfoKHR ci = {
         .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-        .buffer = mpBuffer->getBuffer(),
+        .buffer = mpTLASBuffer->getBuffer(),
         .offset = 0,
         .size = mBuildInfo.size.accelerationStructureSize,
         .type = mBuildInfo.geometry.type,

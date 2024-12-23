@@ -20,7 +20,7 @@ namespace Mandrill
 
         AccelerationStructureBuildInfo buildInfo;
 
-        ptr<Buffer> pBuffer;
+        //ptr<Buffer> pBuffer;
     };
 
     // Forward declare Descriptor and Scene
@@ -104,7 +104,8 @@ namespace Mandrill
 
         std::vector<BLAS> mBLASes;
 
-        ptr<Buffer> mpBuffer;
+        ptr<Buffer> mpBLASBuffer;
+        ptr<Buffer> mpTLASBuffer;
         ptr<Buffer> mpScratch;
         ptr<Buffer> mpInstances;
 
