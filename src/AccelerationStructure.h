@@ -19,8 +19,6 @@ namespace Mandrill
         VkAccelerationStructureBuildRangeInfoKHR buildRange;
 
         AccelerationStructureBuildInfo buildInfo;
-
-        //ptr<Buffer> pBuffer;
     };
 
     // Forward declare Descriptor and Scene
