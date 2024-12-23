@@ -516,6 +516,7 @@ void Scene::createDescriptors()
     for (auto& node : mNodes) {
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpTransforms);
+        desc.back().range = sizeof(glm::mat4);
 
         // Set layout for set 1
         auto layout = pLayout->getDescriptorSetLayouts()[1];
