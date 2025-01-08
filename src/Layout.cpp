@@ -28,7 +28,7 @@ Layout::Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescr
             bindings.push_back({
                 .binding = l.binding,
                 .descriptorType = l.type,
-                .descriptorCount = 1,
+                .descriptorCount = l.arrayCount ? l.arrayCount : 1,
                 .stageFlags = l.stage,
             });
         }

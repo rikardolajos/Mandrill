@@ -28,6 +28,7 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
 
             VkDescriptorBufferInfo bi;
             VkDescriptorImageInfo ii;
+            std::vector<VkDescriptorImageInfo> iis;
             VkWriteDescriptorSetAccelerationStructureKHR asi;
             VkAccelerationStructureKHR as;
             VkDeviceSize offset;
@@ -58,13 +59,27 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                 write.pBufferInfo = &bi;
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-                ii = {
-                    .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
-                    .imageView = desc[d].imageView ? desc[d].imageView
-                                                   : std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                };
-                write.pImageInfo = &ii;
+                if (desc[d].arrayCount) {
+                    auto textures = std::get<ptr<std::vector<ptr<Texture>>>>(desc[d].pResource);
+                    iis.resize(desc[d].arrayCount);
+                    for (uint32_t t = 0; t < desc[d].arrayCount; t++) {
+                        iis[t] = {
+                            .sampler = textures->at(t)->getSampler(),
+                            .imageView = textures->at(t)->getImageView(),
+                            .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                        };
+                    }
+                    write.descriptorCount = static_cast<uint32_t>(desc[d].arrayCount);
+                } else {
+                    iis.resize(1);
+                    iis[0] = {
+                        .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
+                        .imageView = desc[d].imageView ? desc[d].imageView
+                                                       : std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
+                        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    };
+                }
+                write.pImageInfo = iis.data();
                 break;
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
             case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
@@ -104,7 +119,7 @@ void Descriptor::allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorS
     std::vector<VkDescriptorPoolSize> poolSizes(desc.size());
     for (uint32_t i = 0; i < poolSizes.size(); i++) {
         poolSizes[i].type = desc[i].type;
-        poolSizes[i].descriptorCount = copies;
+        poolSizes[i].descriptorCount = copies * (desc[i].arrayCount ? desc[i].arrayCount : 1);
     }
 
     VkDescriptorPoolCreateInfo poolInfo = {
