@@ -19,8 +19,6 @@ namespace Mandrill
         VkAccelerationStructureBuildRangeInfoKHR buildRange;
 
         AccelerationStructureBuildInfo buildInfo;
-
-        ptr<Buffer> pBuffer;
     };
 
     // Forward declare Descriptor and Scene
@@ -55,6 +53,31 @@ namespace Mandrill
             return mTLAS;
         }
 
+        /// <summary>
+        /// Get the write descriptor of the acceleration structure.
+        /// </summary>
+        /// <param name="binding">Binding to assign to the write descriptor</param>
+        /// <returns>A write descriptor</returns>
+        MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const
+        {
+            static VkWriteDescriptorSetAccelerationStructureKHR as = {
+                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
+                .accelerationStructureCount = 1,
+                .pAccelerationStructures = &mTLAS,
+            };
+
+            VkWriteDescriptorSet write = {
+                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                .pNext = &as,
+                .dstBinding = binding,
+                .dstArrayElement = 0,
+                .descriptorCount = 1,
+                .descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+            };
+
+            return write;
+        }
+
     private:
         /// <summary>
         /// Create the bottom levels of the acceleration structure. One BLAS per node in scene.
@@ -79,7 +102,8 @@ namespace Mandrill
 
         std::vector<BLAS> mBLASes;
 
-        ptr<Buffer> mpBuffer;
+        ptr<Buffer> mpBLASBuffer;
+        ptr<Buffer> mpTLASBuffer;
         ptr<Buffer> mpScratch;
         ptr<Buffer> mpInstances;
 

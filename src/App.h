@@ -268,6 +268,10 @@ namespace Mandrill
         // GLFW window
         GLFWwindow* mpWindow;
 
+    protected:
+        // Screen resolution
+        uint32_t mWidth, mHeight;
+
     private:
         /// <summary>
         /// Initialize GLFW.
@@ -339,7 +343,6 @@ namespace Mandrill
         const float kSmoothingFactor = 0.05f;
 
         // Screen mode
-        uint32_t mWidth, mHeight;
         GLFWmonitor* mpMonitor;
         GLFWvidmode mFullscreenMode;
         bool mFullscreen;

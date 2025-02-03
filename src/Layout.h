@@ -11,9 +11,10 @@ namespace Mandrill
         uint32_t binding;
         VkDescriptorType type;
         VkShaderStageFlags stage;
+        uint32_t arrayCount;
 
-        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlagBits stage)
-            : set(set), binding(binding), type(type), stage(stage)
+        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlags stage, uint32_t arrayCount = 0)
+            : set(set), binding(binding), type(type), stage(stage), arrayCount(arrayCount)
         {
         }
     };

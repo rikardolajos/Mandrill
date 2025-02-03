@@ -26,7 +26,7 @@ namespace Mandrill
         void createRenderPass();
 
         ptr<Image> mColor;
-        ptr<Image> mDepth;
+        //ptr<Image> mDepth;
         std::vector<VkFramebuffer> mFramebuffers;
     };
 } // namespace Mandrill

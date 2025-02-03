@@ -56,7 +56,10 @@ namespace Mandrill
             shaderGroups[1 + missGroup] = ci;
         }
 
-        MANDRILL_API void setHitGroup(uint32_t hitGroup, uint32_t stage)
+        MANDRILL_API void
+        setHitGroup(uint32_t hitGroup, uint32_t closestHitStage, uint32_t anyHitStage = VK_SHADER_UNUSED_KHR,
+                    uint32_t intersectionStage = VK_SHADER_UNUSED_KHR,
+                    VkRayTracingShaderGroupTypeKHR type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR)
         {
             if (hitGroup >= hitGroupCount) {
                 Log::error("Hit group {} exceeds hitGroupCount {}", hitGroup, hitGroupCount);
@@ -65,11 +68,11 @@ namespace Mandrill
 
             VkRayTracingShaderGroupCreateInfoKHR ci = {
                 .sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-                .type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR,
+                .type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR,
                 .generalShader = VK_SHADER_UNUSED_KHR,
-                .closestHitShader = VK_SHADER_UNUSED_KHR,
-                .anyHitShader = VK_SHADER_UNUSED_KHR,
-                .intersectionShader = VK_SHADER_UNUSED_KHR,
+                .closestHitShader = closestHitStage,
+                .anyHitShader = anyHitStage,
+                .intersectionShader = intersectionStage,
             };
             shaderGroups[1 + missGroupCount + hitGroup] = ci;
         }
@@ -80,13 +83,12 @@ namespace Mandrill
     public:
         MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
-        MANDRILL_API ~RayTracingPipeline();
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
         MANDRILL_API void write(VkCommandBuffer cmd, VkImage image);
 
-        MANDRILL_API void present(VkCommandBuffer cmd, VkImage image);
+        MANDRILL_API void read(VkCommandBuffer cmd, VkImage image);
 
         MANDRILL_API void recreate();
 
@@ -132,18 +134,9 @@ namespace Mandrill
 
     private:
         void createPipeline();
-        void destroyPipeline();
 
         void createShaderBindingTable();
         void createDescriptor();
-
-        ptr<Device> mpDevice;
-
-        ptr<Shader> mpShader;
-        ptr<Layout> mpLayout;
-
-        VkPipeline mPipeline;
-        VkPipelineLayout mPipelineLayout;
 
         std::vector<VkRayTracingShaderGroupCreateInfoKHR> mShaderGroups;
 

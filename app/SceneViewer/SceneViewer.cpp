@@ -79,8 +79,9 @@ public:
         mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass));
 
         // Create a pipeline for line rendering
-        mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass, PipelineDesc(VK_POLYGON_MODE_LINE)));
+        PipelineDesc pipelineDesc;
+        pipelineDesc.polygonMode = VK_POLYGON_MODE_LINE;
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass, pipelineDesc));
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);

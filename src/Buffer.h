@@ -12,6 +12,7 @@ namespace Mandrill
     public:
         MANDRILL_API Buffer(ptr<Device> pDevice, VkDeviceSize size, VkBufferUsageFlags usage,
                             VkMemoryPropertyFlags properties);
+
         MANDRILL_API ~Buffer();
 
         MANDRILL_API void copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);

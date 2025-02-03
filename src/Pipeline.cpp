@@ -6,7 +6,7 @@ using namespace Mandrill;
 
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass,
                    const PipelineDesc& desc)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass),
+    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass), mPipeline(nullptr),
       mBindingDescription(desc.bindingDescription), mAttributeDescriptions(desc.attributeDescriptions),
       mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mSubpass(desc.subpass),
       mAttachmentCount(desc.attachmentCount)
@@ -24,7 +24,9 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout
 
     Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
 
-    createPipeline();
+    if (mpRenderPass) {
+        createPipeline();
+    }
 }
 
 Pipeline::~Pipeline()

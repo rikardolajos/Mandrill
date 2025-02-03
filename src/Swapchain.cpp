@@ -143,7 +143,7 @@ void Swapchain::present(VkCommandBuffer cmd)
         .pWaitSemaphores = waitSemaphores.data(),
         .pWaitDstStageMask = waitStages.data(),
         .commandBufferCount = 1,
-        .pCommandBuffers = &mCommandBuffers[mInFlightIndex],
+        .pCommandBuffers = &cmd,
         .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size()),
         .pSignalSemaphores = signalSemaphores.data(),
     };

@@ -72,12 +72,6 @@ namespace Mandrill
     class Pipeline
     {
     public:
-        MANDRILL_API Pipeline()
-            : mPipeline(nullptr), mPipelineLayout(nullptr), mPolygonMode(VK_POLYGON_MODE_FILL), mDepthTest(VK_FALSE),
-              mSubpass(0), mAttachmentCount(1)
-        {
-        }
-
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
                               ptr<RenderPass> pRenderPass, const PipelineDesc& desc = PipelineDesc());
         MANDRILL_API ~Pipeline();
@@ -111,9 +105,9 @@ namespace Mandrill
             mLineWidth = lineWidth;
         }
 
-    private:
-        void createPipeline();
-        void destroyPipeline();
+    protected:
+        virtual void createPipeline();
+        virtual void destroyPipeline();
 
         ptr<Device> mpDevice;
         ptr<RenderPass> mpRenderPass;
@@ -124,6 +118,7 @@ namespace Mandrill
         VkPipeline mPipeline;
         VkPipelineLayout mPipelineLayout;
 
+    private:
         VkPolygonMode mPolygonMode;
         VkBool32 mDepthTest;
         uint32_t mSubpass;

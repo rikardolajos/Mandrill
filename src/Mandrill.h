@@ -16,6 +16,7 @@
 #include "RayTracingPipeline.h"
 #include "RenderPasses/Deferred/Deferred.h"
 #include "RenderPasses/Rasterizer/Rasterizer.h"
+#include "RenderPasses/RayTracing/RayTracing.h"
 #include "RenderPasses/RenderPass.h"
 #include "Sampler.h"
 #include "Scene.h"

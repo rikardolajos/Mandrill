@@ -48,6 +48,15 @@ namespace Mandrill
         uint32_t hasTexture;
     };
 
+    struct MaterialDevice {
+        MaterialParams params;
+        uint32_t diffuseTextureIndex;
+        uint32_t specularTextureIndex;
+        uint32_t ambientTextureIndex;
+        uint32_t emissionTextureIndex;
+        uint32_t normalTextureIndex;
+    };
+
     struct Material {
         MaterialParams params{};
         MaterialParams* paramsDevice{}; // This is set during Scene::compile()
@@ -164,18 +173,26 @@ namespace Mandrill
         ///     Camera matrix (struct CameraMatrices): Set = 0, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
         ///     Model matrix (mat4): Set = 1, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
         ///     Material params (struct MaterialParams): Set = 2, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Material diffuse texture: Set = 2, Binding = 1, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Material diffuse texture: Set = 2, Binding = 1, Type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
         ///     Material specular texture: Set = 2, Binding = 2, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
         ///     Material ambient texture: Set = 2, Binding = 3, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
         ///     Material emission texture: Set = 2, Binding = 4, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
         ///     Material normal texture: Set = 2, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Acceleration structure: Set = 3, Binding = 0, Type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
+        ///     Storage output image: Set = 3, Binding = 1, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Scene vertex buffer: Set = 3, Binding = 2, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Scene index buffer: Set = 3, Binding = 3, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Scene material buffer: Set = 3, Binding = 4, Type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        ///     Scene texture array: Set = 3, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///
+        ///     NB: Set 3 is only available when using ray tracing
         ///
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="pSwapchain">Swapchain is used to determine how many descriptors will be used</param>
-        /// <param name="prepareForRayTracing">Prepare scene for handling acceleration sturctures</param>
+        /// <param name="supportRayTracing">Prepare scene for handling acceleration sturctures</param>
         /// <returns></returns>
-        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool prepareForRayTracing = false);
+        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool supportRayTracing = false);
         MANDRILL_API ~Scene();
 
         /// <summary>
@@ -247,6 +264,12 @@ namespace Mandrill
             VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
         /// <summary>
+        /// Bind descriptors for ray tracing.
+        /// </summary>
+        /// <returns></returns>
+        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout);
+
+        /// <summary>
         /// Set sampler to use for rendering materials.
         /// </summary>
         /// <param name="pSampler">Sampler to be used for all materials</param>
@@ -269,12 +292,48 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the number of vertices in the scene.
+        /// </summary>
+        /// <returns>Number of vertices</returns>
+        MANDRILL_API uint32_t getVertexCount() const
+        {
+            return mVertexCount;
+        }
+
+        /// <summary>
+        /// Get the number of indices in the scene.
+        /// </summary>
+        /// <returns>Number of indices</returns>
+        MANDRILL_API uint32_t getIndexCount() const
+        {
+            return mIndexCount;
+        }
+
+        /// <summary>
         /// Get the number of meshes in the scene.
         /// </summary>
         /// <returns>Number of meshes</returns>
         MANDRILL_API uint32_t getMeshCount()
         {
             return static_cast<uint32_t>(mMeshes.size());
+        }
+
+        /// <summary>
+        /// Get the number of materials in the scene.
+        /// </summary>
+        /// <returns>Number of materials</returns>
+        MANDRILL_API uint32_t getMaterialCount() const
+        {
+            return static_cast<uint32_t>(mMaterials.size());
+        }
+
+        /// <summary>
+        /// Get the number of textures in the scene.
+        /// </summary>
+        /// <returns>Number of textures</returns>
+        MANDRILL_API uint32_t getTextureCount() const
+        {
+            return static_cast<uint32_t>(mTextures.size());
         }
 
         /// <summary>
@@ -317,6 +376,15 @@ namespace Mandrill
             return mpIndexBuffer->getDeviceAddress() + mMeshes[meshIndex].deviceIndicesOffset;
         }
 
+        /// <summary>
+        /// Get the acceleration structure of the scene.
+        /// </summary>
+        /// <returns>Pointer to acceleration structure or nullptr</returns>
+        MANDRILL_API ptr<AccelerationStructure> getAccelerationStructure() const
+        {
+            return mpAccelerationStructure;
+        }
+
     private:
         friend Node;
 
@@ -340,6 +408,10 @@ namespace Mandrill
 
         bool mSupportRayTracing;
         ptr<AccelerationStructure> mpAccelerationStructure;
-        ptr<Descriptor> mpAccelerationStructureDescriptor;
+        ptr<Descriptor> mpRayTracingDescriptor;
+        ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
+
+        uint32_t mVertexCount;
+        uint32_t mIndexCount;
     };
 }; // namespace Mandrill

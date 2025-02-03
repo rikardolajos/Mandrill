@@ -12,15 +12,17 @@ namespace Mandrill
 {
     struct DescriptorDesc {
         VkDescriptorType type;
-        std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>, ptr<AccelerationStructure>> pResource;
+        std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>, ptr<std::vector<ptr<Texture>>>, ptr<AccelerationStructure>>
+            pResource;
         VkDeviceSize offset;
         VkDeviceSize range;
         VkBufferView bufferView = nullptr;
         VkImageView imageView = nullptr;
+        uint32_t arrayCount;
 
         MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource, VkDeviceSize offset = 0,
-                                    VkDeviceSize range = 0)
-            : type(type), offset(offset), range(range)
+                                    VkDeviceSize range = 0, uint32_t arrayCount = 0)
+            : type(type), offset(offset), range(range), arrayCount(arrayCount)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
@@ -32,7 +34,11 @@ namespace Mandrill
                 this->pResource = std::static_pointer_cast<Image>(pResource);
                 break;
             case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-                this->pResource = std::static_pointer_cast<Texture>(pResource);
+                if (arrayCount) {
+                    this->pResource = std::static_pointer_cast<std::vector<ptr<Texture>>>(pResource);
+                } else {
+                    this->pResource = std::static_pointer_cast<Texture>(pResource);
+                }
                 break;
             case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
                 this->pResource = std::static_pointer_cast<AccelerationStructure>(pResource);

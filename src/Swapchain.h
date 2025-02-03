@@ -28,6 +28,11 @@ namespace Mandrill
             return mImages[mImageIndex];
         }
 
+        MANDRILL_API VkImageView getImageView() const
+        {
+            return mImageViews[mImageIndex];
+        }
+
         MANDRILL_API std::vector<VkImageView> getImageViews() const
         {
             return mImageViews;
