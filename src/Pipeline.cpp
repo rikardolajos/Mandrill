@@ -8,8 +8,8 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout
                    const PipelineDesc& desc)
     : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass), mPipeline(nullptr),
       mBindingDescription(desc.bindingDescription), mAttributeDescriptions(desc.attributeDescriptions),
-      mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mSubpass(desc.subpass),
-      mAttachmentCount(desc.attachmentCount)
+      mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mBlend(desc.blend),
+      mAlphaToCoverage(desc.alphaToCoverage), mSubpass(desc.subpass), mAttachmentCount(desc.attachmentCount)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
     const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
@@ -114,10 +114,11 @@ void Pipeline::createPipeline()
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .rasterizationSamples = mpRenderPass->getSampleCount(),
         .sampleShadingEnable = VK_FALSE,
+        .alphaToCoverageEnable = mAlphaToCoverage,
     };
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment = {
-        .blendEnable = VK_FALSE,
+        .blendEnable = mBlend,
         .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
         .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
         .colorBlendOp = VK_BLEND_OP_ADD,

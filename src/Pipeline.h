@@ -54,6 +54,8 @@ namespace Mandrill
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
         VkPolygonMode polygonMode;
         VkBool32 depthTest;
+        VkBool32 blend;
+        VkBool32 alphaToCoverage;
         uint32_t subpass;
         uint32_t attachmentCount;
 
@@ -61,8 +63,8 @@ namespace Mandrill
         PipelineDesc(
             VkVertexInputBindingDescription bindingDescription = defaultBindingDescription,
             std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions,
-            VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, uint32_t subpass = 0,
-            uint32_t attachmentCount = 1)
+            VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,
+            VkBool32 alphaToCoverage = VK_FALSE, uint32_t subpass = 0, uint32_t attachmentCount = 1)
             : bindingDescription(bindingDescription), attributeDescriptions(attributeDescriptions),
               polygonMode(polygonMode), depthTest(depthTest), subpass(subpass), attachmentCount(attachmentCount)
         {
@@ -121,6 +123,8 @@ namespace Mandrill
     private:
         VkPolygonMode mPolygonMode;
         VkBool32 mDepthTest;
+        VkBool32 mBlend;
+        VkBool32 mAlphaToCoverage;
         uint32_t mSubpass;
         uint32_t mAttachmentCount;
 
