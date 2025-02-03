@@ -37,6 +37,20 @@ namespace Mandrill
             return mImageInfo.imageView;
         }
 
+        MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding)
+        {
+            VkWriteDescriptorSet descriptor = {
+                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                .dstBinding = binding,
+                .dstArrayElement = 0,
+                .descriptorCount = 1,
+                .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .pImageInfo = &mImageInfo,
+            };
+
+            return descriptor;
+        }
+
     private:
         void generateMipmaps();
 
