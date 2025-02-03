@@ -16,7 +16,7 @@ namespace Mandrill
         MANDRILL_API void recreate();
 
         MANDRILL_API VkCommandBuffer acquireNextImage();
-        MANDRILL_API void present();
+        MANDRILL_API void present(VkCommandBuffer cmd);
 
         MANDRILL_API VkSwapchainKHR getSwapchain() const
         {
@@ -51,6 +51,16 @@ namespace Mandrill
         MANDRILL_API uint32_t getInFlightIndex() const
         {
             return mInFlightIndex;
+        }
+
+        /// <summary>
+        /// Get the index of the previous frame that was in flight. This is useful when indexing after calling
+        /// present(), like when querying for timestamps.
+        /// </summary>
+        /// <returns>Index of previous frame in flight</returns>
+        MANDRILL_API uint32_t getPreviousInFlightIndex() const
+        {
+            return mPreviousInFlightIndex;
         }
 
         MANDRILL_API uint32_t getFramesInFlightCount() const
@@ -93,6 +103,7 @@ namespace Mandrill
         std::vector<VkFence> mInFlightFences;
 
         uint32_t mInFlightIndex = 0;
+        uint32_t mPreviousInFlightIndex = 0;
         uint32_t mImageIndex = 0;
 
         bool mRecreated = false;

@@ -17,8 +17,8 @@ namespace Mandrill
 
         MANDRILL_API void recreate();
 
-        MANDRILL_API virtual void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) = 0;
-        MANDRILL_API virtual void frameEnd(VkCommandBuffer cmd) = 0;
+        MANDRILL_API virtual void begin(VkCommandBuffer cmd, glm::vec4 clearColor) = 0;
+        MANDRILL_API virtual void end(VkCommandBuffer cmd) = 0;
 
         MANDRILL_API VkRenderPass getRenderPass() const
         {

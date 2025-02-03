@@ -168,7 +168,7 @@ void RayTracing::destroyFramebuffers()
     }
 }
 
-void RayTracing::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
+void RayTracing::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
@@ -186,7 +186,7 @@ void RayTracing::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
     Check::Vk(vkBeginCommandBuffer(cmd, &bi));
 }
 
-void RayTracing::frameEnd(VkCommandBuffer cmd)
+void RayTracing::end(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
     Check::Vk(vkEndCommandBuffer(cmd));

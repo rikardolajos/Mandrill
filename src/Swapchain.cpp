@@ -115,14 +115,23 @@ VkCommandBuffer Swapchain::acquireNextImage()
         Log::error("Failed to acquire next swapchain image");
     }
 
+    VkCommandBufferBeginInfo bi = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+    };
+
+    Check::Vk(vkBeginCommandBuffer(mCommandBuffers[mInFlightIndex], &bi));
+
     return mCommandBuffers[mInFlightIndex];
 }
 
-void Swapchain::present()
+void Swapchain::present(VkCommandBuffer cmd)
 {
     if (mRecreated) {
         mRecreated = false;
     }
+
+    Check::Vk(vkEndCommandBuffer(cmd));
 
     std::array<VkSemaphore, 1> waitSemaphores{mImageAvailableSemaphore[mInFlightIndex]};
     std::array<VkSemaphore, 1> signalSemaphores{mRenderFinishedSemaphore[mInFlightIndex]};
@@ -162,6 +171,7 @@ void Swapchain::present()
         Log::error("Failed to present swapchain image");
     }
 
+    mPreviousInFlightIndex = mInFlightIndex;
     mInFlightIndex = (mInFlightIndex + 1) % static_cast<uint32_t>(mInFlightFences.size());
 }
 

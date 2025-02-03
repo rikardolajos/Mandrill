@@ -12,8 +12,8 @@ namespace Mandrill
         MANDRILL_API RayTracing(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
         MANDRILL_API ~RayTracing();
 
-        MANDRILL_API void frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
-        MANDRILL_API void frameEnd(VkCommandBuffer cmd) override;
+        MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
+        MANDRILL_API void end(VkCommandBuffer cmd) override;
 
     protected:
         void createAttachments() override;

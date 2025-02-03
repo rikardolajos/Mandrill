@@ -68,7 +68,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -96,8 +96,8 @@ public:
         mpPipeline->present(cmd, mpSwapchain->getImage());
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->frameEnd(cmd);
-        mpSwapchain->present();
+        mpRenderPass->end(cmd);
+        mpSwapchain->present(cmd);
     }
 
     void appGUI(ImGuiContext* pContext)

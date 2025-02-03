@@ -232,7 +232,7 @@ void Deferred::destroyFramebuffers()
     }
 }
 
-void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
+void Deferred::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
@@ -272,7 +272,7 @@ void Deferred::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
     vkCmdBeginRenderPass(cmd, &rbi, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void Deferred::frameEnd(VkCommandBuffer cmd)
+void Deferred::end(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
     Check::Vk(vkEndCommandBuffer(cmd));

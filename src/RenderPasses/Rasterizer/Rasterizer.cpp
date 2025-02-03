@@ -169,7 +169,7 @@ void Rasterizer::destroyFramebuffers()
     }
 }
 
-void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
+void Rasterizer::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
@@ -178,13 +178,6 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
         createAttachments();
         createFramebuffers();
     }
-
-    VkCommandBufferBeginInfo bi = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-    };
-
-    Check::Vk(vkBeginCommandBuffer(cmd, &bi));
 
     std::array<VkClearValue, 2> clearValues = {};
     clearValues[0].color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]};
@@ -206,8 +199,7 @@ void Rasterizer::frameBegin(VkCommandBuffer cmd, glm::vec4 clearColor)
     vkCmdBeginRenderPass(cmd, &rbi, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void Rasterizer::frameEnd(VkCommandBuffer cmd)
+void Rasterizer::end(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
-    Check::Vk(vkEndCommandBuffer(cmd));
 }
