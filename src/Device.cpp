@@ -6,10 +6,81 @@
 
 using namespace Mandrill;
 
+#if defined(_DEBUG)
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                    VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                    void* pUserData)
+{
+    switch (messageSeverity) {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+        Log::warning("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
+        break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+        Log::error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
+#if MANDRILL_WINDOWS
+        __debugbreak();
+#elif MANDRILL_LINUX
+        raise(SIGTRAP);
+#endif
+        break;
+    }
+
+    return VK_FALSE;
+}
+
+static VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                             const VkAllocationCallbacks* pAllocator,
+                                             VkDebugUtilsMessengerEXT* pDebugMessenger)
+{
+    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    if (func != nullptr) {
+        return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+    } else {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
+}
+
+static void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
+                                          const VkAllocationCallbacks* pAllocator)
+{
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    if (func != nullptr) {
+        func(instance, debugMessenger, pAllocator);
+    }
+}
+
+static void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& ci)
+{
+    ci = {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+        .messageSeverity =
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+        .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                       VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+        .pfnUserCallback = debugCallback,
+    };
+}
+
+void Device::createDebugMessenger()
+{
+    VkDebugUtilsMessengerCreateInfoEXT ci;
+    populateDebugMessengerCreateInfo(ci);
+
+    Check::Vk(createDebugUtilsMessengerEXT(mInstance, &ci, nullptr, &mDebugMessenger));
+}
+
+#endif
+
 Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
     : mpWindow(pWindow)
 {
     createInstance();
+
+#if defined(_DEBUG)
+    createDebugMessenger();
+#endif
+
     createSurface();
     createDevice(extensions, physicalDeviceIndex);
     createCommandPool();
@@ -27,6 +98,11 @@ Device::~Device()
     if (mSurface) {
         vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
     }
+
+#if defined(_DEBUG)
+    destroyDebugUtilsMessengerEXT(mInstance, mDebugMessenger, nullptr);
+#endif
+
     if (mInstance) {
         vkDestroyInstance(mInstance, nullptr);
     }
@@ -90,8 +166,6 @@ void Device::createInstance()
     VkInstanceCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &ai,
-        .enabledExtensionCount = count,
-        .ppEnabledExtensionNames = extensions.data(),
     };
 
 #if defined(_DEBUG)
@@ -115,7 +189,12 @@ void Device::createInstance()
 
     ci.enabledLayerCount = static_cast<uint32_t>(layers.size());
     ci.ppEnabledLayerNames = layers.data();
+
+    extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
+
+    ci.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    ci.ppEnabledExtensionNames = extensions.data();
 
     Check::Vk(vkCreateInstance(&ci, nullptr, &mInstance));
 
@@ -200,8 +279,9 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 void Device::createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
 {
     std::array baseExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME, VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
-        // VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME,
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+        VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
+        VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {

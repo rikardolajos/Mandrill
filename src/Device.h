@@ -141,6 +141,9 @@ namespace Mandrill
         MANDRILL_API VkSampleCountFlagBits getSampleCount() const;
 
     private:
+#if defined(_DEBUG)
+        void createDebugMessenger();
+#endif
         void createInstance();
         void createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex);
         void createCommandPool();
@@ -148,6 +151,10 @@ namespace Mandrill
         void createExtensionProcAddrs();
 
         GLFWwindow* mpWindow;
+
+#if defined(_DEBUG)
+        VkDebugUtilsMessengerEXT mDebugMessenger;
+#endif
 
         VkInstance mInstance;
         VkPhysicalDevice mPhysicalDevice;
