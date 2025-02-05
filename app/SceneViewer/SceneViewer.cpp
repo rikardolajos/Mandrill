@@ -1,7 +1,9 @@
 #include "Mandrill.h"
 
+#if MANDRILL_WINDOWS
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"
+#endif
 
 using namespace Mandrill;
 
@@ -170,6 +172,7 @@ public:
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
+#if MANDRILL_WINDOWS
                 OPENFILENAME ofn;
                 TCHAR szFile[260] = {0};
 
@@ -189,6 +192,18 @@ public:
                     mScenePath = ofn.lpstrFile;
                     loadScene();
                 }
+#elif MANDRILL_LINUX
+                char filename[1024];
+                FILE* f = popen("zenity --file-selection --modal --title=\"Select file\"", "r");
+
+                if (f) {
+                    fgets(filename, sizeof(filename), f);
+                    filename[std::strcspn(filename, "\n")] = 0; // Remove trailing new line
+                    mScenePath = filename;
+                    loadScene();
+                    pclose(f);
+                }
+#endif
             }
 
             ImGui::Text("Scene: %s", mScenePath.string().c_str());

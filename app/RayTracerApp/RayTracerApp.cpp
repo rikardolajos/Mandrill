@@ -74,8 +74,8 @@ public:
         for (uint32_t i = 0; i < mSpecializationConstants.size(); i++) {
             VkSpecializationMapEntry entry = {
                 .constantID = i,
-                .offset = i * sizeof(uint32_t),
-                .size = sizeof(uint32_t),
+                .offset = i * static_cast<uint32_t>(sizeof(uint32_t)),
+                .size = static_cast<uint32_t>(sizeof(uint32_t)),
             };
             mSpecializationMapEntries.push_back(entry);
         }
@@ -167,7 +167,7 @@ public:
         mpPipeline->read(cmd, mpSwapchain->getImage());
 
         // Start rasterization render pass for ImGUI
-        mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Draw GUI
         App::renderGUI(cmd);

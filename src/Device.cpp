@@ -4,6 +4,10 @@
 #include "Extension.h"
 #include "Log.h"
 
+#if MANDRILL_LINUX
+#include <csignal>
+#endif
+
 using namespace Mandrill;
 
 #if defined(_DEBUG)
@@ -21,7 +25,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
 #if MANDRILL_WINDOWS
         __debugbreak();
 #elif MANDRILL_LINUX
-        raise(SIGTRAP);
+        std::raise(SIGTRAP);
 #endif
         break;
     }

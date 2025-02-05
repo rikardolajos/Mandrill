@@ -19,6 +19,9 @@ function(add_mandrill_executable TARGET)
     add_executable(${TARGET})
     target_link_libraries(${TARGET} PRIVATE Mandrill)
     set_target_properties(${TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY})
+    if (UNIX)
+        set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${TARGET}.bin)
+    endif(UNIX)
 endfunction()
 
 function(add_shaders TARGET)
@@ -35,6 +38,8 @@ function(add_shaders TARGET)
         list(APPEND COMPILE_COMMANDS COMMAND Vulkan::glslc --target-env=vulkan1.3 -MD -MF ${DEP} ${INPUT} -o ${OUTPUT})
         list(APPEND SHADER_OUTPUTS ${OUTPUT})
     endforeach()
+
+    make_directory("${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}")
 
     add_custom_target(${TARGET}Shaders ALL
         ${COMPILE_COMMANDS}

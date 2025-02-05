@@ -66,7 +66,8 @@ namespace Mandrill
             VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,
             VkBool32 alphaToCoverage = VK_FALSE, uint32_t subpass = 0, uint32_t attachmentCount = 1)
             : bindingDescription(bindingDescription), attributeDescriptions(attributeDescriptions),
-              polygonMode(polygonMode), depthTest(depthTest), subpass(subpass), attachmentCount(attachmentCount)
+              polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage),
+              subpass(subpass), attachmentCount(attachmentCount)
         {
         }
     };

@@ -37,7 +37,7 @@ Camera::Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapcha
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS,
+        .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR,
     };
 
     VkDescriptorSetLayoutCreateInfo ci = {

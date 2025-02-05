@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "Shader.h"
 
 #include "Error.h"
 #include "Log.h"

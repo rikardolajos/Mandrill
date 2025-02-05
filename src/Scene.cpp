@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-#include "Extension.h "
+#include "Extension.h"
 #include "Helpers.h"
 #include "Log.h"
 #include "Pipeline.h"
@@ -546,7 +546,8 @@ ptr<Layout> Scene::getLayout()
         desc.emplace_back(3, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
         desc.emplace_back(3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
         desc.emplace_back(3, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_RAYGEN_BIT_KHR, static_cast<uint32_t>(mTextures.size()));
+        desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+                          static_cast<uint32_t>(mTextures.size()));
         desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
     }
 
@@ -614,7 +615,8 @@ void Scene::createDescriptors()
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpVertexBuffer);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpIndexBuffer);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpMaterialBuffer);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0, static_cast<uint32_t>(textures.size()));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0,
+                          static_cast<uint32_t>(textures.size()));
 
         auto layout = pLayout->getDescriptorSetLayouts()[3];
         mpRayTracingDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);

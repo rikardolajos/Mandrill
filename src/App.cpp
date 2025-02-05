@@ -6,7 +6,7 @@
 
 #include "stb_image.h"
 
-#ifdef MANDRILL_WINDOWS
+#if MANDRILL_WINDOWS
 // Include windows.h first
 #include <windows.h>
 // Line to stop formatter
@@ -297,13 +297,15 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
             ImGui::Text(
                 "Latest source code is available from the git repository and is released under the MIT License.");
 
-#ifdef MANDRILL_WINDOWS
             if (ImGui::Button("Go to repo")) {
+#if MANDRILL_WINDOWS
                 ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
-            }
-            ImGui::SameLine();
+#elif MANDRILL_LINUX
+                std::system("xdg-open https://github.com/rikardolajos/Mandrill/tree/master");
 #endif
+            }
 
+            ImGui::SameLine();
             if (ImGui::Button("Close")) {
                 mShowAbout = false;
             }
@@ -398,7 +400,7 @@ void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, i
 void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
 {
     if (glfwInit() == GLFW_FALSE) {
-        Log::error("Failed to initialze GLFW.");
+        Log::error("Failed to initialze GLFW");
         Check::GLFW();
     }
 
@@ -433,11 +435,11 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
     if (image.pixels) {
         glfwSetWindowIcon(mpWindow, 1, &image);
     } else {
-        Log::error("Failed to load icon.png.");
+        Log::error("Failed to load icon.png");
     }
 
     if (!glfwVulkanSupported()) {
-        Log::error("Failed to find Vulkan.");
+        Log::error("Failed to find Vulkan");
         Check::GLFW();
     }
 
