@@ -188,7 +188,7 @@ void Device::createInstance()
     if (std::find_if(props.begin(), props.end(), [layers](const VkLayerProperties& p) {
             return std::string(p.layerName) == std::string(layers[0]);
         }) == props.end()) {
-        Log::error("Validation layer not supported.");
+        Log::error("Validation layer not supported");
     }
 
     ci.enabledLayerCount = static_cast<uint32_t>(layers.size());
@@ -237,7 +237,7 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
         }
 
         if (!found) {
-            Log::error("The requested extension {} is not available.", e);
+            Log::error("The requested extension {} is not available", e);
             result = false;
         }
     }
@@ -253,7 +253,7 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, queueFamilyProperties.data());
 
     if (!count) {
-        Log::error("No Vulkan queue family available.");
+        Log::error("No Vulkan queue family available");
     }
 
     Log::debug("Available queue families for selected device: {}", count);
@@ -267,14 +267,14 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     }
 
     if (index == count) {
-        Log::error("No Vulkan queue found for requested families.");
+        Log::error("No Vulkan queue found for requested families");
     }
 
     // Check that the selected queue family supports PRESENT
     VkBool32 supported;
     Check::Vk(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &supported));
     if (!supported) {
-        Log::error("Selected queue family does not support PRESENT.");
+        Log::error("Selected queue family does not support PRESENT");
     }
 
     return index;
@@ -347,12 +347,12 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
     if (mRayTracingSupport) {
         deviceExtensions.insert(deviceExtensions.end(), raytracingExtensions.begin(), raytracingExtensions.end());
     } else {
-        Log::warning("The chosen physical device does not support ray tracing.");
+        Log::warning("The chosen physical device does not support ray tracing");
     }
 
     // Check for extension support
     if (!checkDeviceExtensionSupport(mPhysicalDevice, deviceExtensions)) {
-        Log::error("The chosen physical device does not support the requested extensions.");
+        Log::error("The chosen physical device does not support the requested extensions");
         return;
     }
 
