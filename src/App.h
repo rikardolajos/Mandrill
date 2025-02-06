@@ -125,7 +125,7 @@ namespace Mandrill
         /// screenshots. The menu also allows for controlling different aspects of the rendering context and
         /// therefore needs access to the device, swapchain, render pass and pipelines.
         /// </summary>
-        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipline">Pipeline that should be recreated</param>
@@ -139,7 +139,7 @@ namespace Mandrill
         /// screenshots. The menu also allows for controlling different aspects of the rendering context and
         /// therefore needs access to the device, swapchain, render pass and pipelines.
         /// </summary>
-        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipelines">Pipelines that should be recreated</param>
@@ -163,7 +163,7 @@ namespace Mandrill
         /// <param name="scancode">The system-specific scancode of the key</param>
         /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
-        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipeline">Pipeline that should be recreated</param>
@@ -179,7 +179,7 @@ namespace Mandrill
         /// <param name="scancode">The system-specific scancode of the key</param>
         /// <param name="action">`GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
-        /// <param name="pDevice">Device to toggle vertical sync</param>
+        /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
         /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipelines">Pipelines that should be recreated</param>
@@ -295,6 +295,13 @@ namespace Mandrill
         /// </summary>
         /// <returns></returns>
         ImGuiContext* newFrameGUI();
+
+        /// <summary>
+        /// Save the next available swapchain image to disk.
+        /// </summary>
+        /// <param name="pDevice">Currently active device</param>
+        /// <param name="pSwapchain">Swapchain to get screenshot from</param>
+        void takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
 
         /// <summary>
         /// Toggle between fullscreen and windowed mode.

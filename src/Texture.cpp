@@ -46,7 +46,7 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
     Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);
 
-    Helpers::copyBufferToImage(mpDevice, staging, *mpImage, static_cast<uint32_t>(mWidth),
+    Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(mWidth),
                                static_cast<uint32_t>(mHeight));
 
     if (mipmaps) {

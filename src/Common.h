@@ -17,8 +17,12 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_vulkan.h>
 
+#include <stb/stb_image.h>
+#include <stb/stb_image_write.h>
+
 #include <algorithm>
 #include <array>
+#include <ctime>
 #include <filesystem>
 #include <format>
 #include <fstream>

@@ -153,6 +153,16 @@ namespace Mandrill
 
                 srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR &&
+                       newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+                // Before screenshot
+                srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
+                       newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+                // After screenshot
+                srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
             } else {
                 Log::error("Unsupported layout transition");
             }
@@ -162,8 +172,8 @@ namespace Mandrill
             cmdEnd(pDevice, cmd);
         }
 
-        inline static void copyBufferToImage(ptr<Device> pDevice, const Buffer& buffer, const Image& image,
-                                             uint32_t width, uint32_t height)
+        inline static void copyBufferToImage(ptr<Device> pDevice, VkBuffer buffer, VkImage image, uint32_t width,
+                                             uint32_t height)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);
 
@@ -182,8 +192,32 @@ namespace Mandrill
                 .imageExtent = {width, height, 1},
             };
 
-            vkCmdCopyBufferToImage(cmd, buffer.getBuffer(), image.getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
-                                   &region);
+            vkCmdCopyBufferToImage(cmd, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+            cmdEnd(pDevice, cmd);
+        }
+
+        inline static void copyImageToBuffer(ptr<Device> pDevice, VkImage image, VkBuffer buffer, uint32_t width,
+                                             uint32_t height)
+        {
+            VkCommandBuffer cmd = cmdBegin(pDevice);
+
+            VkBufferImageCopy region = {
+                .bufferOffset = 0,
+                .bufferRowLength = 0,
+                .bufferImageHeight = 0,
+                .imageSubresource =
+                    {
+                        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                        .mipLevel = 0,
+                        .baseArrayLayer = 0,
+                        .layerCount = 1,
+                    },
+                .imageOffset = {0, 0},
+                .imageExtent = {width, height, 1},
+            };
+
+            vkCmdCopyImageToBuffer(cmd, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
 
             cmdEnd(pDevice, cmd);
         }
