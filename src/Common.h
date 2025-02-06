@@ -32,6 +32,7 @@
 #include <set>
 #include <source_location>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <variant>
