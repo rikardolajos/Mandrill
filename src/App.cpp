@@ -269,8 +269,10 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
             ImGui::Text("Camera movement:");
             ImGui::Text("\tW: Move forward");
             ImGui::Text("\tS: Move backward");
-            ImGui::Text("\tA: Strafe left");
-            ImGui::Text("\tD: Strafe right");
+            ImGui::Text("\tA: Move left");
+            ImGui::Text("\tD: Move right");
+            ImGui::Text("\tE: Move up");
+            ImGui::Text("\tQ: Move down");
             ImGui::Text("\tArrow keys: Pan");
             ImGui::Text("\tPeriod: Zoom in");
             ImGui::Text("\tComma: Zoom out");
