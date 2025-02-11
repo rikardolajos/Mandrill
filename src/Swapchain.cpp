@@ -67,12 +67,13 @@ Swapchain::Swapchain(ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pD
 {
     querySupport();
     createSwapchain();
-    // createResources();
     createSyncObjects(framesInFlight);
+    createDescriptor();
 }
 
 Swapchain::~Swapchain()
 {
+    destroyDescriptor();
     destroySyncObjects();
     destroySwapchain();
 }
@@ -90,11 +91,13 @@ void Swapchain::recreate()
     } while (width == 0 || height == 0);
 
     uint32_t framesInFlight = static_cast<uint32_t>(mInFlightFences.size());
+    destroyDescriptor();
     destroySyncObjects();
     destroySwapchain();
     querySupport();
     createSwapchain();
     createSyncObjects(framesInFlight);
+    createDescriptor();
 
     mRecreated = true;
 }
@@ -316,4 +319,83 @@ void Swapchain::destroySyncObjects()
         vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphore[i], nullptr);
         vkDestroyFence(mpDevice->getDevice(), mInFlightFences[i], nullptr);
     }
+}
+
+void Swapchain::createDescriptor()
+{
+    const uint32_t copies = static_cast<uint32_t>(mImages.size());
+
+    // Create descriptor set layout
+    VkDescriptorSetLayoutBinding binding = {
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_ALL,
+    };
+
+    VkDescriptorSetLayoutCreateInfo lci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = 1,
+        .pBindings = &binding,
+    };
+
+    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &lci, nullptr, &mDescriptorSetLayout));
+
+    // Create descriptor pool
+    std::vector<VkDescriptorPoolSize> poolSizes = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, copies},
+    };
+
+    VkDescriptorPoolCreateInfo pci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+        .maxSets = copies,
+        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .pPoolSizes = poolSizes.data(),
+    };
+
+    Check::Vk(vkCreateDescriptorPool(mpDevice->getDevice(), &pci, nullptr, &mDescriptorPool));
+
+    std::vector<VkDescriptorSetLayout> layouts(copies, mDescriptorSetLayout);
+
+    // Allocate descriptor sets (one for each swapchain image)
+    VkDescriptorSetAllocateInfo ai = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .descriptorPool = mDescriptorPool,
+        .descriptorSetCount = static_cast<uint32_t>(layouts.size()),
+        .pSetLayouts = layouts.data(),
+    };
+
+    mDescriptorSets.resize(copies);
+    Check::Vk(vkAllocateDescriptorSets(mpDevice->getDevice(), &ai, mDescriptorSets.data()));
+
+    // Update descriptor sets
+    for (uint32_t i = 0; i < static_cast<uint32_t>(mImageViews.size()); i++) {
+        VkDescriptorImageInfo ii = {
+            .imageView = mImageViews[i],
+            .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
+        };
+
+        VkWriteDescriptorSet write = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstSet = mDescriptorSets[i],
+            .dstBinding = 0,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+            .pImageInfo = &ii,
+        };
+
+        vkUpdateDescriptorSets(mpDevice->getDevice(), 1, &write, 0, nullptr);
+    }
+}
+
+void Swapchain::destroyDescriptor()
+{
+    vkDeviceWaitIdle(mpDevice->getDevice());
+
+    vkFreeDescriptorSets(mpDevice->getDevice(), mDescriptorPool, static_cast<uint32_t>(mDescriptorSets.size()),
+                         mDescriptorSets.data());
+    vkDestroyDescriptorPool(mpDevice->getDevice(), mDescriptorPool, nullptr);
+    vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mDescriptorSetLayout, nullptr);
 }

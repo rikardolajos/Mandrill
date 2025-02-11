@@ -38,6 +38,11 @@ namespace Mandrill
             return mImageViews;
         }
 
+        MANDRILL_API VkDescriptorSet getImageDescriptorSet() const
+        {
+            return mDescriptorSets[mImageIndex];
+        }
+
         MANDRILL_API VkFormat getImageFormat() const
         {
             return mImageFormat;
@@ -84,6 +89,8 @@ namespace Mandrill
         void destroySwapchain();
         void createSyncObjects(uint32_t framesInFlight);
         void destroySyncObjects();
+        void createDescriptor();
+        void destroyDescriptor();
 
         ptr<Device> mpDevice;
 
@@ -110,6 +117,10 @@ namespace Mandrill
         uint32_t mInFlightIndex = 0;
         uint32_t mPreviousInFlightIndex = 0;
         uint32_t mImageIndex = 0;
+
+        VkDescriptorSetLayout mDescriptorSetLayout;
+        VkDescriptorPool mDescriptorPool;
+        std::vector<VkDescriptorSet> mDescriptorSets;
 
         bool mRecreated = false;
     };
