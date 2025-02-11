@@ -69,5 +69,4 @@ if (NOT MANDRILL_EXCLUDE_APPS)
 endif()
 
 configure_file(res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
-configure_file(res/missing.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/missing.png COPYONLY)
 configure_file(res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)

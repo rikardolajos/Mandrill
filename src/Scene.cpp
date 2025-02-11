@@ -70,8 +70,10 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
 Scene::Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool supportRayTracing)
     : mpDevice(pDevice), mpSwapchain(pSwapchain), mSupportRayTracing(supportRayTracing), mVertexCount(0), mIndexCount(0)
 {
+    const uint8_t data[] = {0xff, 0x00, 0xff, 0xff, 0x88, 0x00, 0xff, 0xff,
+                            0x88, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0xff};
     mpMissingTexture =
-        make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_SRGB, "missing.png", false);
+        make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, 2, 2, 4, false);
 }
 
 Scene::~Scene()

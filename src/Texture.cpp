@@ -9,7 +9,6 @@
 
 using namespace Mandrill;
 
-
 Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
     : mpDevice(pDevice), mFormat(format), mMipLevels(1), mImageInfo{0}
 {
@@ -18,42 +17,62 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
     stbi_set_flip_vertically_on_load(1);
 
     std::string pathStr = path.string();
-    stbi_uc* pixels = stbi_load(pathStr.c_str(), &mWidth, &mHeight, &mChannels, STBI_rgb_alpha);
+    stbi_uc* data = stbi_load(pathStr.c_str(), &mWidth, &mHeight, &mChannels, STBI_rgb_alpha);
+    mChannels = STBI_rgb_alpha;
 
-    if (!pixels) {
+    if (!data) {
         Log::error("Failed to load texture.");
         return;
     }
 
+    create(data, mipmaps);
+
+    stbi_image_free(data);
+}
+
+Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* data, uint32_t width, uint32_t height,
+                 uint32_t channels, bool mipmaps)
+    : mpDevice(pDevice), mFormat(format), mWidth(width), mHeight(height), mChannels(channels), mMipLevels(1),
+      mImageInfo{0}
+{
+    create(data, mipmaps);
+}
+
+Texture::~Texture()
+{
+}
+
+void Texture::create(const void* data, bool mipmaps)
+{
     if (mipmaps) {
         mMipLevels = static_cast<uint32_t>(std::floor(log2(std::max(mWidth, mHeight))) + 1);
     }
 
-    VkDeviceSize size = mWidth * mHeight * STBI_rgb_alpha;
-
-    Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-    staging.copyFromHost(pixels, size);
-
-    stbi_image_free(pixels);
-
     mpImage =
-        make_ptr<Image>(mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
+        make_ptr<Image>(mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, mFormat, VK_IMAGE_TILING_OPTIMAL,
                         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
-                                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);
+    if (data) {
+        VkDeviceSize size = mWidth * mHeight * mChannels;
 
-    Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(mWidth),
-                               static_cast<uint32_t>(mHeight));
+        Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    if (mipmaps) {
-        generateMipmaps();
-    } else {
-        Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mMipLevels);
+        staging.copyFromHost(data, size);
+
+        Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);
+
+        Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(mWidth),
+                                   static_cast<uint32_t>(mHeight));
+
+        if (mipmaps) {
+            generateMipmaps();
+        } else {
+            Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mMipLevels);
+        }
     }
 
     mpImage->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
@@ -63,10 +82,6 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         .imageView = mpImage->getImageView(),
         .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
     };
-}
-
-Texture::~Texture()
-{
 }
 
 void Texture::generateMipmaps()
