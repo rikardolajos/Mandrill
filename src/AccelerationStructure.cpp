@@ -26,6 +26,8 @@ AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pSc
 
 AccelerationStructure::~AccelerationStructure()
 {
+    vkDeviceWaitIdle(mpDevice->getDevice());
+
     for (auto& blas : mBLASes) {
         vkDestroyAccelerationStructureKHR(mpDevice->getDevice(), blas.accelerationStructure, nullptr);
     }
@@ -33,12 +35,9 @@ AccelerationStructure::~AccelerationStructure()
     vkDestroyAccelerationStructureKHR(mpDevice->getDevice(), mTLAS, nullptr);
 }
 
-void AccelerationStructure::rebuild(VkBuildAccelerationStructureFlagsKHR flags)
+void AccelerationStructure::update(VkBuildAccelerationStructureFlagsKHR flags)
 {
-}
-
-void AccelerationStructure::refit()
-{
+    createTLAS(flags, true);
 }
 
 void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR flags)
@@ -181,7 +180,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
     }
 }
 
-void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flags)
+void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flags, bool update)
 {
     uint32_t instanceCount = 0;
     for (auto& node : mpScene->getNodes()) {
@@ -209,8 +208,8 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
 
             instances[instanceIndex] = {
                 .transform = transform,
-                .instanceCustomIndex = meshIndex,
-                .mask = 0xff,
+                .instanceCustomIndex = mpScene->getMeshMaterialIndex(meshIndex),
+                .mask = node.getVisible() ? 0xffu : 0x00u,
                 .instanceShaderBindingTableRecordOffset = 0,
                 .flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
                 .accelerationStructureReference = address,
@@ -244,8 +243,9 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
         .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
         .type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
         .flags = flags | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR,
-        .mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
-        .srcAccelerationStructure = VK_NULL_HANDLE,
+        .mode =
+            update ? VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR : VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+        .srcAccelerationStructure = update ? mTLAS : VK_NULL_HANDLE,
         .geometryCount = 1,
         .pGeometries = &mGeometry,
     };
@@ -257,21 +257,24 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
     vkGetAccelerationStructureBuildSizesKHR(mpDevice->getDevice(), VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
                                             &mBuildInfo.geometry, &instanceCount, &mBuildInfo.size);
 
-    // Allocate buffer for the TLAS
-    mpTLASBuffer = make_ptr<Buffer>(mpDevice, mBuildInfo.size.accelerationStructureSize,
-                                    VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
-                                        VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    if (mTLAS == nullptr || !update) {
+        // Allocate buffer for the TLAS
+        mpTLASBuffer =
+            make_ptr<Buffer>(mpDevice, mBuildInfo.size.accelerationStructureSize,
+                             VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+                                 VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    VkAccelerationStructureCreateInfoKHR ci = {
-        .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-        .buffer = mpTLASBuffer->getBuffer(),
-        .offset = 0,
-        .size = mBuildInfo.size.accelerationStructureSize,
-        .type = mBuildInfo.geometry.type,
-    };
+        VkAccelerationStructureCreateInfoKHR ci = {
+            .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+            .buffer = mpTLASBuffer->getBuffer(),
+            .offset = 0,
+            .size = mBuildInfo.size.accelerationStructureSize,
+            .type = mBuildInfo.geometry.type,
+        };
 
-    Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &mTLAS));
+        Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &mTLAS));
+    }
 
     // Create bigger scratch buffer if needed
     VkDeviceSize scratchSize = std::max(mBuildInfo.size.accelerationStructureSize, mBuildInfo.size.updateScratchSize);

@@ -83,13 +83,30 @@
 #define MANDRILL_API MANDRILL_API_IMPORT
 #endif
 
-// Shorthand for using shared pointers
+// Some Mandrill specific helper types and classes
 namespace Mandrill
 {
+    // Shorthand for using shared pointers
     template <typename T> using ptr = std::shared_ptr<T>;
 
     template <typename T, typename... Args> static inline ptr<T> make_ptr(Args&&... args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
+
+    // Most vector counts are uint32_t in Vulkan, this override removes many static casts in code.
+    template <typename T>
+    class Vector : public std::vector<T>
+    {
+    public:
+        /// <summary>
+        /// Get the number of elements in the vector as a uint32_t.
+        /// </summary>
+        /// <returns>Number of elements</returns>
+        constexpr uint32_t count() const noexcept
+        {
+            return static_cast<uint32_t>(std::vector<T>::size());
+        }
+    };
 } // namespace Mandrill
+

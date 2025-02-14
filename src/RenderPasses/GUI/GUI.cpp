@@ -1,4 +1,4 @@
-#include "RayTracing.h"
+#include "GUI.h"
 
 #include "Error.h"
 #include "Helpers.h"
@@ -7,7 +7,7 @@
 using namespace Mandrill;
 
 
-RayTracing::RayTracing(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : RenderPass(pDevice, pSwapchain)
+GUI::GUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : RenderPass(pDevice, pSwapchain)
 {
     mSampleCount = mpDevice->getSampleCount();
     mSampleCount = VK_SAMPLE_COUNT_1_BIT;
@@ -16,19 +16,19 @@ RayTracing::RayTracing(ptr<Device> pDevice, ptr<Swapchain> pSwapchain) : RenderP
     createFramebuffers();
 }
 
-RayTracing::~RayTracing()
+GUI::~GUI()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
     destroyFramebuffers();
     vkDestroyRenderPass(mpDevice->getDevice(), mRenderPass, nullptr);
 }
 
-void RayTracing::createRenderPass()
+void GUI::createRenderPass()
 {
     VkAttachmentDescription colorAttachment = {
         .format = mpSwapchain->getImageFormat(),
         .samples = mSampleCount,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_LOAD, // Preserve ray-traced image
+        .loadOp = VK_ATTACHMENT_LOAD_OP_LOAD, // Preserve what was rendered before the GUI
         .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
         .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -58,15 +58,15 @@ void RayTracing::createRenderPass()
     Check::Vk(vkCreateRenderPass(mpDevice->getDevice(), &ci, nullptr, &mRenderPass));
 }
 
-void RayTracing::createAttachments()
+void GUI::createAttachments()
 {
 }
 
-void RayTracing::destroyAttachments()
+void GUI::destroyAttachments()
 {
 }
 
-void RayTracing::createFramebuffers()
+void GUI::createFramebuffers()
 {
     auto imageViews = mpSwapchain->getImageViews();
     mFramebuffers = std::vector<VkFramebuffer>(imageViews.size());
@@ -90,14 +90,14 @@ void RayTracing::createFramebuffers()
     }
 }
 
-void RayTracing::destroyFramebuffers()
+void GUI::destroyFramebuffers()
 {
     for (auto& fb : mFramebuffers) {
         vkDestroyFramebuffer(mpDevice->getDevice(), fb, nullptr);
     }
 }
 
-void RayTracing::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
+void GUI::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
 {
     if (mpSwapchain->recreated()) {
         Log::debug("Recreating framebuffers since swapchain changed");
@@ -126,7 +126,7 @@ void RayTracing::begin(VkCommandBuffer cmd, glm::vec4 clearColor)
     vkCmdBeginRenderPass(cmd, &rbi, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void RayTracing::end(VkCommandBuffer cmd)
+void GUI::end(VkCommandBuffer cmd)
 {
     vkCmdEndRenderPass(cmd);
 }

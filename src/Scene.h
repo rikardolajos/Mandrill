@@ -14,11 +14,11 @@
 namespace Mandrill
 {
     struct Vertex {
-        glm::vec3 position;
-        glm::vec3 normal;
-        glm::vec2 texcoord;
-        glm::vec3 tangent;
-        glm::vec3 binormal;
+        alignas(16) glm::vec3 position;
+        alignas(16) glm::vec3 normal;
+        alignas(16) glm::vec2 texcoord;
+        alignas(16) glm::vec3 tangent;
+        alignas(16) glm::vec3 binormal;
 
         bool operator==(const Vertex& other) const
         {
@@ -37,7 +37,7 @@ namespace Mandrill
         VkDeviceSize deviceIndicesOffset{};
     };
 
-    struct MaterialParams {
+    struct alignas(16) MaterialParams {
         glm::vec3 diffuse;
         float shininess;
         glm::vec3 specular;
@@ -48,7 +48,7 @@ namespace Mandrill
         uint32_t hasTexture;
     };
 
-    struct MaterialDevice {
+    struct alignas(16) MaterialDevice {
         MaterialParams params;
         uint32_t diffuseTextureIndex;
         uint32_t specularTextureIndex;
@@ -69,6 +69,11 @@ namespace Mandrill
         std::string normalTexturePath;
 
         ptr<Descriptor> pDescriptor;
+    };
+
+    struct InstanceData {
+        uint32_t verticesOffset; // Offset into global vertex buffer
+        uint32_t indicesOffset;  // Offset into global index buffer
     };
 
     class Scene; // Forward declare scene so Node can befriend it
@@ -136,6 +141,15 @@ namespace Mandrill
         MANDRILL_API void setVisible(bool visible)
         {
             mVisible = visible;
+        }
+
+        /// <summary>
+        /// Get the visibility of the node.
+        /// </summary>
+        /// <returns></returns>
+        MANDRILL_API bool getVisible() const
+        {
+            return mVisible;
         }
 
         /// <summary>
@@ -256,11 +270,13 @@ namespace Mandrill
         MANDRILL_API void syncToDevice();
 
         /// <summary>
-        /// Build acceleration structure of the scene. This is needed for ray tracing the scene.
+        /// Build and update acceleration structure of the scene. This is needed for ray tracing the scene. First time
+        /// called, it will build a new acceleration structure. Subsequent calls will update the TLAS to account for
+        /// updates in the instance transforms.
         /// </summary>
         /// <param name="flags">Flags used for building acceleration structure</param>
         /// <returns></returns>
-        MANDRILL_API void buildAccelerationStructure(
+        MANDRILL_API void updateAccelerationStructure(
             VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
         /// <summary>
@@ -377,6 +393,16 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the matieral index of a mesh.
+        /// </summary>
+        /// <param name="meshIndex">Index of the mesh to look up</param>
+        /// <returns></returns>
+        MANDRILL_API uint32_t getMeshMaterialIndex(uint32_t meshIndex) const
+        {
+            return mMeshes[meshIndex].materialIndex;
+        }
+
+        /// <summary>
         /// Get the acceleration structure of the scene.
         /// </summary>
         /// <returns>Pointer to acceleration structure or nullptr</returns>
@@ -410,6 +436,7 @@ namespace Mandrill
         ptr<AccelerationStructure> mpAccelerationStructure;
         ptr<Descriptor> mpRayTracingDescriptor;
         ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
+        ptr<Buffer> mpInstanceDataBuffer;
 
         uint32_t mVertexCount;
         uint32_t mIndexCount;

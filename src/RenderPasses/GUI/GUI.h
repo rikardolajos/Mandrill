@@ -6,11 +6,11 @@
 
 namespace Mandrill
 {
-    class RayTracing : public RenderPass
+    class GUI : public RenderPass
     {
     public:
-        MANDRILL_API RayTracing(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
-        MANDRILL_API ~RayTracing();
+        MANDRILL_API GUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
+        MANDRILL_API ~GUI();
 
         MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor) override;
         MANDRILL_API void end(VkCommandBuffer cmd) override;
@@ -26,7 +26,6 @@ namespace Mandrill
         void createRenderPass();
 
         ptr<Image> mColor;
-        //ptr<Image> mDepth;
         std::vector<VkFramebuffer> mFramebuffers;
     };
 } // namespace Mandrill

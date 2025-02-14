@@ -33,16 +33,10 @@ namespace Mandrill
         MANDRILL_API ~AccelerationStructure();
 
         /// <summary>
-        /// Rebuild the acceleration structure from scratch.
+        /// Rebuild the top level of the acceleration structure to account for updates in instance transforms.
         /// </summary>
         /// <returns></returns>
-        MANDRILL_API void rebuild(VkBuildAccelerationStructureFlagsKHR flags);
-
-        /// <summary>
-        /// Refit the acceleration structure to the new positions of the nodes.
-        /// </summary>
-        /// <returns></returns>
-        MANDRILL_API void refit();
+        MANDRILL_API void update(VkBuildAccelerationStructureFlagsKHR flags);
 
         /// <summary>
         /// Get the TLAS acceleration structure handle.
@@ -82,14 +76,17 @@ namespace Mandrill
         /// <summary>
         /// Create the bottom levels of the acceleration structure. One BLAS per node in scene.
         /// </summary>
+        /// <param name="flags">Flags to set the build mode</param>
         /// <returns></returns>
         MANDRILL_API void createBLASes(VkBuildAccelerationStructureFlagsKHR flags);
 
         /// <summary>
         /// Create the top level of the acceleration structure.
         /// </summary>
+        /// <param name="flags">Flags to set the build mode</param>
+        /// <param name="update">Update to rebuild TLAS with updated matrices</param>
         /// <returns></returns>
-        MANDRILL_API void createTLAS(VkBuildAccelerationStructureFlagsKHR flags);
+        MANDRILL_API void createTLAS(VkBuildAccelerationStructureFlagsKHR flags, bool update = false);
 
         ptr<Device> mpDevice;
         ptr<Scene> mpScene;
@@ -106,7 +103,5 @@ namespace Mandrill
         ptr<Buffer> mpTLASBuffer;
         ptr<Buffer> mpScratch;
         ptr<Buffer> mpInstances;
-
-        ptr<Descriptor> mpDescriptor;
     };
 } // namespace Mandrill

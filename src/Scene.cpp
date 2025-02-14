@@ -221,7 +221,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                 auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
-                shapeMesh[meshIndex].materialIndex = materialIndex;
+                shapeMesh[meshIndex].materialIndex = static_cast<uint32_t>(mMaterials.size()) + materialIndex;
                 indices[meshIndex] += 1;
             }
 
@@ -370,11 +370,11 @@ void Scene::compile()
     for (auto& node : mNodes) {
         for (auto meshIndex : node.mMeshIndices) {
             auto& mesh = mMeshes[meshIndex];
-            verticesSize += mesh.vertices.size() * sizeof(mesh.vertices[0]);
-            indicesSize += mesh.indices.size() * sizeof(mesh.indices[0]);
+            verticesSize += sizeof(Vertex) * mesh.vertices.size();
+            indicesSize += sizeof(uint32_t) * mesh.indices.size();
         }
     }
-
+    
     // Allocate device buffers
     mpVertexBuffer =
         make_ptr<Buffer>(mpDevice, verticesSize,
@@ -389,15 +389,16 @@ void Scene::compile()
                              VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
     uint32_t copies = mpSwapchain->getFramesInFlightCount();
 
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+
     // Transforms can change between frames, material parameters can not
-    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4) * mNodes.size() * copies, alignment);
+    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4), alignment) * mNodes.size() * copies;
     mpTransforms = make_ptr<Buffer>(mpDevice, transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                     VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    VkDeviceSize materialParamsSize = Helpers::alignTo(sizeof(MaterialParams) * mMaterials.size(), alignment);
+    VkDeviceSize materialParamsSize = Helpers::alignTo(sizeof(MaterialParams), alignment) * mMaterials.size();
     mpMaterialParams = make_ptr<Buffer>(mpDevice, materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -419,7 +420,7 @@ void Scene::compile()
     }
 
     if (mSupportRayTracing) {
-        VkDeviceSize materialBufferSize = Helpers::alignTo(sizeof(MaterialDevice) * mMaterials.size(), alignment);
+        VkDeviceSize materialBufferSize = sizeof(MaterialDevice) * mMaterials.size();
         mpMaterialBuffer = make_ptr<Buffer>(mpDevice, materialBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -436,6 +437,27 @@ void Scene::compile()
                 std::distance(mTextures.begin(), mTextures.find(mMaterials[i].emissionTexturePath)));
             materials[i].normalTextureIndex = static_cast<uint32_t>(
                 std::distance(mTextures.begin(), mTextures.find(mMaterials[i].normalTexturePath)));
+        }
+
+        VkDeviceSize instanceDataBufferSize = sizeof(InstanceData) * mMeshes.size();
+        mpInstanceDataBuffer = make_ptr<Buffer>(mpDevice, instanceDataBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                                VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        InstanceData* instanceData = static_cast<InstanceData*>(mpInstanceDataBuffer->getHostMap());
+        uint32_t instanceIndex = 0;
+        uint32_t verticesOffset = 0;
+        uint32_t indicesOffset = 0;
+        for (auto& node : mNodes) {
+            for (auto& meshIndex : node.getMeshIndices()) {
+                auto& mesh = mMeshes[meshIndex];
+
+                instanceData[instanceIndex].verticesOffset = verticesOffset;
+                instanceData[instanceIndex].indicesOffset = indicesOffset;
+
+                verticesOffset += static_cast<uint32_t>(mesh.vertices.size());
+                indicesOffset += static_cast<uint32_t>(mesh.indices.size());
+
+                instanceIndex += 1;
+            }
         }
     }
 
@@ -455,8 +477,8 @@ void Scene::syncToDevice()
         for (auto meshIndex : node.mMeshIndices) {
             auto& mesh = mMeshes[meshIndex];
 
-            size_t vertSize = mesh.vertices.size() * sizeof(mesh.vertices[0]);
-            size_t indxSize = mesh.indices.size() * sizeof(mesh.indices[0]);
+            size_t vertSize = mesh.vertices.size() * sizeof(Vertex);
+            size_t indxSize = mesh.indices.size() * sizeof(uint32_t);
 
             vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
             indices.insert(indices.end(), mesh.indices.begin(), mesh.indices.end());
@@ -469,11 +491,11 @@ void Scene::syncToDevice()
         }
     }
 
-    mpVertexBuffer->copyFromHost(vertices.data(), vertices.size() * sizeof(vertices[0]), 0);
-    mpIndexBuffer->copyFromHost(indices.data(), indices.size() * sizeof(indices[0]), 0);
+    mpVertexBuffer->copyFromHost(vertices.data(), verticesOffset, 0);
+    mpIndexBuffer->copyFromHost(indices.data(), indicesOffset, 0);
 }
 
-void Scene::buildAccelerationStructure(VkBuildAccelerationStructureFlagsKHR flags)
+void Scene::updateAccelerationStructure(VkBuildAccelerationStructureFlagsKHR flags)
 {
     if (!mSupportRayTracing) {
         Log::error("Cannot build acceleration structure for a scene that was not initiated to support ray tracing. Set "
@@ -491,7 +513,7 @@ void Scene::buildAccelerationStructure(VkBuildAccelerationStructureFlagsKHR flag
         return;
     }
 
-    mpAccelerationStructure->rebuild(flags);
+    mpAccelerationStructure->update(flags);
 }
 
 void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout)
@@ -543,14 +565,16 @@ ptr<Layout> Scene::getLayout()
         // 3.2: Scene index buffer
         // 3.3: Scene material buffer
         // 3.4: Scene texture array
+        // 3.5: Instance data buffer
         // 4.0: Output storage image
         desc.emplace_back(3, 0, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+        desc.emplace_back(3, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(3, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                           static_cast<uint32_t>(mTextures.size()));
-        desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        desc.emplace_back(3, 5, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL);
     }
 
     return make_ptr<Layout>(mpDevice, desc);
@@ -619,6 +643,7 @@ void Scene::createDescriptors()
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpMaterialBuffer);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0,
                           static_cast<uint32_t>(textures.size()));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpInstanceDataBuffer);
 
         auto layout = pLayout->getDescriptorSetLayouts()[3];
         mpRayTracingDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);

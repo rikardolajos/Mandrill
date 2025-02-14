@@ -2,28 +2,15 @@
 
 using namespace Mandrill;
 
-class RayTracerApp : public App
+class RayTracer : public App
 {
 public:
-    VkWriteDescriptorSet getRayTracingImageDescriptor(uint32_t binding)
-    {
-        static VkDescriptorImageInfo ii;
-        ii.imageView = mpSwapchain->getImageView();
-        ii.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+    struct PushConstants {
+        int renderMode;
+        float time;
+    };
 
-        VkWriteDescriptorSet descriptor = {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .dstBinding = binding,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-            .pImageInfo = &ii,
-        };
-
-        return descriptor;
-    }
-
-    RayTracerApp() : App("Ray Tracer App", 1920, 1080)
+    RayTracer() : App("Ray Tracer", 1920, 1080)
     {
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
@@ -31,20 +18,11 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a render pass (only needed for ImGUI)
-        mpRenderPass = std::make_shared<RayTracing>(mpDevice, mpSwapchain);
+        // Create a render pass for ImGUI
+        mpRenderPass = std::make_shared<GUI>(mpDevice, mpSwapchain);
 
         // Create a scene so we can access the layout, the actual scene will be loaded later
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
-
-        // std::vector<LayoutDesc> layoutDesc;
-        // layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        // layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        // layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        // layoutDesc.emplace_back(0, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        // layoutDesc.emplace_back(0, 4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        // auto pLayout =
-        //     std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
 
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
@@ -52,7 +30,8 @@ public:
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
-        // auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\box\\box.obj");
+        // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
+        auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         std::shared_ptr<Node> pNode = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
@@ -60,6 +39,11 @@ public:
 
         // Scale down the model
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+
+        mpCube = mpScene->addNode();
+        for (auto meshIndex : meshIndices2) {
+            mpCube->addMesh(meshIndex);
+        }
 
         mpScene->setSampler(mpSampler);
         mpScene->compile();
@@ -70,6 +54,7 @@ public:
         mSpecializationConstants.push_back(mpScene->getIndexCount());    // INDEX_COUNT
         mSpecializationConstants.push_back(mpScene->getMaterialCount()); // MATERIAL_COUNT
         mSpecializationConstants.push_back(mpScene->getTextureCount());  // TEXTURE_COUNT
+        mSpecializationConstants.push_back(mpScene->getMeshCount());     // MESH_COUNT
 
         for (uint32_t i = 0; i < mSpecializationConstants.size(); i++) {
             VkSpecializationMapEntry entry = {
@@ -89,10 +74,10 @@ public:
 
         // Create a shader module with ray-tracing stages
         std::vector<ShaderDesc> shaderDesc;
-        shaderDesc.emplace_back("RayTracerApp/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+        shaderDesc.emplace_back("RayTracer/RayGen.rgen", "main", VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        shaderDesc.emplace_back("RayTracer/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
+        shaderDesc.emplace_back("RayTracer/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                                 &mSpecializationInfo);
-        shaderDesc.emplace_back("RayTracerApp/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
-        shaderDesc.emplace_back("RayTracerApp/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         auto pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create pipeline description with recursion depth and shader groups
@@ -103,6 +88,14 @@ public:
 
         // Create ray-tracing pipeline
         auto pLayout = mpScene->getLayout();
+
+        VkPushConstantRange pushConstantRange = {
+            .stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+            .offset = 0,
+            .size = sizeof(PushConstants),
+        };
+        pLayout->addPushConstantRange(pushConstantRange);
+
         mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pShader, pLayout, pipelineDesc);
 
         // Setup camera
@@ -115,7 +108,7 @@ public:
         App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT);
     }
 
-    ~RayTracerApp()
+    ~RayTracer()
     {
         App::destroyGUI(mpDevice);
     }
@@ -126,15 +119,24 @@ public:
             mpCamera->update(delta, getCursorDelta());
         }
 
-        // Rebuild acceleration structure
-        mpScene->buildAccelerationStructure();
+        mTime += delta;
+
+        mAngle += mRotationSpeed * delta;
+
+        glm::mat4 transform = glm::scale(glm::vec3(0.5f));
+        transform = glm::translate(transform, glm::vec3(0.0f, 5.0f, 0.0f));
+        transform = glm::rotate(transform, mAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+        transform = glm::rotate(transform, 3.0f * mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        mpCube->setTransform(transform);
+
+        // Update acceleration structure
+        mpScene->updateAccelerationStructure();
     }
 
     void render() override
     {
         // Acquire frame from swapchain
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -147,13 +149,19 @@ public:
         // Prepare image for writing
         mpPipeline->write(cmd, mpSwapchain->getImage());
 
-        // Push descriptor with image
-        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        std::vector<VkWriteDescriptorSet> writes = {
-            getRayTracingImageDescriptor(0),
+        // Push constants
+        PushConstants pushConstants = {
+            .renderMode = mRenderMode,
+            .time = mTime,
         };
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4,
-                                  static_cast<uint32_t>(writes.size()), writes.data());
+        vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_RAYGEN_BIT_KHR, 0, sizeof pushConstants,
+                           &pushConstants);
+
+        // Bind descriptors
+        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
+        auto imageDescriptorSet = mpSwapchain->getImageDescriptorSet();
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4, 1,
+                                &imageDescriptorSet, 0, nullptr);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -185,7 +193,12 @@ public:
         App::baseGUI(mpDevice, mpSwapchain, nullptr, mpPipeline);
 
         // App-specific GUI elements
-        if (ImGui::Begin("Ray Tracer App")) {
+        if (ImGui::Begin("Ray Tracer")) {
+            const char* renderModes[] = {
+                "Diffuse",
+                "Normal",
+            };
+            ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
         }
 
         ImGui::End();
@@ -221,11 +234,18 @@ private:
     std::vector<uint32_t> mSpecializationConstants;
     std::vector<VkSpecializationMapEntry> mSpecializationMapEntries;
     VkSpecializationInfo mSpecializationInfo;
+
+    int mRenderMode = 0;
+    float mTime = 0.0f;
+
+    std::shared_ptr<Node> mpCube;
+    float mRotationSpeed = 0.2f;
+    float mAngle = 0.0f;
 };
 
 int main()
 {
-    RayTracerApp app = RayTracerApp();
+    RayTracer app = RayTracer();
     app.run();
     return 0;
 }
