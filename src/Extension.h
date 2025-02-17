@@ -21,6 +21,7 @@ extern MANDRILL_API PFN_vkGetAccelerationStructureBuildSizesKHR vkGetAcceleratio
 extern MANDRILL_API PFN_vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR_;
 extern MANDRILL_API PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR_;
 extern MANDRILL_API PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR_;
+extern MANDRILL_API PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT_;
 
 // Add more extensions here, don't forget the macro below.
 }
@@ -35,6 +36,7 @@ extern MANDRILL_API PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR_;
 #define vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR_
 #define vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR_
 #define vkCmdTraceRaysKHR vkCmdTraceRaysKHR_
+#define vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT_
 
 // Macro for loading a device function pointers as Xvk...()
 #define VK_LOAD(device, func_name)                                                                                     \
