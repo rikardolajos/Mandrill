@@ -284,12 +284,10 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
 {
     std::array baseExtensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
         VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {
-        VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
         VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
         VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
         VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
@@ -375,6 +373,9 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
                 .fillModeNonSolid = VK_TRUE,
                 .wideLines = VK_TRUE,
                 .samplerAnisotropy = VK_TRUE,
+                .vertexPipelineStoresAndAtomics = VK_TRUE,
+                .fragmentStoresAndAtomics = VK_TRUE,
+                .shaderInt64 = VK_TRUE,
             },
     };
 
@@ -400,13 +401,17 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
         .pNext = &vk11Features,
         .descriptorIndexing = mRayTracingSupport,
+        .timelineSemaphore = VK_TRUE,
         .bufferDeviceAddress = VK_TRUE,
+        .vulkanMemoryModel = VK_TRUE,
+        .vulkanMemoryModelDeviceScope = VK_TRUE,
     };
 
     VkPhysicalDeviceVulkan13Features vk13Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
         .pNext = &vk12Features,
         .synchronization2 = VK_TRUE,
+        .dynamicRendering = VK_TRUE,
     };
 
     features2.pNext = &vk13Features;
@@ -459,4 +464,6 @@ void Device::createExtensionProcAddrs()
     vkGetRayTracingShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(
         vkGetDeviceProcAddr(mDevice, "vkGetRayTracingShaderGroupHandlesKHR"));
     vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetDeviceProcAddr(mDevice, "vkCmdTraceRaysKHR"));
+    vkSetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(
+        vkGetDeviceProcAddr(mDevice, "vkSetDebugUtilsObjectNameEXT"));
 }
