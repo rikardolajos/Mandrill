@@ -84,6 +84,24 @@ namespace Mandrill
             return mFormat;
         }
 
+        /// <summary>
+        /// Get the width of the image.
+        /// </summary>
+        /// <returns>Image width</returns>
+        MANDRILL_API uint32_t getWidth() const
+        {
+            return mWidth;
+        }
+
+        /// <summary>
+        /// Get the height of the image.
+        /// </summary>
+        /// <returns>Image height</returns>
+        MANDRILL_API uint32_t getHeight() const
+        {
+            return mHeight;
+        }
+
     private:
         ptr<Device> mpDevice;
 
@@ -92,6 +110,9 @@ namespace Mandrill
 
         VkDeviceMemory mMemory;
         bool mOwnMemory;
+
+        uint32_t mWidth;
+        uint32_t mHeight;
 
         uint32_t mMipLevels;
         VkFormat mFormat;

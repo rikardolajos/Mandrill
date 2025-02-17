@@ -7,13 +7,14 @@ using namespace Mandrill;
 
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
              VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
-    : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mTiling(tiling), mImageView(VK_NULL_HANDLE)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
+      mImageView(VK_NULL_HANDLE)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = mFormat,
-        .extent = {.width = width, .height = height, .depth = 1},
+        .extent = {.width = mWidth, .height = mHeight, .depth = 1},
         .mipLevels = mipLevels,
         .arrayLayers = 1,
         .samples = samples,
@@ -43,14 +44,14 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipL
 
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
              VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)
-    : mpDevice(pDevice), mMipLevels(mipLevels), mFormat(format), mTiling(tiling), mImageView(VK_NULL_HANDLE),
-      mMemory(memory)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
+      mImageView(VK_NULL_HANDLE), mMemory(memory)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = format,
-        .extent = {.width = width, .height = height, .depth = 1},
+        .extent = {.width = mWidth, .height = mHeight, .depth = 1},
         .mipLevels = mipLevels,
         .arrayLayers = 1,
         .samples = samples,
