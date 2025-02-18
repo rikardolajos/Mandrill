@@ -24,6 +24,8 @@ add_library(Mandrill SHARED
 	"Log.cpp"
 	"Log.h"
 	"Mandrill.h"
+	"Pass.cpp"
+	"Pass.h"
 	"Pipeline.cpp"
 	"Pipeline.h"
 	"RayTracingPipeline.cpp"
@@ -66,7 +68,6 @@ target_link_libraries(Mandrill
 )
 
 add_subdirectory(External)
-add_subdirectory(RenderPasses)
 
 include_directories(External/imgui)
 include_directories(External/stb)

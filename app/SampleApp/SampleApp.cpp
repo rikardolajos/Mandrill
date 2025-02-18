@@ -63,8 +63,8 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a rasterizer render pass
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
+        // Create a pass linked to the swapchain with depth attachment and multisampling
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, true, mpDevice->getSampleCount());
 
         // Create a layout matching the shader inputs
         std::vector<LayoutDesc> layoutDesc;
@@ -81,7 +81,7 @@ public:
         std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create a pipeline for rendering using the shader
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass);
+        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -110,7 +110,7 @@ public:
                                                     mpSwapchain->getFramesInFlightCount());
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
+        App::createGUI(mpDevice, mpPass);
     }
 
     ~SampleApp()
@@ -136,7 +136,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        mpPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Bind the pipeline for rendering
         mpPipeline->bind(cmd);
@@ -171,16 +171,16 @@ public:
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->end(cmd);
-        mpSwapchain->present(cmd);
+        mpPass->end(cmd);
+        mpSwapchain->present(cmd, mpPass->getOutput());
     }
 
     void appGUI(ImGuiContext* pContext)
     {
         ImGui::SetCurrentContext(pContext);
 
-        // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
+        // Render the base GUI, the menu bar with its subwindows
+        App::baseGUI(mpDevice, mpSwapchain, mpPipeline);
 
         // Here we can add app-specific GUI elements
         if (ImGui::Begin("Sample App GUI")) {
@@ -194,7 +194,7 @@ public:
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mpPipeline);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline);
 
         // Here we can add app-specific keyboard commands
         if (key == GLFW_KEY_O && action == GLFW_PRESS) {
@@ -220,7 +220,7 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Rasterizer> mpRenderPass;
+    std::shared_ptr<Pass> mpPass;
     std::shared_ptr<Pipeline> mpPipeline;
 
     std::shared_ptr<Camera> mpCamera;

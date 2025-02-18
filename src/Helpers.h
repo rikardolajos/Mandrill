@@ -95,9 +95,13 @@ namespace Mandrill
         }
 
         inline static void transitionImageLayout(ptr<Device> pDevice, VkImage image, VkFormat format,
-                                                 VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels)
+                                                 VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels, VkCommandBuffer cmd = VK_NULL_HANDLE)
         {
-            VkCommandBuffer cmd = cmdBegin(pDevice);
+            bool endCmd = false;
+            if (!cmd) {
+                cmd = cmdBegin(pDevice);
+                endCmd = true;
+            }
 
             VkImageMemoryBarrier barrier = {
                 .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -146,6 +150,18 @@ namespace Mandrill
                 srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
                 dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+                       newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+                barrier.srcAccessMask = 0;
+                barrier.dstAccessMask =
+                    VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+                srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+                       newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+                srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
                        newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
                 barrier.srcAccessMask = 0;
                 barrier.dstAccessMask =
@@ -158,18 +174,24 @@ namespace Mandrill
                 // Before screenshot
                 srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
                 dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
             } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
                        newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
                 // After screenshot
                 srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
                 dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+                barrier.dstAccessMask = VK_ACCESS_NONE;
             } else {
                 Log::error("Unsupported layout transition");
             }
 
             vkCmdPipelineBarrier(cmd, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-            cmdEnd(pDevice, cmd);
+            if (endCmd) {
+                cmdEnd(pDevice, cmd);
+            }
         }
 
         inline static void copyBufferToImage(ptr<Device> pDevice, VkBuffer buffer, VkImage image, uint32_t width,

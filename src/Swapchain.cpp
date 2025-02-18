@@ -105,11 +105,12 @@ void Swapchain::recreate()
 VkCommandBuffer Swapchain::acquireNextImage()
 {
     // Wait for the current frame to not be in flight
-    Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
+    waitForInFlightImage();
+    Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
 
     // Acquire index of next image in the swapchain
     VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
-                                            mImageAvailableSemaphore[mInFlightIndex], nullptr, &mImageIndex);
+                                            mImageAvailableSemaphores[mInFlightIndex], nullptr, &mImageIndex);
 
     // Check if swapchain needs to be reconstructed
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -128,41 +129,116 @@ VkCommandBuffer Swapchain::acquireNextImage()
     return mCommandBuffers[mInFlightIndex];
 }
 
-void Swapchain::present(VkCommandBuffer cmd)
+void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
 {
     if (mRecreated) {
         mRecreated = false;
     }
 
+    // Transition swapchain image for blitting
+    VkImageMemoryBarrier2 barrier = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
+        .srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+        .dstAccessMask = VK_ACCESS_2_TRANSFER_WRITE_BIT,
+        .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = mImages[mImageIndex],
+        .subresourceRange =
+            {
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .baseMipLevel = 0,
+                .levelCount = 1,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+            },
+    };
+
+    VkDependencyInfo dependencyInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+        .imageMemoryBarrierCount = 1,
+        .pImageMemoryBarriers = &barrier,
+    };
+
+    vkCmdPipelineBarrier2(mCommandBuffers[mInFlightIndex], &dependencyInfo);
+
+    // Blit image to current swapchain image
+    VkImageSubresourceLayers subresourceLayers = {
+        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+        .mipLevel = 0,
+        .baseArrayLayer = 0,
+        .layerCount = 1,
+    };
+    int32_t srcWidth = static_cast<int32_t>(pImage->getWidth());
+    int32_t srcHeight = static_cast<int32_t>(pImage->getHeight());
+    int32_t dstWidth = static_cast<int32_t>(mExtent.width);
+    int32_t dstHeight = static_cast<int32_t>(mExtent.height);
+    VkImageBlit region = {
+        .srcSubresource = subresourceLayers,
+        .srcOffsets = {{0, 0, 0}, {srcWidth, srcHeight, 1}},
+        .dstSubresource = subresourceLayers,
+        .dstOffsets = {{0, 0, 0}, {dstWidth, dstHeight, 1}},
+    };
+
+    vkCmdBlitImage(cmd, pImage->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mImages[mImageIndex],
+                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
+
+    // Transition swapchain image for presenting
+    VkImageMemoryBarrier2 swapchainBarrier = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
+        .srcStageMask = VK_PIPELINE_STAGE_2_BLIT_BIT,
+        .srcAccessMask = VK_ACCESS_2_TRANSFER_WRITE_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT,
+        .dstAccessMask = VK_ACCESS_2_NONE,
+        .oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = mImages[mImageIndex],
+        .subresourceRange =
+            {
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .baseMipLevel = 0,
+                .levelCount = 1,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+            },
+    };
+
+    VkDependencyInfo swapchainDependencyInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+        .imageMemoryBarrierCount = 1,
+        .pImageMemoryBarriers = &swapchainBarrier,
+    };
+
+    vkCmdPipelineBarrier2(cmd, &swapchainDependencyInfo);
+
     Check::Vk(vkEndCommandBuffer(cmd));
 
-    std::array<VkSemaphore, 1> waitSemaphores{mImageAvailableSemaphore[mInFlightIndex]};
-    std::array<VkSemaphore, 1> signalSemaphores{mRenderFinishedSemaphore[mInFlightIndex]};
-    std::array<VkPipelineStageFlags, 1> waitStages{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
     VkSubmitInfo si = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size()),
-        .pWaitSemaphores = waitSemaphores.data(),
-        .pWaitDstStageMask = waitStages.data(),
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &mImageAvailableSemaphores[mInFlightIndex],
+        .pWaitDstStageMask = &waitStage,
         .commandBufferCount = 1,
         .pCommandBuffers = &cmd,
-        .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size()),
-        .pSignalSemaphores = signalSemaphores.data(),
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = &mRenderFinishedSemaphores[mInFlightIndex],
     };
-
-    Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
 
     Check::Vk(vkQueueSubmit(mpDevice->getQueue(), 1, &si, mInFlightFences[mInFlightIndex]));
 
-    std::array<VkSwapchainKHR, 1> swapchains{mSwapchain};
-
     VkPresentInfoKHR pi = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-        .waitSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size()),
-        .pWaitSemaphores = signalSemaphores.data(),
-        .swapchainCount = static_cast<uint32_t>(swapchains.size()),
-        .pSwapchains = swapchains.data(),
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &mRenderFinishedSemaphores[mInFlightIndex],
+        .swapchainCount = 1,
+        .pSwapchains = &mSwapchain,
         .pImageIndices = &mImageIndex,
     };
 
@@ -222,8 +298,8 @@ void Swapchain::createSwapchain()
         .imageColorSpace = surfaceFormat.colorSpace,
         .imageExtent = extent,
         .imageArrayLayers = 1, // Unless rendering stereoscopically
-        .imageUsage =
-            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
+                      VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .preTransform = mSupportDetails.capabilities.currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         .presentMode = presentMode,
@@ -287,8 +363,8 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
 
     Check::Vk(vkAllocateCommandBuffers(mpDevice->getDevice(), &ai, mCommandBuffers.data()));
 
-    mImageAvailableSemaphore.resize(framesInFlight);
-    mRenderFinishedSemaphore.resize(framesInFlight);
+    mImageAvailableSemaphores.resize(framesInFlight);
+    mRenderFinishedSemaphores.resize(framesInFlight);
     mInFlightFences.resize(framesInFlight);
 
     VkSemaphoreCreateInfo sci = {
@@ -301,8 +377,8 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
     };
 
     for (uint32_t i = 0; i < framesInFlight; i++) {
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mImageAvailableSemaphore[i]));
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mRenderFinishedSemaphore[i]));
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mImageAvailableSemaphores[i]));
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mRenderFinishedSemaphores[i]));
         Check::Vk(vkCreateFence(mpDevice->getDevice(), &fci, nullptr, &mInFlightFences[i]));
     }
 }
@@ -314,9 +390,9 @@ void Swapchain::destroySyncObjects()
     vkFreeCommandBuffers(mpDevice->getDevice(), mpDevice->getCommandPool(),
                          static_cast<uint32_t>(mCommandBuffers.size()), mCommandBuffers.data());
 
-    for (uint32_t i = 0; i < mImageAvailableSemaphore.size(); i++) {
-        vkDestroySemaphore(mpDevice->getDevice(), mImageAvailableSemaphore[i], nullptr);
-        vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphore[i], nullptr);
+    for (uint32_t i = 0; i < mImageAvailableSemaphores.size(); i++) {
+        vkDestroySemaphore(mpDevice->getDevice(), mImageAvailableSemaphores[i], nullptr);
+        vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphores[i], nullptr);
         vkDestroyFence(mpDevice->getDevice(), mInFlightFences[i], nullptr);
     }
 }

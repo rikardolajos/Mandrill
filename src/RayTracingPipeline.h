@@ -81,7 +81,7 @@ namespace Mandrill
     class RayTracingPipeline : public Pipeline
     {
     public:
-        MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
+        MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout, ptr<Shader> pShader,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
 
         MANDRILL_API void bind(VkCommandBuffer cmd);

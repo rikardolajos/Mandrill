@@ -4,7 +4,7 @@
 
 #include "Device.h"
 #include "Layout.h"
-#include "RenderPasses/RenderPass.h"
+#include "Pass.h"
 #include "Scene.h"
 #include "Shader.h"
 
@@ -56,18 +56,15 @@ namespace Mandrill
         VkBool32 depthTest;
         VkBool32 blend;
         VkBool32 alphaToCoverage;
-        uint32_t subpass;
-        uint32_t attachmentCount;
 
         MANDRILL_API
         PipelineDesc(
             VkVertexInputBindingDescription bindingDescription = defaultBindingDescription,
             std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions,
             VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,
-            VkBool32 alphaToCoverage = VK_FALSE, uint32_t subpass = 0, uint32_t attachmentCount = 1)
+            VkBool32 alphaToCoverage = VK_FALSE)
             : bindingDescription(bindingDescription), attributeDescriptions(attributeDescriptions),
-              polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage),
-              subpass(subpass), attachmentCount(attachmentCount)
+              polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage)
         {
         }
     };
@@ -75,8 +72,8 @@ namespace Mandrill
     class Pipeline
     {
     public:
-        MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout,
-                              ptr<RenderPass> pRenderPass, const PipelineDesc& desc = PipelineDesc());
+        MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
+                              const PipelineDesc& desc = PipelineDesc());
         MANDRILL_API ~Pipeline();
 
         MANDRILL_API void bind(VkCommandBuffer cmd);
@@ -113,7 +110,7 @@ namespace Mandrill
         virtual void destroyPipeline();
 
         ptr<Device> mpDevice;
-        ptr<RenderPass> mpRenderPass;
+        ptr<Pass> mpPass;
 
         ptr<Shader> mpShader;
         ptr<Layout> mpLayout;
@@ -126,8 +123,6 @@ namespace Mandrill
         VkBool32 mDepthTest;
         VkBool32 mBlend;
         VkBool32 mAlphaToCoverage;
-        uint32_t mSubpass;
-        uint32_t mAttachmentCount;
 
         VkVertexInputBindingDescription mBindingDescription;
         std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;

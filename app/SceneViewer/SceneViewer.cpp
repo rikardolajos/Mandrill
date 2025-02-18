@@ -60,8 +60,8 @@ public:
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
-        // Create rasterizer render pass with layout matching the scene
-        mpRenderPass = std::make_shared<Rasterizer>(mpDevice, mpSwapchain);
+        // Create a pass linked to the swapchain with depth attachment and multisampling
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, true, mpDevice->getSampleCount());
 
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
@@ -78,12 +78,12 @@ public:
         std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create a pipeline filled polygon rendering
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass));
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader));
 
         // Create a pipeline for line rendering
         PipelineDesc pipelineDesc;
         pipelineDesc.polygonMode = VK_POLYGON_MODE_LINE;
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, pShader, pLayout, mpRenderPass, pipelineDesc));
+        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc));
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -95,7 +95,7 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), mpDevice->getSampleCount());
+        App::createGUI(mpDevice, mpPass);
     }
 
     ~SceneViewer()
@@ -114,7 +114,7 @@ public:
     {
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
@@ -160,15 +160,15 @@ public:
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->end(cmd);
-        mpSwapchain->present(cmd);
+        mpPass->end(cmd);
+        mpSwapchain->present(cmd, mpPass->getOutput());
     }
 
     void appGUI(ImGuiContext* pContext)
     {
         ImGui::SetCurrentContext(pContext);
 
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mPipelines);
+        App::baseGUI(mpDevice, mpSwapchain, mPipelines);
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
@@ -264,8 +264,7 @@ public:
 
     void appKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
     {
-        // Invoke the base application's keyboard commands
-        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mPipelines);
+        App::baseKeyCallback(pWindow, key, scancode, action, mods, mpDevice, mpSwapchain, mPipelines);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -281,7 +280,7 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Rasterizer> mpRenderPass;
+    std::shared_ptr<Pass> mpPass;
     std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
     std::shared_ptr<Camera> mpCamera;

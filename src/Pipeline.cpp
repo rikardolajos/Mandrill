@@ -1,15 +1,16 @@
 #include "Pipeline.h"
 
 #include "Error.h"
+#include "Helpers.h"
 
 using namespace Mandrill;
 
-Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout, ptr<RenderPass> pRenderPass,
+Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
                    const PipelineDesc& desc)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpRenderPass(pRenderPass), mPipeline(nullptr),
+    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpPass(pPass), mPipeline(nullptr),
       mBindingDescription(desc.bindingDescription), mAttributeDescriptions(desc.attributeDescriptions),
       mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mBlend(desc.blend),
-      mAlphaToCoverage(desc.alphaToCoverage), mSubpass(desc.subpass), mAttachmentCount(desc.attachmentCount)
+      mAlphaToCoverage(desc.alphaToCoverage)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
     const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
@@ -24,7 +25,7 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Shader> pShader, ptr<Layout> pLayout
 
     Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
 
-    if (mpRenderPass) {
+    if (pPass) {
         createPipeline();
     }
 }
@@ -47,8 +48,8 @@ void Pipeline::bind(VkCommandBuffer cmd)
     VkViewport viewport = {
         .x = 0.0f,
         .y = 0.0f,
-        .width = static_cast<float>(mpRenderPass->getSwapchain()->getExtent().width),
-        .height = static_cast<float>(mpRenderPass->getSwapchain()->getExtent().height),
+        .width = static_cast<float>(mpPass->getExtent().width),
+        .height = static_cast<float>(mpPass->getExtent().height),
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
     };
@@ -56,7 +57,7 @@ void Pipeline::bind(VkCommandBuffer cmd)
 
     VkRect2D scissor = {
         .offset = {0, 0},
-        .extent = mpRenderPass->getSwapchain()->getExtent(),
+        .extent = mpPass->getExtent(),
     };
     vkCmdSetScissor(cmd, 0, 1, &scissor);
 }
@@ -112,7 +113,7 @@ void Pipeline::createPipeline()
 
     VkPipelineMultisampleStateCreateInfo multisampling = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        .rasterizationSamples = mpRenderPass->getSampleCount(),
+        .rasterizationSamples = mpPass->getSampleCount(),
         .sampleShadingEnable = VK_FALSE,
         .alphaToCoverageEnable = mAlphaToCoverage,
     };
@@ -141,7 +142,7 @@ void Pipeline::createPipeline()
     };
 
     std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
-    for (uint32_t i = 0; i < mAttachmentCount; i++) {
+    for (uint32_t i = 0; i < mpPass->getColorAttachments().count(); i++) {
         colorBlendAttachmentStates.push_back(colorBlendAttachment);
     }
 
@@ -153,9 +154,11 @@ void Pipeline::createPipeline()
     };
 
     auto stages = mpShader->getStages();
+    VkPipelineRenderingCreateInfo pipelineRenderingCreateInfo = mpPass->getPipelineRenderingCreateInfo();
 
     VkGraphicsPipelineCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .pNext = &pipelineRenderingCreateInfo,
         .stageCount = static_cast<uint32_t>(stages.size()),
         .pStages = stages.data(),
         .pVertexInputState = &vertexInputInfo,
@@ -167,10 +170,8 @@ void Pipeline::createPipeline()
         .pColorBlendState = &colorBlending,
         .pDynamicState = &dynamicState,
         .layout = mPipelineLayout,
-        .renderPass = mpRenderPass->getRenderPass(),
-        .subpass = mSubpass,
+        .renderPass = nullptr,
     };
-
     Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline));
 }
 

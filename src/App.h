@@ -4,8 +4,8 @@
 
 #include "Camera.h"
 #include "Device.h"
+#include "Pass.h"
 #include "Pipeline.h"
-#include "RenderPasses/RenderPass.h"
 #include "Swapchain.h"
 
 namespace Mandrill
@@ -56,11 +56,11 @@ namespace Mandrill
         virtual void update(float delta) = 0;
 
         /// <summary>
-        /// Render scene.
+        /// Render app.
         ///
         /// This function is called once per <c>run()</c> loop is used to populate the command buffer for rendering.
-        /// Typical use case to acquire a frame from the swapchain, populate the command buffer and then present the to
-        /// the screen using a render pass.
+        /// Typical use case is to acquire a frame from the swapchain, populate the command buffer and then present the
+        /// to the screen using a render pass.
         ///
         /// This is an example:
         ///
@@ -68,12 +68,12 @@ namespace Mandrill
         /// void render() override
         /// {
         ///     VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        ///     mpRenderPass->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        ///     mpPass->frameBegin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
         ///
         ///     // Populate command buffer using cmd here...
         ///
-        ///     mpRenderPass->frameEnd(cmd);
-        ///     mpSwapchain->present();
+        ///     mpPass->frameEnd(cmd);
+        ///     mpSwapchain->present(cmd, mpPass->getOutput());
         /// }
         /// </code>
         ///
@@ -104,11 +104,8 @@ namespace Mandrill
         /// This initializes all the resources for ImGUI.
         /// </summary>
         /// <param name="pDevice">Device to use for resource allocations</param>
-        /// <param name="renderPass">Render pass that will be used for GUI presentation</param>
-        /// <param name="samples">MSAA samples to use for rendering</param>
-        /// <param name="subpass">Which subpass to draw the GUI on</param>
-        void createGUI(ptr<Device> pDevice, VkRenderPass renderPass,
-                       VkSampleCountFlagBits samples = VK_SAMPLE_COUNT_1_BIT, uint32_t subpass = 0);
+        /// <param name="pPass">Pass to use for rendering the GUI</param>
+        void createGUI(ptr<Device> pDevice, ptr<Pass> pPass);
 
         /// <summary>
         /// Destroy the GUI for the application.
@@ -127,10 +124,8 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipline">Pipeline that should be recreated</param>
-        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                     ptr<Pipeline> pPipeline);
+        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<Pipeline> pPipeline);
 
         /// <summary>
         /// Draw the base GUI of a Mandrill application.
@@ -141,10 +136,8 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipelines">Pipelines that should be recreated</param>
-        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                     std::vector<ptr<Pipeline>> pPipelines);
+        void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<ptr<Pipeline>> pPipelines);
 
         /// <summary>
         /// Render the GUI by writing the state to a command buffer.
@@ -165,10 +158,9 @@ namespace Mandrill
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
         /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipeline">Pipeline that should be recreated</param>
         void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline);
+                             ptr<Swapchain> pSwapchain, ptr<Pipeline> pPipeline);
 
         /// <summary>
         /// App keyboard callback function. This will handle keyboard commands associated with the base application
@@ -181,11 +173,9 @@ namespace Mandrill
         /// actions</param> <param name="mods">Bit field describing which modifier keys were held down</param>
         /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pRenderPass">Render pass that should be recreated on changes</param>
         /// <param name="pPipelines">Pipelines that should be recreated</param>
         void baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                             ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                             std::vector<ptr<Pipeline>> pPipelines);
+                             ptr<Swapchain> pSwapchain, std::vector<ptr<Pipeline>> pPipelines);
 
         /// <summary>
         /// Virtual function for app to override. Just invoke <code>baseKeyCallback()</code> to get standard

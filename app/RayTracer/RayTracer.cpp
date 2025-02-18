@@ -18,24 +18,24 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a render pass for ImGUI
-        mpRenderPass = std::make_shared<GUI>(mpDevice, mpSwapchain);
+        // Create a pass, color attachment 0 will be used for ray tracing
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain);
 
-        // Create a scene so we can access the layout, the actual scene will be loaded later
+        // Create a scene
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
 
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Load scene
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        //auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         std::shared_ptr<Node> pNode = mpScene->addNode();
-        for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
-        }
+        //for (auto meshIndex : meshIndices) {
+        //    pNode->addMesh(meshIndex);
+        //}
 
         // Scale down the model
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
@@ -96,7 +96,7 @@ public:
         };
         pLayout->addPushConstantRange(pushConstantRange);
 
-        mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pShader, pLayout, pipelineDesc);
+        mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pLayout, pShader, pipelineDesc);
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
@@ -105,7 +105,7 @@ public:
         mpCamera->setFov(60.0f);
 
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT);
+        App::createGUI(mpDevice, mpPass);
     }
 
     ~RayTracer()
@@ -147,7 +147,7 @@ public:
         mpPipeline->bind(cmd);
 
         // Prepare image for writing
-        mpPipeline->write(cmd, mpSwapchain->getImage());
+        mpPipeline->write(cmd, mpPass->getColorAttachments()[0]->getImage());
 
         // Push constants
         PushConstants pushConstants = {
@@ -159,7 +159,7 @@ public:
 
         // Bind descriptors
         mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        auto imageDescriptorSet = mpSwapchain->getImageDescriptorSet();
+        auto imageDescriptorSet = mpPass->getColorAttachments()[0]->getDescriptorSet();
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4, 1,
                                 &imageDescriptorSet, 0, nullptr);
 
@@ -172,25 +172,26 @@ public:
                           mpSwapchain->getExtent().height, 1);
 
         // Prepare image for reading
-        mpPipeline->read(cmd, mpSwapchain->getImage());
+        mpPipeline->read(cmd, mpPass->getColorAttachments()[0]->getImage());
 
-        // Start rasterization render pass for ImGUI
-        mpRenderPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
+        // Start pass
+        mpPass->begin(cmd);
 
         // Draw GUI
         App::renderGUI(cmd);
 
-        // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->end(cmd);
-        mpSwapchain->present(cmd);
+        // End pass
+        mpPass->end(cmd);
+
+        // Submit command buffer and present
+        mpSwapchain->present(cmd, mpPass->getOutput());
     }
 
     void appGUI(ImGuiContext* pContext)
     {
         ImGui::SetCurrentContext(pContext);
 
-        // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, nullptr, mpPipeline);
+        App::baseGUI(mpDevice, mpSwapchain, mpPipeline);
 
         // App-specific GUI elements
         if (ImGui::Begin("Ray Tracer")) {
@@ -206,8 +207,7 @@ public:
 
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        // Invoke the base application's keyboard commands
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, nullptr, mpPipeline);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpPipeline);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -220,11 +220,10 @@ public:
         App::baseMouseButtonCallback(pWindow, button, action, mods, mpCamera);
     }
 
-
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<RenderPass> mpRenderPass;
+    std::shared_ptr<Pass> mpPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
 
     std::shared_ptr<Scene> mpScene;

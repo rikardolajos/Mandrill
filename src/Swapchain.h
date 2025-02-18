@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include "Device.h"
+#include "Error.h"
 #include "Image.h"
 
 namespace Mandrill
@@ -16,7 +17,7 @@ namespace Mandrill
         MANDRILL_API void recreate();
 
         MANDRILL_API VkCommandBuffer acquireNextImage();
-        MANDRILL_API void present(VkCommandBuffer cmd);
+        MANDRILL_API void present(VkCommandBuffer cmd, ptr<Image> pImage);
 
         MANDRILL_API VkSwapchainKHR getSwapchain() const
         {
@@ -28,12 +29,17 @@ namespace Mandrill
             return mImages[mImageIndex];
         }
 
+        MANDRILL_API const std::vector<VkImage>& getImages() const
+        {
+            return mImages;
+        }
+
         MANDRILL_API VkImageView getImageView() const
         {
             return mImageViews[mImageIndex];
         }
 
-        MANDRILL_API std::vector<VkImageView> getImageViews() const
+        MANDRILL_API const std::vector<VkImageView>& getImageViews() const
         {
             return mImageViews;
         }
@@ -46,6 +52,13 @@ namespace Mandrill
         MANDRILL_API VkFormat getImageFormat() const
         {
             return mImageFormat;
+        }
+
+        MANDRILL_API Vector<VkFormat> getImageFormats() const
+        {
+            Vector<VkFormat> formats;
+            formats.push_back(mImageFormat);
+            return formats;
         }
 
         MANDRILL_API VkExtent2D getExtent() const
@@ -83,6 +96,11 @@ namespace Mandrill
             return mRecreated;
         }
 
+        MANDRILL_API void waitForInFlightImage() const
+        {
+            Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
+        }
+
     private:
         void querySupport();
         void createSwapchain();
@@ -110,8 +128,8 @@ namespace Mandrill
 
         std::vector<VkCommandBuffer> mCommandBuffers;
 
-        std::vector<VkSemaphore> mImageAvailableSemaphore;
-        std::vector<VkSemaphore> mRenderFinishedSemaphore;
+        std::vector<VkSemaphore> mImageAvailableSemaphores;
+        std::vector<VkSemaphore> mRenderFinishedSemaphores;
         std::vector<VkFence> mInFlightFences;
 
         uint32_t mInFlightIndex = 0;

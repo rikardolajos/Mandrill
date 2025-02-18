@@ -73,7 +73,7 @@ void App::run()
     Log::info("Exiting...");
 }
 
-void App::createGUI(ptr<Device> pDevice, VkRenderPass renderPass, VkSampleCountFlagBits samples, uint32_t subpass)
+void App::createGUI(ptr<Device> pDevice, ptr<Pass> pPass)
 {
     // Create descriptor pool for ImGUI
     std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -98,12 +98,12 @@ void App::createGUI(ptr<Device> pDevice, VkRenderPass renderPass, VkSampleCountF
         .QueueFamily = pDevice->getQueueFamily(),
         .Queue = pDevice->getQueue(),
         .DescriptorPool = mDescriptorPool,
-        .RenderPass = renderPass,
         .MinImageCount = 2,
         .ImageCount = 2,
-        .MSAASamples = samples,
+        .MSAASamples = pPass->getSampleCount(),
         .PipelineCache = VK_NULL_HANDLE,
-        .Subpass = subpass,
+        .UseDynamicRendering = true,
+        .PipelineRenderingCreateInfo = pPass->getPipelineRenderingCreateInfo(),
         .Allocator = nullptr,
     };
 
@@ -164,15 +164,14 @@ ImGuiContext* App::newFrameGUI()
     return ImGui::GetCurrentContext();
 }
 
-void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline)
+void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<Pipeline> pPipeline)
 {
     std::vector<ptr<Pipeline>> pipelines;
     pipelines.push_back(pPipeline);
-    App::baseGUI(pDevice, pSwapchain, pRenderPass, pipelines);
+    App::baseGUI(pDevice, pSwapchain, pipelines);
 }
 
-void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass,
-                  std::vector<ptr<Pipeline>> pPipelines)
+void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<ptr<Pipeline>> pPipelines)
 {
     if (!mCreatedGUI) {
         return;
@@ -203,9 +202,6 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<RenderPass
                     }
                 }
                 pSwapchain->recreate();
-                if (pRenderPass) {
-                    pRenderPass->recreate();
-                }
             }
 
             ImGui::EndMenu();
@@ -329,15 +325,15 @@ void App::renderGUI(VkCommandBuffer cmd) const
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, ptr<Pipeline> pPipeline)
+                          ptr<Swapchain> pSwapchain, ptr<Pipeline> pPipeline)
 {
     std::vector<ptr<Pipeline>> pipelines;
     pipelines.push_back(pPipeline);
-    App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pRenderPass, pipelines);
+    App::baseKeyCallback(pWindow, key, scancode, action, mods, pDevice, pSwapchain, pipelines);
 }
 
 void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods, ptr<Device> pDevice,
-                          ptr<Swapchain> pSwapchain, ptr<RenderPass> pRenderPass, std::vector<ptr<Pipeline>> pipelines)
+                          ptr<Swapchain> pSwapchain, std::vector<ptr<Pipeline>> pipelines)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mpWindow, 1);
@@ -377,9 +373,6 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
         }
 
         pSwapchain->recreate();
-        if (pRenderPass) {
-            pRenderPass->recreate();
-        }
     }
 }
 
@@ -485,6 +478,8 @@ void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
     Log::info("Taking screenshot and saving to disk...");
 
     const uint32_t channels = 4;
+
+    pSwapchain->waitForInFlightImage();
 
     Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
                                    VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
