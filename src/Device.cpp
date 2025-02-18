@@ -304,7 +304,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
     Check::Vk(vkEnumeratePhysicalDevices(mInstance, &n, physicalDevices.data()));
 
     Log::info("Available devices ({}):", n);
-    for (int i = 0; i < count(physicalDevices); i++) {
+    for (uint32_t i = 0; i < count(physicalDevices); i++) {
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtp = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
         };
