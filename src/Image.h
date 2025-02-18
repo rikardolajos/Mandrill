@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include "Device.h"
+#include "Log.h"
 
 namespace Mandrill
 {
@@ -58,6 +59,12 @@ namespace Mandrill
         MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags);
 
         /// <summary>
+        /// Create a descriptor set so the image can be used as a storage image in a shader.
+        /// </summary>
+        /// <returns></returns>
+        MANDRILL_API void createDescriptor();
+
+        /// <summary>
         /// Get the VkImage handle.
         /// </summary>
         /// <returns>VkImage handle</returns>
@@ -102,7 +109,22 @@ namespace Mandrill
             return mHeight;
         }
 
+        /// <summary>
+        /// Get the descriptor set for the image.
+        /// </summary>
+        /// <returns>Descriptor set</returns>
+        MANDRILL_API VkDescriptorSet getDescriptorSet() const
+        {
+            if (mDescriptorSet) {
+                return mDescriptorSet;
+            }
+            Log::error("Descriptor set not created for image");
+            return VK_NULL_HANDLE;
+        }
+
     private:
+        void destroyDescriptor();
+
         ptr<Device> mpDevice;
 
         VkImage mImage;
@@ -117,5 +139,9 @@ namespace Mandrill
         uint32_t mMipLevels;
         VkFormat mFormat;
         VkImageTiling mTiling;
+
+        VkDescriptorSetLayout mDescriptorSetLayout;
+        VkDescriptorPool mDescriptorPool;
+        VkDescriptorSet mDescriptorSet;
     };
 } // namespace Mandrill
