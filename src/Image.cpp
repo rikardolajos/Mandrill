@@ -135,7 +135,7 @@ void Image::createDescriptor()
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
         .maxSets = 1,
-        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .poolSizeCount = count(poolSizes),
         .pPoolSizes = poolSizes.data(),
     };
 

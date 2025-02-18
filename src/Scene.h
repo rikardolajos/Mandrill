@@ -331,7 +331,7 @@ namespace Mandrill
         /// <returns>Number of meshes</returns>
         MANDRILL_API uint32_t getMeshCount()
         {
-            return static_cast<uint32_t>(mMeshes.size());
+            return count(mMeshes);
         }
 
         /// <summary>
@@ -340,7 +340,7 @@ namespace Mandrill
         /// <returns>Number of materials</returns>
         MANDRILL_API uint32_t getMaterialCount() const
         {
-            return static_cast<uint32_t>(mMaterials.size());
+            return count(mMaterials);
         }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace Mandrill
         /// <returns>Number of textures</returns>
         MANDRILL_API uint32_t getTextureCount() const
         {
-            return static_cast<uint32_t>(mTextures.size());
+            return count(mTextures);
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace Mandrill
         /// <returns>Number of vertices</returns>
         MANDRILL_API uint32_t getMeshVertexCount(uint32_t meshIndex) const
         {
-            return static_cast<uint32_t>(mMeshes[meshIndex].vertices.size());
+            return count(mMeshes[meshIndex].vertices);
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace Mandrill
         /// <returns>Number of indices</returns>
         MANDRILL_API uint32_t getMeshIndexCount(uint32_t meshIndex) const
         {
-            return static_cast<uint32_t>(mMeshes[meshIndex].indices.size());
+            return count(mMeshes[meshIndex].indices);
         }
 
         /// <summary>

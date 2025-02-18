@@ -151,18 +151,18 @@ void Device::createInstance()
         .apiVersion = VK_API_VERSION_1_3,
     };
 
-    uint32_t count;
-    glfwGetRequiredInstanceExtensions(&count);
-    const char** tmp = glfwGetRequiredInstanceExtensions(&count);
+    uint32_t n;
+    glfwGetRequiredInstanceExtensions(&n);
+    const char** tmp = glfwGetRequiredInstanceExtensions(&n);
 
     if (!tmp) {
         Log::error("No Vulkan instance extensions found for GLFW.");
         Check::GLFW();
     }
 
-    std::vector<const char*> extensions(tmp, tmp + count);
+    std::vector<const char*> extensions(tmp, tmp + n);
 
-    Log::debug("GLFW required instance extensions ({}):", count);
+    Log::debug("GLFW required instance extensions ({}):", n);
     for (auto& e : extensions) {
         Log::debug(" * {}", e);
     }
@@ -176,11 +176,11 @@ void Device::createInstance()
     // Use validation layers
     std::vector<const char*> layers = {"VK_LAYER_KHRONOS_validation"};
 
-    Check::Vk(vkEnumerateInstanceLayerProperties(&count, nullptr));
-    std::vector<VkLayerProperties> props(count);
-    Check::Vk(vkEnumerateInstanceLayerProperties(&count, props.data()));
+    Check::Vk(vkEnumerateInstanceLayerProperties(&n, nullptr));
+    std::vector<VkLayerProperties> props(n);
+    Check::Vk(vkEnumerateInstanceLayerProperties(&n, props.data()));
 
-    Log::debug("Available layers ({}):", props.size());
+    Log::debug("Available layers ({}):", count(props));
     for (auto& p : props) {
         Log::debug(" * {}", p.layerName);
     }
@@ -191,13 +191,13 @@ void Device::createInstance()
         Log::error("Validation layer not supported");
     }
 
-    ci.enabledLayerCount = static_cast<uint32_t>(layers.size());
+    ci.enabledLayerCount = count(layers);
     ci.ppEnabledLayerNames = layers.data();
 
     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 
-    ci.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    ci.enabledExtensionCount = count(extensions);
     ci.ppEnabledExtensionNames = extensions.data();
 
     Check::Vk(vkCreateInstance(&ci, nullptr, &mInstance));
@@ -211,17 +211,17 @@ void Device::createInstance()
 // Check if device supports requested extensions
 static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::vector<const char*> requestedExtensions)
 {
-    uint32_t count;
-    Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr));
-    std::vector<VkExtensionProperties> availableExtensions(count);
-    Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, availableExtensions.data()));
+    uint32_t n;
+    Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &n, nullptr));
+    std::vector<VkExtensionProperties> availableExtensions(n);
+    Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &n, availableExtensions.data()));
 
-    Log::info("Requesting device extensions ({}):", requestedExtensions.size());
+    Log::info("Requesting device extensions ({}):", count(requestedExtensions));
     for (auto& e : requestedExtensions) {
         Log::info(" * {}", e);
     }
 
-    Log::debug("Available device extensions ({}):", count);
+    Log::debug("Available device extensions ({}):", n);
     for (auto& e : availableExtensions) {
         Log::debug(" * {}", e.extensionName);
     }
@@ -298,13 +298,13 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
     deviceExtensions.insert(deviceExtensions.end(), extensions.begin(), extensions.end());
 
     // Iterate all physical devices
-    uint32_t count;
-    Check::Vk(vkEnumeratePhysicalDevices(mInstance, &count, nullptr));
-    std::vector<VkPhysicalDevice> physicalDevices(count);
-    Check::Vk(vkEnumeratePhysicalDevices(mInstance, &count, physicalDevices.data()));
+    uint32_t n;
+    Check::Vk(vkEnumeratePhysicalDevices(mInstance, &n, nullptr));
+    std::vector<VkPhysicalDevice> physicalDevices(n);
+    Check::Vk(vkEnumeratePhysicalDevices(mInstance, &n, physicalDevices.data()));
 
-    Log::info("Available devices ({}):", count);
-    for (int i = 0; i < physicalDevices.size(); i++) {
+    Log::info("Available devices ({}):", n);
+    for (int i = 0; i < count(physicalDevices); i++) {
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtp = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
         };
@@ -421,7 +421,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         .pNext = &features2,
         .queueCreateInfoCount = 1,
         .pQueueCreateInfos = &queueCreateInfo,
-        .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
+        .enabledExtensionCount = count(deviceExtensions),
         .ppEnabledExtensionNames = deviceExtensions.data(),
     };
 

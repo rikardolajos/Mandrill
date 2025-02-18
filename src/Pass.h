@@ -12,8 +12,8 @@ namespace Mandrill
     public:
         MANDRILL_API Pass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool depthAttachment = true,
                           VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
-        MANDRILL_API Pass(ptr<Device> pDevice, VkExtent2D extent, Vector<VkFormat> formats, bool depthAttachment = true,
-                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+        MANDRILL_API Pass(ptr<Device> pDevice, VkExtent2D extent, std::vector<VkFormat> formats,
+                          bool depthAttachment = true, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
         MANDRILL_API ~Pass();
 
         MANDRILL_API void begin(VkCommandBuffer cmd);
@@ -26,7 +26,7 @@ namespace Mandrill
             return mPipelineRenderingCreateInfo;
         }
 
-        MANDRILL_API const Vector<ptr<Image>>& getColorAttachments() const
+        MANDRILL_API const std::vector<ptr<Image>>& getColorAttachments() const
         {
             return mColorAttachments;
         }
@@ -60,9 +60,9 @@ namespace Mandrill
         VkPipelineRenderingCreateInfo mPipelineRenderingCreateInfo;
         VkExtent2D mExtent;
 
-        Vector<VkFormat> mFormats;
+        std::vector<VkFormat> mFormats;
 
-        Vector<ptr<Image>> mColorAttachments;
+        std::vector<ptr<Image>> mColorAttachments;
         ptr<Image> mpDepthAttachment;
         ptr<Image> mpResolveAttachment;
     };

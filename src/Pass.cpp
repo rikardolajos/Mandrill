@@ -10,7 +10,7 @@ Pass::Pass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool depthAttachment,
     mpSwapchain = pSwapchain;
 }
 
-Pass::Pass(ptr<Device> pDevice, VkExtent2D extent, Vector<VkFormat> formats, bool depthAttachment,
+Pass::Pass(ptr<Device> pDevice, VkExtent2D extent, std::vector<VkFormat> formats, bool depthAttachment,
            VkSampleCountFlagBits sampleCount)
     : mpDevice(pDevice), mExtent(extent), mFormats(formats)
 {
@@ -65,7 +65,7 @@ void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp l
     vkCmdPipelineBarrier2(cmd, &srcDependencyInfo);
 
     // Set up attachments and begin
-    Vector<VkRenderingAttachmentInfo> colorAttachmentInfos;
+    std::vector<VkRenderingAttachmentInfo> colorAttachmentInfos;
     for (auto colorAttachment : mColorAttachments) {
         VkRenderingAttachmentInfo colorAttachmentInfo = {
             .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
@@ -105,7 +105,7 @@ void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp l
                 .extent = mExtent,
             },
         .layerCount = 1,
-        .colorAttachmentCount = colorAttachmentInfos.count(),
+        .colorAttachmentCount = count(colorAttachmentInfos),
         .pColorAttachments = colorAttachmentInfos.data(),
         .pDepthAttachment = mpDepthAttachment ? &depthAttachmentInfo : nullptr,
         .pStencilAttachment = nullptr,
@@ -196,7 +196,7 @@ void Pass::createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
 
     mPipelineRenderingCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
-        .colorAttachmentCount = mColorAttachments.count(),
+        .colorAttachmentCount = count(mColorAttachments),
         .pColorAttachmentFormats = mFormats.data(),
         .depthAttachmentFormat = depthFormat,
     };

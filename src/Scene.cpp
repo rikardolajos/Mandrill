@@ -42,8 +42,8 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
     std::array<VkDescriptorSet, 2> descriptors = {};
     descriptors[0] = pCamera->getDescriptorSet();
     descriptors[1] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
-                            static_cast<uint32_t>(descriptors.size()), descriptors.data(), 0, nullptr);
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0, count(descriptors),
+                            descriptors.data(), 0, nullptr);
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
@@ -52,18 +52,16 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
         std::array<VkDescriptorSet, 1> descriptorSetMaterial = {};
         descriptorSetMaterial[0] = pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet();
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 2,
-                                static_cast<uint32_t>(descriptorSetMaterial.size()), descriptorSetMaterial.data(), 0,
-                                nullptr);
+                                count(descriptorSetMaterial), descriptorSetMaterial.data(), 0, nullptr);
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
         std::array<VkDeviceSize, 1> offsets = {mesh.deviceVerticesOffset};
-        vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
-                               offsets.data());
+        vkCmdBindVertexBuffers(cmd, 0, count(vertexBuffers), vertexBuffers.data(), offsets.data());
         vkCmdBindIndexBuffer(cmd, pScene->mpIndexBuffer->getBuffer(), mesh.deviceIndicesOffset, VK_INDEX_TYPE_UINT32);
 
         // Draw mesh
-        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(mesh.indices.size()), 1, 0, 0, 0);
+        vkCmdDrawIndexed(cmd, count(mesh.indices), 1, 0, 0, 0);
     }
 }
 
@@ -117,7 +115,7 @@ uint32_t Scene::addMaterial(Material material)
 
     mMaterials.push_back(material);
 
-    return static_cast<uint32_t>(mMaterials.size() - 1);
+    return count(mMaterials) - 1;
 }
 
 uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<uint32_t> indices, uint32_t materialIndex)
@@ -130,7 +128,7 @@ uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<ui
 
     mMeshes.push_back(mesh);
 
-    return static_cast<uint32_t>(mMeshes.size() - 1);
+    return count(mMeshes) - 1;
 }
 
 template <typename T, typename... Rest> inline void hashCombine(std::size_t& seed, T const& v, Rest&&... rest)
@@ -221,7 +219,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
                 auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
-                shapeMesh[meshIndex].materialIndex = static_cast<uint32_t>(mMaterials.size()) + materialIndex;
+                shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
                 indices[meshIndex] += 1;
             }
 
@@ -230,14 +228,14 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
         for (auto& mesh : shapeMesh) {
             mMeshes.push_back(mesh);
-            newMeshIndices.push_back(static_cast<uint32_t>(mMeshes.size() - 1));
+            newMeshIndices.push_back(count(mMeshes) - 1);
         }
     }
 
     // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < newMeshIndices.size(); i++) {
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
         Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < mesh.indices.size(); j += 3) {
+        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
             Vertex& v0 = mesh.vertices[j + 0];
             Vertex& v1 = mesh.vertices[j + 1];
             Vertex& v2 = mesh.vertices[j + 2];
@@ -268,13 +266,13 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
     }
 
     // Remove duplicates
-    for (uint32_t i = 0; i < newMeshIndices.size(); i++) {
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
         Mesh& mesh = mMeshes[newMeshIndices.at(i)];
         std::unordered_map<Vertex, uint32_t> uniqueVertices;
         std::vector<Vertex> newVertices;
         std::vector<uint32_t> newIndices;
         uint32_t index = 0;
-        for (uint32_t j = 0; j < mesh.indices.size(); j++) {
+        for (uint32_t j = 0; j < count(mesh.indices); j++) {
             Vertex v = mesh.vertices[j];
 
             if (uniqueVertices.count(v) == 0) {
@@ -351,8 +349,8 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
     // Add to statistics
     for (auto index : newMeshIndices) {
-        mVertexCount += static_cast<uint32_t>(mMeshes[index].vertices.size());
-        mIndexCount += static_cast<uint32_t>(mMeshes[index].indices.size());
+        mVertexCount += count(mMeshes[index].vertices);
+        mIndexCount += count(mMeshes[index].indices);
     }
 
     return newMeshIndices;
@@ -374,7 +372,7 @@ void Scene::compile()
             indicesSize += sizeof(uint32_t) * mesh.indices.size();
         }
     }
-    
+
     // Allocate device buffers
     mpVertexBuffer =
         make_ptr<Buffer>(mpDevice, verticesSize,
@@ -404,16 +402,16 @@ void Scene::compile()
 
     // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
-    for (size_t i = 0; i < mNodes.size(); i++) {
+    for (uint32_t i = 0; i < count(mNodes); i++) {
         mNodes[i].mpTransformDevice = transforms + i * copies;
-        for (size_t c = 0; c < copies; c++) {
+        for (uint32_t c = 0; c < copies; c++) {
             *(mNodes[i].mpTransformDevice + c) = glm::mat4(1.0f);
         }
     }
 
     // Associate each material with a part of the material params buffer
     MaterialParams* materialParams = static_cast<MaterialParams*>(mpMaterialParams->getHostMap());
-    for (size_t i = 0; i < mMaterials.size(); i++) {
+    for (uint32_t i = 0; i < count(mMaterials); i++) {
         mMaterials[i].paramsDevice = materialParams + i;
         *mMaterials[i].paramsDevice = mMaterials[i].params;
         mMaterials[i].paramsOffset = Helpers::alignTo(i * sizeof(MaterialParams), alignment);
@@ -425,7 +423,7 @@ void Scene::compile()
                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         MaterialDevice* materials = static_cast<MaterialDevice*>(mpMaterialBuffer->getHostMap());
-        for (size_t i = 0; i < mMaterials.size(); i++) {
+        for (uint32_t i = 0; i < count(mMaterials); i++) {
             memcpy(&materials[i].params, materialParams + i, sizeof(MaterialParams));
             materials[i].diffuseTextureIndex = static_cast<uint32_t>(
                 std::distance(mTextures.begin(), mTextures.find(mMaterials[i].diffuseTexturePath)));
@@ -453,8 +451,8 @@ void Scene::compile()
                 instanceData[instanceIndex].verticesOffset = verticesOffset;
                 instanceData[instanceIndex].indicesOffset = indicesOffset;
 
-                verticesOffset += static_cast<uint32_t>(mesh.vertices.size());
-                indicesOffset += static_cast<uint32_t>(mesh.indices.size());
+                verticesOffset += count(mesh.vertices);
+                indicesOffset += count(mesh.indices);
 
                 instanceIndex += 1;
             }
@@ -520,12 +518,12 @@ void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, 
 {
     std::vector<VkDescriptorSet> descriptors = {};
     descriptors.push_back(pCamera->getDescriptorSet());
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0,
-                            static_cast<uint32_t>(descriptors.size()), descriptors.data(), 0, nullptr);
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0, count(descriptors),
+                            descriptors.data(), 0, nullptr);
     descriptors.clear();
     descriptors.push_back(mpRayTracingDescriptor->getSet(0));
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3,
-                            static_cast<uint32_t>(descriptors.size()), descriptors.data(), 0, nullptr);
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3, count(descriptors),
+                            descriptors.data(), 0, nullptr);
 }
 
 void Scene::setSampler(const ptr<Sampler> pSampler)
@@ -572,7 +570,7 @@ ptr<Layout> Scene::getLayout()
         desc.emplace_back(3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         desc.emplace_back(3, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
-                          static_cast<uint32_t>(mTextures.size()));
+                          count(mTextures));
         desc.emplace_back(3, 5, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL);
     }
@@ -641,8 +639,7 @@ void Scene::createDescriptors()
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpVertexBuffer);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpIndexBuffer);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpMaterialBuffer);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0,
-                          static_cast<uint32_t>(textures.size()));
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0, count(textures));
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpInstanceDataBuffer);
 
         auto layout = pLayout->getDescriptorSetLayouts()[3];

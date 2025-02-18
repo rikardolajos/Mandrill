@@ -107,9 +107,9 @@ void RayTracingPipeline::createPipeline()
 
     VkRayTracingPipelineCreateInfoKHR ci = {
         .sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
-        .stageCount = static_cast<uint32_t>(stages.size()),
+        .stageCount = count(stages),
         .pStages = stages.data(),
-        .groupCount = static_cast<uint32_t>(mShaderGroups.size()),
+        .groupCount = count(mShaderGroups),
         .pGroups = mShaderGroups.data(),
         .maxPipelineRayRecursionDepth = mMaxRecursionDepth,
         .layout = mPipelineLayout,
@@ -126,11 +126,10 @@ void RayTracingPipeline::createShaderBindingTable()
         Helpers::alignTo(groupSize, mpDevice->getProperties().rayTracingPipeline.shaderGroupBaseAlignment));
 
     // Bytes needed for the shader binding table
-    uint32_t sbtSize = static_cast<uint32_t>(mShaderGroups.size()) * mGroupSizeAligned;
+    uint32_t sbtSize = count(mShaderGroups) * mGroupSizeAligned;
     auto shaderHandleStorage = std::vector<uint8_t>(sbtSize);
 
-    Check::Vk(vkGetRayTracingShaderGroupHandlesKHR(mpDevice->getDevice(), mPipeline, 0,
-                                                   static_cast<uint32_t>(mShaderGroups.size()), sbtSize,
+    Check::Vk(vkGetRayTracingShaderGroupHandlesKHR(mpDevice->getDevice(), mPipeline, 0, count(mShaderGroups), sbtSize,
                                                    shaderHandleStorage.data()));
 
     // Allocate buffer for the shader binding table
@@ -141,7 +140,7 @@ void RayTracingPipeline::createShaderBindingTable()
                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     // Write the handles at the aligned positions
-    for (uint32_t i = 0; i < static_cast<uint32_t>(mShaderGroups.size()); i++) {
+    for (uint32_t i = 0; i < count(mShaderGroups); i++) {
         uint8_t* map = static_cast<uint8_t*>(mpShaderBindingTableBuffer->getHostMap());
         std::memcpy(map + i * mGroupSizeAligned, shaderHandleStorage.data() + i * groupSize, groupSize);
     }

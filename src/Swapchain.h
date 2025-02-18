@@ -54,9 +54,9 @@ namespace Mandrill
             return mImageFormat;
         }
 
-        MANDRILL_API Vector<VkFormat> getImageFormats() const
+        MANDRILL_API std::vector<VkFormat> getImageFormats() const
         {
-            Vector<VkFormat> formats;
+            std::vector<VkFormat> formats;
             formats.push_back(mImageFormat);
             return formats;
         }

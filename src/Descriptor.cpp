@@ -12,7 +12,7 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
 {
     allocate(desc, layout, copies);
 
-    for (uint32_t d = 0; d < desc.size(); d++) {
+    for (uint32_t d = 0; d < count(desc); d++) {
 
         VkWriteDescriptorSet write;
 
@@ -117,7 +117,7 @@ void Descriptor::allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorS
 {
     // Pool
     std::vector<VkDescriptorPoolSize> poolSizes(desc.size());
-    for (uint32_t i = 0; i < poolSizes.size(); i++) {
+    for (uint32_t i = 0; i < count(poolSizes); i++) {
         poolSizes[i].type = desc[i].type;
         poolSizes[i].descriptorCount = copies * (desc[i].arrayCount ? desc[i].arrayCount : 1);
     }
@@ -125,7 +125,7 @@ void Descriptor::allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorS
     VkDescriptorPoolCreateInfo poolInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .maxSets = copies,
-        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .poolSizeCount = count(poolSizes),
         .pPoolSizes = poolSizes.data(),
     };
 
@@ -137,7 +137,7 @@ void Descriptor::allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorS
     VkDescriptorSetAllocateInfo ai = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .descriptorPool = mPool,
-        .descriptorSetCount = static_cast<uint32_t>(layouts.size()),
+        .descriptorSetCount = count(layouts),
         .pSetLayouts = layouts.data(),
     };
 

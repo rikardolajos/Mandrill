@@ -90,7 +90,7 @@ void Swapchain::recreate()
         glfwWaitEvents();
     } while (width == 0 || height == 0);
 
-    uint32_t framesInFlight = static_cast<uint32_t>(mInFlightFences.size());
+    uint32_t framesInFlight = count(mInFlightFences);
     destroyDescriptor();
     destroySyncObjects();
     destroySwapchain();
@@ -251,7 +251,7 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     }
 
     mPreviousInFlightIndex = mInFlightIndex;
-    mInFlightIndex = (mInFlightIndex + 1) % static_cast<uint32_t>(mInFlightFences.size());
+    mInFlightIndex = (mInFlightIndex + 1) % count(mInFlightFences);
 }
 
 // Query for swapchain support. This function will allocate memory for the pointers in the returned struct and those
@@ -387,10 +387,10 @@ void Swapchain::destroySyncObjects()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
 
-    vkFreeCommandBuffers(mpDevice->getDevice(), mpDevice->getCommandPool(),
-                         static_cast<uint32_t>(mCommandBuffers.size()), mCommandBuffers.data());
+    vkFreeCommandBuffers(mpDevice->getDevice(), mpDevice->getCommandPool(), count(mCommandBuffers),
+                         mCommandBuffers.data());
 
-    for (uint32_t i = 0; i < mImageAvailableSemaphores.size(); i++) {
+    for (uint32_t i = 0; i < count(mImageAvailableSemaphores); i++) {
         vkDestroySemaphore(mpDevice->getDevice(), mImageAvailableSemaphores[i], nullptr);
         vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphores[i], nullptr);
         vkDestroyFence(mpDevice->getDevice(), mInFlightFences[i], nullptr);
@@ -399,7 +399,7 @@ void Swapchain::destroySyncObjects()
 
 void Swapchain::createDescriptor()
 {
-    const uint32_t copies = static_cast<uint32_t>(mImages.size());
+    const uint32_t copies = count(mImages);
 
     // Create descriptor set layout
     VkDescriptorSetLayoutBinding binding = {
@@ -426,7 +426,7 @@ void Swapchain::createDescriptor()
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
         .maxSets = copies,
-        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .poolSizeCount = count(poolSizes),
         .pPoolSizes = poolSizes.data(),
     };
 
@@ -438,7 +438,7 @@ void Swapchain::createDescriptor()
     VkDescriptorSetAllocateInfo ai = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .descriptorPool = mDescriptorPool,
-        .descriptorSetCount = static_cast<uint32_t>(layouts.size()),
+        .descriptorSetCount = count(layouts),
         .pSetLayouts = layouts.data(),
     };
 
@@ -446,7 +446,7 @@ void Swapchain::createDescriptor()
     Check::Vk(vkAllocateDescriptorSets(mpDevice->getDevice(), &ai, mDescriptorSets.data()));
 
     // Update descriptor sets
-    for (uint32_t i = 0; i < static_cast<uint32_t>(mImageViews.size()); i++) {
+    for (uint32_t i = 0; i < count(mImageViews); i++) {
         VkDescriptorImageInfo ii = {
             .imageView = mImageViews[i],
             .imageLayout = VK_IMAGE_LAYOUT_GENERAL,
@@ -470,8 +470,7 @@ void Swapchain::destroyDescriptor()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());
 
-    vkFreeDescriptorSets(mpDevice->getDevice(), mDescriptorPool, static_cast<uint32_t>(mDescriptorSets.size()),
-                         mDescriptorSets.data());
+    vkFreeDescriptorSets(mpDevice->getDevice(), mDescriptorPool, count(mDescriptorSets), mDescriptorSets.data());
     vkDestroyDescriptorPool(mpDevice->getDevice(), mDescriptorPool, nullptr);
     vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mDescriptorSetLayout, nullptr);
 }

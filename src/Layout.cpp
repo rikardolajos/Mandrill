@@ -36,7 +36,7 @@ Layout::Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescr
         VkDescriptorSetLayoutCreateInfo ci = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             .flags = flags,
-            .bindingCount = static_cast<uint32_t>(bindings.size()),
+            .bindingCount = count(bindings),
             .pBindings = bindings.data(),
         };
 

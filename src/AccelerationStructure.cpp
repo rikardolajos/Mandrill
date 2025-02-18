@@ -145,7 +145,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
     VkDeviceSize batchSize = 0;
     const VkDeviceSize batchMemoryLimit = 256'000'000;
 
-    for (uint32_t i = 0; i < static_cast<uint32_t>(mBLASes.size()); i++) {
+    for (uint32_t i = 0; i < count(mBLASes); i++) {
         BLAS* blas = &mBLASes[i];
 
         batchLength += 1;
@@ -154,7 +154,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
         blas->buildInfo.geometry.dstAccelerationStructure = blas->accelerationStructure;
         blas->buildInfo.geometry.scratchData.deviceAddress = scratchAddress;
 
-        if (batchSize >= batchMemoryLimit || i == mBLASes.size() - 1) {
+        if (batchSize >= batchMemoryLimit || i == count(mBLASes) - 1) {
             VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
             for (uint32_t j = batchStart; j < batchLength; j++) {
                 BLAS* b = &mBLASes[j];
@@ -184,7 +184,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
 {
     uint32_t instanceCount = 0;
     for (auto& node : mpScene->getNodes()) {
-        instanceCount += static_cast<uint32_t>(node.getMeshIndices().size());
+        instanceCount += count(node.getMeshIndices());
     }
 
     auto instances = std::vector<VkAccelerationStructureInstanceKHR>(instanceCount);

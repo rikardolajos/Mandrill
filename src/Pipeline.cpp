@@ -17,9 +17,9 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, pt
 
     VkPipelineLayoutCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size()),
+        .setLayoutCount = count(descriptorSetLayouts),
         .pSetLayouts = descriptorSetLayouts.data(),
-        .pushConstantRangeCount = static_cast<uint32_t>(pushConstantLayout.size()),
+        .pushConstantRangeCount = count(pushConstantLayout),
         .pPushConstantRanges = pushConstantLayout.data(),
     };
 
@@ -75,7 +75,7 @@ void Pipeline::createPipeline()
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .vertexBindingDescriptionCount = 1,
         .pVertexBindingDescriptions = &mBindingDescription,
-        .vertexAttributeDescriptionCount = static_cast<uint32_t>(mAttributeDescriptions.size()),
+        .vertexAttributeDescriptionCount = count(mAttributeDescriptions),
         .pVertexAttributeDescriptions = mAttributeDescriptions.data(),
     };
 
@@ -92,7 +92,7 @@ void Pipeline::createPipeline()
 
     VkPipelineDynamicStateCreateInfo dynamicState = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-        .dynamicStateCount = static_cast<uint32_t>(dynamicStates.size()),
+        .dynamicStateCount = count(dynamicStates),
         .pDynamicStates = dynamicStates.data(),
     };
 
@@ -142,14 +142,14 @@ void Pipeline::createPipeline()
     };
 
     std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
-    for (uint32_t i = 0; i < mpPass->getColorAttachments().count(); i++) {
+    for (uint32_t i = 0; i < count(mpPass->getColorAttachments()); i++) {
         colorBlendAttachmentStates.push_back(colorBlendAttachment);
     }
 
     VkPipelineColorBlendStateCreateInfo colorBlending = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .logicOpEnable = VK_FALSE,
-        .attachmentCount = static_cast<uint32_t>(colorBlendAttachmentStates.size()),
+        .attachmentCount = count(colorBlendAttachmentStates),
         .pAttachments = colorBlendAttachmentStates.data(),
     };
 
@@ -159,7 +159,7 @@ void Pipeline::createPipeline()
     VkGraphicsPipelineCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .pNext = &pipelineRenderingCreateInfo,
-        .stageCount = static_cast<uint32_t>(stages.size()),
+        .stageCount = count(stages),
         .pStages = stages.data(),
         .pVertexInputState = &vertexInputInfo,
         .pInputAssemblyState = &inputAssembly,

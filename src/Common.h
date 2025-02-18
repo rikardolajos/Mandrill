@@ -94,19 +94,11 @@ namespace Mandrill
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
-    // Most vector counts are uint32_t in Vulkan, this override removes many static casts in code.
-    template <typename T>
-    class Vector : public std::vector<T>
+    // Most vector counts are uint32_t in Vulkan (use with any container that provides size())
+    template <typename T> static inline uint32_t count(T t)
     {
-    public:
-        /// <summary>
-        /// Get the number of elements in the vector as a uint32_t.
-        /// </summary>
-        /// <returns>Number of elements</returns>
-        constexpr uint32_t count() const noexcept
-        {
-            return static_cast<uint32_t>(std::vector<T>::size());
-        }
-    };
+        return static_cast<uint32_t>(t.size());
+    }
+    
 } // namespace Mandrill
 
