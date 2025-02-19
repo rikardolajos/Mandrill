@@ -10,6 +10,18 @@ public:
         float time;
     };
 
+    static ptr<Image> createImage(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
+    {
+        auto image = std::make_shared<Image>(
+            pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, VK_SAMPLE_COUNT_1_BIT,
+            pSwapchain->getImageFormat(), VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        image->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+        image->createDescriptor();
+        return image;
+    }
+
     RayTracer() : App("Ray Tracer", 1920, 1080)
     {
         // Create a Vulkan instance and device
@@ -18,8 +30,11 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a pass, color attachment 0 will be used for ray tracing
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain);
+        // Create a pass for rendering GUI (depth attachment is not needed)
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, false);
+
+        // Create an image to render to
+        mpImage = createImage(mpDevice, mpSwapchain);
 
         // Create a scene
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
@@ -28,14 +43,14 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Load scene
-        //auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         std::shared_ptr<Node> pNode = mpScene->addNode();
-        //for (auto meshIndex : meshIndices) {
-        //    pNode->addMesh(meshIndex);
-        //}
+        // for (auto meshIndex : meshIndices) {
+        //     pNode->addMesh(meshIndex);
+        // }
 
         // Scale down the model
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
@@ -141,13 +156,15 @@ public:
         // Check if camera matrix needs to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
+            // Also update render image since swapchain changed
+            mpImage = createImage(mpDevice, mpSwapchain);
         }
 
         // Bind pipeline
         mpPipeline->bind(cmd);
 
         // Prepare image for writing
-        mpPipeline->write(cmd, mpPass->getColorAttachments()[0]->getImage());
+        mpPipeline->write(cmd, mpImage->getImage());
 
         // Push constants
         PushConstants pushConstants = {
@@ -159,7 +176,7 @@ public:
 
         // Bind descriptors
         mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        auto imageDescriptorSet = mpPass->getColorAttachments()[0]->getDescriptorSet();
+        auto imageDescriptorSet = mpImage->getDescriptorSet();
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4, 1,
                                 &imageDescriptorSet, 0, nullptr);
 
@@ -172,19 +189,19 @@ public:
                           mpSwapchain->getExtent().height, 1);
 
         // Prepare image for reading
-        mpPipeline->read(cmd, mpPass->getColorAttachments()[0]->getImage());
+        mpPipeline->read(cmd, mpImage->getImage());
 
         // Start pass
-        mpPass->begin(cmd);
+        mpPass->begin(cmd, mpImage);
 
         // Draw GUI
         App::renderGUI(cmd);
 
         // End pass
-        mpPass->end(cmd);
+        mpPass->end(cmd, mpImage);
 
         // Submit command buffer and present
-        mpSwapchain->present(cmd, mpPass->getOutput());
+        mpSwapchain->present(cmd, mpImage);
     }
 
     void appGUI(ImGuiContext* pContext)
@@ -225,6 +242,7 @@ private:
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<Pass> mpPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
+    std::shared_ptr<Image> mpImage;
 
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;

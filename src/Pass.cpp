@@ -114,6 +114,58 @@ void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp l
     vkCmdBeginRendering(cmd, &renderingInfo);
 }
 
+void Pass::begin(VkCommandBuffer cmd, ptr<Image> pImage)
+{
+    VkRenderingAttachmentInfo colorAttachmentInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+        .imageView = pImage->getImageView(),
+        .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .resolveMode = mpResolveAttachment ? VK_RESOLVE_MODE_AVERAGE_BIT : VK_RESOLVE_MODE_NONE,
+        .resolveImageView = mpResolveAttachment ? mpResolveAttachment->getImageView() : nullptr,
+        .resolveImageLayout =
+            mpResolveAttachment ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_UNDEFINED,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .clearValue =
+            {
+                .color = {0.0f, 0.0f, 0.0f, 0.0f},
+            },
+    };
+
+    VkRenderingAttachmentInfo depthAttachmentInfo;
+    if (mpDepthAttachment) {
+        depthAttachmentInfo = {
+            .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+            .imageView = mpDepthAttachment->getImageView(),
+            .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+            .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+            .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+            .clearValue = {.depthStencil = {.depth = 1.0f, .stencil = 0}},
+        };
+    }
+
+    VkExtent2D extent = {
+        .width = pImage->getWidth(),
+        .height = pImage->getHeight(),
+    };
+
+    VkRenderingInfo renderingInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
+        .renderArea =
+            {
+                .offset = {0, 0},
+                .extent = extent,
+            },
+        .layerCount = 1,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentInfo,
+        .pDepthAttachment = mpDepthAttachment ? &depthAttachmentInfo : nullptr,
+        .pStencilAttachment = nullptr,
+    };
+
+    vkCmdBeginRendering(cmd, &renderingInfo);
+}
+
 void Pass::end(VkCommandBuffer cmd) const
 {
     // End rendering (and resolve image)
@@ -150,6 +202,42 @@ void Pass::end(VkCommandBuffer cmd) const
     vkCmdPipelineBarrier2(cmd, &dependencyInfo);
 }
 
+void Pass::end(VkCommandBuffer cmd, ptr<Image> pImage) const
+{
+    // End rendering (and resolve image)
+    vkCmdEndRendering(cmd);
+
+    // Transition output image for blitting
+    VkImageMemoryBarrier2 barrier = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
+        .srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_2_BLIT_BIT,
+        .dstAccessMask = VK_ACCESS_2_TRANSFER_READ_BIT,
+        .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = pImage->getImage(),
+        .subresourceRange =
+            {
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .baseMipLevel = 0,
+                .levelCount = 1,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+            },
+    };
+
+    VkDependencyInfo dependencyInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+        .imageMemoryBarrierCount = 1,
+        .pImageMemoryBarriers = &barrier,
+    };
+
+    vkCmdPipelineBarrier2(cmd, &dependencyInfo);
+}
+
 void Pass::createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
 {
     // Update the extent from the swapchain, if coupled
@@ -162,9 +250,7 @@ void Pass::createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
     mColorAttachments.clear();
 
     for (auto format : mFormats) {
-        // Color attachment can only be used as storage image if not using multisamping
-        VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-                                  (sampleCount & VK_SAMPLE_COUNT_1_BIT ? VK_IMAGE_USAGE_STORAGE_BIT : 0);
+        VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
         mColorAttachments.push_back(make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, sampleCount, format,
                                                     VK_IMAGE_TILING_OPTIMAL, usage,
                                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
@@ -173,10 +259,6 @@ void Pass::createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
                                        VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 1);
 
         mColorAttachments.back()->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-
-        if (sampleCount == VK_SAMPLE_COUNT_1_BIT) {
-            mColorAttachments.back()->createDescriptor();
-        }
     }
 
     if (sampleCount != VK_SAMPLE_COUNT_1_BIT) {

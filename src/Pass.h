@@ -19,7 +19,9 @@ namespace Mandrill
         MANDRILL_API void begin(VkCommandBuffer cmd);
         MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor,
                                 VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR);
+        MANDRILL_API void begin(VkCommandBuffer cmd, ptr<Image> pImage);
         MANDRILL_API void end(VkCommandBuffer cmd) const;
+        MANDRILL_API void end(VkCommandBuffer cmd, ptr<Image> pImage) const;
 
         MANDRILL_API VkPipelineRenderingCreateInfo getPipelineRenderingCreateInfo() const
         {
