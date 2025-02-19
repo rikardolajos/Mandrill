@@ -168,38 +168,7 @@ void Pass::begin(VkCommandBuffer cmd, ptr<Image> pImage)
 
 void Pass::end(VkCommandBuffer cmd) const
 {
-    // End rendering (and resolve image)
-    vkCmdEndRendering(cmd);
-
-    // Transition output image for blitting
-    VkImageMemoryBarrier2 barrier = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
-        .srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-        .srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-        .dstStageMask = VK_PIPELINE_STAGE_2_BLIT_BIT,
-        .dstAccessMask = VK_ACCESS_2_TRANSFER_READ_BIT,
-        .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        .newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .image = mpResolveAttachment ? mpResolveAttachment->getImage() : mColorAttachments[0]->getImage(),
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1,
-            },
-    };
-
-    VkDependencyInfo dependencyInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-        .imageMemoryBarrierCount = 1,
-        .pImageMemoryBarriers = &barrier,
-    };
-
-    vkCmdPipelineBarrier2(cmd, &dependencyInfo);
+    end(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
 }
 
 void Pass::end(VkCommandBuffer cmd, ptr<Image> pImage) const
