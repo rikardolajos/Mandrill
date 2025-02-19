@@ -11,7 +11,7 @@ using namespace Mandrill;
 
 AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
                                              VkBuildAccelerationStructureFlagsKHR flags)
-    : mpDevice(pDevice), mpScene(pScene)
+    : mpDevice(pDevice), mpScene(pScene), mTLAS(nullptr)
 {
     if (mpScene->getNodes().empty()) {
         Log::error("Cannot build acceleration structure of empty scene");

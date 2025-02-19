@@ -299,7 +299,9 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<pt
 #if MANDRILL_WINDOWS
                 ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
 #elif MANDRILL_LINUX
-                std::system("xdg-open https://github.com/rikardolajos/Mandrill/tree/master");
+                if (std::system("xdg-open https://github.com/rikardolajos/Mandrill/tree/master")) {
+                    Log::error("Unable to open browser");
+                }
 #endif
             }
 
@@ -433,6 +435,7 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
     image.pixels = stbi_load("icon.png", &image.width, &image.height, nullptr, 4);
     if (image.pixels) {
         glfwSetWindowIcon(mpWindow, 1, &image);
+        stbi_image_free(image.pixels);
     } else {
         Log::error("Failed to load icon.png");
     }

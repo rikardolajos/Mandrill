@@ -77,7 +77,7 @@ void Device::createDebugMessenger()
 #endif
 
 Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
-    : mpWindow(pWindow)
+    : mpWindow(pWindow), mVsync(true), mRayTracingSupport(false)
 {
     createInstance();
 

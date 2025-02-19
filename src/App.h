@@ -342,12 +342,12 @@ namespace Mandrill
         // Screen mode
         GLFWmonitor* mpMonitor;
         GLFWvidmode mFullscreenMode;
-        bool mFullscreen;
+        bool mFullscreen = false;
 
         // Mouse movement
-        float mCursorX, mCursorY;
-        float mCursorDeltaX, mCursorDeltaY;
-        float mCursorPrevX, mCursorPrevY;
+        float mCursorX = 0.0f, mCursorY = 0.0f;
+        float mCursorDeltaX = 0.0f, mCursorDeltaY = 0.0f;
+        float mCursorPrevX = 0.0f, mCursorPrevY = 0.0f;
 
         // GUI
         bool mCreatedGUI = false;
