@@ -8,5 +8,6 @@ add_subdirectory(glfw)
 # GLM
 message(STATUS "Configure GLM")
 set(GLM_BUILD_TESTS OFF)
-set(BUILD_SHARED_LIBS OFF)
+set(GLM_BUILD_LIBRARY OFF)
+set(GLM_BUILD_INSTALL OFF)
 add_subdirectory(glm)
