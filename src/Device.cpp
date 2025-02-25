@@ -23,10 +23,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
         Log::error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
 #if MANDRILL_WINDOWS
-        __debugbreak();
-#elif MANDRILL_LINUX
-        std::raise(SIGTRAP);
-#endif
+        __debugbreak();         // Vulkan encountered an error and since you are running Mandrill
+#elif MANDRILL_LINUX            // in debug mode, the execution is halted. You can inspect the log,
+        std::raise(SIGTRAP);    // and the call stack in your debugger to find out where in the code
+#endif                          // the error was encountered.
         break;
     }
 
