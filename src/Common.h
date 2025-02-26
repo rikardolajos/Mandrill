@@ -29,6 +29,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <random>
 #include <set>
 #include <source_location>
 #include <string>
@@ -99,6 +100,5 @@ namespace Mandrill
     {
         return static_cast<uint32_t>(t.size());
     }
-    
-} // namespace Mandrill
 
+} // namespace Mandrill
