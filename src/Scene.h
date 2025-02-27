@@ -171,6 +171,7 @@ namespace Mandrill
         glm::mat4 mTransform;
         glm::mat4* mpTransformDevice;
         ptr<Descriptor> pDescriptor;
+        std::vector<VkDescriptorSet> mDescriptors;
 
         bool mVisible;
 
@@ -184,8 +185,8 @@ namespace Mandrill
         /// Create a new scene.
         ///
         /// The scene will use descriptor sets as follows:
-        ///     Camera matrix (struct CameraMatrices): Set = 0, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Model matrix (mat4): Set = 1, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        ///     Camera matrix (struct CameraMatrices): Set = 0, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        ///     Model matrix (mat4): Set = 1, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
         ///     Material params (struct MaterialParams): Set = 2, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
         ///     Material diffuse texture: Set = 2, Binding = 1, Type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
         ///     Material specular texture: Set = 2, Binding = 2, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
@@ -198,8 +199,9 @@ namespace Mandrill
         ///     Scene index buffer: Set = 3, Binding = 3, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
         ///     Scene material buffer: Set = 3, Binding = 4, Type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
         ///     Scene texture array: Set = 3, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        ///     Output storage image: Set = 4, Binding = 0, Type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
         ///
-        ///     NB: Set 3 is only available when using ray tracing
+        ///     NB: Set 3 and 4 is only available when using ray tracing
         ///
         /// </summary>
         /// <param name="pDevice">Device to use</param>
@@ -281,6 +283,11 @@ namespace Mandrill
 
         /// <summary>
         /// Bind descriptors for ray tracing.
+        ///
+        /// This will bind the descriptor sets 0 (camera matrices) and 3 (acceleration structure and scene buffers).
+        /// Descriptor set 4 should contain the storage image to render the ray-traced image to, and has to be bound
+        /// elsewhere.
+        ///
         /// </summary>
         /// <returns></returns>
         MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout);
@@ -294,6 +301,30 @@ namespace Mandrill
 
         /// <summary>
         /// Get the layout used by the scene.
+        ///
+        /// The layout is as follows:
+        ///
+        /// Set.Binding: Descriptor type [usage]
+        ///
+        /// 0.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Camera matrices]
+        /// 1.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Model matrix]
+        /// 2.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER          [Material parameters]
+        /// 2.1: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material diffuse texture]
+        /// 2.2: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material specular texture]
+        /// 2.3: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material ambient texture]
+        /// 2.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material emission texture]
+        /// 2.5: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material normal texture]
+        ///
+        /// If ray-tracing support is requested, the following is also available:
+        ///
+        /// 3.0: VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR      [Acceleration structure]
+        /// 3.1: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene vertex buffer]
+        /// 3.2: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene index buffer]
+        /// 3.3: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene material buffer]
+        /// 3.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (array)  [Scene texture array]
+        /// 3.5: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Instance data buffer]
+        /// 4.0: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE                   [Output storage image]
+        ///
         /// </summary>
         /// <returns>Pointer to layout</returns>
         MANDRILL_API ptr<Layout> getLayout();

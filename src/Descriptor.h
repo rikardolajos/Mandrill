@@ -14,19 +14,22 @@ namespace Mandrill
         VkDescriptorType type;
         std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>, ptr<std::vector<ptr<Texture>>>, ptr<AccelerationStructure>>
             pResource;
-        VkDeviceSize offset;
+        VkDeviceSize offset = 0;
         VkDeviceSize range;
         VkBufferView bufferView = nullptr;
         VkImageView imageView = nullptr;
+        VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         uint32_t arrayCount;
 
         MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource, VkDeviceSize offset = 0,
-                                    VkDeviceSize range = 0, uint32_t arrayCount = 0)
+                                    VkDeviceSize range = VK_WHOLE_SIZE, uint32_t arrayCount = 0)
             : type(type), offset(offset), range(range), arrayCount(arrayCount)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
             case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
                 this->pResource = std::static_pointer_cast<Buffer>(pResource);
                 break;
             case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
@@ -57,20 +60,65 @@ namespace Mandrill
     {
     public:
         MANDRILL_API Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
-                                VkDescriptorSetLayout layout, uint32_t copies = 1);
+                                VkDescriptorSetLayout layout);
         MANDRILL_API ~Descriptor();
 
-        MANDRILL_API VkDescriptorSet getSet(uint32_t index = 0) const
+        /// <summary>
+        /// Bind descriptor with vector of dynamic offsets.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="bindPoint">Bind point in pipeline</param>
+        /// <param name="pipelineLayout">Layout of pipeline</param>
+        /// <param name="firstSet">At which index to put the start of the descriptor</param>
+        /// <param name="offsets">Vector of dynamic offsets</param>
+        /// <returns></returns>
+        MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
+                               uint32_t firstSet, std::vector<uint32_t> offsets)
         {
-            return mSets[index];
+            vkCmdBindDescriptorSets(cmd, bindPoint, pipelineLayout, firstSet, 1, &mSet, count(offsets), offsets.data());
+        }
+
+        /// <summary>
+        /// Bind descriptor with one dynamic offset.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="bindPoint">Bind point in pipeline</param>
+        /// <param name="pipelineLayout">Layout of pipeline</param>
+        /// <param name="firstSet">At which index to put the start of the descriptor</param>
+        /// <param name="offset">A dynamic offset</param>
+        /// <returns></returns>
+        MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
+                               uint32_t firstSet, uint32_t offset)
+        {
+            std::vector<uint32_t> offsets = {offset};
+            bind(cmd, bindPoint, pipelineLayout, firstSet, offsets);
+        }
+
+        /// <summary>
+        /// Bind descriptor.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="bindPoint">Bind point in pipeline</param>
+        /// <param name="pipelineLayout">Layout of pipeline</param>
+        /// <param name="firstSet">At which index to put the start of the descriptor</param>
+        /// <returns></returns>
+        MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
+                               uint32_t firstSet)
+        {
+            vkCmdBindDescriptorSets(cmd, bindPoint, pipelineLayout, firstSet, 1, &mSet, 0, nullptr);
+        }
+
+        MANDRILL_API VkDescriptorSet getSet() const
+        {
+            return mSet;
         }
 
     private:
-        void allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout, uint32_t copies);
+        void allocate(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout);
 
         ptr<Device> mpDevice;
 
         VkDescriptorPool mPool;
-        std::vector<VkDescriptorSet> mSets;
+        VkDescriptorSet mSet;
     };
 } // namespace Mandrill

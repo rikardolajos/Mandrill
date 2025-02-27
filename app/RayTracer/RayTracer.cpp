@@ -18,7 +18,6 @@ public:
             VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         image->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-        image->createDescriptor();
         return image;
     }
 
@@ -36,7 +35,7 @@ public:
         // Create an image to render to
         mpImage = createImage(mpDevice, mpSwapchain);
 
-        // Create a scene
+        // Create a scene (with ray-tracing support)
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
 
         // Create a sampler that will be used to render materials
@@ -119,6 +118,12 @@ public:
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
+        // Image descriptor (layout is in set 4 from scene)
+        std::vector<DescriptorDesc> descriptorDesc;
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpImage);
+        descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+        mpImageDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[4]);
+
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
     }
@@ -176,9 +181,7 @@ public:
 
         // Bind descriptors
         mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        auto imageDescriptorSet = mpImage->getDescriptorSet();
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4, 1,
-                                &imageDescriptorSet, 0, nullptr);
+        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -243,6 +246,7 @@ private:
     std::shared_ptr<Pass> mpPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
     std::shared_ptr<Image> mpImage;
+    std::shared_ptr<Descriptor> mpImageDescriptor;
 
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;

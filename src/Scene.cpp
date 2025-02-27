@@ -39,20 +39,22 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
     mpPipeline->bind(cmd);
 
     // Bind descriptor set for camera matrices and node transform
-    std::array<VkDescriptorSet, 2> descriptors = {};
-    descriptors[0] = pCamera->getDescriptorSet();
-    descriptors[1] = pDescriptor->getSet(pScene->mpSwapchain->getInFlightIndex());
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0, count(descriptors),
-                            descriptors.data(), 0, nullptr);
+    VkDeviceSize alignment = pScene->mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
+                                                            pScene->mpSwapchain->getInFlightIndex());
+    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+                                   cameraDescriptorOffset);
+
+    uint32_t nodeDescriptorOffset =
+        static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * pScene->mpSwapchain->getInFlightIndex());
+    pDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
 
         // Bind descriptor set for material
-        std::array<VkDescriptorSet, 1> descriptorSetMaterial = {};
-        descriptorSetMaterial[0] = pScene->mMaterials[mesh.materialIndex].pDescriptor->getSet();
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 2,
-                                count(descriptorSetMaterial), descriptorSetMaterial.data(), 0, nullptr);
+        pScene->mMaterials[mesh.materialIndex].pDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                                                 mpPipeline->getLayout(), 2);
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
@@ -516,14 +518,12 @@ void Scene::updateAccelerationStructure(VkBuildAccelerationStructureFlagsKHR fla
 
 void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout)
 {
-    std::vector<VkDescriptorSet> descriptors = {};
-    descriptors.push_back(pCamera->getDescriptorSet());
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0, count(descriptors),
-                            descriptors.data(), 0, nullptr);
-    descriptors.clear();
-    descriptors.push_back(mpRayTracingDescriptor->getSet(0));
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3, count(descriptors),
-                            descriptors.data(), 0, nullptr);
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    uint32_t cameraDescriptorOffset =
+        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * mpSwapchain->getInFlightIndex());
+    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0, cameraDescriptorOffset);
+
+    mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3);
 }
 
 void Scene::setSampler(const ptr<Sampler> pSampler)
@@ -547,9 +547,9 @@ ptr<Layout> Scene::getLayout()
     // 2.3: Material ambient texture
     // 2.4: Material emission texture
     // 2.5: Material normal texture
-    desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+    desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
                       VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-    desc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+    desc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
     desc.emplace_back(2, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
     desc.emplace_back(2, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
     desc.emplace_back(2, 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
@@ -596,15 +596,21 @@ void Scene::createDescriptors()
 {
     ptr<Layout> pLayout = getLayout();
 
-    // Node transform
+    // Node transforms
+    VkDeviceSize offset = 0;
     for (auto& node : mNodes) {
         std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpTransforms);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpTransforms);
         desc.back().range = sizeof(glm::mat4);
+        desc.back().offset = offset;
+
+        offset += Helpers::alignTo(sizeof(glm::mat4),
+                                   mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment) *
+                  mpSwapchain->getFramesInFlightCount();
 
         // Set layout for set 1
         auto layout = pLayout->getDescriptorSetLayouts()[1];
-        node.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout, mpSwapchain->getFramesInFlightCount());
+        node.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
 
     // Materials

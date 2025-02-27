@@ -68,9 +68,9 @@ public:
 
         // Create a layout matching the shader inputs
         std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
                                 VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
         layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
         auto pLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
 
@@ -98,16 +98,18 @@ public:
         setupVertexBuffers();
 
         // Uniform for sending model matrix to shaders
-        mpUniform = std::make_shared<Buffer>(
-            mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+        VkDeviceSize size = Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getFramesInFlightCount();
+        mpUniform =
+            std::make_shared<Buffer>(mpDevice, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         // Descriptor set for model matrix and texture
         std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpUniform);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniform);
+        descriptorDesc.back().range = sizeof(glm::mat4);
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1],
-                                                    mpSwapchain->getFramesInFlightCount());
+        mpDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1]);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -150,18 +152,20 @@ public:
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
         // Bind descriptor sets
-        std::array<VkDescriptorSet, 2> descriptorSets = {};
-        descriptorSets[0] = mpCamera->getDescriptorSet();
-        descriptorSets[1] = mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
+        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
+                                                                mpSwapchain->getInFlightIndex());
+        mpCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
+                                        cameraDescriptorOffset);
 
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
-                                static_cast<uint32_t>(descriptorSets.size()), descriptorSets.data(), 0, nullptr);
+        uint32_t sceneDescriptorOffset =
+            static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getInFlightIndex());
+        mpDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, sceneDescriptorOffset);
 
         // Bind vertex and index buffers
-        std::array<VkBuffer, 1> vertexBuffers = {mpVertexBuffer->getBuffer()};
-        std::array<VkDeviceSize, 1> offsets = {0};
-        vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(vertexBuffers.size()), vertexBuffers.data(),
-                               offsets.data());
+        VkBuffer vertexBuffer = mpVertexBuffer->getBuffer();
+        VkDeviceSize vertexBufferOffset = 0;
+        vkCmdBindVertexBuffers(cmd, 0, 1, &vertexBuffer, &vertexBufferOffset);
         vkCmdBindIndexBuffer(cmd, mpIndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
         // Draw mesh

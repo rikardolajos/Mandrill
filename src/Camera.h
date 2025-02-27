@@ -100,9 +100,9 @@ namespace Mandrill
             return matrices->proj;
         }
 
-        MANDRILL_API VkDescriptorSet getDescriptorSet() const
+        MANDRILL_API ptr<Descriptor> getDescriptor() const
         {
-            return mpDescriptor->getSet(mpSwapchain->getInFlightIndex());
+            return mpDescriptor;
         }
 
         VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const
