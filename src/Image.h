@@ -59,12 +59,6 @@ namespace Mandrill
         MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags);
 
         /// <summary>
-        /// Create a descriptor set so the image can be used as a storage image in a shader.
-        /// </summary>
-        /// <returns></returns>
-        MANDRILL_API void createDescriptor();
-
-        /// <summary>
         /// Get the VkImage handle.
         /// </summary>
         /// <returns>VkImage handle</returns>
@@ -123,8 +117,6 @@ namespace Mandrill
         }
 
     private:
-        void destroyDescriptor();
-
         ptr<Device> mpDevice;
 
         VkImage mImage;
