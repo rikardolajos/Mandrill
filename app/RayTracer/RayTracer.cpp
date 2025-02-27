@@ -10,7 +10,7 @@ public:
         float time;
     };
 
-    static ptr<Image> createImage(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
+    static std::shared_ptr<Image> createImage(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
     {
         auto image = std::make_shared<Image>(
             pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, VK_SAMPLE_COUNT_1_BIT,
