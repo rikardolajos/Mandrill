@@ -248,5 +248,21 @@ namespace Mandrill
         {
             return (value + alignment - 1) & ~(alignment - 1);
         }
+
+        /// <summary>
+        /// Return a random value from the interval [0.0, 1.0)
+        /// </summary>
+        /// <param name="reset">If true, the random seed is reset</param>
+        /// <returns>A random value</returns>
+        inline float random(bool reset = false)
+        {
+            static std::random_device dev;
+            static std::mt19937 rng(dev());
+            static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+            if (reset) {
+                rng.seed();
+            }
+            return dis(rng);
+        }
     };
 } // namespace Mandrill
