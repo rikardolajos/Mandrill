@@ -60,8 +60,9 @@ public:
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
         auto pLayout = mpScene->getLayout();
 
-        // Create a pass linked to the swapchain with depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, true, mpDevice->getSampleCount());
+        // Create a pass with 1 color attachment, depth attachment and multisampling
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
+                                        mpDevice->getSampleCount());
 
         // Add push constant to layout so we can set render mode in shader
         VkPushConstantRange pushConstantRange = {
@@ -112,14 +113,15 @@ public:
 
     void render() override
     {
+        // Check if camera matrix and attachments need to be updated
+        if (mpSwapchain->recreated()) {
+            mpCamera->updateAspectRatio();
+            mpPass->update(mpSwapchain->getExtent());
+        }
+
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-        // Check if camera matrix needs to be updated
-        if (mpSwapchain->recreated()) {
-            mpCamera->updateAspectRatio();
-        }
 
         PushConstants pushConstants = {
             .renderMode = mRenderMode,

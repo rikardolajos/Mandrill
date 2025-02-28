@@ -4,21 +4,45 @@
 
 using namespace Mandrill;
 
-Pass::Pass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool depthAttachment, VkSampleCountFlagBits sampleCount)
-    : Pass(pDevice, pSwapchain->getExtent(), pSwapchain->getImageFormats(), depthAttachment, sampleCount)
+Pass::Pass(ptr<Device> pDevice, std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
+    : mpDevice(pDevice), mImplicitAttachments(false)
 {
-    mpSwapchain = pSwapchain;
+    createExplicitPass(colorAttachments, pDepthAttachment);
+}
+
+Pass::Pass(ptr<Device> pDevice, VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount, bool depthAttachment,
+           VkSampleCountFlagBits sampleCount)
+    : mpDevice(pDevice), mImplicitAttachments(true), mExtent(extent)
+{
+    mFormats = {format};
+    createImplicitPass(depthAttachment, sampleCount);
 }
 
 Pass::Pass(ptr<Device> pDevice, VkExtent2D extent, std::vector<VkFormat> formats, bool depthAttachment,
            VkSampleCountFlagBits sampleCount)
-    : mpDevice(pDevice), mExtent(extent), mFormats(formats)
+    : mpDevice(pDevice), mImplicitAttachments(true), mExtent(extent), mFormats(formats)
 {
-    createPass(depthAttachment, sampleCount);
+    createImplicitPass(depthAttachment, sampleCount);
 }
 
 Pass::~Pass()
 {
+}
+
+void Pass::transitionForRendering(VkCommandBuffer cmd, ptr<Image> pImage) const
+{
+    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
+                          VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                          VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT,
+                          VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, pImage->getImage());
+}
+
+void Pass::transitionForBlitting(VkCommandBuffer cmd, ptr<Image> pImage) const
+{
+    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
+                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                          pImage->getImage());
 }
 
 void Pass::begin(VkCommandBuffer cmd)
@@ -28,41 +52,9 @@ void Pass::begin(VkCommandBuffer cmd)
 
 void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp loadOp)
 {
-    if (mpSwapchain && mpSwapchain->recreated()) {
-        bool depthAttachment = !!mpDepthAttachment;
-        VkSampleCountFlagBits sampleCount = getSampleCount();
-        createPass(depthAttachment, sampleCount);
+    if (mImplicitAttachments) {
+        transitionForRendering(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
     }
-
-    // Transition output image for rendering
-    VkImageMemoryBarrier2 srcBarrier = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
-        .srcStageMask = VK_PIPELINE_STAGE_2_BLIT_BIT,
-        .srcAccessMask = VK_ACCESS_2_TRANSFER_READ_BIT,
-        .dstStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-        .dstAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT,
-        .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-        .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .image = mpResolveAttachment ? mpResolveAttachment->getImage() : mColorAttachments[0]->getImage(),
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1,
-            },
-    };
-
-    VkDependencyInfo srcDependencyInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-        .imageMemoryBarrierCount = 1,
-        .pImageMemoryBarriers = &srcBarrier,
-    };
-
-    vkCmdPipelineBarrier2(cmd, &srcDependencyInfo);
 
     // Set up attachments and begin
     std::vector<VkRenderingAttachmentInfo> colorAttachmentInfos;
@@ -168,52 +160,76 @@ void Pass::begin(VkCommandBuffer cmd, ptr<Image> pImage)
 
 void Pass::end(VkCommandBuffer cmd) const
 {
-    end(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
+    end(cmd, nullptr);
 }
 
 void Pass::end(VkCommandBuffer cmd, ptr<Image> pImage) const
 {
-    // End rendering (and resolve image)
     vkCmdEndRendering(cmd);
 
-    // Transition output image for blitting
-    VkImageMemoryBarrier2 barrier = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
-        .srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-        .srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-        .dstStageMask = VK_PIPELINE_STAGE_2_BLIT_BIT,
-        .dstAccessMask = VK_ACCESS_2_TRANSFER_READ_BIT,
-        .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        .newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .image = pImage->getImage(),
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1,
-            },
-    };
-
-    VkDependencyInfo dependencyInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-        .imageMemoryBarrierCount = 1,
-        .pImageMemoryBarriers = &barrier,
-    };
-
-    vkCmdPipelineBarrier2(cmd, &dependencyInfo);
-}
-
-void Pass::createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
-{
-    // Update the extent from the swapchain, if coupled
-    if (mpSwapchain) {
-        mExtent = mpSwapchain->getExtent();
+    // If image is provided, transition it
+    if (pImage) {
+        transitionForBlitting(cmd, pImage);
+        return;
     }
 
+    // If doing implicit pass, transition the implicit ouput
+    if (mImplicitAttachments) {
+        transitionForBlitting(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
+        return;
+    }
+}
+
+void Pass::update(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
+{
+    if (mImplicitAttachments) {
+        Log::error("Cannot use explicit update for an implicit pass");
+        return;
+    }
+    createExplicitPass(colorAttachments, pDepthAttachment);
+}
+
+void Pass::update(VkExtent2D extent)
+{
+    if (!mImplicitAttachments) {
+        Log::error("Cannot use implicit update for an explicit pass");
+        return;
+    }
+    mExtent = extent;
+    bool depthAttachment = !!mpDepthAttachment;
+    VkSampleCountFlagBits sampleCount = getSampleCount();
+    createImplicitPass(depthAttachment, sampleCount);
+}
+
+void Pass::createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
+{
+    mExtent.width = colorAttachments[0]->getWidth();
+    mExtent.height = colorAttachments[0]->getHeight();
+
+    VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
+
+    mColorAttachments.clear();
+
+    for (auto& attachment : colorAttachments) {
+        mColorAttachments.push_back(attachment);
+        mFormats.push_back(attachment->getFormat());
+    }
+
+    if (pDepthAttachment) {
+        mpDepthAttachment = pDepthAttachment;
+        mpDepthAttachment->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+    }
+
+    mPipelineRenderingCreateInfo = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
+        .colorAttachmentCount = count(mColorAttachments),
+        .pColorAttachmentFormats = mFormats.data(),
+        .depthAttachmentFormat = mpDepthAttachment->getFormat(),
+    };
+}
+
+void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sampleCount)
+{
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
 
     mColorAttachments.clear();

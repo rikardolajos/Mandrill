@@ -284,7 +284,6 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
 {
     std::array baseExtensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     };
 
     std::vector<const char*> raytracingExtensions = {
@@ -414,7 +413,14 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
         .dynamicRendering = VK_TRUE,
     };
 
-    features2.pNext = &vk13Features;
+    VkPhysicalDeviceVulkan14Features vk14Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
+        .pNext = &vk13Features,
+        .dynamicRenderingLocalRead = VK_TRUE,
+        .pushDescriptor = VK_TRUE,
+    };
+
+    features2.pNext = &vk14Features;
 
     VkDeviceCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,

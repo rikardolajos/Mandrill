@@ -57,7 +57,7 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                     .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
                     .imageView = desc[d].imageView ? desc[d].imageView
                                                    : std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
-                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    .imageLayout = desc[d].imageLayout ? desc[d].imageLayout : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
             }
             write.pImageInfo = iis.data();

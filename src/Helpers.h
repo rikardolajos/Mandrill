@@ -94,8 +94,45 @@ namespace Mandrill
                                        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
 
+        inline static void imageBarrier(VkCommandBuffer cmd, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess,
+                                        VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess,
+                                        VkImageLayout oldLayout, VkImageLayout newLayout, VkImage image,
+                                        VkImageSubresourceRange* pSubresourceRange = nullptr)
+        {
+            VkImageSubresourceRange defaultSubresourceRange = {
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .baseMipLevel = 0,
+                .levelCount = 1,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+            };
+
+            VkImageMemoryBarrier2 barrier = {
+                .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
+                .srcStageMask = srcStage,
+                .srcAccessMask = srcAccess,
+                .dstStageMask = dstStage,
+                .dstAccessMask = dstAccess,
+                .oldLayout = oldLayout,
+                .newLayout = newLayout,
+                .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .image = image,
+                .subresourceRange = pSubresourceRange ? *pSubresourceRange : defaultSubresourceRange,
+            };
+
+            VkDependencyInfo dependencyInfo = {
+                .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+                .imageMemoryBarrierCount = 1,
+                .pImageMemoryBarriers = &barrier,
+            };
+
+            vkCmdPipelineBarrier2(cmd, &dependencyInfo);
+        }
+
         inline static void transitionImageLayout(ptr<Device> pDevice, VkImage image, VkFormat format,
-                                                 VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels, VkCommandBuffer cmd = VK_NULL_HANDLE)
+                                                 VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels,
+                                                 VkCommandBuffer cmd = VK_NULL_HANDLE)
         {
             bool endCmd = false;
             if (!cmd) {
@@ -152,13 +189,11 @@ namespace Mandrill
             } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
                        newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
                 barrier.srcAccessMask = 0;
-                barrier.dstAccessMask =
-                    VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
                 srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-                       newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
                 srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
             } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
@@ -180,7 +215,7 @@ namespace Mandrill
                        newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
                 // After screenshot
                 srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-                dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+                dstStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
                 barrier.dstAccessMask = VK_ACCESS_NONE;
             } else {

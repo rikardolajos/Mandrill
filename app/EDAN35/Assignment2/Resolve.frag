@@ -20,7 +20,7 @@ void main() {
     vec3 lightPos = vec3(0.0, 5.0, 0.0);
 
     vec3 L = normalize(lightPos - fragPos);
-    vec3 N = normalize(normal);
+    vec3 N = normalize(normal) * 2.0 - 1.0;
 
     vec3 diffuse = albedo * max(0.0, dot(N, L));
 

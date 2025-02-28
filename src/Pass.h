@@ -11,19 +11,30 @@ namespace Mandrill
     {
     public:
         /// <summary>
-        /// Create a pass that is linked to a swapchain. This means that if the swapchain is recreated, the pass will
-        /// match the extent of the new swapchain.
+        /// Create a pass with explicit color and depth attachments.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="pSwapchain">Swapchain to link with</param>
+        /// <param name="colorAttachments">Vector of image to use as color attachments</param>
+        /// <param name="pDepthAttachment">Depth attachment to use, can be nullptr</param>
+        MANDRILL_API Pass(ptr<Device> pDevice, std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment);
+
+        /// <summary>
+        /// Create a pass with implicit attachments, given a certain extent and format. Same format will be used for all
+        /// color attachments.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="extent">Resolution of attachments</param>
+        /// <param name="format">Format of color attachment</param>
+        /// <param name="colorAttachmentCount">Number of color attachments</param>
         /// <param name="depthAttachment">If depth attachment should be created</param>
         /// <param name="sampleCount">Multisampling count</param>
         /// <returns></returns>
-        MANDRILL_API Pass(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool depthAttachment = true,
-                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+        MANDRILL_API Pass(ptr<Device> pDevice, VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount = 1,
+                          bool depthAttachment = true, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
         /// <summary>
-        /// Create a pass given a certain extent and format. The list of formats will create mathcing color attachments.
+        /// Create a pass with implicit attachments, given a certain extent and format. The list of formats will create
+        /// mathcing color attachments.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="extent">Resolution of attachments</param>
@@ -39,6 +50,23 @@ namespace Mandrill
         /// </summary>
         /// <returns></returns>
         MANDRILL_API ~Pass();
+
+        /// <summary>
+        /// Transition an image for rendering. Call before begin() in an explicit pass.
+        /// </summary>
+        /// <param name="cmd">Command buffer</param>
+        /// <param name="pImage">Image to transition</param>
+        /// <returns></returns>
+        MANDRILL_API void transitionForRendering(VkCommandBuffer cmd, ptr<Image> pImage) const;
+
+        /// <summary>
+        /// Transition an image for blitting. Call after end() and before Swapchain::present(..., pImage) in an explicit
+        /// pass.
+        /// </summary>
+        /// <param name="cmd">Command buffer</param>
+        /// <param name="pImage">Image to transition</param>
+        /// <returns></returns>
+        MANDRILL_API void transitionForBlitting(VkCommandBuffer cmd, ptr<Image> pImage) const;
 
         /// <summary>
         /// Begin a pass without clearing the color attachments.
@@ -74,12 +102,27 @@ namespace Mandrill
         MANDRILL_API void end(VkCommandBuffer cmd) const;
 
         /// <summary>
-        /// End a pass and override the output image. The image will be transitioned for blitting.
+        /// End a pass and transition a given image for blitting.
         /// </summary>
         /// <param name="cmd">Command buffer</param>
-        /// <param name="pImage">Overriding image</param>
+        /// <param name="pImage">Image to transition</param>
         /// <returns></returns>
         MANDRILL_API void end(VkCommandBuffer cmd, ptr<Image> pImage) const;
+
+        /// <summary>
+        /// Update an explicit pass with new attachments. Typically call on swapchain recreation.
+        /// </summary>
+        /// <param name="colorAttachments">Vector with new color attachments</param>
+        /// <param name="pDepthAttachment">New depth attachment, can be nullptr</param>
+        /// <returns></returns>
+        MANDRILL_API void update(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment);
+
+        /// <summary>
+        /// Update an implicit pass with a new extent. Typically call on swapchain recreation.
+        /// </summary>
+        /// <param name="extent">New attachment extent</param>
+        /// <returns></returns>
+        MANDRILL_API void update(VkExtent2D extent);
 
         /// <summary>
         /// Get the pipeline rendering create info. This is needed for pipeline creation when using dynamic rendering.
@@ -129,16 +172,17 @@ namespace Mandrill
         }
 
     private:
-        void createPass(bool depthAttachment, VkSampleCountFlagBits sampleCount);
+        void createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Image> depthAttachment);
+        void createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sampleCount);
 
         ptr<Device> mpDevice;
-        ptr<Swapchain> mpSwapchain;
 
         VkPipelineRenderingCreateInfo mPipelineRenderingCreateInfo;
         VkExtent2D mExtent;
 
         std::vector<VkFormat> mFormats;
 
+        bool mImplicitAttachments;
         std::vector<ptr<Image>> mColorAttachments;
         ptr<Image> mpDepthAttachment;
         ptr<Image> mpResolveAttachment;

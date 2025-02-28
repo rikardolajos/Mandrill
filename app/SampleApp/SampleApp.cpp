@@ -63,8 +63,9 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create a pass linked to the swapchain with depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, true, mpDevice->getSampleCount());
+        // Create a pass with 1 color attachment, depth attachment and multisampling
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
+                                        mpDevice->getSampleCount());
 
         // Create a layout matching the shader inputs
         std::vector<LayoutDesc> layoutDesc;
@@ -136,17 +137,18 @@ public:
 
     void render() override
     {
+        // Check if camera matrix and attachments need to be updated
+        if (mpSwapchain->recreated()) {
+            mpCamera->updateAspectRatio();
+            mpPass->update(mpSwapchain->getExtent());
+        }
+
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpPass->begin(cmd, glm::vec4(0.0f, 0.4f, 0.2f, 1.0f));
 
         // Bind the pipeline for rendering
         mpPipeline->bind(cmd);
-
-        // Check if camera matrix needs to be updated
-        if (mpSwapchain->recreated()) {
-            mpCamera->updateAspectRatio();
-        }
 
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);

@@ -14,13 +14,86 @@ public:
         int renderMode;
     };
 
-    void createInputAttachmentDescriptor()
+    static std::shared_ptr<Image> createColorAttachmentImage(std::shared_ptr<Device> pDevice, uint32_t width,
+                                                             uint32_t height)
     {
+        return std::make_shared<Image>(pDevice, width, height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_B8G8R8A8_UNORM,
+                                       VK_IMAGE_TILING_OPTIMAL,
+                                       VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    }
+
+    void transitionAttachmentsForGBuffer(VkCommandBuffer cmd)
+    {
+        for (auto& attachment : mColorAttachments) {
+            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
+                                  VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                  VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, attachment->getImage());
+        }
+    }
+
+    void transitionAttachmentsForResolve(VkCommandBuffer cmd)
+    {
+        for (auto& attachment : mColorAttachments) {
+            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                  VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+                                  VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, attachment->getImage());
+        }
+    }
+
+    void createAttachments()
+    {
+        uint32_t width = mpSwapchain->getExtent().width;
+        uint32_t height = mpSwapchain->getExtent().height;
+        VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
+
+        mColorAttachments.clear();
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
+        mpDepthAttachment = std::make_shared<Image>(
+            mpDevice, width, height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        // Create image views and transition image layouts
+        VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+
+        for (auto& attachment : mColorAttachments) {
+            attachment->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            // Transition to correct layout for descriptor creation
+            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                                  VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
+                                  VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                  attachment->getImage());
+        }
+
+        // Transition depth attachment for depth use
+        VkImageSubresourceRange depthSubresourceRange = {.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+                                                         .baseMipLevel = 0,
+                                                         .levelCount = 1,
+                                                         .baseArrayLayer = 0,
+                                                         .layerCount = 1};
+        if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT) {
+            depthSubresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+        Helpers::imageBarrier(
+            cmd, VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE, VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT,
+            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, mpDepthAttachment->getImage(),
+            &depthSubresourceRange);
+
+        Helpers::cmdEnd(mpDevice, cmd);
+
+        // Create descriptor for resolve pass input attachments
         std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getPositionImage());
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getNormalImage());
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, mpRenderPass->getAlbedoImage());
-        mpInputAttachmentDescriptor =
+        for (auto& attachment : mColorAttachments) {
+            descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, attachment);
+        }
+        mpColorAttachmentDescriptor =
             std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpResolveLayout->getDescriptorSetLayouts()[0]);
     }
 
@@ -32,16 +105,13 @@ public:
         // Create a swapchain with 2 frames in flight
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
-        // Create render pass
-        mpRenderPass = std::make_shared<Deferred>(mpDevice, mpSwapchain);
-
         // Create scene
         mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
 
         // Create layouts for rendering the scene in first pass and resolve in the second pass
         auto pGBufferLayout = mpScene->getLayout();
 
-        // 3 input attachments: world position, normal, albedo color
+        // 3 color attachments: position, normal, albedo
         std::vector<LayoutDesc> layoutDesc;
         layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
         layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -56,6 +126,11 @@ public:
         };
         mpResolveLayout->addPushConstantRange(pushConstantRange);
 
+        // Create two passes
+        createAttachments();
+        mpGBufferPass = std::make_shared<Pass>(mpDevice, mColorAttachments, mpDepthAttachment);
+        mpResolvePass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat());
+
         // Create two shaders (and pipelines) for G-buffer and resolve pass respectively
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
@@ -69,17 +144,13 @@ public:
 
         // Create pipelines
         PipelineDesc pipelineDesc;
-        pipelineDesc.subpass = 0;
         pipelineDesc.depthTest = VK_TRUE;
-        pipelineDesc.attachmentCount = 3;
         mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, pGBufferShader, pGBufferLayout, mpRenderPass, pipelineDesc));
+            std::make_shared<Pipeline>(mpDevice, mpGBufferPass, pGBufferLayout, pGBufferShader, pipelineDesc));
 
-        pipelineDesc.subpass = 1;
         pipelineDesc.depthTest = VK_FALSE;
-        pipelineDesc.attachmentCount = 1;
         mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, pResolveShader, mpResolveLayout, mpRenderPass, pipelineDesc));
+            std::make_shared<Pipeline>(mpDevice, mpResolvePass, mpResolveLayout, pResolveShader, pipelineDesc));
 
         // Create a sampler that will be used to render materials
         mpSampler = std::make_shared<Sampler>(mpDevice);
@@ -107,11 +178,8 @@ public:
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Create descriptor for resolve pass input attachments
-        createInputAttachmentDescriptor();
-
         // Initialize GUI
-        App::createGUI(mpDevice, mpRenderPass->getRenderPass(), VK_SAMPLE_COUNT_1_BIT, 1);
+        App::createGUI(mpDevice, mpResolvePass);
     }
 
     ~Assignment2()
@@ -128,29 +196,40 @@ public:
 
     void render() override
     {
-        // Acquire frame from swapchain and prepare rasterizer
-        VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-        mpRenderPass->begin(cmd, glm::vec4(0.2f, 0.6f, 1.0f, 1.0f));
-
-        // Check if camera matrix needs to be updated
+        // Check if camera matrix and attachments need to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
-            createInputAttachmentDescriptor();
+            createAttachments();
+            mpGBufferPass->update(mColorAttachments, mpDepthAttachment);
+            mpResolvePass->update(mpSwapchain->getExtent());
         }
+
+        // Acquire frame from swapchain and prepare rasterizer
+        VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
+
+        // Transition color attachments to correct image layout
+        transitionAttachmentsForGBuffer(cmd);
+
+        // Begin G-Buffer pass
+        mpGBufferPass->begin(cmd, glm::vec4(0.2f, 0.6f, 1.0f, 1.0f));
 
         // Render scene
         mpScene->render(cmd, mpCamera);
 
-        // Go to next subpass of the render pass
-        vkCmdNextSubpass(cmd, VK_SUBPASS_CONTENTS_INLINE);
+        // End the G-Buffer pass without any implicit image transitions
+        vkCmdEndRendering(cmd);
+
+        // Transition color attachments to correct image layout
+        transitionAttachmentsForResolve(cmd);
+
+        mpResolvePass->begin(cmd);
 
         // Bind the pipeline for the full-screen quad
         mPipelines[RESOLVE_PASS]->bind(cmd);
 
-        // Bind descriptors for input attachments
-        auto descriptorSet = mpInputAttachmentDescriptor->getSet(0);
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[RESOLVE_PASS]->getLayout(), 0, 1,
-                                &descriptorSet, 0, nullptr);
+        // Bind descriptors for color attachments
+        mpColorAttachmentDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[RESOLVE_PASS]->getLayout(),
+                                          0);
 
         // Push constants
         PushConstants pushConstants = {
@@ -166,8 +245,8 @@ public:
         App::renderGUI(cmd);
 
         // Submit command buffer to rasterizer and present swapchain frame
-        mpRenderPass->end(cmd);
-        mpSwapchain->present(cmd);
+        mpResolvePass->end(cmd);
+        mpSwapchain->present(cmd, mpResolvePass->getOutput());
     }
 
     void appGUI(ImGuiContext* pContext)
@@ -175,7 +254,7 @@ public:
         ImGui::SetCurrentContext(pContext);
 
         // Render the base GUI, the menu bar with it's subwindows
-        App::baseGUI(mpDevice, mpSwapchain, mpRenderPass, mPipelines);
+        App::baseGUI(mpDevice, mpSwapchain, mPipelines);
 
         if (ImGui::Begin("Assignment 2")) {
             const char* renderModes[] = {
@@ -192,7 +271,7 @@ public:
 
     void appKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mpRenderPass, mPipelines);
+        App::baseKeyCallback(window, key, scancode, action, mods, mpDevice, mpSwapchain, mPipelines);
     }
 
     void appCursorPosCallback(GLFWwindow* pWindow, double xPos, double yPos)
@@ -209,11 +288,16 @@ public:
 private:
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
-    std::shared_ptr<Deferred> mpRenderPass;
+    std::shared_ptr<Pass> mpGBufferPass;
+    std::shared_ptr<Pass> mpResolvePass;
     std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
     std::shared_ptr<Layout> mpResolveLayout;
-    std::shared_ptr<Descriptor> mpInputAttachmentDescriptor;
+
+    std::vector<std::shared_ptr<Image>> mColorAttachments;
+    std::shared_ptr<Descriptor> mpColorAttachmentDescriptor;
+
+    std::shared_ptr<Image> mpDepthAttachment;
 
     std::shared_ptr<Sampler> mpSampler;
     std::shared_ptr<Scene> mpScene;

@@ -134,9 +134,7 @@ namespace Mandrill
 
     private:
         void createPipeline();
-
         void createShaderBindingTable();
-        void createDescriptor();
 
         std::vector<VkRayTracingShaderGroupCreateInfoKHR> mShaderGroups;
 

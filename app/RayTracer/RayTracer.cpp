@@ -21,6 +21,16 @@ public:
         return image;
     }
 
+    static std::shared_ptr<Descriptor> createImageDescriptor(std::shared_ptr<Device> pDevice,
+                                                             std::shared_ptr<Image> pImage,
+                                                             VkDescriptorSetLayout setLayout)
+    {
+        std::vector<DescriptorDesc> descriptorDesc;
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, pImage);
+        descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+        return std::make_shared<Descriptor>(pDevice, descriptorDesc, setLayout);
+    }
+
     RayTracer() : App("Ray Tracer", 1920, 1080)
     {
         // Create a Vulkan instance and device
@@ -30,7 +40,7 @@ public:
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a pass for rendering GUI (depth attachment is not needed)
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain, false);
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, false);
 
         // Create an image to render to
         mpImage = createImage(mpDevice, mpSwapchain);
@@ -119,10 +129,8 @@ public:
         mpCamera->setFov(60.0f);
 
         // Image descriptor (layout is in set 4 from scene)
-        std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpImage);
-        descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-        mpImageDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[4]);
+        mImageDescriptorSetLayout = pLayout->getDescriptorSetLayouts()[4];
+        mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -155,15 +163,17 @@ public:
 
     void render() override
     {
-        // Acquire frame from swapchain
-        VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
-
-        // Check if camera matrix needs to be updated
+        // Check if camera matrix and attachments need to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
+            mpPass->update(mpSwapchain->getExtent());
             // Also update render image since swapchain changed
             mpImage = createImage(mpDevice, mpSwapchain);
+            mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);     
         }
+
+        // Acquire frame from swapchain
+        VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
 
         // Bind pipeline
         mpPipeline->bind(cmd);
@@ -247,6 +257,7 @@ private:
     std::shared_ptr<RayTracingPipeline> mpPipeline;
     std::shared_ptr<Image> mpImage;
     std::shared_ptr<Descriptor> mpImageDescriptor;
+    VkDescriptorSetLayout mImageDescriptorSetLayout;
 
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
