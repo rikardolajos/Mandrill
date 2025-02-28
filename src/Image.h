@@ -103,19 +103,6 @@ namespace Mandrill
             return mHeight;
         }
 
-        /// <summary>
-        /// Get the descriptor set for the image.
-        /// </summary>
-        /// <returns>Descriptor set</returns>
-        MANDRILL_API VkDescriptorSet getDescriptorSet() const
-        {
-            if (mDescriptorSet) {
-                return mDescriptorSet;
-            }
-            Log::error("Descriptor set not created for image");
-            return VK_NULL_HANDLE;
-        }
-
     private:
         ptr<Device> mpDevice;
 
@@ -131,9 +118,5 @@ namespace Mandrill
         uint32_t mMipLevels;
         VkFormat mFormat;
         VkImageTiling mTiling;
-
-        VkDescriptorSetLayout mDescriptorSetLayout;
-        VkDescriptorPool mDescriptorPool;
-        VkDescriptorSet mDescriptorSet;
     };
 } // namespace Mandrill
