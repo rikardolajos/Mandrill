@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <array>
+#include <concepts>
 #include <ctime>
 #include <filesystem>
 #include <format>
@@ -87,16 +88,22 @@
 // Some Mandrill specific helper types and classes
 namespace Mandrill
 {
-    // Shorthand for using shared pointers
+    // Shorthand for std::shared_ptr<T>
     template <typename T> using ptr = std::shared_ptr<T>;
 
+    // Shorthand for std::make_shared<T>
     template <typename T, typename... Args> static inline ptr<T> make_ptr(Args&&... args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
+    template <typename T>
+    concept Sizable = requires(T t) {
+        { t.size() } -> std::convertible_to<std::size_t>;
+    };
+
     // Most vector counts are uint32_t in Vulkan (use with any container that provides size())
-    template <typename T> static inline uint32_t count(T t)
+    template <Sizable T> static inline uint32_t count(const T& t)
     {
         return static_cast<uint32_t>(t.size());
     }
