@@ -68,6 +68,16 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Use this function if image view is created externally.
+        /// </summary>
+        /// <param name="imageView">Image view to use</param>
+        /// <returns></returns>
+        MANDRILL_API void setImageView(VkImageView imageView)
+        {
+            mImageView = imageView;
+        }
+
+        /// <summary>
         /// Get the VkImageView handle.
         /// </summary>
         /// <returns>VkImageView handle</returns>
