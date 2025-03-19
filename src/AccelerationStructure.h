@@ -28,6 +28,8 @@ namespace Mandrill
     class AccelerationStructure : public std::enable_shared_from_this<AccelerationStructure>
     {
     public:
+        MANDRILL_NON_COPYABLE(AccelerationStructure)
+
         MANDRILL_API AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
                                            VkBuildAccelerationStructureFlagsKHR flags);
         MANDRILL_API ~AccelerationStructure();

@@ -10,6 +10,8 @@ namespace Mandrill
     class Pass
     {
     public:
+        MANDRILL_NON_COPYABLE(Pass)
+
         /// <summary>
         /// Create a pass with explicit color and depth attachments.
         /// </summary>

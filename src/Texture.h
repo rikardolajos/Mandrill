@@ -18,10 +18,14 @@ namespace Mandrill
             CubeMap,
         };
 
+        MANDRILL_NON_COPYABLE(Texture)
+
         MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path,
                              bool mipmaps = false);
+
         MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* data, uint32_t width,
                              uint32_t height, uint32_t channels, bool mipmaps = false);
+
         MANDRILL_API ~Texture();
 
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler)

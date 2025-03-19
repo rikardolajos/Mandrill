@@ -13,6 +13,8 @@ namespace Mandrill
     class Device
     {
     public:
+        MANDRILL_NON_COPYABLE(Device)
+
         /// <summary>
         /// Device that initializes and keeps track of everything related to rendering.
         /// </summary>
@@ -23,6 +25,11 @@ namespace Mandrill
         MANDRILL_API Device(GLFWwindow* pWindow,
                             const std::vector<const char*>& extensions = std::vector<const char*>(),
                             uint32_t physicalDeviceIndex = 0);
+        
+        /// <summary>
+        /// Destructor for device.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API ~Device();
 
         /// <summary>

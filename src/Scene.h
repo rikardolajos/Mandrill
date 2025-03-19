@@ -82,7 +82,16 @@ namespace Mandrill
     class Node
     {
     public:
+        /// <summary>
+        /// Create a new scene node.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API Node();
+
+        /// <summary>
+        /// Destructor for scene node.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API ~Node();
 
         /// <summary>
@@ -181,6 +190,8 @@ namespace Mandrill
     class Scene : public std::enable_shared_from_this<Scene>
     {
     public:
+        MANDRILL_NON_COPYABLE(Scene)
+
         /// <summary>
         /// Create a new scene.
         ///
@@ -209,6 +220,11 @@ namespace Mandrill
         /// <param name="supportRayTracing">Prepare scene for handling acceleration sturctures</param>
         /// <returns></returns>
         MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool supportRayTracing = false);
+
+        /// <summary>
+        /// Destructor for scene.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API ~Scene();
 
         /// <summary>

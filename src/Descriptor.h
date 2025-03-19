@@ -59,6 +59,8 @@ namespace Mandrill
     class Descriptor
     {
     public:
+        MANDRILL_NON_COPYABLE(Descriptor)
+
         MANDRILL_API Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
                                 VkDescriptorSetLayout layout);
         MANDRILL_API ~Descriptor();

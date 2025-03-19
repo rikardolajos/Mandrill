@@ -72,6 +72,8 @@ namespace Mandrill
     class Pipeline
     {
     public:
+        MANDRILL_NON_COPYABLE(Pipeline)
+
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
                               const PipelineDesc& desc = PipelineDesc());
         MANDRILL_API ~Pipeline();

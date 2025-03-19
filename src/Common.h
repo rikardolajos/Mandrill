@@ -85,6 +85,11 @@
 #define MANDRILL_API MANDRILL_API_IMPORT
 #endif
 
+#define MANDRILL_NON_COPYABLE(x)                                                                                       \
+    MANDRILL_API x() = delete;                                                                                        \
+    MANDRILL_API x(const x&) = delete;                                                                               \
+    MANDRILL_API x& operator=(const x&) = delete;
+
 // Some Mandrill specific helper types and classes
 namespace Mandrill
 {

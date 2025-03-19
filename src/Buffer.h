@@ -10,6 +10,8 @@ namespace Mandrill
     class Buffer
     {
     public:
+        MANDRILL_NON_COPYABLE(Buffer)
+
         MANDRILL_API Buffer(ptr<Device> pDevice, VkDeviceSize size, VkBufferUsageFlags usage,
                             VkMemoryPropertyFlags properties);
 

@@ -19,6 +19,8 @@ namespace Mandrill
     class Camera
     {
     public:
+        MANDRILL_NON_COPYABLE(Camera)
+
         MANDRILL_API Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapchain);
         MANDRILL_API ~Camera();
 

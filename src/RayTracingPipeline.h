@@ -81,6 +81,8 @@ namespace Mandrill
     class RayTracingPipeline : public Pipeline
     {
     public:
+        MANDRILL_NON_COPYABLE(RayTracingPipeline)
+
         MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout, ptr<Shader> pShader,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
 

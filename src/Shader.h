@@ -22,7 +22,10 @@ namespace Mandrill
     class Shader
     {
     public:
+        MANDRILL_NON_COPYABLE(Shader)
+
         MANDRILL_API Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
+
         MANDRILL_API ~Shader();
 
         MANDRILL_API void reload();

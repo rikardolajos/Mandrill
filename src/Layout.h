@@ -13,7 +13,8 @@ namespace Mandrill
         VkShaderStageFlags stage;
         uint32_t arrayCount;
 
-        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlags stage, uint32_t arrayCount = 0)
+        MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlags stage,
+                                uint32_t arrayCount = 0)
             : set(set), binding(binding), type(type), stage(stage), arrayCount(arrayCount)
         {
         }
@@ -22,8 +23,11 @@ namespace Mandrill
     class Layout
     {
     public:
+        MANDRILL_NON_COPYABLE(Layout)
+
         MANDRILL_API
         Layout(ptr<Device> pDevice, const std::vector<LayoutDesc>& desc, VkDescriptorSetLayoutCreateFlags flags = 0);
+
         MANDRILL_API ~Layout();
 
         MANDRILL_API const std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() const

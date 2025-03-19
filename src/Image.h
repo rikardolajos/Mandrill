@@ -10,6 +10,8 @@ namespace Mandrill
     class Image
     {
     public:
+        MANDRILL_NON_COPYABLE(Image)
+
         /// <summary>
         /// Create a new Image and allocate memory for it.
         /// </summary>

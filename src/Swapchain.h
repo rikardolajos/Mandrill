@@ -11,7 +11,10 @@ namespace Mandrill
     class Swapchain
     {
     public:
+        MANDRILL_NON_COPYABLE(Swapchain)
+
         MANDRILL_API Swapchain(ptr<Device> pDevice, uint32_t framesInFlight = 2);
+
         MANDRILL_API ~Swapchain();
 
         MANDRILL_API void recreate();
