@@ -374,6 +374,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
                 .samplerAnisotropy = VK_TRUE,
                 .vertexPipelineStoresAndAtomics = VK_TRUE,
                 .fragmentStoresAndAtomics = VK_TRUE,
+                .shaderStorageImageWriteWithoutFormat = VK_TRUE,
                 .shaderInt64 = VK_TRUE,
             },
     };
