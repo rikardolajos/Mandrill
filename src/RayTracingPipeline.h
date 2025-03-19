@@ -83,17 +83,49 @@ namespace Mandrill
     public:
         MANDRILL_NON_COPYABLE(RayTracingPipeline)
 
+        /// <summary>
+        /// Create a new ray tracing pipeline.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="pLayout">Layout to use</param>
+        /// <param name="pShader">Shader to use</param>
+        /// <param name="desc">Description of pipeline</param>
         MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout, ptr<Shader> pShader,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
 
+        /// <summary>
+        /// Bind pipeline for rendering.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
+        /// <summary>
+        /// Transition an image for writing to.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="image">Image to transition</param>
+        /// <returns></returns>
         MANDRILL_API void write(VkCommandBuffer cmd, VkImage image);
 
+        /// <summary>
+        /// Transition and image for reading from.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="image">Image to transition</param>
+        /// <returns></returns>
         MANDRILL_API void read(VkCommandBuffer cmd, VkImage image);
 
+        /// <summary>
+        /// Recreate a pipeline. Call this if shader source code has changed and should be reloaded.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API void recreate();
 
+        /// <summary>
+        /// Get the raygen group shader binding table record.
+        /// </summary>
+        /// <returns>Device address for raygen group</returns>
         MANDRILL_API VkStridedDeviceAddressRegionKHR getRayGenSBT() const
         {
             VkDeviceAddress address = mpShaderBindingTableBuffer->getDeviceAddress();
@@ -105,6 +137,10 @@ namespace Mandrill
             return region;
         }
 
+        /// <summary>
+        /// Get the miss group shader binding table record.
+        /// </summary>
+        /// <returns>Device address for miss group</returns>
         MANDRILL_API VkStridedDeviceAddressRegionKHR getMissSBT() const
         {
             VkDeviceAddress address = mpShaderBindingTableBuffer->getDeviceAddress();
@@ -116,6 +152,10 @@ namespace Mandrill
             return region;
         }
 
+        /// <summary>
+        /// Get the hit group shader binding table record.
+        /// </summary>
+        /// <returns>Device address for hit group</returns>
         MANDRILL_API VkStridedDeviceAddressRegionKHR getHitSBT() const
         {
             VkDeviceAddress address = mpShaderBindingTableBuffer->getDeviceAddress();
@@ -127,6 +167,10 @@ namespace Mandrill
             return region;
         }
 
+        /// <summary>
+        /// [NOT IMPLEMENTED] Get the call group shader binding table record.
+        /// </summary>
+        /// <returns>Device address for call group</returns>
         MANDRILL_API VkStridedDeviceAddressRegionKHR getCallSBT() const
         {
             // Not implemented

@@ -20,29 +20,69 @@ namespace Mandrill
 
         MANDRILL_NON_COPYABLE(Texture)
 
+        /// <summary>
+        /// Create a new texture from a file.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="type">Type of texture</param>
+        /// <param name="format">Format to use</param>
+        /// <param name="path">Path to texture file</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
         MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path,
                              bool mipmaps = false);
 
+        /// <summary>
+        /// Create a new texture from a buffer.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="type">Type of texture</param>
+        /// <param name="format">Format to use</param>
+        /// <param name="data">Pointer to texture data</param>
+        /// <param name="width">Width of texture</param>
+        /// <param name="height">Height of texture</param>
+        /// <param name="channels">Number of channels in texture</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
         MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* data, uint32_t width,
                              uint32_t height, uint32_t channels, bool mipmaps = false);
 
+        /// <summary>
+        /// Destructor for texture.
+        /// </summary>
         MANDRILL_API ~Texture();
 
+        /// <summary>
+        /// Set the sampler for the texture.
+        /// </summary>
+        /// <param name="pSampler">Sampler to use</param>
+        /// <returns></returns>
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler)
         {
             mImageInfo.sampler = pSampler->getSampler();
         }
 
+        /// <summary>
+        /// Get the sampler handle currently in use by the texture.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API VkSampler getSampler()
         {
             return mImageInfo.sampler;
         }
 
+        /// <summary>
+        /// Get the image view handle.
+        /// </summary>
+        /// <returns>Image view handle</returns>
         MANDRILL_API VkImageView getImageView()
         {
             return mImageInfo.imageView;
         }
 
+        /// <summary>
+        /// Get the write descriptor set. Useful when using push descriptors.
+        /// </summary>
+        /// <param name="binding">Binding to place the write descriptor in</param>
+        /// <returns>Write descriptor set</returns>
         MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding)
         {
             VkWriteDescriptorSet descriptor = {

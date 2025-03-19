@@ -24,17 +24,37 @@ namespace Mandrill
     public:
         MANDRILL_NON_COPYABLE(Shader)
 
+        /// <summary>
+        /// Create a new shader.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="desc">Description of shader being created</param>
         MANDRILL_API Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
 
+        /// <summary>
+        /// Destructor for shader.
+        /// </summary>
         MANDRILL_API ~Shader();
 
+        /// <summary>
+        /// Reload shader code from disk and recompile it.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API void reload();
 
+        /// <summary>
+        /// Get shader module handles.
+        /// </summary>
+        /// <returns>Vector of shader module handles</returns>
         MANDRILL_API std::vector<VkShaderModule> getModules() const
         {
             return mModules;
         }
 
+        /// <summary>
+        /// Get pipeline shader stage create infos.
+        /// </summary>
+        /// <returns>Vector of pipeline shader stage create infos</returns>
         MANDRILL_API std::vector<VkPipelineShaderStageCreateInfo> getStages() const
         {
             return mStages;

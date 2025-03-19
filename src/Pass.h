@@ -48,7 +48,7 @@ namespace Mandrill
                           bool depthAttachment = true, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
         /// <summary>
-        /// Destroy a pass.
+        /// Destructor for pass.
         /// </summary>
         /// <returns></returns>
         MANDRILL_API ~Pass();

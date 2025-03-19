@@ -61,8 +61,18 @@ namespace Mandrill
     public:
         MANDRILL_NON_COPYABLE(Descriptor)
 
+        /// <summary>
+        /// Create a new descriptor.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="desc">Description of the descriptor being created</param>
+        /// <param name="layout">Layout to use</param>
         MANDRILL_API Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& desc,
                                 VkDescriptorSetLayout layout);
+
+        /// <summary>
+        /// Destructor for descriptor.
+        /// </summary>
         MANDRILL_API ~Descriptor();
 
         /// <summary>
@@ -110,6 +120,10 @@ namespace Mandrill
             vkCmdBindDescriptorSets(cmd, bindPoint, pipelineLayout, firstSet, 1, &mSet, 0, nullptr);
         }
 
+        /// <summary>
+        /// Get the descriptor set handle.
+        /// </summary>
+        /// <returns>Descriptor set handle</returns>
         MANDRILL_API VkDescriptorSet getSet() const
         {
             return mSet;

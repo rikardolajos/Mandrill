@@ -74,34 +74,78 @@ namespace Mandrill
     public:
         MANDRILL_NON_COPYABLE(Pipeline)
 
+        /// <summary>
+        /// Create a new pipeline.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="pPass">Pass to use</param>
+        /// <param name="pLayout">Layout to use</param>
+        /// <param name="pShader">Shader to use</param>
+        /// <param name="desc">Description of pipeline</param>
         MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
                               const PipelineDesc& desc = PipelineDesc());
+
+        /// <summary>
+        /// Destructor for pipeline.
+        /// </summary>
         MANDRILL_API ~Pipeline();
 
+        /// <summary>
+        /// Bind a pipeline for rendering and set its dynamic states.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
+        /// <summary>
+        /// Recreate a pipeline. Call this if shader source code has changed and should be reloaded.
+        /// </summary>
+        /// <returns></returns>
         MANDRILL_API void recreate();
 
+        /// <summary>
+        /// Get the pipeline handle.
+        /// </summary>
+        /// <returns>Pipeline handle</returns>
         MANDRILL_API VkPipeline getPipeline() const
         {
             return mPipeline;
         }
 
+        /// <summary>
+        /// Get the pipeline layout handle.
+        /// </summary>
+        /// <returns>Pipeline layout handle</returns>
         MANDRILL_API VkPipelineLayout getLayout() const
         {
             return mPipelineLayout;
         }
 
+        /// <summary>
+        /// Set the cull mode.
+        /// </summary>
+        /// <param name="cullMode">New cull mode</param>
+        /// <returns></returns>
         MANDRILL_API void setCullMode(VkCullModeFlagBits cullMode)
         {
             mCullMode = cullMode;
         }
 
+        /// <summary>
+        /// Set the front face.
+        /// </summary>
+        /// <param name="frontFace">New front face</param>
+        /// <returns></returns>
         MANDRILL_API void setFrontFace(VkFrontFace frontFace)
         {
             mFrontFace = frontFace;
         }
 
+        /// <summary>
+        /// Set line width.
+        /// </summary>
+        /// <param name="lineWidth">New line width</param>
+        /// <returns></returns>
         MANDRILL_API void setLineWidth(float lineWidth)
         {
             mLineWidth = lineWidth;

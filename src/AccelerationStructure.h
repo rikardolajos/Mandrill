@@ -30,8 +30,18 @@ namespace Mandrill
     public:
         MANDRILL_NON_COPYABLE(AccelerationStructure)
 
+        /// <summary>
+        /// Create a new acceleration structure.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="pScene">Scene to create the acceleration structure of</param>
+        /// <param name="flags">Flags for building acceleration structure</param>
         MANDRILL_API AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
                                            VkBuildAccelerationStructureFlagsKHR flags);
+
+        /// <summary>
+        /// Destructor for acceleration structure.
+        /// </summary>
         MANDRILL_API ~AccelerationStructure();
 
         /// <summary>

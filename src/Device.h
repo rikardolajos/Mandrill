@@ -29,7 +29,6 @@ namespace Mandrill
         /// <summary>
         /// Destructor for device.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API ~Device();
 
         /// <summary>

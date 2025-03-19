@@ -13,6 +13,11 @@ namespace Mandrill
     class MANDRILL_API Helpers
     {
     public:
+        /// <summary>
+        /// Create a new one-time use command buffer. This call should be paired with a corresponding call to cmdEnd().
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <returns>Command buffer</returns>
         inline static VkCommandBuffer cmdBegin(ptr<Device> pDevice)
         {
             VkCommandBufferAllocateInfo ai = {
@@ -35,6 +40,11 @@ namespace Mandrill
             return cmd;
         }
 
+        /// <summary>
+        /// End a one-time use command buffer that was initialized with a call to cmdBegin().
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="cmd">Command buffer to end</param>
         inline static void cmdEnd(ptr<Device> pDevice, VkCommandBuffer cmd)
         {
             Check::Vk(vkEndCommandBuffer(cmd));
@@ -51,6 +61,13 @@ namespace Mandrill
             vkFreeCommandBuffers(pDevice->getDevice(), pDevice->getCommandPool(), 1, &cmd);
         }
 
+        /// <summary>
+        /// Find a suitable memory type given the memory properties.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="typeFilter">Type filter from memory requirements</param>
+        /// <param name="properties">Requested memory properties</param>
+        /// <returns>Memory type</returns>
         inline static uint32_t findMemoryType(ptr<Device> pDevice, uint32_t typeFilter,
                                               VkMemoryPropertyFlags properties)
         {
@@ -65,6 +82,14 @@ namespace Mandrill
             return UINT32_MAX;
         }
 
+        /// <summary>
+        /// Find supported format for an attachment.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="candidates">Formats that we want to use</param>
+        /// <param name="tiling">Tiling to use</param>
+        /// <param name="features">Features to use</param>
+        /// <returns>A supported format or VK_FORMAT_UNDEFINED</returns>
         inline static VkFormat findSupportedFormat(ptr<Device> pDevice, std::vector<VkFormat> candidates,
                                                    VkImageTiling tiling, VkFormatFeatureFlags features)
         {
@@ -82,7 +107,11 @@ namespace Mandrill
             return VK_FORMAT_UNDEFINED;
         }
 
-
+        /// <summary>
+        /// Find a supported depth format for a depth attachment.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <returns>A supported depth format or VK_FORMAT_UNDEFINED</returns>
         inline static VkFormat findDepthFormat(ptr<Device> pDevice)
         {
             std::vector<VkFormat> candidates;
@@ -94,6 +123,18 @@ namespace Mandrill
                                        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
 
+        /// <summary>
+        /// Create an image barrier with layout transition.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="srcStage">Stage the barrier has to wait for</param>
+        /// <param name="srcAccess">Type of access the barrier has to wait for</param>
+        /// <param name="dstStage">Stage when the barrier has to be finished</param>
+        /// <param name="dstAccess">Type of access the barrer must be ready for when finished</param>
+        /// <param name="oldLayout">Old image layout</param>
+        /// <param name="newLayout">New image layout</param>
+        /// <param name="image">Image to transition</param>
+        /// <param name="pSubresourceRange">Subresource range to use, or nullptr</param>
         inline static void imageBarrier(VkCommandBuffer cmd, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess,
                                         VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess,
                                         VkImageLayout oldLayout, VkImageLayout newLayout, VkImage image,
@@ -130,6 +171,16 @@ namespace Mandrill
             vkCmdPipelineBarrier2(cmd, &dependencyInfo);
         }
 
+        /// <summary>
+        /// Transition an image layout with some standard synchronizations.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="image">Image to transition</param>
+        /// <param name="format">Image format</param>
+        /// <param name="oldLayout">Old image layout</param>
+        /// <param name="newLayout">New image layout</param>
+        /// <param name="mipLevels">Miplevel to use</param>
+        /// <param name="cmd">Command buffer to use, otherwise a new one is created</param>
         inline static void transitionImageLayout(ptr<Device> pDevice, VkImage image, VkFormat format,
                                                  VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels,
                                                  VkCommandBuffer cmd = VK_NULL_HANDLE)
@@ -229,6 +280,14 @@ namespace Mandrill
             }
         }
 
+        /// <summary>
+        /// Copy a buffer to an image.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="buffer">Buffer to use</param>
+        /// <param name="image">Image to use</param>
+        /// <param name="width">Width of image</param>
+        /// <param name="height">Height of image</param>
         inline static void copyBufferToImage(ptr<Device> pDevice, VkBuffer buffer, VkImage image, uint32_t width,
                                              uint32_t height)
         {
@@ -254,6 +313,14 @@ namespace Mandrill
             cmdEnd(pDevice, cmd);
         }
 
+        /// <summary>
+        /// Copy an image to a buffer.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="image">Image to use</param>
+        /// <param name="buffer">Buffer to use</param>
+        /// <param name="width">Width of image</param>
+        /// <param name="height">Height of image</param>
         inline static void copyImageToBuffer(ptr<Device> pDevice, VkImage image, VkBuffer buffer, uint32_t width,
                                              uint32_t height)
         {
@@ -279,6 +346,12 @@ namespace Mandrill
             cmdEnd(pDevice, cmd);
         }
 
+        /// <summary>
+        /// Aligne a value to a given alignment.
+        /// </summary>
+        /// <param name="value">Value to align</param>
+        /// <param name="alignment">Alignment to use</param>
+        /// <returns>Aligned value</returns>
         inline static VkDeviceSize alignTo(VkDeviceSize value, VkDeviceSize alignment)
         {
             return (value + alignment - 1) & ~(alignment - 1);

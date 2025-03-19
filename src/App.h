@@ -25,6 +25,10 @@ namespace Mandrill
         /// <param name="width">Width of window</param>
         /// <param name="height">Height of window</param>
         App(const std::string& title, uint32_t width = 1280, uint32_t height = 720);
+        
+        /// <summary>
+        /// Destructor for app.
+        /// </summary>
         ~App();
 
         /// <summary>
