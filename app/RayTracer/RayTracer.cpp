@@ -7,7 +7,6 @@ class RayTracer : public App
 public:
     struct PushConstants {
         int renderMode;
-        float time;
     };
 
     static std::shared_ptr<Image> createImage(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
@@ -147,8 +146,6 @@ public:
             mpCamera->update(delta, getCursorDelta());
         }
 
-        mTime += delta;
-
         mAngle += mRotationSpeed * delta;
 
         glm::mat4 transform = glm::scale(glm::vec3(0.5f));
@@ -184,7 +181,6 @@ public:
         // Push constants
         PushConstants pushConstants = {
             .renderMode = mRenderMode,
-            .time = mTime,
         };
         vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_RAYGEN_BIT_KHR, 0, sizeof pushConstants,
                            &pushConstants);
@@ -268,7 +264,6 @@ private:
     VkSpecializationInfo mSpecializationInfo;
 
     int mRenderMode = 0;
-    float mTime = 0.0f;
 
     std::shared_ptr<Node> mpCube;
     float mRotationSpeed = 0.2f;
