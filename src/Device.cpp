@@ -399,6 +399,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
     VkPhysicalDeviceVulkan12Features vk12Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
         .pNext = &vk11Features,
+        .uniformAndStorageBuffer8BitAccess = VK_TRUE,
         .descriptorIndexing = mRayTracingSupport,
         .timelineSemaphore = VK_TRUE,
         .bufferDeviceAddress = VK_TRUE,
