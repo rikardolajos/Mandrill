@@ -186,7 +186,6 @@ namespace Mandrill
         VkSwapchainKHR mSwapchain;
         VkFormat mImageFormat;
         VkExtent2D mExtent;
-        std::vector<VkFramebuffer> mFramebuffers;
 
         std::vector<VkImage> mImages;
         std::vector<VkImageView> mImageViews;
