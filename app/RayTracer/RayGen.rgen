@@ -12,7 +12,7 @@ layout(set = 0, binding = 0) uniform CameraUniforms {
 
 layout(set = 3, binding = 0) uniform accelerationStructureEXT scene;
 
-layout(set = 4, binding = 0) uniform writeonly image2D image;
+layout(set = 4, binding = 0, rgba8) uniform image2D image;
 
 layout(push_constant) uniform PushConstant {
     uint renderMode;

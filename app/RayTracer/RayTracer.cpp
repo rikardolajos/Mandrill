@@ -14,7 +14,7 @@ public:
     {
         auto image = std::make_shared<Image>(
             pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, VK_SAMPLE_COUNT_1_BIT,
-            pSwapchain->getImageFormat(), VK_IMAGE_TILING_OPTIMAL,
+            VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         image->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
@@ -40,7 +40,7 @@ public:
         mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
 
         // Create a pass for rendering GUI (depth attachment is not needed)
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, false);
+        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), VK_FORMAT_R8G8B8A8_UNORM, 1, false);
 
         // Create an image to render to
         mpImage = createImage(mpDevice, mpSwapchain);
@@ -56,13 +56,13 @@ public:
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
-        std::shared_ptr<Node> pNode = mpScene->addNode();
+        // std::shared_ptr<Node> pNode = mpScene->addNode();
         // for (auto meshIndex : meshIndices) {
         //     pNode->addMesh(meshIndex);
         // }
 
-        // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+        //// Scale down the model
+        // pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpCube = mpScene->addNode();
         for (auto meshIndex : meshIndices2) {
@@ -169,7 +169,7 @@ public:
             mpPass->update(mpSwapchain->getExtent());
             // Also update render image since swapchain changed
             mpImage = createImage(mpDevice, mpSwapchain);
-            mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);     
+            mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
         }
 
         // Acquire frame from swapchain
