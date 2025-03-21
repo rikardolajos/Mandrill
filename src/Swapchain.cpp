@@ -151,15 +151,26 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     int32_t srcHeight = static_cast<int32_t>(pImage->getHeight());
     int32_t dstWidth = static_cast<int32_t>(mExtent.width);
     int32_t dstHeight = static_cast<int32_t>(mExtent.height);
-    VkImageBlit region = {
+    VkImageBlit2 region = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
         .srcSubresource = subresourceLayers,
         .srcOffsets = {{0, 0, 0}, {srcWidth, srcHeight, 1}},
         .dstSubresource = subresourceLayers,
         .dstOffsets = {{0, 0, 0}, {dstWidth, dstHeight, 1}},
     };
 
-    vkCmdBlitImage(cmd, pImage->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mImages[mImageIndex],
-                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
+    VkBlitImageInfo2 blitImageInfo = {
+        .sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2,
+        .srcImage = pImage->getImage(),
+        .srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        .dstImage = mImages[mImageIndex],
+        .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        .regionCount = 1,
+        .pRegions = &region,
+        .filter = VK_FILTER_NEAREST,
+    };
+
+    vkCmdBlitImage2(cmd, &blitImageInfo);
 
     // Transition swapchain image for presenting
     Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
