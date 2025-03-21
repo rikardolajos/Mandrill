@@ -115,6 +115,15 @@ namespace Mandrill
             return mHeight;
         }
 
+        /// <summary>
+        /// Get the mipmap levels of the image.
+        /// </summary>
+        /// <returns>Image mipmap levels</returns>
+        MANDRILL_API uint32_t getMipLevels() const
+        {
+            return mMipLevels;
+        }
+
     private:
         ptr<Device> mpDevice;
 

@@ -51,17 +51,17 @@ public:
         mpSampler = std::make_shared<Sampler>(mpDevice);
 
         // Load scene
-        // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
         // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
         auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
-        // std::shared_ptr<Node> pNode = mpScene->addNode();
-        // for (auto meshIndex : meshIndices) {
-        //     pNode->addMesh(meshIndex);
-        // }
+         std::shared_ptr<Node> pNode = mpScene->addNode();
+         for (auto meshIndex : meshIndices) {
+             pNode->addMesh(meshIndex);
+         }
 
-        //// Scale down the model
-        // pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+        // Scale down the model
+        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpCube = mpScene->addNode();
         for (auto meshIndex : meshIndices2) {

@@ -10,68 +10,70 @@
 using namespace Mandrill;
 
 Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
-    : mpDevice(pDevice), mFormat(format), mMipLevels(1), mImageInfo{0}
+    : mpDevice(pDevice), mImageInfo{0}
 {
     Log::info("Loading texture from {}", path.string());
 
     stbi_set_flip_vertically_on_load(1);
 
     std::string pathStr = path.string();
-    stbi_uc* data = stbi_load(pathStr.c_str(), &mWidth, &mHeight, &mChannels, STBI_rgb_alpha);
-    mChannels = STBI_rgb_alpha;
+    int width, height, channels;
+    stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+    channels = STBI_rgb_alpha;
 
-    if (!data) {
+    if (!pData) {
         Log::error("Failed to load texture.");
         return;
     }
 
-    create(data, mipmaps);
+    create(format, pData, width, height, channels, mipmaps);
 
-    stbi_image_free(data);
+    stbi_image_free(pData);
 }
 
-Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* data, uint32_t width, uint32_t height,
+Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* pData, uint32_t width, uint32_t height,
                  uint32_t channels, bool mipmaps)
-    : mpDevice(pDevice), mFormat(format), mWidth(width), mHeight(height), mChannels(channels), mMipLevels(1),
-      mImageInfo{0}
+    : mpDevice(pDevice), mImageInfo{0}
 {
-    create(data, mipmaps);
+    create(format, pData, width, height, channels, mipmaps);
 }
 
 Texture::~Texture()
 {
 }
 
-void Texture::create(const void* data, bool mipmaps)
+void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t channels,
+                     bool mipmaps)
 {
+    uint32_t mipLevels = 1;
     if (mipmaps) {
-        mMipLevels = static_cast<uint32_t>(std::floor(log2(std::max(mWidth, mHeight))) + 1);
+        mipLevels = static_cast<uint32_t>(std::floor(log2(std::max(width, height))) + 1);
     }
 
     mpImage =
-        make_ptr<Image>(mpDevice, mWidth, mHeight, mMipLevels, VK_SAMPLE_COUNT_1_BIT, mFormat, VK_IMAGE_TILING_OPTIMAL,
+        make_ptr<Image>(mpDevice, width, height, mipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
                         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    if (data) {
-        VkDeviceSize size = mWidth * mHeight * mChannels;
+    if (pData) {
+        VkDeviceSize size = width * height * channels;
 
         Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        staging.copyFromHost(data, size);
+        staging.copyFromHost(pData, size);
 
-        Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_UNDEFINED,
-                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mMipLevels);
+        Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), format, VK_IMAGE_LAYOUT_UNDEFINED,
+                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
 
-        Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(mWidth),
-                                   static_cast<uint32_t>(mHeight));
+        Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(width),
+                                   static_cast<uint32_t>(height));
 
         if (mipmaps) {
             generateMipmaps();
         } else {
-            Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), mFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mMipLevels);
+            Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
         }
     }
 
@@ -87,7 +89,7 @@ void Texture::create(const void* data, bool mipmaps)
 void Texture::generateMipmaps()
 {
     VkFormatProperties props;
-    vkGetPhysicalDeviceFormatProperties(mpDevice->getPhysicalDevice(), mFormat, &props);
+    vkGetPhysicalDeviceFormatProperties(mpDevice->getPhysicalDevice(), mpImage->getFormat(), &props);
 
     if (!(props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
         Log::error("Texture image format does not support linear blitting");
@@ -95,62 +97,54 @@ void Texture::generateMipmaps()
 
     VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
 
-    VkImageMemoryBarrier barrier = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .image = mpImage->getImage(),
-        .subresourceRange =
-            {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1,
-            },
+    VkImageSubresourceRange subresourceRange = {
+        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+        .levelCount = 1,
+        .baseArrayLayer = 0,
+        .layerCount = 1,
     };
 
-    int32_t mipWidth = mWidth;
-    int32_t mipHeight = mHeight;
+    int32_t mipWidth = mpImage->getWidth();
+    int32_t mipHeight = mpImage->getHeight();
 
-    for (uint32_t i = 1; i < mMipLevels; i++) {
-        barrier.subresourceRange.baseMipLevel = i - 1;
-        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+    for (uint32_t i = 1; i < mpImage->getMipLevels(); i++) {
+        subresourceRange.baseMipLevel = i - 1;
 
-        vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
-                             nullptr, 1, &barrier);
+        Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_TRANSFER_BIT_KHR, VK_ACCESS_TRANSFER_WRITE_BIT,
+                              VK_PIPELINE_STAGE_2_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
+                              VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                              mpImage->getImage(), &subresourceRange);
 
-        VkImageBlit blit = {
-            .srcSubresource =
-                {
-                    .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                    .mipLevel = i - 1,
-                    .baseArrayLayer = 0,
-                    .layerCount = 1,
-                },
+        VkImageBlit2 region = {
+            .srcSubresource = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                               .mipLevel = i - 1,
+                               .baseArrayLayer = 0,
+                               .layerCount = 1},
             .srcOffsets = {{0, 0, 0}, {mipWidth, mipHeight, 1}},
-            .dstSubresource =
-                {
-                    .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                    .mipLevel = i,
-                    .baseArrayLayer = 0,
-                    .layerCount = 1,
-                },
+            .dstSubresource = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                               .mipLevel = i,
+                               .baseArrayLayer = 0,
+                               .layerCount = 1},
             .dstOffsets = {{0, 0, 0}, {mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1}},
         };
 
-        vkCmdBlitImage(cmd, mpImage->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mpImage->getImage(),
-                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
+        VkBlitImageInfo2 blitImageInfo = {
+            .sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2,
+            .srcImage = mpImage->getImage(),
+            .srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            .dstImage = mpImage->getImage(),
+            .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            .regionCount = 1,
+            .pRegions = &region,
+            .filter = VK_FILTER_NEAREST,
+        };
 
-        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        vkCmdBlitImage2(cmd, &blitImageInfo);
 
-        vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr,
-                             0, nullptr, 1, &barrier);
+        Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_TRANSFER_BIT_KHR, VK_ACCESS_2_TRANSFER_READ_BIT,
+                              VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
+                              VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                              mpImage->getImage(), &subresourceRange);
 
         if (mipWidth > 1) {
             mipWidth /= 2;
@@ -160,14 +154,12 @@ void Texture::generateMipmaps()
         }
     }
 
-    barrier.subresourceRange.baseMipLevel = mMipLevels - 1;
-    barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-    barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-    barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    subresourceRange.baseMipLevel = mpImage->getMipLevels() - 1;
 
-    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
-                         nullptr, 1, &barrier);
+    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_TRANSFER_BIT_KHR, VK_ACCESS_2_TRANSFER_WRITE_BIT,
+                          VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                          mpImage->getImage(), &subresourceRange);
 
     Helpers::cmdEnd(mpDevice, cmd);
 }

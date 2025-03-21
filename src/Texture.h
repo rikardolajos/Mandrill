@@ -37,12 +37,12 @@ namespace Mandrill
         /// <param name="pDevice">Device to use</param>
         /// <param name="type">Type of texture</param>
         /// <param name="format">Format to use</param>
-        /// <param name="data">Pointer to texture data</param>
+        /// <param name="pData">Pointer to texture data</param>
         /// <param name="width">Width of texture</param>
         /// <param name="height">Height of texture</param>
         /// <param name="channels">Number of channels in texture</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
-        MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* data, uint32_t width,
+        MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* pData, uint32_t width,
                              uint32_t height, uint32_t channels, bool mipmaps = false);
 
         /// <summary>
@@ -98,14 +98,12 @@ namespace Mandrill
         }
 
     private:
-        void create(const void* data, bool mipmaps);
+        void create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t channels,
+                    bool mipmaps);
         void generateMipmaps();
 
         ptr<Device> mpDevice;
 
-        int mWidth, mHeight, mChannels;
-        uint32_t mMipLevels;
-        VkFormat mFormat;
         ptr<Image> mpImage;
         VkDescriptorImageInfo mImageInfo;
     };
