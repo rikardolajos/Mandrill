@@ -332,7 +332,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
             mProperties.rayTracingPipeline = rtp;
         }
 
-        Log::info(" * {}, driver: {} {}, Vulkan {}.{}.{} {}", prop.properties.deviceName, driver.driverName,
+        Log::info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,
                   driver.driverInfo, VK_API_VERSION_MAJOR(prop.properties.apiVersion),
                   VK_API_VERSION_MINOR(prop.properties.apiVersion), VK_API_VERSION_PATCH(prop.properties.apiVersion),
                   i == physicalDeviceIndex ? "(chosen)" : "");
