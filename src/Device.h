@@ -20,12 +20,14 @@ namespace Mandrill
         /// </summary>
         /// <param name="window">GLFW window to create render context for</param>
         /// <param name="extensions">Extra device extensions to activate</param>
-        /// <param name="physicalDeviceIndex">Physical device to use. Set this explicitly if device 0 is not the
-        /// intended one.</param>
+        /// <param name="pFeatures">Pointer to a pNext-chain of features to link with when creating device, can be
+        /// nullptr in which case a set of required default features will be used</param> <param
+        /// name="physicalDeviceIndex">Physical device to use. Set this explicitly if device 0 is not the intended
+        /// one.</param>
         MANDRILL_API Device(GLFWwindow* pWindow,
                             const std::vector<const char*>& extensions = std::vector<const char*>(),
-                            uint32_t physicalDeviceIndex = 0);
-        
+                            VkPhysicalDeviceFeatures2* pFeatures = nullptr, uint32_t physicalDeviceIndex = 0);
+
         /// <summary>
         /// Destructor for device.
         /// </summary>
@@ -151,7 +153,8 @@ namespace Mandrill
         void createDebugMessenger();
 #endif
         void createInstance();
-        void createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex);
+        void createDevice(const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures2* pFeatures,
+                          uint32_t physicalDeviceIndex);
         void createCommandPool();
         void createSurface();
         void createExtensionProcAddrs();

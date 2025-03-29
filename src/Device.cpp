@@ -23,10 +23,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
         Log::error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
 #if MANDRILL_WINDOWS
-        __debugbreak();         // Vulkan encountered an error and since you are running Mandrill
-#elif MANDRILL_LINUX            // in debug mode, the execution is halted. You can inspect the log,
-        std::raise(SIGTRAP);    // and the call stack in your debugger to find out where in the code
-#endif                          // the error was encountered.
+        __debugbreak(); // Vulkan encountered an error and since you are running Mandrill
+#elif MANDRILL_LINUX    // in debug mode, the execution is halted. You can inspect the log,
+        std::raise(SIGTRAP); // and the call stack in your debugger to find out where in the code
+#endif                  // the error was encountered.
         break;
     }
 
@@ -76,7 +76,8 @@ void Device::createDebugMessenger()
 
 #endif
 
-Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
+Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures2* pFeatures,
+               uint32_t physicalDeviceIndex)
     : mpWindow(pWindow), mVsync(true), mRayTracingSupport(false)
 {
     createInstance();
@@ -86,7 +87,7 @@ Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, 
 #endif
 
     createSurface();
-    createDevice(extensions, physicalDeviceIndex);
+    createDevice(extensions, pFeatures, physicalDeviceIndex);
     createCommandPool();
     createExtensionProcAddrs();
 }
@@ -280,7 +281,8 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     return index;
 }
 
-void Device::createDevice(const std::vector<const char*>& extensions, uint32_t physicalDeviceIndex)
+void Device::createDevice(const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures2* pFeatures,
+                          uint32_t physicalDeviceIndex)
 {
     std::array baseExtensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
@@ -425,7 +427,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, uint32_t p
 
     VkDeviceCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        .pNext = &features2,
+        .pNext = pFeatures ? pFeatures : &features2,
         .queueCreateInfoCount = 1,
         .pQueueCreateInfos = &queueCreateInfo,
         .enabledExtensionCount = count(deviceExtensions),
