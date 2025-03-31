@@ -116,6 +116,7 @@ void Texture::generateMipmaps()
                               mpImage->getImage(), &subresourceRange);
 
         VkImageBlit2 region = {
+            .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
             .srcSubresource = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
                                .mipLevel = i - 1,
                                .baseArrayLayer = 0,
