@@ -110,4 +110,8 @@ void main()
         
         rayPayload.normal = normalize(vec3(TBN * vec3(normal) * gl_WorldToObjectEXT));
     }
+
+    if (gl_HitKindEXT == gl_HitKindBackFacingTriangleEXT) {
+        rayPayload.normal *= -1;
+    }
 }
