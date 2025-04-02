@@ -35,7 +35,7 @@ function(add_shaders TARGET)
         set(OUTPUT "${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}/${SHADER_FILENAME}.spv")
         set(DEP "${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/${TARGET}/${SHADER_FILENAME}.d")
         
-        list(APPEND COMPILE_COMMANDS COMMAND Vulkan::glslc --target-env=vulkan1.3 -MD -MF ${DEP} ${INPUT} -o ${OUTPUT})
+        list(APPEND COMPILE_COMMANDS COMMAND Vulkan::glslc --target-env=vulkan1.4 -MD -MF ${DEP} ${INPUT} -o ${OUTPUT})
         list(APPEND SHADER_OUTPUTS ${OUTPUT})
     endforeach()
 
