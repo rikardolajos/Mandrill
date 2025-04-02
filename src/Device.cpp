@@ -16,19 +16,21 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
                                                     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                     void* pUserData)
 {
+    // clang-format off
     switch (messageSeverity) {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
         Log::warning("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
         Log::error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
-#if MANDRILL_WINDOWS
-        __debugbreak(); // Vulkan encountered an error and since you are running Mandrill
-#elif MANDRILL_LINUX    // in debug mode, the execution is halted. You can inspect the log,
-        std::raise(SIGTRAP); // and the call stack in your debugger to find out where in the code
-#endif                  // the error was encountered.
-        break;
+#if MANDRILL_WINDOWS 
+        __debugbreak();         // Vulkan encountered an error and since you are running Mandrill
+#elif MANDRILL_LINUX            // in debug mode, the execution is halted. You can inspect the log,
+        std::raise(SIGTRAP);    // and the call stack in your debugger to find out where in the code
+#endif                          // the error was encountered.
+        break; 
     }
+    // clang-format on
 
     return VK_FALSE;
 }
