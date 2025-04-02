@@ -76,7 +76,7 @@ Shader::Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc) : mpDev
     mSpecializationInfos.resize(desc.size());
 
     for (size_t i = 0; i < desc.size(); i++) {
-        mSrcFilenames[i] = desc[i].filename;
+        mSrcFilenames[i] = getExecutablePath() / desc[i].filename;
         mEntries[i] = desc[i].entry;
         mStageFlags[i] = desc[i].stageFlags;
         mSpecializationInfos[i] = desc[i].pSpecializationInfo;

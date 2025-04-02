@@ -12,11 +12,16 @@ using namespace Mandrill;
 Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
+    std::filesystem::path fullPath = path;
+    if (path.is_relative()) {
+        fullPath = getExecutablePath() / path;
+    }
+
     Log::info("Loading texture from {}", path.string());
 
     stbi_set_flip_vertically_on_load(1);
 
-    std::string pathStr = path.string();
+    std::string pathStr = fullPath.string();
     int width, height, channels;
     stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
     channels = STBI_rgb_alpha;

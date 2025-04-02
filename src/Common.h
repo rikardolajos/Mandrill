@@ -1,7 +1,17 @@
 #pragma once
 
+#if defined(_WIN64)
+#define NOMINMAX
+#include "windows.h"
+#endif
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+#if defined(_WIN64)
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include "GLFW/glfw3native.h"
+#endif
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -112,6 +122,19 @@ namespace Mandrill
     template <Sizable T> static inline uint32_t count(const T& t)
     {
         return static_cast<uint32_t>(t.size());
+    }
+
+    static inline std::filesystem::path getExecutablePath()
+    {
+        std::filesystem::path path;
+#if MANDRILL_WINDOWS
+        TCHAR szFile[260] = {0};
+        GetModuleFileNameA(NULL, szFile, 260);
+        path = std::filesystem::path(szFile);
+#elif MANDRILL_LINUX
+        path = std::filesystem::canonical("/proc/self/exe");
+#endif
+        return path.remove_filename();
     }
 
 } // namespace Mandrill

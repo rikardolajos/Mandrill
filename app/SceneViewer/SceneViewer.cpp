@@ -1,10 +1,5 @@
 #include "Mandrill.h"
 
-#if MANDRILL_WINDOWS
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include "GLFW/glfw3native.h"
-#endif
-
 using namespace Mandrill;
 
 class SceneViewer : public App
