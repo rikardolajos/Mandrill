@@ -464,14 +464,15 @@ void App::initImGUI()
     ImGui_ImplGlfw_InitForVulkan(mpWindow, true);
 }
 
-static void saveScreenshot(uint8_t* data, uint32_t width, uint32_t height, uint32_t channels)
+static void saveScreenshot(uint8_t* pData, uint32_t width, uint32_t height, uint32_t channels)
 {
     char timestamp[64];
     time_t t = std::time(nullptr);
     std::strftime(timestamp, 64, "%G-%m-%d_%H-%M-%S", std::localtime(&t));
-    std::filesystem::path filename = std::format("{}.png", timestamp);
-    stbi_write_png(filename.string().c_str(), width, height, channels, data, width * 4);
+    std::filesystem::path filename = std::format("Screenshot_{}.png", timestamp);
+    stbi_write_png(filename.string().c_str(), width, height, channels, pData, width * 4);
     auto fullpath = std::filesystem::current_path() / filename;
+    std::free(pData);
 
     Log::info("Screenshot saved to {}", fullpath.string());
 }
@@ -493,16 +494,23 @@ void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
                                pSwapchain->getExtent().height);
     Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
                                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
-    uint8_t* data = static_cast<uint8_t*>(buffer.getHostMap());
+    uint8_t* pData = static_cast<uint8_t*>(buffer.getHostMap());
 
     // BGR -> RGB
     for (uint32_t i = 0; i < size; i += channels) {
-        std::swap(data[i], data[i + 2]);
+        std::swap(pData[i], pData[i + 2]);
     }
+
+    uint8_t* pDataCopy = static_cast<uint8_t*>(std::malloc(buffer.getSize()));
+    if (!pDataCopy) {
+        Log::error("Failed to allocate buffer for screenshot");
+        return;
+    }
+    std::memcpy(pDataCopy, pData, buffer.getSize());
 
     // Run in a thread since saving takes forever
     auto thread =
-        std::thread(saveScreenshot, data, pSwapchain->getExtent().width, pSwapchain->getExtent().height, channels);
+        std::thread(saveScreenshot, pDataCopy, pSwapchain->getExtent().width, pSwapchain->getExtent().height, channels);
     thread.detach();
 }
 
