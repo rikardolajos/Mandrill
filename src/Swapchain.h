@@ -198,8 +198,8 @@ namespace Mandrill
 
         std::vector<VkCommandBuffer> mCommandBuffers;
 
-        std::vector<VkSemaphore> mImageAvailableSemaphores;
-        std::vector<VkSemaphore> mRenderFinishedSemaphores;
+        std::vector<VkSemaphore> mImageFinishedSemaphores;
+        std::vector<VkSemaphore> mInFlightSemaphores;
         std::vector<VkFence> mInFlightFences;
 
         uint32_t mInFlightIndex = 0;

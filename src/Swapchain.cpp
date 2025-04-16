@@ -110,7 +110,7 @@ VkCommandBuffer Swapchain::acquireNextImage()
 
     // Acquire index of next image in the swapchain
     VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
-                                            mImageAvailableSemaphores[mInFlightIndex], nullptr, &mImageIndex);
+                                            mInFlightSemaphores[mInFlightIndex], nullptr, &mImageIndex);
 
     // Check if swapchain needs to be reconstructed
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -184,12 +184,12 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     VkSubmitInfo si = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &mImageAvailableSemaphores[mInFlightIndex],
+        .pWaitSemaphores = &mInFlightSemaphores[mInFlightIndex],
         .pWaitDstStageMask = &waitStage,
         .commandBufferCount = 1,
         .pCommandBuffers = &cmd,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &mRenderFinishedSemaphores[mInFlightIndex],
+        .pSignalSemaphores = &mImageFinishedSemaphores[mImageIndex],
     };
 
     Check::Vk(vkQueueSubmit(mpDevice->getQueue(), 1, &si, mInFlightFences[mInFlightIndex]));
@@ -197,7 +197,7 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     VkPresentInfoKHR pi = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &mRenderFinishedSemaphores[mInFlightIndex],
+        .pWaitSemaphores = &mImageFinishedSemaphores[mImageIndex],
         .swapchainCount = 1,
         .pSwapchains = &mSwapchain,
         .pImageIndices = &mImageIndex,
@@ -324,8 +324,8 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
 
     Check::Vk(vkAllocateCommandBuffers(mpDevice->getDevice(), &ai, mCommandBuffers.data()));
 
-    mImageAvailableSemaphores.resize(framesInFlight);
-    mRenderFinishedSemaphores.resize(framesInFlight);
+    mImageFinishedSemaphores.resize(count(mImages));
+    mInFlightSemaphores.resize(framesInFlight);
     mInFlightFences.resize(framesInFlight);
 
     VkSemaphoreCreateInfo sci = {
@@ -337,9 +337,12 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
         .flags = VK_FENCE_CREATE_SIGNALED_BIT,
     };
 
+    for (uint32_t i = 0; i < count(mImages); i++) {
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mImageFinishedSemaphores[i]));
+    }
+
     for (uint32_t i = 0; i < framesInFlight; i++) {
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mImageAvailableSemaphores[i]));
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mRenderFinishedSemaphores[i]));
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mInFlightSemaphores[i]));
         Check::Vk(vkCreateFence(mpDevice->getDevice(), &fci, nullptr, &mInFlightFences[i]));
     }
 }
@@ -351,9 +354,12 @@ void Swapchain::destroySyncObjects()
     vkFreeCommandBuffers(mpDevice->getDevice(), mpDevice->getCommandPool(), count(mCommandBuffers),
                          mCommandBuffers.data());
 
-    for (uint32_t i = 0; i < count(mImageAvailableSemaphores); i++) {
-        vkDestroySemaphore(mpDevice->getDevice(), mImageAvailableSemaphores[i], nullptr);
-        vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphores[i], nullptr);
+    for (uint32_t i = 0; i < count(mImages); i++) {
+        vkDestroySemaphore(mpDevice->getDevice(), mImageFinishedSemaphores[i], nullptr);
+    }
+
+    for (uint32_t i = 0; i < count(mInFlightFences); i++) {
+        vkDestroySemaphore(mpDevice->getDevice(), mInFlightSemaphores[i], nullptr);
         vkDestroyFence(mpDevice->getDevice(), mInFlightFences[i], nullptr);
     }
 }
