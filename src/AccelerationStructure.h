@@ -34,9 +34,9 @@ namespace Mandrill
         /// Create a new acceleration structure.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="pScene">Scene to create the acceleration structure of</param>
+        /// <param name="wpScene">Scene to create the acceleration structure of</param>
         /// <param name="flags">Flags for building acceleration structure</param>
-        MANDRILL_API AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
+        MANDRILL_API AccelerationStructure(ptr<Device> pDevice, std::weak_ptr<Scene> wpScene,
                                            VkBuildAccelerationStructureFlagsKHR flags);
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Mandrill
         MANDRILL_API void createTLAS(VkBuildAccelerationStructureFlagsKHR flags, bool update = false);
 
         ptr<Device> mpDevice;
-        ptr<Scene> mpScene;
+        std::weak_ptr<Scene> mwpScene; // Use weak pointer to scene so scene can destruct freely
 
         VkAccelerationStructureKHR mTLAS;
         VkAccelerationStructureGeometryKHR mGeometry;

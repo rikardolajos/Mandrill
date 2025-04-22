@@ -9,16 +9,21 @@
 using namespace Mandrill;
 
 
-AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, ptr<Scene> pScene,
+AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, std::weak_ptr<Scene> wpScene,
                                              VkBuildAccelerationStructureFlagsKHR flags)
-    : mpDevice(pDevice), mpScene(pScene), mTLAS(nullptr)
+    : mpDevice(pDevice), mwpScene(wpScene), mTLAS(nullptr)
 {
-    if (mpScene->getNodes().empty()) {
+    ptr<Scene> pScene = mwpScene.lock();
+    if (!pScene) {
+        Log::error("Scene not valid for acceleration structure");
+    }
+
+    if (pScene->getNodes().empty()) {
         Log::error("Cannot build acceleration structure of empty scene");
         return;
     }
 
-    mBLASes.resize(mpScene->getMeshCount());
+    mBLASes.resize(pScene->getMeshCount());
 
     createBLASes(flags);
     createTLAS(flags);
@@ -47,19 +52,24 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
     VkDeviceSize scratchSize = 0;
     VkDeviceSize totalAccelerationStructureSize = 0;
 
+    ptr<Scene> pScene = mwpScene.lock();
+    if (!pScene) {
+        Log::error("Scene not valid for acceleration structure");
+    }
+
     // Loop over the meshes in the scene
-    for (uint32_t meshIndex = 0; meshIndex < mpScene->getMeshCount(); meshIndex++) {
+    for (uint32_t meshIndex = 0; meshIndex < pScene->getMeshCount(); meshIndex++) {
         BLAS* blas = &mBLASes[meshIndex];
 
-        VkDeviceOrHostAddressConstKHR vertexAddress = {.deviceAddress = mpScene->getMeshVertexAddress(meshIndex)};
-        VkDeviceOrHostAddressConstKHR indexAddress = {.deviceAddress = mpScene->getMeshIndexAddress(meshIndex)};
+        VkDeviceOrHostAddressConstKHR vertexAddress = {.deviceAddress = pScene->getMeshVertexAddress(meshIndex)};
+        VkDeviceOrHostAddressConstKHR indexAddress = {.deviceAddress = pScene->getMeshIndexAddress(meshIndex)};
 
         VkAccelerationStructureGeometryTrianglesDataKHR triangles = {
             .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
             .vertexFormat = VK_FORMAT_R32G32B32_SFLOAT,
             .vertexData = vertexAddress,
             .vertexStride = sizeof(Vertex),
-            .maxVertex = mpScene->getMeshVertexCount(meshIndex) - 1,
+            .maxVertex = pScene->getMeshVertexCount(meshIndex) - 1,
             .indexType = VK_INDEX_TYPE_UINT32,
             .indexData = indexAddress,
             .transformData = {0}, // Identity transform
@@ -77,7 +87,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
         };
 
         blas->buildRange = {
-            .primitiveCount = mpScene->getMeshIndexCount(meshIndex) / 3,
+            .primitiveCount = pScene->getMeshIndexCount(meshIndex) / 3,
             .primitiveOffset = 0,
             .firstVertex = 0,
             .transformOffset = 0,
@@ -182,14 +192,19 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
 
 void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flags, bool update)
 {
+    ptr<Scene> pScene = mwpScene.lock();
+    if (!pScene) {
+        Log::error("Scene not valid for acceleration structure");
+    }
+
     uint32_t instanceCount = 0;
-    for (auto& node : mpScene->getNodes()) {
+    for (auto& node : pScene->getNodes()) {
         instanceCount += count(node.getMeshIndices());
     }
 
     auto instances = std::vector<VkAccelerationStructureInstanceKHR>(instanceCount);
     uint32_t instanceIndex = 0;
-    for (auto& node : mpScene->getNodes()) {
+    for (auto& node : pScene->getNodes()) {
         for (auto& meshIndex : node.getMeshIndices()) {
             VkAccelerationStructureDeviceAddressInfoKHR addressInfo = {
                 .sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
@@ -208,7 +223,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
 
             instances[instanceIndex] = {
                 .transform = transform,
-                .instanceCustomIndex = mpScene->getMeshMaterialIndex(meshIndex),
+                .instanceCustomIndex = pScene->getMeshMaterialIndex(meshIndex),
                 .mask = node.getVisible() ? 0xffu : 0x00u,
                 .instanceShaderBindingTableRecordOffset = 0,
                 .flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
