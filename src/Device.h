@@ -16,7 +16,7 @@ namespace Mandrill
         MANDRILL_NON_COPYABLE(Device)
 
         /// <summary>
-        /// Device that initializes and keeps track of everything related to rendering.
+        /// Device that abstracts the physical and logical device, and their features and properties.
         /// </summary>
         /// <param name="window">GLFW window to create render context for</param>
         /// <param name="extensions">Extra device extensions to activate</param>
