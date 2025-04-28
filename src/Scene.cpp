@@ -38,7 +38,7 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
 
     mpPipeline->bind(cmd);
 
-    // Bind descriptor set for camera matrices and node transform
+    // Bind descriptor set for camera matrices, node transform, and environment map
     VkDeviceSize alignment = pScene->mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
     uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
                                                             pScene->mpSwapchain->getInFlightIndex());
@@ -48,6 +48,10 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
     uint32_t nodeDescriptorOffset =
         static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * pScene->mpSwapchain->getInFlightIndex());
     pDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
+
+    if (pScene->mpEnvironmentMapDescriptor) {
+        pScene->mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 3);
+    }
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
@@ -523,7 +527,11 @@ void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, 
         static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * mpSwapchain->getInFlightIndex());
     pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0, cameraDescriptorOffset);
 
-    mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3);
+    if (mpEnvironmentMapDescriptor) {
+        mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 3);
+    }
+
+    mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 4);
 }
 
 void Scene::setSampler(const ptr<Sampler> pSampler)
@@ -547,6 +555,7 @@ ptr<Layout> Scene::getLayout()
     // 2.3: Material ambient texture
     // 2.4: Material emission texture
     // 2.5: Material normal texture
+    // 3.0: Environment map texture
     desc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
                       VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR);
     desc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
@@ -556,23 +565,25 @@ ptr<Layout> Scene::getLayout()
     desc.emplace_back(2, 3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
     desc.emplace_back(2, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
     desc.emplace_back(2, 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
+    desc.emplace_back(3, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_MISS_BIT_KHR);
 
     if (mSupportRayTracing) {
-        // 3.0: Acceleration structure
-        // 3.1: Scene vertex buffer
-        // 3.2: Scene index buffer
-        // 3.3: Scene material buffer
-        // 3.4: Scene texture array
-        // 3.5: Instance data buffer
-        // 4.0: Output storage image
-        desc.emplace_back(3, 0, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        desc.emplace_back(3, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        desc.emplace_back(3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        desc.emplace_back(3, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        desc.emplace_back(3, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
+        // 4.0: Acceleration structure
+        // 4.1: Scene vertex buffer
+        // 4.2: Scene index buffer
+        // 4.3: Scene material buffer
+        // 4.4: Scene texture array
+        // 4.5: Instance data buffer
+        // 5.0: Output storage image
+        desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        desc.emplace_back(4, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(4, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(4, 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(4, 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                           count(mTextures));
-        desc.emplace_back(3, 5, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-        desc.emplace_back(4, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL);
+        desc.emplace_back(4, 5, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        desc.emplace_back(5, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL);
     }
 
     return make_ptr<Layout>(mpDevice, desc);
@@ -631,7 +642,17 @@ void Scene::createDescriptors()
         mat.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
 
-    // Add extra descriptors for ray tracing (set 3)
+    // Environment map
+    if (mpEnvironmentMap) {
+        std::vector<DescriptorDesc> desc;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
+
+        // Set layout for set 3
+        auto layout = pLayout->getDescriptorSetLayouts()[3];
+        mpEnvironmentMapDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
+    }
+
+    // Add extra descriptors for ray tracing (set 4)
     if (mSupportRayTracing) {
         std::vector<DescriptorDesc> desc;
 
@@ -648,7 +669,7 @@ void Scene::createDescriptors()
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, 0, 0, count(textures));
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpInstanceDataBuffer);
 
-        auto layout = pLayout->getDescriptorSetLayouts()[3];
+        auto layout = pLayout->getDescriptorSetLayouts()[4];
         mpRayTracingDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
 }

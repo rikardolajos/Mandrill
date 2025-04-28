@@ -458,6 +458,16 @@ namespace Mandrill
             return mpAccelerationStructure;
         }
 
+        /// <summary>
+        /// Set an environment map for the scene.
+        /// </summary>
+        /// <param name="pTexture">Texture to use as environment map</param>
+        /// <returns></returns>
+        MANDRILL_API void setEnvironmentMap(ptr<Texture> pTexture)
+        {
+            mpEnvironmentMap = pTexture;
+        }
+
     private:
         friend Node;
 
@@ -471,6 +481,8 @@ namespace Mandrill
         std::vector<Node> mNodes;
         std::vector<Material> mMaterials;
         std::unordered_map<std::string, ptr<Texture>> mTextures;
+        ptr<Texture> mpEnvironmentMap;
+        ptr<Descriptor> mpEnvironmentMapDescriptor;
 
         ptr<Buffer> mpVertexBuffer;
         ptr<Buffer> mpIndexBuffer;
