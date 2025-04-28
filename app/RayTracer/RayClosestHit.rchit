@@ -19,11 +19,11 @@ struct Vertex {
     float _padding; // To enforce same size and alignment as host
 };
 
-layout(set = 3, binding = 1, std430) readonly buffer VertexBuffer {
+layout(set = 4, binding = 1, std430) readonly buffer VertexBuffer {
 	Vertex vertices[VERTEX_COUNT];
 };
 
-layout(set = 3, binding = 2, std430) readonly buffer IndexBuffer {
+layout(set = 4, binding = 2, std430) readonly buffer IndexBuffer {
 	uint indices[INDEX_COUNT];
 };
 
@@ -56,18 +56,18 @@ struct Material {
     uint _padding2;
 };
 
-layout(set = 3, binding = 3, std430) readonly buffer MaterialBuffer {
+layout(set = 4, binding = 3, std430) readonly buffer MaterialBuffer {
 	Material materials[MATERIAL_COUNT];
 };
 
-layout(set = 3, binding = 4) uniform sampler2D textures[TEXTURE_COUNT];
+layout(set = 4, binding = 4) uniform sampler2D textures[TEXTURE_COUNT];
 
 struct InstanceData {
     uint verticesOffset;
     uint indicesOffset;
 };
 
-layout(set = 3, binding = 5, std430) readonly buffer InstanceDataBuffer {
+layout(set = 4, binding = 5, std430) readonly buffer InstanceDataBuffer {
 	InstanceData instanceDatas[MESH_COUNT];
 };
 

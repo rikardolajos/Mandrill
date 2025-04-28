@@ -25,6 +25,8 @@ layout(set = 2, binding = 3) uniform sampler2D ambientTexture;
 layout(set = 2, binding = 4) uniform sampler2D emissionTexture;
 layout(set = 2, binding = 5) uniform sampler2D normalTexture;
 
+layout(set = 3, binding = 0) uniform sampler2D environmentMap;
+
 layout(push_constant) uniform PushConstant {
     uint renderMode;
     uint discardOnZeroAlpha;

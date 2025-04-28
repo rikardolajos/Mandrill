@@ -72,6 +72,12 @@ public:
         mpScene->compile();
         mpScene->syncToDevice();
 
+        // Load environment map
+        mpEnvironmentMap = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
+                                                     "D:\\scenes\\hdris\\lilienstein_4k.hdr");
+        mpEnvironmentMap->setSampler(mpSampler);
+        mpScene->setEnvironmentMap(mpEnvironmentMap);
+
         // Setup specialization constants with scene information for ray gen shader
         mSpecializationConstants.push_back(mpScene->getVertexCount());   // VERTEX_COUNT
         mSpecializationConstants.push_back(mpScene->getIndexCount());    // INDEX_COUNT
@@ -127,8 +133,8 @@ public:
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Image descriptor (layout is in set 4 from scene)
-        mImageDescriptorSetLayout = pLayout->getDescriptorSetLayouts()[4];
+        // Image descriptor (layout is in set 5 from scene)
+        mImageDescriptorSetLayout = pLayout->getDescriptorSetLayouts()[5];
         mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
 
         // Initialize GUI
@@ -187,7 +193,7 @@ public:
 
         // Bind descriptors
         mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 4);
+        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 5);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -258,6 +264,8 @@ private:
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
     std::shared_ptr<Sampler> mpSampler;
+
+    std::shared_ptr<Texture> mpEnvironmentMap;
 
     std::vector<uint32_t> mSpecializationConstants;
     std::vector<VkSpecializationMapEntry> mSpecializationMapEntries;
