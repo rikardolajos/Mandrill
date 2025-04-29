@@ -312,9 +312,14 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
         };
 
+        VkPhysicalDeviceAccelerationStructurePropertiesKHR asp = {
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR,
+            .pNext = &rtp,
+        };
+
         VkPhysicalDeviceDescriptorBufferPropertiesEXT descriptorBuffer = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT,
-            .pNext = &rtp,
+            .pNext = &asp,
         };
 
         VkPhysicalDeviceDriverProperties driver = {
@@ -334,6 +339,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             vkGetPhysicalDeviceProperties(mPhysicalDevice, &mProperties.physicalDevice);
             vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mProperties.memory);
             mProperties.rayTracingPipeline = rtp;
+            mProperties.accelerationStucture = asp;
         }
 
         Log::info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,

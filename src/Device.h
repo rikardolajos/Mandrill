@@ -8,6 +8,7 @@ namespace Mandrill
         VkPhysicalDeviceProperties physicalDevice;
         VkPhysicalDeviceMemoryProperties memory;
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipeline;
+        VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStucture;
     };
 
     class Device
