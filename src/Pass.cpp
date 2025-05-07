@@ -183,7 +183,7 @@ void Pass::end(VkCommandBuffer cmd, ptr<Image> pImage) const
 void Pass::update(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
 {
     if (mImplicitAttachments) {
-        Log::error("Cannot use explicit update for an implicit pass");
+        Log::Error("Cannot use explicit update for an implicit pass");
         return;
     }
     createExplicitPass(colorAttachments, pDepthAttachment);
@@ -192,7 +192,7 @@ void Pass::update(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAtt
 void Pass::update(VkExtent2D extent)
 {
     if (!mImplicitAttachments) {
-        Log::error("Cannot use implicit update for an explicit pass");
+        Log::Error("Cannot use implicit update for an explicit pass");
         return;
     }
     mExtent = extent;

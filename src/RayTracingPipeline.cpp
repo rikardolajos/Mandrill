@@ -13,7 +13,7 @@ RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout,
       mGroupSizeAligned(0)
 {
     if (!mpDevice->supportsRayTracing()) {
-        Log::error("Trying to create a ray-tracing pipeline for a device that does not support it");
+        Log::Error("Trying to create a ray-tracing pipeline for a device that does not support it");
         return;
     }
 

@@ -19,10 +19,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
     // clang-format off
     switch (messageSeverity) {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        Log::warning("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
+        Log::Warning("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        Log::error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
+        Log::Error("{}: {}", pCallbackData->pMessageIdName, pCallbackData->pMessage);
 #if MANDRILL_WINDOWS 
         __debugbreak();         // Vulkan encountered an error and since you are running Mandrill
 #elif MANDRILL_LINUX            // in debug mode, the execution is halted. You can inspect the log,
@@ -159,15 +159,15 @@ void Device::createInstance()
     const char** tmp = glfwGetRequiredInstanceExtensions(&n);
 
     if (!tmp) {
-        Log::error("No Vulkan instance extensions found for GLFW.");
+        Log::Error("No Vulkan instance extensions found for GLFW.");
         Check::GLFW();
     }
 
     std::vector<const char*> extensions(tmp, tmp + n);
 
-    Log::debug("GLFW required instance extensions ({}):", n);
+    Log::Debug("GLFW required instance extensions ({}):", n);
     for (auto& e : extensions) {
-        Log::debug(" * {}", e);
+        Log::Debug(" * {}", e);
     }
 
     VkInstanceCreateInfo ci = {
@@ -183,15 +183,15 @@ void Device::createInstance()
     std::vector<VkLayerProperties> props(n);
     Check::Vk(vkEnumerateInstanceLayerProperties(&n, props.data()));
 
-    Log::debug("Available layers ({}):", count(props));
+    Log::Debug("Available layers ({}):", count(props));
     for (auto& p : props) {
-        Log::debug(" * {}", p.layerName);
+        Log::Debug(" * {}", p.layerName);
     }
 
     if (std::find_if(props.begin(), props.end(), [layers](const VkLayerProperties& p) {
             return std::string(p.layerName) == std::string(layers[0]);
         }) == props.end()) {
-        Log::error("Validation layer not supported");
+        Log::Error("Validation layer not supported");
     }
 
     ci.enabledLayerCount = count(layers);
@@ -207,7 +207,7 @@ void Device::createInstance()
 
     uint32_t version;
     Check::Vk(vkEnumerateInstanceVersion(&version));
-    Log::info("Created Vulkan instance: {}.{}.{}", VK_API_VERSION_MAJOR(version), VK_API_VERSION_MINOR(version),
+    Log::Info("Created Vulkan instance: {}.{}.{}", VK_API_VERSION_MAJOR(version), VK_API_VERSION_MINOR(version),
               VK_API_VERSION_PATCH(version));
 }
 
@@ -219,14 +219,14 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
     std::vector<VkExtensionProperties> availableExtensions(n);
     Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &n, availableExtensions.data()));
 
-    Log::info("Requesting device extensions ({}):", count(requestedExtensions));
+    Log::Info("Requesting device extensions ({}):", count(requestedExtensions));
     for (auto& e : requestedExtensions) {
-        Log::info(" * {}", e);
+        Log::Info(" * {}", e);
     }
 
-    Log::debug("Available device extensions ({}):", n);
+    Log::Debug("Available device extensions ({}):", n);
     for (auto& e : availableExtensions) {
-        Log::debug(" * {}", e.extensionName);
+        Log::Debug(" * {}", e.extensionName);
     }
 
     bool result = true;
@@ -240,7 +240,7 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
         }
 
         if (!found) {
-            Log::error("The requested extension {} is not available", e);
+            Log::Error("The requested extension {} is not available", e);
             result = false;
         }
     }
@@ -256,10 +256,10 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, queueFamilyProperties.data());
 
     if (!count) {
-        Log::error("No Vulkan queue family available");
+        Log::Error("No Vulkan queue family available");
     }
 
-    Log::debug("Available queue families for selected device: {}", count);
+    Log::Debug("Available queue families for selected device: {}", count);
 
     uint32_t index = 0;
     for (auto& p : queueFamilyProperties) {
@@ -270,14 +270,14 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     }
 
     if (index == count) {
-        Log::error("No Vulkan queue found for requested families");
+        Log::Error("No Vulkan queue found for requested families");
     }
 
     // Check that the selected queue family supports PRESENT
     VkBool32 supported;
     Check::Vk(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &supported));
     if (!supported) {
-        Log::error("Selected queue family does not support PRESENT");
+        Log::Error("Selected queue family does not support PRESENT");
     }
 
     return index;
@@ -306,7 +306,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     std::vector<VkPhysicalDevice> physicalDevices(n);
     Check::Vk(vkEnumeratePhysicalDevices(mInstance, &n, physicalDevices.data()));
 
-    Log::info("Available devices ({}):", n);
+    Log::Info("Available devices ({}):", n);
     for (uint32_t i = 0; i < count(physicalDevices); i++) {
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtp = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
@@ -342,7 +342,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             mProperties.accelerationStucture = asp;
         }
 
-        Log::info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,
+        Log::Info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,
                   driver.driverInfo, VK_API_VERSION_MAJOR(prop.properties.apiVersion),
                   VK_API_VERSION_MINOR(prop.properties.apiVersion), VK_API_VERSION_PATCH(prop.properties.apiVersion),
                   i == physicalDeviceIndex ? "(chosen)" : "");
@@ -354,12 +354,12 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     if (mRayTracingSupport) {
         deviceExtensions.insert(deviceExtensions.end(), raytracingExtensions.begin(), raytracingExtensions.end());
     } else {
-        Log::warning("The chosen physical device does not support ray tracing");
+        Log::Warning("The chosen physical device does not support ray tracing");
     }
 
     // Check for extension support
     if (!checkDeviceExtensionSupport(mPhysicalDevice, deviceExtensions)) {
-        Log::error("The chosen physical device does not support the requested extensions");
+        Log::Error("The chosen physical device does not support the requested extensions");
         return;
     }
 

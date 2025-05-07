@@ -15,11 +15,11 @@ AccelerationStructure::AccelerationStructure(ptr<Device> pDevice, std::weak_ptr<
 {
     ptr<Scene> pScene = mwpScene.lock();
     if (!pScene) {
-        Log::error("Scene not valid for acceleration structure");
+        Log::Error("Scene not valid for acceleration structure");
     }
 
     if (pScene->getNodes().empty()) {
-        Log::error("Cannot build acceleration structure of empty scene");
+        Log::Error("Cannot build acceleration structure of empty scene");
         return;
     }
 
@@ -54,7 +54,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
 
     ptr<Scene> pScene = mwpScene.lock();
     if (!pScene) {
-        Log::error("Scene not valid for acceleration structure");
+        Log::Error("Scene not valid for acceleration structure");
     }
 
     // Loop over the meshes in the scene
@@ -194,7 +194,7 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
 {
     ptr<Scene> pScene = mwpScene.lock();
     if (!pScene) {
-        Log::error("Scene not valid for acceleration structure");
+        Log::Error("Scene not valid for acceleration structure");
     }
 
     uint32_t instanceCount = 0;

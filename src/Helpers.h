@@ -78,7 +78,7 @@ namespace Mandrill
                 }
             }
 
-            Log::error("Failed to find suitable memory type");
+            Log::Error("Failed to find suitable memory type");
             return UINT32_MAX;
         }
 
@@ -270,7 +270,7 @@ namespace Mandrill
                 barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
                 barrier.dstAccessMask = VK_ACCESS_NONE;
             } else {
-                Log::error("Unsupported layout transition");
+                Log::Error("Unsupported layout transition");
             }
 
             vkCmdPipelineBarrier(cmd, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);

@@ -47,7 +47,7 @@ namespace Mandrill
                 this->pResource = std::static_pointer_cast<AccelerationStructure>(pResource);
                 break;
             default:
-                Log::error("DescriptorDesc: Resource not supported\n");
+                Log::Error("DescriptorDesc: Resource not supported\n");
             }
         }
 

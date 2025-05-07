@@ -80,7 +80,7 @@ Swapchain::~Swapchain()
 
 void Swapchain::recreate()
 {
-    Log::debug("Recreating swapchain");
+    Log::Debug("Recreating swapchain");
 
     // Handle minimization
     int width = 0;
@@ -116,7 +116,7 @@ VkCommandBuffer Swapchain::acquireNextImage()
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         recreate();
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-        Log::error("Failed to acquire next swapchain image");
+        Log::Error("Failed to acquire next swapchain image");
     }
 
     VkCommandBufferBeginInfo bi = {
@@ -208,7 +208,7 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
         recreate();
     } else if (result != VK_SUCCESS) {
-        Log::error("Failed to present swapchain image");
+        Log::Error("Failed to present swapchain image");
     }
 
     mPreviousInFlightIndex = mInFlightIndex;

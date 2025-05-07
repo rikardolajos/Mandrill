@@ -93,7 +93,7 @@ namespace Mandrill
         MANDRILL_API void* getHostMap() const
         {
             if (!(mProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
-                Log::error("Unable to access host map of buffer that is not host coherent.");
+                Log::Error("Unable to access host map of buffer that is not host coherent.");
                 return nullptr;
             }
             return mpHostMap;

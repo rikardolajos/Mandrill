@@ -63,7 +63,7 @@ void Check::GLFW(const std::source_location loc)
     const char* desc;
     int code = glfwGetError(&desc);
     if (code != GLFW_NO_ERROR) {
-        Log::error("{}:{}: GLFW failed with {}: {}\n", loc.file_name(), loc.line(), GLFWErrors[code - 0x00010001],
+        Log::Error("{}:{}: GLFW failed with {}: {}\n", loc.file_name(), loc.line(), GLFWErrors[code - 0x00010001],
                    desc);
     }
 }
@@ -71,6 +71,6 @@ void Check::GLFW(const std::source_location loc)
 void Check::Vk(VkResult res, const std::source_location loc)
 {
     if (res != VK_SUCCESS) {
-        Log::error("{}:{}: Vulkan failed with {}", loc.file_name(), loc.line(), vulkanErrors.at(res));
+        Log::Error("{}:{}: Vulkan failed with {}", loc.file_name(), loc.line(), vulkanErrors.at(res));
     }
 }

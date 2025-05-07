@@ -41,7 +41,7 @@ namespace Mandrill
         MANDRILL_API void setMissGroup(uint32_t missGroup, uint32_t stage)
         {
             if (missGroup >= missGroupCount) {
-                Log::error("Miss group {} exceeds hitGroupCount {}", missGroup, missGroupCount);
+                Log::Error("Miss group {} exceeds hitGroupCount {}", missGroup, missGroupCount);
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace Mandrill
                     VkRayTracingShaderGroupTypeKHR type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR)
         {
             if (hitGroup >= hitGroupCount) {
-                Log::error("Hit group {} exceeds hitGroupCount {}", hitGroup, hitGroupCount);
+                Log::Error("Hit group {} exceeds hitGroupCount {}", hitGroup, hitGroupCount);
                 return;
             }
 

@@ -8,7 +8,7 @@ using namespace Mandrill;
 // Compile GLSL to SPIR-V
 static bool compile(const std::filesystem::path& input, const std::filesystem::path& output)
 {
-    Log::debug("Compiling {}", input.string());
+    Log::Debug("Compiling {}", input.string());
 
     auto depFile = output.parent_path() / output.stem();
     depFile += ".d";
@@ -22,7 +22,7 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 
     const char* sdk = getenv("VULKAN_SDK");
     if (!sdk) {
-        Log::error("VULKAN_SDK not found");
+        Log::Error("VULKAN_SDK not found");
         return false;
     }
     std::string cmd = std::format("{}\\Bin\\glslc.exe --target-env=vulkan1.4 -MD -MF {} {} -o {}", sdk,
@@ -35,7 +35,7 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
     int res = std::system(cmd.c_str());
 
     if (res) {
-        Log::error("Failed to compile {}", input.string());
+        Log::Error("Failed to compile {}", input.string());
     }
 
     return true;
@@ -50,7 +50,7 @@ static void findDependenciesAndCompile(const std::filesystem::path& input)
 
     std::ifstream is(depFile, std::ios::binary);
     if (!is.is_open()) {
-        Log::error("Unable to open {}", depFile.string());
+        Log::Error("Unable to open {}", depFile.string());
         return;
     }
 
@@ -133,7 +133,7 @@ VkShaderModule Shader::loadModuleFromFile(const std::filesystem::path& src)
 
     std::ifstream is(dst, std::ios::binary);
     if (!is.is_open()) {
-        Log::error("Unable to open {}", dst.string());
+        Log::Error("Unable to open {}", dst.string());
     }
 
     is.seekg(0, std::ios_base::end);

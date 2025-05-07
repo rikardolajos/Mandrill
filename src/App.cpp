@@ -17,17 +17,17 @@ using namespace Mandrill;
 
 static void errorCallback(int errorCode, const char* pDescription)
 {
-    Log::error("GLFW error {}: {}", errorCode, pDescription);
+    Log::Error("GLFW error {}: {}", errorCode, pDescription);
 }
 
 App::App(const std::string& title, uint32_t width, uint32_t height) : mWidth(width), mHeight(height)
 {
-    Log::info("=== Mandrill {}.{}.{} ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH);
+    Log::Info("=== Mandrill {}.{}.{} ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH);
 
-    Log::info("Initializing GLFW");
+    Log::Info("Initializing GLFW");
     initGLFW(title, width, height);
 
-    Log::info("Initializing ImGUI");
+    Log::Info("Initializing ImGUI");
     initImGUI();
 
     mFullscreen = false;
@@ -41,7 +41,7 @@ App::~App()
 
 void App::run()
 {
-    Log::info("Running...");
+    Log::Info("Running...");
 
     while (!glfwWindowShouldClose(mpWindow)) {
         mDelta = static_cast<float>(glfwGetTime());
@@ -70,7 +70,7 @@ void App::run()
         glfwPollEvents();
     }
 
-    Log::info("Exiting...");
+    Log::Info("Exiting...");
 }
 
 void App::createGUI(ptr<Device> pDevice, ptr<Pass> pPass)
@@ -300,7 +300,7 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<pt
                 ShellExecute(0, 0, "https://github.com/rikardolajos/Mandrill/tree/master", 0, 0, SW_SHOW);
 #elif MANDRILL_LINUX
                 if (std::system("xdg-open https://github.com/rikardolajos/Mandrill/tree/master")) {
-                    Log::error("Unable to open browser");
+                    Log::Error("Unable to open browser");
                 }
 #endif
             }
@@ -401,7 +401,7 @@ void App::baseMouseButtonCallback(GLFWwindow* pWindow, int button, int action, i
 void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
 {
     if (glfwInit() == GLFW_FALSE) {
-        Log::error("Failed to initialze GLFW");
+        Log::Error("Failed to initialze GLFW");
         Check::GLFW();
     }
 
@@ -410,7 +410,7 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
     // Save video mode of fullscreen mode
     mpMonitor = glfwGetPrimaryMonitor();
     if (!mpMonitor) {
-        Log::error("Failed to find primary monitor");
+        Log::Error("Failed to find primary monitor");
         Check::GLFW();
     }
     const GLFWvidmode* mode = glfwGetVideoMode(mpMonitor);
@@ -427,7 +427,7 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
     std::string fullTitle = std::format("Mandrill: {}", title);
     mpWindow = glfwCreateWindow(width, height, fullTitle.c_str(), nullptr, nullptr);
     if (!mpWindow) {
-        Log::error("Failed to create window");
+        Log::Error("Failed to create window");
         Check::GLFW();
     }
 
@@ -437,11 +437,11 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
         glfwSetWindowIcon(mpWindow, 1, &image);
         stbi_image_free(image.pixels);
     } else {
-        Log::error("Failed to load icon.png");
+        Log::Error("Failed to load icon.png");
     }
 
     if (!glfwVulkanSupported()) {
-        Log::error("Failed to find Vulkan");
+        Log::Error("Failed to find Vulkan");
         Check::GLFW();
     }
 
@@ -474,12 +474,12 @@ static void saveScreenshot(uint8_t* pData, uint32_t width, uint32_t height, uint
     auto fullpath = std::filesystem::current_path() / filename;
     std::free(pData);
 
-    Log::info("Screenshot saved to {}", fullpath.string());
+    Log::Info("Screenshot saved to {}", fullpath.string());
 }
 
 void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
 {
-    Log::info("Taking screenshot and saving to disk...");
+    Log::Info("Taking screenshot and saving to disk...");
 
     const uint32_t channels = 4;
 
@@ -503,7 +503,7 @@ void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
 
     uint8_t* pDataCopy = static_cast<uint8_t*>(std::malloc(buffer.getSize()));
     if (!pDataCopy) {
-        Log::error("Failed to allocate buffer for screenshot");
+        Log::Error("Failed to allocate buffer for screenshot");
         return;
     }
     std::memcpy(pDataCopy, pData, buffer.getSize());

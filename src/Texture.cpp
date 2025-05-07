@@ -17,11 +17,11 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         fullPath = getExecutablePath() / path;
     }
 
-    Log::info("Loading texture from {}", path.string());
+    Log::Info("Loading texture from {}", path.string());
 
     switch (type) {
     case Type::Texture1D: {
-        Log::error("Texture1D cannot be read from file");
+        Log::Error("Texture1D cannot be read from file");
         break;
     }
     case Type::Texture2D: {
@@ -33,7 +33,7 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         channels = STBI_rgb_alpha;
 
         if (!pData) {
-            Log::error("Failed to load texture.");
+            Log::Error("Failed to load texture.");
             return;
         }
 
@@ -47,7 +47,7 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         break;
     }
     case Type::CubeMap: {
-        Log::error("Not implemented");
+        Log::Error("Not implemented");
         break;
     }
     }
@@ -114,7 +114,7 @@ void Texture::generateMipmaps()
     vkGetPhysicalDeviceFormatProperties(mpDevice->getPhysicalDevice(), mpImage->getFormat(), &props);
 
     if (!(props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
-        Log::error("Texture image format does not support linear blitting");
+        Log::Error("Texture image format does not support linear blitting");
     }
 
     VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);

@@ -162,7 +162,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 {
     std::vector<uint32_t> newMeshIndices;
 
-    Log::info("Loading {}", path.string());
+    Log::Info("Loading {}", path.string());
 
     tinyobj::ObjReaderConfig readerConfig;
     readerConfig.mtl_search_path = materialPath.string();
@@ -172,13 +172,13 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
     if (!reader.ParseFromFile(path.string(), readerConfig)) {
         if (!reader.Error().empty()) {
-            Log::error("TinyObjReader: {}", reader.Error());
+            Log::Error("TinyObjReader: {}", reader.Error());
         }
-        Log::error("Failed to load {}", path.string());
+        Log::Error("Failed to load {}", path.string());
     }
 
     if (!reader.Warning().empty()) {
-        Log::warning("TinyObjReader: {}", reader.Warning());
+        Log::Warning("TinyObjReader: {}", reader.Warning());
     }
 
     auto& attrib = reader.GetAttrib();
@@ -365,7 +365,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 void Scene::compile()
 {
     if (mpMissingTexture->getSampler() == VK_NULL_HANDLE) {
-        Log::error("Scene: Sampler must be set before calling compile()");
+        Log::Error("Scene: Sampler must be set before calling compile()");
     }
 
     // Calculate size of buffers
@@ -502,7 +502,7 @@ void Scene::syncToDevice()
 void Scene::updateAccelerationStructure(VkBuildAccelerationStructureFlagsKHR flags)
 {
     if (!mSupportRayTracing) {
-        Log::error("Cannot build acceleration structure for a scene that was not initiated to support ray tracing. Set "
+        Log::Error("Cannot build acceleration structure for a scene that was not initiated to support ray tracing. Set "
                    "supportRayTracing to TRUE during scene creation.");
         return;
     }
