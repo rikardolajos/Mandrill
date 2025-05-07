@@ -19,46 +19,63 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
 
     Log::info("Loading texture from {}", path.string());
 
-    stbi_set_flip_vertically_on_load(1);
-
-    std::string pathStr = fullPath.string();
-    int width, height, channels;
-    stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-    channels = STBI_rgb_alpha;
-
-    if (!pData) {
-        Log::error("Failed to load texture.");
-        return;
+    switch (type) {
+    case Type::Texture1D: {
+        Log::error("Texture1D cannot be read from file");
+        break;
     }
+    case Type::Texture2D: {
+        stbi_set_flip_vertically_on_load(1);
 
-    create(format, pData, width, height, channels, mipmaps);
+        std::string pathStr = fullPath.string();
+        int width, height, channels;
+        stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+        channels = STBI_rgb_alpha;
 
-    stbi_image_free(pData);
+        if (!pData) {
+            Log::error("Failed to load texture.");
+            return;
+        }
+
+        create(format, pData, width, height, 1, channels, mipmaps);
+
+        stbi_image_free(pData);
+        break;
+    }
+    case Type::Texture3D: {
+        // TODO: Load using OpenVDB?
+        break;
+    }
+    case Type::CubeMap: {
+        Log::error("Not implemented");
+        break;
+    }
+    }
 }
 
 Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* pData, uint32_t width, uint32_t height,
-                 uint32_t channels, bool mipmaps)
+                 uint32_t depth, uint32_t channels, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
-    create(format, pData, width, height, channels, mipmaps);
+    create(format, pData, width, height, depth, channels, mipmaps);
 }
 
 Texture::~Texture()
 {
 }
 
-void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t channels,
-                     bool mipmaps)
+void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
+                     uint32_t channels, bool mipmaps)
 {
     uint32_t mipLevels = 1;
     if (mipmaps) {
         mipLevels = static_cast<uint32_t>(std::floor(log2(std::max(width, height))) + 1);
     }
 
-    mpImage =
-        make_ptr<Image>(mpDevice, width, height, mipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
-                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    mpImage = make_ptr<Image>(
+        mpDevice, width, height, depth, mipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     if (pData) {
         VkDeviceSize size = width * height * channels;

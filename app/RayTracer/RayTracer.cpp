@@ -11,11 +11,11 @@ public:
 
     static std::shared_ptr<Image> createImage(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
     {
-        auto image = std::make_shared<Image>(pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1,
-                                             VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
-                                             VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
-                                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        auto image = std::make_shared<Image>(
+            pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, 1, VK_SAMPLE_COUNT_1_BIT,
+            VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         image->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
         return image;
     }

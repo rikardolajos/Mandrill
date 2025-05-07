@@ -236,7 +236,7 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
 
     for (auto format : mFormats) {
         VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-        mColorAttachments.push_back(make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, sampleCount, format,
+        mColorAttachments.push_back(make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, sampleCount, format,
                                                     VK_IMAGE_TILING_OPTIMAL, usage,
                                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 
@@ -247,7 +247,7 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
     }
 
     if (sampleCount != VK_SAMPLE_COUNT_1_BIT) {
-        mpResolveAttachment = make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, VK_SAMPLE_COUNT_1_BIT,
+        mpResolveAttachment = make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, VK_SAMPLE_COUNT_1_BIT,
                                               VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
                                               VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -256,7 +256,7 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
     }
 
     if (depthAttachment) {
-        mpDepthAttachment = make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, sampleCount, depthFormat,
+        mpDepthAttachment = make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, sampleCount, depthFormat,
                                             VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 

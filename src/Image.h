@@ -18,6 +18,7 @@ namespace Mandrill
         /// <param name="pDevice">Device pointer</param>
         /// <param name="width">Width of image</param>
         /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
         /// <param name="mipLevels">Number of mipmapping levels</param>
         /// <param name="samples">Number of samples</param>
         /// <param name="format">Image format</param>
@@ -25,7 +26,7 @@ namespace Mandrill
         /// <param name="usage">How the image will be used</param>
         /// <param name="properties">Which memory properties to require</param>
         /// <returns>Image object</returns>
-        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
+        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
 
@@ -35,6 +36,7 @@ namespace Mandrill
         /// <param name="pDevice">Device pointer</param>
         /// <param name="width">Width of image</param>
         /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
         /// <param name="mipLevels">Number of mipmapping levels</param>
         /// <param name="samples">Number of samples</param>
         /// <param name="format">Image format</param>
@@ -43,7 +45,7 @@ namespace Mandrill
         /// <param name="memory">Allocated memory to use for image</param>
         /// <param name="offset">Where in the allocated memory the image should be stored</param>
         /// <returns>Image object</returns>
-        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels,
+        MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);
 
@@ -116,6 +118,15 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the depth of the image.
+        /// </summary>
+        /// <returns>Image height</returns>
+        MANDRILL_API uint32_t getDepth() const
+        {
+            return mDepth;
+        }
+
+        /// <summary>
         /// Get the mipmap levels of the image.
         /// </summary>
         /// <returns>Image mipmap levels</returns>
@@ -135,6 +146,7 @@ namespace Mandrill
 
         uint32_t mWidth;
         uint32_t mHeight;
+        uint32_t mDepth;
 
         uint32_t mMipLevels;
         VkFormat mFormat;

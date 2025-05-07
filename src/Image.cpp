@@ -5,16 +5,17 @@
 
 using namespace Mandrill;
 
-Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
-             VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
-    : mpDevice(pDevice), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
-      mImageView(VK_NULL_HANDLE)
+Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+             VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
+             VkMemoryPropertyFlags properties)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format),
+      mTiling(tiling), mImageView(VK_NULL_HANDLE)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = mFormat,
-        .extent = {.width = mWidth, .height = mHeight, .depth = 1},
+        .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
         .arrayLayers = 1,
         .samples = samples,
@@ -42,16 +43,16 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipL
     Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mImage, mMemory, 0));
 }
 
-Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits samples,
+Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples,
              VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)
-    : mpDevice(pDevice), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
       mImageView(VK_NULL_HANDLE), mMemory(memory)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = format,
-        .extent = {.width = mWidth, .height = mHeight, .depth = 1},
+        .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
         .arrayLayers = 1,
         .samples = samples,

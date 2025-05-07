@@ -77,7 +77,7 @@ Scene::Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool supportRayTrac
     const uint8_t data[] = {0xff, 0x00, 0xff, 0xff, 0x88, 0x00, 0xff, 0xff,
                             0x88, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0xff};
     mpMissingTexture =
-        make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, 2, 2, 4, false);
+        make_ptr<Texture>(pDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, 2, 2, 1, 4, false);
 }
 
 Scene::~Scene()

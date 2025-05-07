@@ -17,7 +17,7 @@ public:
     static std::shared_ptr<Image> createColorAttachmentImage(std::shared_ptr<Device> pDevice, uint32_t width,
                                                              uint32_t height)
     {
-        return std::make_shared<Image>(pDevice, width, height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_B8G8R8A8_UNORM,
+        return std::make_shared<Image>(pDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_B8G8R8A8_UNORM,
                                        VK_IMAGE_TILING_OPTIMAL,
                                        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -54,7 +54,7 @@ public:
         mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
         mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
         mpDepthAttachment = std::make_shared<Image>(
-            mpDevice, width, height, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
+            mpDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
