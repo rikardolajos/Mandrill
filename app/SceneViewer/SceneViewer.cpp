@@ -169,38 +169,10 @@ public:
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
-#if MANDRILL_WINDOWS
-                OPENFILENAME ofn;
-                TCHAR szFile[260] = {0};
-
-                ZeroMemory(&ofn, sizeof(ofn));
-                ofn.lStructSize = sizeof(ofn);
-                ofn.hwndOwner = glfwGetWin32Window(mpWindow);
-                ofn.lpstrFile = szFile;
-                ofn.nMaxFile = sizeof(szFile);
-                ofn.lpstrFilter = "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0";
-                ofn.nFilterIndex = 2;
-                ofn.lpstrFileTitle = NULL;
-                ofn.nMaxFileTitle = 0;
-                ofn.lpstrInitialDir = NULL;
-                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-
-                if (GetOpenFileNameA(&ofn)) {
-                    mScenePath = ofn.lpstrFile;
+                mScenePath = OpenFile(mpWindow, "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0");
+                if (!mScenePath.empty()) {
                     loadScene();
                 }
-#elif MANDRILL_LINUX
-                char filename[1024];
-                FILE* f = popen("zenity --file-selection --modal --title=\"Select file\"", "r");
-
-                if (f) {
-                    fgets(filename, sizeof(filename), f);
-                    filename[std::strcspn(filename, "\n")] = 0; // Remove trailing new line
-                    mScenePath = filename;
-                    loadScene();
-                    pclose(f);
-                }
-#endif
             }
 
             ImGui::Text("Scene: %s", mScenePath.string().c_str());
