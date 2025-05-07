@@ -56,6 +56,16 @@ find_package(Vulkan REQUIRED COMPONENTS glslc)
 include_directories(${Vulkan_INCLUDE_DIRS})
 link_libraries(${Vulkan_LIBRARIES})
 
+find_package(OpenVDB QUIET)
+if (OpenVDB_FOUND)
+    link_libraries(OpenVDB::openvdb)
+    add_compile_definitions(MANDRILL_USE_OPENVDB)
+else()
+    message(WARNING
+        "OpenVDB was not found in your system. Loading volumes (Texture3D) will not be supported in Mandrill.\n"
+        "OpenVDB can be install with vcpkg: `vcpkg install openvdb`")
+endif()
+
 include_directories(src)
 include_directories(src/External)
 include_directories(submodules/glm)

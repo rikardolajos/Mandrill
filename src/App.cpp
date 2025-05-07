@@ -30,11 +30,19 @@ App::App(const std::string& title, uint32_t width, uint32_t height) : mWidth(wid
     Log::Info("Initializing ImGUI");
     initImGUI();
 
+#ifdef MANDRILL_USE_OPENVDB
+    openvdb::initialize();
+#endif
+
     mFullscreen = false;
 }
 
 App::~App()
 {
+#ifdef MANDRILL_USE_OPENVDB
+    openvdb::uninitialize();
+#endif
+
     glfwDestroyWindow(mpWindow);
     glfwTerminate();
 }
@@ -491,7 +499,7 @@ void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
     Buffer buffer(pDevice, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     Helpers::copyImageToBuffer(pDevice, pSwapchain->getImage(), buffer.getBuffer(), pSwapchain->getExtent().width,
-                               pSwapchain->getExtent().height);
+                               pSwapchain->getExtent().height, 1);
     Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
                                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
     uint8_t* pData = static_cast<uint8_t*>(buffer.getHostMap());

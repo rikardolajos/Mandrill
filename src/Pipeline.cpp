@@ -8,7 +8,7 @@ using namespace Mandrill;
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
                    const PipelineDesc& desc)
     : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpPass(pPass), mPipeline(nullptr),
-      mBindingDescription(desc.bindingDescription), mAttributeDescriptions(desc.attributeDescriptions),
+      mBindingDescriptions(desc.bindingDescriptions), mAttributeDescriptions(desc.attributeDescriptions),
       mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mBlend(desc.blend),
       mAlphaToCoverage(desc.alphaToCoverage)
 {
@@ -73,8 +73,8 @@ void Pipeline::createPipeline()
 {
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 1,
-        .pVertexBindingDescriptions = &mBindingDescription,
+        .vertexBindingDescriptionCount = count(mBindingDescriptions),
+        .pVertexBindingDescriptions = mBindingDescriptions.data(),
         .vertexAttributeDescriptionCount = count(mAttributeDescriptions),
         .pVertexAttributeDescriptions = mAttributeDescriptions.data(),
     };

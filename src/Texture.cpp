@@ -14,7 +14,7 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
 {
     std::filesystem::path fullPath = path;
     if (path.is_relative()) {
-        fullPath = getExecutablePath() / path;
+        fullPath = GetExecutablePath() / path;
     }
 
     Log::Info("Loading texture from {}", path.string());
@@ -33,17 +33,60 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         channels = STBI_rgb_alpha;
 
         if (!pData) {
-            Log::Error("Failed to load texture.");
+            Log::Error("Failed to load texture");
             return;
         }
 
-        create(format, pData, width, height, 1, channels, mipmaps);
+        create(format, pData, width, height, 1, sizeof(stbi_uc) * channels, mipmaps);
 
         stbi_image_free(pData);
         break;
     }
     case Type::Texture3D: {
-        // TODO: Load using OpenVDB?
+#ifdef MANDRILL_USE_OPENVDB
+        openvdb::io::File file(path.string());
+        file.open();
+
+        Log::Debug("Grids in volume:");
+        for (auto iter = file.beginName(); iter != file.endName(); ++iter) {
+            Log::Debug("\t{}", *iter);
+        }
+
+        auto found = std::find_if(file.beginName(), file.endName(), [](const auto& grid) { return grid == "density"; });
+        if (found == file.endName()) {
+            Log::Error("Density grid not found in volume");
+        }
+
+        auto baseGrid = file.readGrid("density");
+        auto floatGrid = openvdb::gridPtrCast<openvdb::FloatGrid>(baseGrid);
+
+        openvdb::CoordBBox bbox = floatGrid->evalActiveVoxelBoundingBox();
+        int32_t sizeX = bbox.dim().x();
+        int32_t sizeY = bbox.dim().y();
+        int32_t sizeZ = bbox.dim().z();
+
+        std::vector<float> volumeData(sizeX * sizeY * sizeZ);
+
+        auto accessor = floatGrid->getAccessor();
+        for (int z = bbox.min().z(); z <= bbox.max().z(); ++z) {
+            for (int y = bbox.min().y(); y <= bbox.max().y(); ++y) {
+                for (int x = bbox.min().x(); x <= bbox.max().x(); ++x) {
+                    openvdb::Coord ijk(x, y, z);
+                    float density = accessor.getValue(ijk);
+                    int32_t localX = x - bbox.min().x();
+                    int32_t localY = y - bbox.min().y();
+                    int32_t localZ = z - bbox.min().z();
+                    int32_t idx = (localZ * sizeY + localY) * sizeX + localX;
+                    volumeData[idx] = density;
+                }
+            }
+        }
+
+        create(format, volumeData.data(), sizeX, sizeY, sizeZ, sizeof(float), false);
+#else
+        Log::Error("Trying to load a Texture3D but Mandrill was not compiled with OpenVDB support. OpenVDB can be "
+                   "installed using vcpkg:\n\t`vcpkg install openvdb`");
+#endif
         break;
     }
     case Type::CubeMap: {
@@ -65,7 +108,7 @@ Texture::~Texture()
 }
 
 void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
-                     uint32_t channels, bool mipmaps)
+                     uint32_t bytesPerPixel, bool mipmaps)
 {
     uint32_t mipLevels = 1;
     if (mipmaps) {
@@ -78,7 +121,7 @@ void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
     if (pData) {
-        VkDeviceSize size = width * height * channels;
+        VkDeviceSize size = width * height * depth * bytesPerPixel;
 
         Buffer staging(mpDevice, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -88,8 +131,7 @@ void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_
         Helpers::transitionImageLayout(mpDevice, mpImage->getImage(), format, VK_IMAGE_LAYOUT_UNDEFINED,
                                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
 
-        Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), static_cast<uint32_t>(width),
-                                   static_cast<uint32_t>(height));
+        Helpers::copyBufferToImage(mpDevice, staging.getBuffer(), mpImage->getImage(), width, height, depth);
 
         if (mipmaps) {
             generateMipmaps();

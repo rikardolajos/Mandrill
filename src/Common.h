@@ -1,7 +1,9 @@
 #pragma once
 
 #if defined(_WIN64)
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include "windows.h"
 #endif
 
@@ -29,6 +31,10 @@
 
 #include <stb/stb_image.h>
 #include <stb/stb_image_write.h>
+
+#ifdef MANDRILL_USE_OPENVDB
+#include <openvdb/openvdb.h>
+#endif
 
 #include <algorithm>
 #include <array>
@@ -124,7 +130,7 @@ namespace Mandrill
         return static_cast<uint32_t>(t.size());
     }
 
-    static inline std::filesystem::path getExecutablePath()
+    static inline std::filesystem::path GetExecutablePath()
     {
         std::filesystem::path path;
 #if MANDRILL_WINDOWS
@@ -135,6 +141,52 @@ namespace Mandrill
         path = std::filesystem::canonical("/proc/self/exe");
 #endif
         return path.remove_filename();
+    }
+
+#if MANDRILL_LINUX
+#define LPCSTR const char*
+#endif
+    /// <summary>
+    /// Open an "Open File" dialogue.
+    /// </summary>
+    /// <param name="pWindow">GLFW window pointer</param>
+    /// <param name="filter">(Windows only) File types to filter on. Check GetOpenFileNameA() and OPENFILENAME:
+    /// lpstrFilter for details.</param>
+    /// <returns>Path to opened file, empty string on cancel or failure</returns>
+    static inline std::string OpenFile(GLFWwindow* pWindow, LPCSTR filter)
+    {
+#if MANDRILL_WINDOWS
+        OPENFILENAME ofn;
+        TCHAR szFile[260] = {0};
+
+        ZeroMemory(&ofn, sizeof(ofn));
+        ofn.lStructSize = sizeof(ofn);
+        ofn.hwndOwner = glfwGetWin32Window(pWindow);
+        ofn.lpstrFile = szFile;
+        ofn.nMaxFile = sizeof(szFile);
+        ofn.lpstrFilter = filter;
+        ofn.nFilterIndex = 1;
+        ofn.lpstrFileTitle = NULL;
+        ofn.nMaxFileTitle = 0;
+        ofn.lpstrInitialDir = NULL;
+        ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+        if (GetOpenFileNameA(&ofn)) {
+            return std::string(ofn.lpstrFile);
+        }
+
+#elif MANDRILL_LINUX
+        char filename[1024];
+        FILE* f = popen("zenity --file-selection --modal --title=\"Select file\"", "r");
+
+        if (f) {
+            fgets(filename, sizeof(filename), f);
+            filename[std::strcspn(filename, "\n")] = 0; // Remove trailing new line
+            pclose(f);
+            return std::string(filename);
+        }
+#endif
+        return "";
     }
 
 } // namespace Mandrill

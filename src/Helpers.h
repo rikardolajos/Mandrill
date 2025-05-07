@@ -288,8 +288,9 @@ namespace Mandrill
         /// <param name="image">Image to use</param>
         /// <param name="width">Width of image</param>
         /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
         inline static void copyBufferToImage(ptr<Device> pDevice, VkBuffer buffer, VkImage image, uint32_t width,
-                                             uint32_t height)
+                                             uint32_t height, uint32_t depth)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);
 
@@ -305,7 +306,7 @@ namespace Mandrill
                         .layerCount = 1,
                     },
                 .imageOffset = {0, 0},
-                .imageExtent = {width, height, 1},
+                .imageExtent = {width, height, depth},
             };
 
             vkCmdCopyBufferToImage(cmd, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
@@ -321,8 +322,9 @@ namespace Mandrill
         /// <param name="buffer">Buffer to use</param>
         /// <param name="width">Width of image</param>
         /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
         inline static void copyImageToBuffer(ptr<Device> pDevice, VkImage image, VkBuffer buffer, uint32_t width,
-                                             uint32_t height)
+                                             uint32_t height, uint32_t depth)
         {
             VkCommandBuffer cmd = cmdBegin(pDevice);
 
@@ -338,7 +340,7 @@ namespace Mandrill
                         .layerCount = 1,
                     },
                 .imageOffset = {0, 0},
-                .imageExtent = {width, height, 1},
+                .imageExtent = {width, height, depth},
             };
 
             vkCmdCopyImageToBuffer(cmd, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);

@@ -10,11 +10,11 @@
 
 namespace Mandrill
 {
-    static VkVertexInputBindingDescription defaultBindingDescription = {
+    static std::vector<VkVertexInputBindingDescription> defaultBindingDescriptions = {{{
         .binding = 0,
         .stride = sizeof(Vertex),
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-    };
+    }}};
 
     static std::vector<VkVertexInputAttributeDescription> defaultAttributeDescriptions = {{
         {
@@ -50,7 +50,7 @@ namespace Mandrill
     }};
 
     struct PipelineDesc {
-        VkVertexInputBindingDescription bindingDescription;
+        std::vector<VkVertexInputBindingDescription> bindingDescriptions;
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
         VkPolygonMode polygonMode;
         VkBool32 depthTest;
@@ -59,11 +59,11 @@ namespace Mandrill
 
         MANDRILL_API
         PipelineDesc(
-            VkVertexInputBindingDescription bindingDescription = defaultBindingDescription,
+            std::vector<VkVertexInputBindingDescription> bindingDescriptions = defaultBindingDescriptions,
             std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions,
             VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,
             VkBool32 alphaToCoverage = VK_FALSE)
-            : bindingDescription(bindingDescription), attributeDescriptions(attributeDescriptions),
+            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions),
               polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage)
         {
         }
@@ -170,7 +170,7 @@ namespace Mandrill
         VkBool32 mBlend;
         VkBool32 mAlphaToCoverage;
 
-        VkVertexInputBindingDescription mBindingDescription;
+        std::vector<VkVertexInputBindingDescription> mBindingDescriptions;
         std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
         VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;
         VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;

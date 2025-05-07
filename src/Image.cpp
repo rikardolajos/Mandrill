@@ -13,7 +13,9 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
+        .imageType = mHeight == 1  ? VK_IMAGE_TYPE_1D
+                     : mDepth == 1 ? VK_IMAGE_TYPE_2D
+                                   : VK_IMAGE_TYPE_3D,
         .format = mFormat,
         .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
@@ -43,14 +45,17 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
     Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mImage, mMemory, 0));
 }
 
-Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples,
-             VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)
-    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format), mTiling(tiling),
-      mImageView(VK_NULL_HANDLE), mMemory(memory)
+Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+             VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
+             VkDeviceMemory memory, VkDeviceSize offset)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format),
+      mTiling(tiling), mImageView(VK_NULL_HANDLE), mMemory(memory)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
+        .imageType = mHeight == 1  ? VK_IMAGE_TYPE_1D
+                     : mDepth == 1 ? VK_IMAGE_TYPE_2D
+                                   : VK_IMAGE_TYPE_3D,
         .format = format,
         .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
@@ -89,7 +94,9 @@ void Image::createImageView(VkImageAspectFlags aspectFlags)
     VkImageViewCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = mImage,
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .viewType = mHeight == 1  ? VK_IMAGE_VIEW_TYPE_1D
+                    : mDepth == 1 ? VK_IMAGE_VIEW_TYPE_2D
+                                  : VK_IMAGE_VIEW_TYPE_3D,
         .format = mFormat,
         .components = {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
                        .g = VK_COMPONENT_SWIZZLE_IDENTITY,
