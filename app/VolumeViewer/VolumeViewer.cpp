@@ -5,8 +5,19 @@ using namespace Mandrill;
 class VolumeViewer : public App
 {
 public:
-    struct PushConstantEnv {
+    struct PushConstant {
+        glm::mat4 inverseModel;
+        glm::vec3 gridMin;
+        float _padding0;
+        glm::vec3 gridMax;
+        float _padding1;
         glm::vec2 viewport;
+    };
+
+    struct SpecializationConstants {
+        int maxSteps;
+        float stepSize;
+        float density;
     };
 
     VolumeViewer() : App("VolumeViewer", 1920, 1080)
@@ -34,7 +45,7 @@ public:
         VkPushConstantRange pushConstantRange = {
             .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS,
             .offset = 0,
-            .size = sizeof(PushConstantEnv),
+            .size = sizeof(PushConstant),
         };
         pLayout->addPushConstantRange(pushConstantRange);
 
@@ -46,6 +57,8 @@ public:
         std::vector<VkVertexInputBindingDescription> emptyBindingDescription;
         std::vector<VkVertexInputAttributeDescription> emptyAttributeDescription;
         PipelineDesc pipelineDesc = PipelineDesc(emptyBindingDescription, emptyAttributeDescription);
+        pipelineDesc.depthTest = VK_FALSE;
+        pipelineDesc.blend = VK_FALSE;
 
         // Create a pipeline for environment map
         std::vector<ShaderDesc> shaderDesc;
@@ -54,18 +67,37 @@ public:
         std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
         mpEnvironmentMapPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
 
+        // Specialization constants for ray marching shader
+        mSpecializationConstants = {.maxSteps = 1000, .stepSize = 0.01f, .density = 1.0f};
+        mSpecializationMapEntries.push_back(
+            {.constantID = 0, .offset = offsetof(SpecializationConstants, maxSteps), .size = sizeof(uint32_t)});
+        mSpecializationMapEntries.push_back(
+            {.constantID = 1, .offset = offsetof(SpecializationConstants, stepSize), .size = sizeof(float)});
+        mSpecializationMapEntries.push_back(
+            {.constantID = 2, .offset = offsetof(SpecializationConstants, density), .size = sizeof(float)});
+        mSpecializationInfo = {
+            .mapEntryCount = count(mSpecializationMapEntries),
+            .pMapEntries = mSpecializationMapEntries.data(),
+            .dataSize = sizeof mSpecializationConstants,
+            .pData = &mSpecializationConstants,
+        };
+
         // Create a pipeline for ray marching
         shaderDesc.clear();
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc.emplace_back("VolumeViewer/RayMarcher.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shaderDesc.emplace_back("VolumeViewer/RayMarcher.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT,
+                                &mSpecializationInfo);
         pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+
+        pipelineDesc.depthTest = VK_TRUE;
+        pipelineDesc.blend = VK_TRUE;
         mpRayMarchingPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
 
         mPipelines = {mpEnvironmentMapPipeline, mpRayMarchingPipeline};
 
         // Setup camera
         mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
-        mpCamera->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+        mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
@@ -120,11 +152,21 @@ public:
                                   count(writes), writes.data());
 
         // Push constants
-        PushConstantEnv pushConstant = {
+        glm::vec3 volumeDim(1.0f);
+        if (mpVolume) {
+            volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
+                                  mpVolume->getImage()->getDepth());
+        }
+        glm::vec3 gridMin = mVolumeModelPosition - (mVolumeModelScale * volumeDim / 2.0f);
+        glm::vec3 gridMax = gridMin + mVolumeModelScale * volumeDim;
+        PushConstant pushConstant = {
+            .inverseModel = glm::inverse(mVolumeModelMatrix),
+            .gridMin = gridMin,
+            .gridMax = gridMax,
             .viewport = glm::vec2(mWidth, mHeight),
         };
         vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_ALL_GRAPHICS, 0,
-                           sizeof(PushConstantEnv), &pushConstant);
+                           sizeof pushConstant, &pushConstant);
 
         // Render environment map
         if (mpEnvironmentMap) {
@@ -160,10 +202,33 @@ public:
                     mpVolume = std::make_shared<Texture>(mpDevice, Texture::Type::Texture3D, VK_FORMAT_R32_SFLOAT,
                                                          mVolumePath, false);
                     mpVolume->setSampler(mpVolumeSampler);
+                    glm::vec3 volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
+                                          mpVolume->getImage()->getDepth());
+                    mVolumeModelScale = 1.0f / glm::max(volumeDim.x, glm::max(volumeDim.y, volumeDim.z));
                 }
             }
             ImGui::SameLine();
             ImGui::Text(mVolumePath.string().c_str());
+            bool recreatePipeline = false;
+            recreatePipeline |= ImGui::DragFloat("Density", &mSpecializationConstants.density, 0.01f, 0.0f, 100.0f);
+
+            bool newModelMatrix = false;
+            newModelMatrix |= ImGui::DragFloat("Scale", &mVolumeModelScale, 0.01f);
+            newModelMatrix |= ImGui::DragFloat3("Position", &mVolumeModelPosition.x, 0.01f);
+            if (newModelMatrix) {
+                mVolumeModelMatrix = glm::scale(glm::vec3(mVolumeModelScale));
+                mVolumeModelMatrix = glm::translate(mVolumeModelMatrix, mVolumeModelPosition);
+            }
+
+            ImGui::SeparatorText("Ray Marcher");
+            recreatePipeline |= ImGui::DragInt("Max steps", &mSpecializationConstants.maxSteps, 1.0f);
+
+            recreatePipeline |=
+                ImGui::DragFloat("Step size", &mSpecializationConstants.stepSize, 0.0001f, 0.0f, 0.0f, "%.4f");
+
+            if (recreatePipeline) {
+                mpRayMarchingPipeline->recreate();
+            }
 
             ImGui::SeparatorText("Environment Map");
             if (ImGui::Button("Load##EnvMap")) {
@@ -177,10 +242,6 @@ public:
             }
             ImGui::SameLine();
             ImGui::Text(mEnvironmentMapPath.string().c_str());
-
-            if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
-                mpCamera->setMoveSpeed(mCameraMoveSpeed);
-            }
         }
 
         ImGui::End();
@@ -208,7 +269,6 @@ private:
     std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
     std::shared_ptr<Camera> mpCamera;
-    float mCameraMoveSpeed = 1.0f;
 
     std::shared_ptr<Pipeline> mpEnvironmentMapPipeline;
     std::shared_ptr<Texture> mpEnvironmentMap;
@@ -219,6 +279,13 @@ private:
     std::shared_ptr<Texture> mpVolume;
     std::filesystem::path mVolumePath;
     std::shared_ptr<Sampler> mpVolumeSampler;
+    float mVolumeModelScale = 1.0;
+    glm::vec3 mVolumeModelPosition = glm::vec3(0.0f);
+    glm::mat4 mVolumeModelMatrix = glm::mat4(1.0f);
+
+    std::vector<VkSpecializationMapEntry> mSpecializationMapEntries;
+    VkSpecializationInfo mSpecializationInfo;
+    SpecializationConstants mSpecializationConstants;
 };
 
 int main()

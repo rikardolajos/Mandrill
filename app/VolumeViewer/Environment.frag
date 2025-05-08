@@ -18,6 +18,11 @@ layout(set = 0, binding = 0) uniform CameraUniforms {
 layout(set = 0, binding = 1) uniform sampler2D environmentMap;
 
 layout(push_constant) uniform PushConstant {
+	mat4 model_inv;
+	vec3 gridMin;
+    float _padding0;
+	vec3 gridMax;
+    float _padding1;
     vec2 viewPort;
 } pushConstant;
 
