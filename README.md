@@ -80,6 +80,6 @@ For this to work, OpenVDB has to be available on your system so that CMake can f
 If it is not found, a warning message will be given and the use of `Texture3D` will not be available.
 See `app/VolumeViewer` for an example of loading a volume from a VDB file and then rendering it with ray marching.
 
-On Windows, the easiest way of setting up OpenVDB for Mandrill, is to use (vcpkg)[https://github.com/microsoft/vcpkg]:
+On Windows, the easiest way of setting up OpenVDB for Mandrill, is to use [vcpkg](https://github.com/microsoft/vcpkg):
 
 	vcpkg install openvdb
