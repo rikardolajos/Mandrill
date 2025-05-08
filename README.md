@@ -110,8 +110,8 @@ For instance (use `copy` instead of `cp` on Windows):
 Remember that if you copy from like this, the paths to the shader files have to be changed in `Example.cpp`.
 From:
 
-	shaderDesc.emplace_back("<strike>SampleApp</strike>/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-	shaderDesc.emplace_back("<strike>SampleApp</strike>/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+	shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+	shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
 
 To:
 
