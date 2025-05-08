@@ -110,11 +110,13 @@ Then add a second `CMakeLists.txt` in `src` with the following:
 	)
 
 To get started, you can copy any of the applications in `Mandrill/app` to your project folder.
-For instance (use `copy` instead of `cp` on Windows):
+For instance:
 	
 	cp Mandrill/app/SampleApp/SampleApp.cpp src/Example.cpp
 	cp Mandrill/app/SampleApp/VertexShader.vert src/VertexShader.vert
 	cp Mandrill/app/SampleApp/FragmentShader.frag src/FragmentShader.frag
+
+(On Windows, use `copy` instead of `cp`.)
 
 Remember that if you copy from like this, the paths to the shader files have to be changed in `Example.cpp`.
 From:
