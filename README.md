@@ -119,6 +119,7 @@ For instance:
 (On Windows, use `copy` instead of `cp`.)
 
 Remember that if you copy from like this, the paths to the shader files have to be changed in `Example.cpp`.
+
 From:
 
 	shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
