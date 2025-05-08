@@ -21,9 +21,14 @@ If you cloned the repo but forgot to initialize the submodules, use:
 	git submodule update --init --recursive
 
 This project uses CMake to generate project files, and has been tested on Windows with Visual Studio and on Linux with Make.
-Use Visual Studio's internal CMake support for setting up the project: after cloning the git repo as instructed above, start Visual studio and pick `Open a local folder` and pick the folder where the repo was cloned to.
 
-On other platforms, use the CMake command line interface to setup the project.
+### Windows
+
+Use Visual Studio's internal CMake support for setting up the project: after cloning the git repo as instructed above, start Visual studio and pick `Open a local folder` and pick the folder where the repo was cloned to.
+Compile all targets with `Ctrl + Shift + B`, and use the dropdown menu with the green triangle to run a compiled application.
+
+### Linux
+On Linux, use the CMake command line interface to setup the project.
 Navigate to the folder where the repo resides:
 
 	cd Mandrill
