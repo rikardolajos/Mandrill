@@ -64,17 +64,26 @@ namespace Mandrill
         /// <summary>
         /// Get the sampler handle currently in use by the texture.
         /// </summary>
-        /// <returns></returns>
-        MANDRILL_API VkSampler getSampler()
+        /// <returns>Vulkan sampler handle</returns>
+        MANDRILL_API VkSampler getSampler() const
         {
             return mImageInfo.sampler;
+        }
+
+        /// <summary>
+        /// Get the image of the texture.
+        /// </summary>
+        /// <returns>Pointer to image</returns>
+        MANDRILL_API ptr<Image> getImage() const
+        {
+            return mpImage;
         }
 
         /// <summary>
         /// Get the image view handle.
         /// </summary>
         /// <returns>Image view handle</returns>
-        MANDRILL_API VkImageView getImageView()
+        MANDRILL_API VkImageView getImageView() const
         {
             return mImageInfo.imageView;
         }
@@ -84,7 +93,7 @@ namespace Mandrill
         /// </summary>
         /// <param name="binding">Binding to place the write descriptor in</param>
         /// <returns>Write descriptor set</returns>
-        MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding)
+        MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const
         {
             VkWriteDescriptorSet descriptor = {
                 .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
