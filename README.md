@@ -57,6 +57,7 @@ To setup a new repository that uses Mandrill, follow these steps.
 Create a new folder and initialize git in it:
 
 	mkdir Example
+	cd Example
 	git init
 
 Add Mandrill as a submodule:
@@ -89,7 +90,11 @@ Now add a `CMakeLists.txt` file to your repo with the following:
 	include_directories(src)
 
 	add_subdirectory(Mandrill)
-	add_submodule(src)
+	add_subdirectory(src)
+
+Create a folder for your source files:
+
+	mkdir src
 
 Then add a second `CMakeLists.txt` in `src` with the following:
 
