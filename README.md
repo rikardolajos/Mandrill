@@ -90,9 +90,8 @@ Then add a second `CMakeLists.txt` in `src` with the following:
 
 	add_mandrill_executable(Example)
 
-	target_sources(Example
-		PRIVATE
-			"Example.cpp"
+	target_sources(Example PRIVATE
+		"Example.cpp"
 	)
 
 	add_shaders(Example
