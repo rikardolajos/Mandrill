@@ -1,5 +1,7 @@
 # Mandrill
 
+<img align="right" width="128" height="128" src="res/icon.png">
+
 This is an education and research graphics framework written and used at Lund University.
 Mandrill uses the Vulkan API and lightly abstracts some of its most commonly used features without restricting the low-level controll offered by using Vulkan.
 This repository contains the main framework together with some sample apps that are located in the `app` folder.
@@ -44,8 +46,79 @@ To run the project, change to the binary output folder and run a executable file
 	cd {Debug,Release}/bin
 	./SampleApp.bin
 
-## Setting up a new project with Mandrill
+## Setting up a new project with Mandrill as submodule
 
+To setup a new repository that uses Mandrill, follow these steps.
+Create a new folder and initialize git in it:
+
+	mkdir Example
+	git init
+
+Add Mandrill as a submodule:
+
+	git submodule add https://github.com/rikardolajos/Mandrill.git
+
+Initialize Mandrill and its submodules:
+
+	git submodule update --init --recursive
+
+Now add a `CMakeLists.txt` file to your repo with the following:
+
+	cmake_minimum_required(VERSION 3.13)
+
+	set(CMAKE_CXX_STANDARD 20)
+	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+	project("Example" VERSION 1.0.0)
+
+	set(MANDRILL_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+	find_package(Vulkan REQUIRED COMPONENTS glslc)
+	include_directories(${Vulkan_INCLUDE_DIRS})
+	link_libraries(${Vulkan_LIBRARIES})
+
+	set(MANDRILL_EXCLUDE_APPS ON)
+	include_directories(Mandrill/src)
+	include_directories(Mandrill/src/External)
+	include_directories(Mandrill/submodules/glm)
+	include_directories(src)
+
+	add_subdirectory(Mandrill)
+	add_submodule(src)
+
+Then add a second `CMakeLists.txt` in `src` with the following:
+
+	add_mandrill_executable(Example)
+
+	target_sources(Example
+		PRIVATE
+			"Example.cpp"
+	)
+
+	add_shaders(Example
+		"VertexShader.vert"
+		"FragmentShader.frag"
+	)
+
+To get started, you can copy any of the applications in `Mandrill/app` to your project folder.
+For instance (use `copy` instead of `cp` on Windows):
+	
+	cp Mandrill/app/SampleApp/SampleApp.cpp src/Example.cpp
+	cp Mandrill/app/SampleApp/VertexShader.vert src/VertexShader.vert
+	cp Mandrill/app/SampleApp/FragmentShader.frag src/FragmentShader.frag
+
+Remember that if you copy from like this, the paths to the shader files have to be changed in `Example.cpp`.
+From:
+
+	shaderDesc.emplace_back("<strike>SampleApp</strike>/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+	shaderDesc.emplace_back("<strike>SampleApp</strike>/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+
+To:
+
+	shaderDesc.emplace_back("Example/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+	shaderDesc.emplace_back("Example/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+
+Then follow the build instructions above (from after the submodules are initialized).
 
 ## Apps
 
