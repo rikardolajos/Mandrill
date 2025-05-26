@@ -78,7 +78,7 @@ Hit rayMarch(vec3 ro, vec3 rd) {
     for (int i = 0; i < MAX_STEPS; i++) {
         vec3 p = ro + t * rd;
         hit = scene(p);
-        if (hit.dist < 0.001 || t > MAX_DIST) break;
+        if (hit.dist < SURF_DIST || t > MAX_DIST) break;
         t += hit.dist;
     }
 
