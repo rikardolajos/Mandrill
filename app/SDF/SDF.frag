@@ -57,7 +57,7 @@ Hit opSmoothUnion(Hit a, Hit b, float k) {
 
 Hit scene(vec3 p) {
     // Sphere
-    Hit h1 = Hit(sdSphere(p - vec3(0.0, 0.0, 4.0 * sin(pushConstant.time)), 1.5),
+    Hit h1 = Hit(sdSphere(p - vec3(0.0, 2.0 * cos(pushConstant.time), 4.0 * sin(pushConstant.time)), 1.5),
                  Material(1, vec3(1.0, 0.0, 0.0)));
 
     // Box
@@ -68,7 +68,7 @@ Hit scene(vec3 p) {
     Hit h3 = Hit(sdOctahedron(p - vec3(0.0, 0.0, -4.0), 2.0),
                  Material(3, vec3(0.2, 1.0, 0.4)));
 
-    return opSmoothUnion(h1, opUnion(h2, h3), 0.8);
+    return opSmoothUnion(h1, opUnion(h2, h3), 1.5);
 }
 
 Hit rayMarch(vec3 ro, vec3 rd) {
