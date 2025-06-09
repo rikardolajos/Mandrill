@@ -31,18 +31,18 @@ Pass::~Pass()
 
 void Pass::transitionForRendering(VkCommandBuffer cmd, ptr<Image> pImage) const
 {
-    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
+    Helpers::imageBarrier(cmd, pImage->getImage(), VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
                           VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                           VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT,
-                          VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, pImage->getImage());
+                          VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 }
 
 void Pass::transitionForBlitting(VkCommandBuffer cmd, ptr<Image> pImage) const
 {
-    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_READ_BIT,
-                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                          pImage->getImage());
+    Helpers::imageBarrier(cmd, pImage->getImage(), VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                          VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_2_BLIT_BIT,
+                          VK_ACCESS_2_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                          VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 }
 
 void Pass::begin(VkCommandBuffer cmd)
@@ -240,8 +240,13 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
                                                     VK_IMAGE_TILING_OPTIMAL, usage,
                                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
 
-        Helpers::transitionImageLayout(mpDevice, mColorAttachments.back()->getImage(), format,
-                                       VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 1);
+        // Transition the image to color attachment layout
+        VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+        Helpers::imageBarrier(cmd, mColorAttachments.back()->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                              VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                              VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+                              VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        Helpers::cmdEnd(mpDevice, cmd);
 
         mColorAttachments.back()->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
     }
@@ -260,8 +265,27 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
                                             VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-        Helpers::transitionImageLayout(mpDevice, mpDepthAttachment->getImage(), depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
-                                       VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+        VkImageSubresourceRange subresourceRange = {
+            .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1,
+        };
+
+        // Check if format has stencil component
+        if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT) {
+            subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+
+        // Transition the depth attachment layout
+        VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+        Helpers::imageBarrier(
+            cmd, mpDepthAttachment->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+            VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT,
+            VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, &subresourceRange);
+        Helpers::cmdEnd(mpDevice, cmd);
 
         mpDepthAttachment->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
     }

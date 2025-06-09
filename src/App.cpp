@@ -493,35 +493,37 @@ void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
 
     const uint32_t channels = 4;
 
+    std::vector<uint8_t> data = pSwapchain->grabScreenshot();
+
     pSwapchain->waitForInFlightImage();
 
-    Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
-                                   VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
-    VkDeviceSize size = pSwapchain->getExtent().width * pSwapchain->getExtent().height * channels;
-    Buffer buffer(pDevice, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    Helpers::copyImageToBuffer(pDevice, pSwapchain->getImage(), buffer.getBuffer(), pSwapchain->getExtent().width,
-                               pSwapchain->getExtent().height, 1);
-    Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
-                                   VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
-    uint8_t* pData = static_cast<uint8_t*>(buffer.getHostMap());
+    //Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
+    //                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
+    //VkDeviceSize size = pSwapchain->getExtent().width * pSwapchain->getExtent().height * channels;
+    //Buffer buffer(pDevice, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    //              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    //Helpers::copyImageToBuffer(pDevice, pSwapchain->getImage(), buffer.getBuffer(), pSwapchain->getExtent().width,
+    //                           pSwapchain->getExtent().height, 1);
+    //Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
+    //                               VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
+    //uint8_t* pData = static_cast<uint8_t*>(buffer.getHostMap());
 
-    // BGR -> RGB
-    for (uint32_t i = 0; i < size; i += channels) {
-        std::swap(pData[i], pData[i + 2]);
-    }
+    //// BGR -> RGB
+    //for (uint32_t i = 0; i < size; i += channels) {
+    //    std::swap(pData[i], pData[i + 2]);
+    //}
 
-    uint8_t* pDataCopy = static_cast<uint8_t*>(std::malloc(buffer.getSize()));
-    if (!pDataCopy) {
-        Log::Error("Failed to allocate buffer for screenshot");
-        return;
-    }
-    std::memcpy(pDataCopy, pData, buffer.getSize());
+    //uint8_t* pDataCopy = static_cast<uint8_t*>(std::malloc(buffer.getSize()));
+    //if (!pDataCopy) {
+    //    Log::Error("Failed to allocate buffer for screenshot");
+    //    return;
+    //}
+    //std::memcpy(pDataCopy, pData, buffer.getSize());
 
-    // Run in a thread since saving takes forever
-    auto thread =
-        std::thread(saveScreenshot, pDataCopy, pSwapchain->getExtent().width, pSwapchain->getExtent().height, channels);
-    thread.detach();
+    //// Run in a thread since saving takes forever
+    //auto thread =
+    //    std::thread(saveScreenshot, pDataCopy, pSwapchain->getExtent().width, pSwapchain->getExtent().height, channels);
+    //thread.detach();
 }
 
 void App::toggleFullscreen()

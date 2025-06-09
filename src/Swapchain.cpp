@@ -136,9 +136,10 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     }
 
     // Transition swapchain image for blitting
-    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT,
-                          VK_PIPELINE_STAGE_2_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
-                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mImages[mImageIndex]);
+    Helpers::imageBarrier(cmd, mImages[mImageIndex], VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+                          VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT, VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+                          VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     // Blit image to current swapchain image
     VkImageSubresourceLayers subresourceLayers = {
@@ -173,9 +174,9 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     vkCmdBlitImage2(cmd, &blitImageInfo);
 
     // Transition swapchain image for presenting
-    Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
+    Helpers::imageBarrier(cmd, mImages[mImageIndex], VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
                           VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT, VK_ACCESS_2_NONE, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, mImages[mImageIndex]);
+                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
     Check::Vk(vkEndCommandBuffer(cmd));
 
@@ -214,6 +215,11 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     mPreviousInFlightIndex = mInFlightIndex;
     mInFlightIndex = (mInFlightIndex + 1) % count(mInFlightFences);
 }
+
+std::vector<uint8_t> Swapchain::grabScreenshot() const
+{
+    return {};
+};
 
 // Query for swapchain support. This function will allocate memory for the pointers in the returned struct and those
 // needs to be freed by caller.

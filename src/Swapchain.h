@@ -46,6 +46,12 @@ namespace Mandrill
         MANDRILL_API void present(VkCommandBuffer cmd, ptr<Image> pImage);
 
         /// <summary>
+        /// Grab a screenshot from the current swapchain image.
+        /// </summary>
+        /// <returns>Vector to pixel data containing screenshot</returns>
+        MANDRILL_API std::vector<uint8_t> grabScreenshot() const;
+
+        /// <summary>
         /// Get the swapchain handle.
         /// </summary>
         /// <returns>Swapchain handle</returns>
