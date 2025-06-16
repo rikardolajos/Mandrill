@@ -91,6 +91,46 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the device memory.
+        /// </summary>
+        /// <returns>VkDeviceMemory handle</returns>
+        MANDRILL_API VkDeviceMemory getMemory() const
+        {
+            return mMemory;
+        }
+
+        /// <summary>
+        /// Get the image usage flags.
+        /// </summary>
+        /// <returns>Usage flags</returns>
+        MANDRILL_API VkImageUsageFlags getUsage() const
+        {
+            return mUsage;
+        }
+
+        /// <summary>
+        /// Get the memory property flags
+        /// </summary>
+        /// <returns>Memory property flags</returns>
+        MANDRILL_API VkMemoryPropertyFlags getProperties() const
+        {
+            return mProperties;
+        }
+
+        /// <summary>
+        /// If the buffer memory is host-coherent, this returns the pointor to the memory.
+        /// </summary>
+        /// <returns>Pointer to buffer memory, or nullptr</returns>
+        MANDRILL_API void* getHostMap() const
+        {
+            if (!(mProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+                Log::Error("Unable to access host map of buffer that is not host coherent.");
+                return nullptr;
+            }
+            return mpHostMap;
+        }
+
+        /// <summary>
         /// Get the format of the image.
         /// </summary>
         /// <returns>Image format</returns>
@@ -141,8 +181,12 @@ namespace Mandrill
         VkImage mImage;
         VkImageView mImageView;
 
+        VkImageUsageFlags mUsage;
+        VkMemoryPropertyFlags mProperties;
+
         VkDeviceMemory mMemory;
         bool mOwnMemory;
+        void* mpHostMap;
 
         uint32_t mWidth;
         uint32_t mHeight;

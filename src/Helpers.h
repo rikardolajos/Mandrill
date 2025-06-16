@@ -45,14 +45,22 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="cmd">Command buffer to end</param>
-        inline static void cmdEnd(ptr<Device> pDevice, VkCommandBuffer cmd)
+        inline static void cmdEnd(ptr<Device> pDevice, VkCommandBuffer cmd,
+                                  const std::vector<VkSemaphore>& waitSemaphores = {},
+                                  const std::vector<VkPipelineStageFlags>& waitStages = {},
+                                  const std::vector<VkSemaphore>& signalSemaphores = {})
         {
             Check::Vk(vkEndCommandBuffer(cmd));
 
             VkSubmitInfo si = {
                 .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .waitSemaphoreCount = count(waitSemaphores),
+                .pWaitSemaphores = waitSemaphores.data(),
+                .pWaitDstStageMask = waitStages.data(),
                 .commandBufferCount = 1,
                 .pCommandBuffers = &cmd,
+                .signalSemaphoreCount = count(signalSemaphores),
+                .pSignalSemaphores = signalSemaphores.data(),
             };
 
             Check::Vk(vkQueueSubmit(pDevice->getQueue(), 1, &si, nullptr));

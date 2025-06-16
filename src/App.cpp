@@ -232,7 +232,7 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<pt
             }
 
             if (ImGui::MenuItem("Take screenshot", "F12", false)) {
-                takeScreenshot(pDevice, pSwapchain);
+                takeScreenshot(pSwapchain);
             }
 
             if (ImGui::MenuItem("Reset to initial framesize", "", false)) {
@@ -368,7 +368,7 @@ void App::baseKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action
     }
 
     if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-        takeScreenshot(pDevice, pSwapchain);
+        takeScreenshot(pSwapchain);
     }
 
     if (key == GLFW_KEY_V && action == GLFW_PRESS) {
@@ -474,56 +474,35 @@ void App::initImGUI()
     ImGui_ImplGlfw_InitForVulkan(mpWindow, true);
 }
 
-static void saveScreenshot(uint8_t* pData, uint32_t width, uint32_t height, uint32_t channels)
+static void requestScreenshot(ptr<Swapchain> pSwapchain)
 {
+    pSwapchain->requestScreenshot();
+}
+
+static void acquireAndSaveScreenshot(ptr<Swapchain> pSwapchain)
+{
+    // Acquire screenshot (wait until swapchain is ready)
+    std::vector<uint8_t> data = pSwapchain->waitForScreenshot();
+
+    // Save screenshot
     char timestamp[64];
     time_t t = std::time(nullptr);
     std::strftime(timestamp, 64, "%G-%m-%d_%H-%M-%S", std::localtime(&t));
     std::filesystem::path filename = std::format("Screenshot_{}.png", timestamp);
-    stbi_write_png(filename.string().c_str(), width, height, channels, pData, width * 4);
+    stbi_write_png(filename.string().c_str(), pSwapchain->getExtent().width, pSwapchain->getExtent().height, 4,
+                   data.data(), pSwapchain->getExtent().width * 4);
     auto fullpath = std::filesystem::current_path() / filename;
-    std::free(pData);
 
     Log::Info("Screenshot saved to {}", fullpath.string());
 }
 
-void App::takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain)
+void App::takeScreenshot(ptr<Swapchain> pSwapchain)
 {
-    Log::Info("Taking screenshot and saving to disk...");
+    auto threadRequest = std::thread(requestScreenshot, pSwapchain);
+    threadRequest.detach();
 
-    const uint32_t channels = 4;
-
-    std::vector<uint8_t> data = pSwapchain->grabScreenshot();
-
-    pSwapchain->waitForInFlightImage();
-
-    //Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
-    //                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 1);
-    //VkDeviceSize size = pSwapchain->getExtent().width * pSwapchain->getExtent().height * channels;
-    //Buffer buffer(pDevice, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-    //              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    //Helpers::copyImageToBuffer(pDevice, pSwapchain->getImage(), buffer.getBuffer(), pSwapchain->getExtent().width,
-    //                           pSwapchain->getExtent().height, 1);
-    //Helpers::transitionImageLayout(pDevice, pSwapchain->getImage(), pSwapchain->getImageFormat(),
-    //                               VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
-    //uint8_t* pData = static_cast<uint8_t*>(buffer.getHostMap());
-
-    //// BGR -> RGB
-    //for (uint32_t i = 0; i < size; i += channels) {
-    //    std::swap(pData[i], pData[i + 2]);
-    //}
-
-    //uint8_t* pDataCopy = static_cast<uint8_t*>(std::malloc(buffer.getSize()));
-    //if (!pDataCopy) {
-    //    Log::Error("Failed to allocate buffer for screenshot");
-    //    return;
-    //}
-    //std::memcpy(pDataCopy, pData, buffer.getSize());
-
-    //// Run in a thread since saving takes forever
-    //auto thread =
-    //    std::thread(saveScreenshot, pDataCopy, pSwapchain->getExtent().width, pSwapchain->getExtent().height, channels);
-    //thread.detach();
+    auto threadAcquire = std::thread(acquireAndSaveScreenshot, pSwapchain);
+    threadAcquire.detach();
 }
 
 void App::toggleFullscreen()

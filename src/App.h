@@ -296,9 +296,8 @@ namespace Mandrill
         /// <summary>
         /// Save the next available swapchain image to disk.
         /// </summary>
-        /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain to get screenshot from</param>
-        void takeScreenshot(ptr<Device> pDevice, ptr<Swapchain> pSwapchain);
+        void takeScreenshot(ptr<Swapchain> pSwapchain);
 
         /// <summary>
         /// Toggle between fullscreen and windowed mode.

@@ -69,6 +69,17 @@ Swapchain::Swapchain(ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pD
     createSwapchain();
     createSyncObjects(framesInFlight);
     createDescriptor();
+
+    mScreenshotStageImage =
+        make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
+                        VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+    Helpers::imageBarrier(cmd, mScreenshotStageImage->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Helpers::cmdEnd(mpDevice, cmd);
 }
 
 Swapchain::~Swapchain()
@@ -105,12 +116,32 @@ void Swapchain::recreate()
 VkCommandBuffer Swapchain::acquireNextImage()
 {
     // Wait for the current frame to not be in flight
-    waitForInFlightImage();
+    Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
     Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
+
+    // When the fence is reached, the screenshot has finished the copy
+    bool waitForScreenshotCopy = false;
+    {
+        std::lock_guard lock(mScreenshotMutex);
+        if (mScreenshotState == ScreenshotState::QueuedForBlitting && mScreenshotInFlightIndex == mInFlightIndex) {
+            mScreenshotState = ScreenshotState::BlittedToStage;
+            Log::Debug("Thread render: Blitting done, notify other thread");
+            mScreenshotAvailableCV.notify_all();
+            waitForScreenshotCopy = true;
+        }
+    }
+
+    // Wait for other thread to copy screenshot
+    if (waitForScreenshotCopy) {
+        Log::Debug("Thread render: Wait for copy");
+        std::unique_lock lock(mScreenshotMutex);
+        mScreenshotAvailableCV.wait(lock, [this]() { return mScreenshotState == ScreenshotState::CopiedToHost; });
+        mScreenshotState = ScreenshotState::Idle;
+    }
 
     // Acquire index of next image in the swapchain
     VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
-                                            mInFlightSemaphores[mInFlightIndex], nullptr, &mImageIndex);
+                                            mPresentFinishedSemaphores[mInFlightIndex], nullptr, &mImageIndex);
 
     // Check if swapchain needs to be reconstructed
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -173,6 +204,19 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
 
     vkCmdBlitImage2(cmd, &blitImageInfo);
 
+    // Blit to screenshot stage image if it has been requested
+    {
+        std::lock_guard lock(mScreenshotMutex);
+        if (mScreenshotState == ScreenshotState::Requested) {
+            Log::Debug("Thread render: Queue for blitting");
+
+            blitImageInfo.dstImage = mScreenshotStageImage->getImage(), vkCmdBlitImage2(cmd, &blitImageInfo);
+
+            mScreenshotState = ScreenshotState::QueuedForBlitting;
+            mScreenshotInFlightIndex = mInFlightIndex;
+        }
+    }
+
     // Transition swapchain image for presenting
     Helpers::imageBarrier(cmd, mImages[mImageIndex], VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
                           VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT, VK_ACCESS_2_NONE, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -185,12 +229,12 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     VkSubmitInfo si = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &mInFlightSemaphores[mInFlightIndex],
+        .pWaitSemaphores = &mPresentFinishedSemaphores[mInFlightIndex],
         .pWaitDstStageMask = &waitStage,
         .commandBufferCount = 1,
         .pCommandBuffers = &cmd,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &mImageFinishedSemaphores[mImageIndex],
+        .pSignalSemaphores = &mRenderFinishedSemaphores[mImageIndex],
     };
 
     Check::Vk(vkQueueSubmit(mpDevice->getQueue(), 1, &si, mInFlightFences[mInFlightIndex]));
@@ -198,7 +242,7 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     VkPresentInfoKHR pi = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &mImageFinishedSemaphores[mImageIndex],
+        .pWaitSemaphores = &mRenderFinishedSemaphores[mImageIndex],
         .swapchainCount = 1,
         .pSwapchains = &mSwapchain,
         .pImageIndices = &mImageIndex,
@@ -216,10 +260,31 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
     mInFlightIndex = (mInFlightIndex + 1) % count(mInFlightFences);
 }
 
-std::vector<uint8_t> Swapchain::grabScreenshot() const
+void Swapchain::requestScreenshot()
 {
-    return {};
+    Log::Debug("Thread screenshot: Requesting screenshot");
+    std::lock_guard lock(mScreenshotMutex);
+    mScreenshotState = ScreenshotState::Requested;
 };
+
+std::vector<uint8_t> Swapchain::waitForScreenshot()
+{
+    Log::Debug("Thread screenshot: Wait for screenshot to be blitted");
+    std::unique_lock lock(mScreenshotMutex);
+    mScreenshotAvailableCV.wait(lock, [this] { return mScreenshotState == ScreenshotState::BlittedToStage; });
+
+    std::vector<uint8_t> data(mExtent.width * mExtent.height * 4);
+    uint8_t* pData = static_cast<uint8_t*>(mScreenshotStageImage->getHostMap());
+    std::memcpy(data.data(), pData, data.size());
+
+    mScreenshotState = ScreenshotState::CopiedToHost;
+
+    Log::Debug("Thread screenshot: Screenshot copied, notify other thread");
+    lock.unlock();
+    mScreenshotAvailableCV.notify_all();
+
+    return data;
+}
 
 // Query for swapchain support. This function will allocate memory for the pointers in the returned struct and those
 // needs to be freed by caller.
@@ -330,8 +395,8 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
 
     Check::Vk(vkAllocateCommandBuffers(mpDevice->getDevice(), &ai, mCommandBuffers.data()));
 
-    mImageFinishedSemaphores.resize(count(mImages));
-    mInFlightSemaphores.resize(framesInFlight);
+    mRenderFinishedSemaphores.resize(count(mImages));
+    mPresentFinishedSemaphores.resize(framesInFlight);
     mInFlightFences.resize(framesInFlight);
 
     VkSemaphoreCreateInfo sci = {
@@ -344,11 +409,11 @@ void Swapchain::createSyncObjects(uint32_t framesInFlight)
     };
 
     for (uint32_t i = 0; i < count(mImages); i++) {
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mImageFinishedSemaphores[i]));
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mRenderFinishedSemaphores[i]));
     }
 
     for (uint32_t i = 0; i < framesInFlight; i++) {
-        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mInFlightSemaphores[i]));
+        Check::Vk(vkCreateSemaphore(mpDevice->getDevice(), &sci, nullptr, &mPresentFinishedSemaphores[i]));
         Check::Vk(vkCreateFence(mpDevice->getDevice(), &fci, nullptr, &mInFlightFences[i]));
     }
 }
@@ -361,11 +426,11 @@ void Swapchain::destroySyncObjects()
                          mCommandBuffers.data());
 
     for (uint32_t i = 0; i < count(mImages); i++) {
-        vkDestroySemaphore(mpDevice->getDevice(), mImageFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(mpDevice->getDevice(), mRenderFinishedSemaphores[i], nullptr);
     }
 
     for (uint32_t i = 0; i < count(mInFlightFences); i++) {
-        vkDestroySemaphore(mpDevice->getDevice(), mInFlightSemaphores[i], nullptr);
+        vkDestroySemaphore(mpDevice->getDevice(), mPresentFinishedSemaphores[i], nullptr);
         vkDestroyFence(mpDevice->getDevice(), mInFlightFences[i], nullptr);
     }
 }

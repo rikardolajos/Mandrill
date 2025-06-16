@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <array>
 #include <concepts>
+#include <condition_variable>
 #include <ctime>
 #include <filesystem>
 #include <format>

@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "Buffer.h"
 #include "Device.h"
 #include "Error.h"
 #include "Image.h"
@@ -46,10 +47,18 @@ namespace Mandrill
         MANDRILL_API void present(VkCommandBuffer cmd, ptr<Image> pImage);
 
         /// <summary>
-        /// Grab a screenshot from the current swapchain image.
+        /// Request a screenshot from the next rendered frame. This call must be paired with a call to
+        /// waitForScreenshot(). See App::takeScreenshot() for proper usage.
         /// </summary>
         /// <returns>Vector to pixel data containing screenshot</returns>
-        MANDRILL_API std::vector<uint8_t> grabScreenshot() const;
+        MANDRILL_API void requestScreenshot();
+
+        /// <summary>
+        /// Wait for screenshot to be available and acquire it. Only call this after a call to requestScreenshot(). See
+        /// App::takeScreenshot() for proper usage.
+        /// </summary>
+        /// <returns>Vector with pixel data</returns>
+        MANDRILL_API std::vector<uint8_t> waitForScreenshot();
 
         /// <summary>
         /// Get the swapchain handle.
@@ -97,7 +106,8 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the descriptor set of the current swapchain image. Useful if using the swapchain image as a storage image in a shader.
+        /// Get the descriptor set of the current swapchain image. Useful if using the swapchain image as a storage
+        /// image in a shader.
         /// </summary>
         /// <returns>Descriptor set handle</returns>
         MANDRILL_API VkDescriptorSet getImageDescriptorSet() const
@@ -168,15 +178,6 @@ namespace Mandrill
         {
             return mRecreated;
         }
-        
-        /// <summary>
-        /// Wait for the frame in flight to finish.
-        /// </summary>
-        /// <returns></returns>
-        MANDRILL_API void waitForInFlightImage() const
-        {
-            Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
-        }
 
     private:
         void querySupport();
@@ -204,8 +205,8 @@ namespace Mandrill
 
         std::vector<VkCommandBuffer> mCommandBuffers;
 
-        std::vector<VkSemaphore> mImageFinishedSemaphores;
-        std::vector<VkSemaphore> mInFlightSemaphores;
+        std::vector<VkSemaphore> mRenderFinishedSemaphores;
+        std::vector<VkSemaphore> mPresentFinishedSemaphores;
         std::vector<VkFence> mInFlightFences;
 
         uint32_t mInFlightIndex = 0;
@@ -217,5 +218,19 @@ namespace Mandrill
         std::vector<VkDescriptorSet> mDescriptorSets;
 
         bool mRecreated = false;
+
+        enum class ScreenshotState {
+            Idle,
+            Requested,
+            QueuedForBlitting,
+            BlittedToStage,
+            CopiedToHost,
+        };
+
+        ScreenshotState mScreenshotState = ScreenshotState::Idle;
+        ptr<Image> mScreenshotStageImage;
+        std::mutex mScreenshotMutex;
+        std::condition_variable mScreenshotAvailableCV;
+        uint32_t mScreenshotInFlightIndex;
     };
 } // namespace Mandrill
