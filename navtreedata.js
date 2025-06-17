@@ -25,19 +25,20 @@
 var NAVTREE =
 [
   [ "Mandrill", "index.html", [
-    [ "Build", "index.html#autotoc_md1", [
-      [ "Windows", "index.html#autotoc_md2", null ],
-      [ "Linux", "index.html#autotoc_md3", null ]
+    [ "API Reference", "index.html#autotoc_md1", null ],
+    [ "Build", "index.html#autotoc_md2", [
+      [ "Windows", "index.html#autotoc_md3", null ],
+      [ "Linux", "index.html#autotoc_md4", null ]
     ] ],
-    [ "Setting up a new project with Mandrill as submodule", "index.html#autotoc_md4", null ],
-    [ "Apps", "index.html#autotoc_md5", [
-      [ "SampleApp", "index.html#autotoc_md6", null ],
-      [ "SceneViewer", "index.html#autotoc_md7", null ],
-      [ "SDF", "index.html#autotoc_md8", null ],
-      [ "RayTracer", "index.html#autotoc_md9", null ],
-      [ "VolumeViewer", "index.html#autotoc_md10", null ]
+    [ "Setting up a new project with Mandrill as submodule", "index.html#autotoc_md5", null ],
+    [ "Apps", "index.html#autotoc_md6", [
+      [ "SampleApp", "index.html#autotoc_md7", null ],
+      [ "SceneViewer", "index.html#autotoc_md8", null ],
+      [ "SDF", "index.html#autotoc_md9", null ],
+      [ "RayTracer", "index.html#autotoc_md10", null ],
+      [ "VolumeViewer", "index.html#autotoc_md11", null ]
     ] ],
-    [ "OpenVDB", "index.html#autotoc_md11", null ],
+    [ "OpenVDB", "index.html#autotoc_md12", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", null ],
       [ "Namespace Members", "namespacemembers.html", [

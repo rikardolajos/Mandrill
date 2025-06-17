@@ -99,14 +99,17 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p>This is an education and research graphics framework written and used at Lund University. Mandrill uses the Vulkan API and lightly abstracts some of its most commonly used features without restricting the low-level controll offered by using Vulkan. This repository contains the main framework together with some sample apps that are located in the <code>app</code> folder. New apps can be created in the same folder, but it is recommened to create a new repository for each project or application, and accessing the Mandrill framework as a submodule.</p>
 <p>Mandrill uses <a href="https://github.com/glfw/glfw">GLFW</a> for window handling and <a href="https://github.com/ocornut/imgui">Dear ImGUI</a> for user interaction through an immediate mode user interface. Image loading is provided through <a href="https://github.com/nothings/stb">stb</a>.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
+API Reference</h1>
+<p>The Mandrill API reference is available on the GitHub Pages site: <a href="https://rikardolajos.github.io/Mandrill/">Mandrill API</a></p>
+<h1><a class="anchor" id="autotoc_md2"></a>
 Build</h1>
 <p>Clone the repo, and make sure to also initialize the submodules: </p><pre class="fragment">git clone --recurse-submodules https://github.com/rikardolajos/Mandrill.git
 </pre><p> If you cloned the repo but forgot to initialize the submodules, use: </p><pre class="fragment">git submodule update --init --recursive
 </pre><p> This project uses CMake to generate project files, and has been tested on Windows with Visual Studio and on Linux with Make.</p>
-<h2><a class="anchor" id="autotoc_md2"></a>
+<h2><a class="anchor" id="autotoc_md3"></a>
 Windows</h2>
 <p>Use Visual Studio's internal CMake support for setting up the project: after cloning the git repo as instructed above, start Visual studio and pick <code>Open a local folder</code> and pick the folder where the repo was cloned to. Compile all targets with <code>Ctrl + Shift + B</code>, and use the dropdown menu with the green triangle to run a compiled application.</p>
-<h2><a class="anchor" id="autotoc_md3"></a>
+<h2><a class="anchor" id="autotoc_md4"></a>
 Linux</h2>
 <p>On Linux, use the CMake command line interface to setup the project. Navigate to the folder where the repo resides: </p><pre class="fragment">cd Mandrill
 </pre><p> Create a build folder: </p><pre class="fragment">mkdir build
@@ -115,7 +118,7 @@ cmake ..
 </pre><p> To build and compile the project use: </p><pre class="fragment">cmake --build .
 </pre><p> To run the project, change to the binary output folder and run a executable file: </p><pre class="fragment">cd bin
 ./SampleApp.bin
-</pre> <h1><a class="anchor" id="autotoc_md4"></a>
+</pre> <h1><a class="anchor" id="autotoc_md5"></a>
 Setting up a new project with Mandrill as submodule</h1>
 <p>To setup a new repository that uses Mandrill, follow these steps. Create a new folder and initialize git in it: </p><pre class="fragment">mkdir Example
 cd Example
@@ -164,25 +167,25 @@ shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE
 </pre><p> To: </p><pre class="fragment">shaderDesc.emplace_back("Example/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
 shaderDesc.emplace_back("Example/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
 </pre><p> Then follow the build instructions above (from after the submodules are initialized).</p>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Apps</h1>
 <p>The applications provided in this repository can be found in the <code>app</code> folder, and showcase different ways of using Mandrill.</p>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 SampleApp</h2>
 <p>This is a minimal app, with rendering of a single textured billboard. Custom vertex and index buffers are used to draw the mesh, and the Mandrill descriptor abstraction is used.</p>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 SceneViewer</h2>
 <p>The scene viewer uses the <code>Scene.cpp</code> scene abstraction that allows for loading meshes from Wavefront OBJ files. To upload the scene from host (CPU) to device (GPU), the scene has to be compiled and synced to device. See the <code>loadScene()</code> function and the <code><a class="el" href="Scene_8h_source.html">Scene.h</a></code> documentation for proper use. The scene has a predetermined set of descritors that are used for rendering materials and so on.</p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 SDF</h2>
 <p>This application implements a basic signed distance field (SDF) renderer. Rendering is done using a fullscreen triangle pair, and the SDF is sampled in the fragment shader.</p>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 RayTracer</h2>
 <p>Mandrill abstracts some of the ray tracing handling as well (pipeline, shader binding table, and acceleration structure creation). This ray tracer app shows how this functionality can be used.</p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 VolumeViewer</h2>
 <p>This application implements a basic ray marcher for rendering of volumetric entities. **(Requires OpenVDB, see below.)**</p>
-<h1><a class="anchor" id="autotoc_md11"></a>
+<h1><a class="anchor" id="autotoc_md12"></a>
 OpenVDB</h1>
 <p>Mandrill supports the use of VDB files. For this to work, OpenVDB has to be available on your system so that CMake can find it during project generation. If it is not found, a warning message will be given and the use of <code>Texture3D</code> will not be available. See <code>app/VolumeViewer</code> for an example of loading a volume from a VDB file and then rendering it with ray marching.</p>
 <p>On Windows, the easiest way of setting up OpenVDB for Mandrill, is to use <a href="https://github.com/microsoft/vcpkg">vcpkg</a>: </p><pre class="fragment">vcpkg install openvdb
