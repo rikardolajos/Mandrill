@@ -26,20 +26,20 @@ public:
     void transitionAttachmentsForGBuffer(VkCommandBuffer cmd)
     {
         for (auto& attachment : mColorAttachments) {
-            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
-                                  VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+            Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+                                  VK_ACCESS_2_SHADER_READ_BIT, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                                   VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, attachment->getImage());
+                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
     }
 
     void transitionAttachmentsForResolve(VkCommandBuffer cmd)
     {
         for (auto& attachment : mColorAttachments) {
-            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+            Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                                   VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
                                   VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, attachment->getImage());
+                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         }
     }
 
@@ -65,10 +65,9 @@ public:
             attachment->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
 
             // Transition to correct layout for descriptor creation
-            Helpers::imageBarrier(cmd, VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+            Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
                                   VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
-                                  VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                  attachment->getImage());
+                                  VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         }
 
         // Transition depth attachment for depth use
@@ -81,10 +80,10 @@ public:
             depthSubresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
         Helpers::imageBarrier(
-            cmd, VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE, VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT,
+            cmd, mpDepthAttachment->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+            VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT,
             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, mpDepthAttachment->getImage(),
-            &depthSubresourceRange);
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, &depthSubresourceRange);
 
         Helpers::cmdEnd(mpDevice, cmd);
 
