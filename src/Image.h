@@ -7,6 +7,10 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Image class for managing Vulkan images. This class handles the creation and destruction of images, as well as
+    /// basic memory management.
+    /// </summary>
     class Image
     {
     public:
@@ -25,7 +29,6 @@ namespace Mandrill
         /// <param name="tiling">Tiling mode to use</param>
         /// <param name="usage">How the image will be used</param>
         /// <param name="properties">Which memory properties to require</param>
-        /// <returns>Image object</returns>
         MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
@@ -44,7 +47,6 @@ namespace Mandrill
         /// <param name="usage">How the image will be used</param>
         /// <param name="memory">Allocated memory to use for image</param>
         /// <param name="offset">Where in the allocated memory the image should be stored</param>
-        /// <returns>Image object</returns>
         MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);
@@ -52,14 +54,12 @@ namespace Mandrill
         /// <summary>
         /// Destructor for image
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API ~Image();
 
         /// <summary>
         /// Create a default image view for Image object.
         /// </summary>
         /// <param name="aspectFlags">Aspect flags to use for image view</param>
-        /// <returns></returns>
         MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags);
 
         /// <summary>
@@ -75,7 +75,6 @@ namespace Mandrill
         /// Use this function if image view is created externally.
         /// </summary>
         /// <param name="imageView">Image view to use</param>
-        /// <returns></returns>
         MANDRILL_API void setImageView(VkImageView imageView)
         {
             mImageView = imageView;

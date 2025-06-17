@@ -25,6 +25,9 @@ namespace Mandrill
     class Descriptor;
     class Scene;
 
+    /// <summary>
+    /// Acceleration structure class for building and managing acceleration structures.
+    /// </summary>
     class AccelerationStructure : public std::enable_shared_from_this<AccelerationStructure>
     {
     public:

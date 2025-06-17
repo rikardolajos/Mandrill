@@ -14,12 +14,17 @@
 namespace Mandrill
 {
     struct Vertex {
-        alignas(16) glm::vec3 position;
-        alignas(16) glm::vec3 normal;
-        alignas(16) glm::vec2 texcoord;
-        alignas(16) glm::vec3 tangent;
-        alignas(16) glm::vec3 binormal;
+        alignas(16) glm::vec3 position; // Position of vertex in 3D space
+        alignas(16) glm::vec3 normal;   // Normal vector of vertex
+        alignas(16) glm::vec2 texcoord; // Texture coordinates
+        alignas(16) glm::vec3 tangent;  // Tangent vector for normal mapping
+        alignas(16) glm::vec3 binormal; // Binormal vector for normal mapping
 
+        /// <summary>
+        /// Check if two vertices are exactly equal (so we can remove redundant vertices).
+        /// </summary>
+        /// <param name="other">Vertex to compare to</param>
+        /// <returns>True if equal, otherwise false</returns>
         bool operator==(const Vertex& other) const
         {
             return position == other.position && normal == other.normal && texcoord == other.texcoord &&
@@ -79,6 +84,9 @@ namespace Mandrill
     class Scene; // Forward declare scene so Node can befriend it
     class Pipeline;
 
+    /// <summary>
+    /// Scene node class for managing a single node in a scene graph. This class can hold meshes and transformations.
+    /// </summary>
     class Node
     {
     public:
@@ -187,6 +195,9 @@ namespace Mandrill
         std::vector<Node*> mChildren;
     };
 
+    /// <summary>
+    /// Scene class that manages a collection of nodes, materials, meshes, and rendering operations.
+    /// </summary>
     class Scene : public std::enable_shared_from_this<Scene>
     {
     public:
@@ -196,23 +207,27 @@ namespace Mandrill
         /// Create a new scene.
         ///
         /// The scene will use descriptor sets as follows:
-        ///     Camera matrix (struct CameraMatrices): Set = 0, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        ///     Model matrix (mat4): Set = 1, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        ///     Material params (struct MaterialParams): Set = 2, Binding = 0, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Material diffuse texture: Set = 2, Binding = 1, Type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-        ///     Material specular texture: Set = 2, Binding = 2, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        ///     Material ambient texture: Set = 2, Binding = 3, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        ///     Material emission texture: Set = 2, Binding = 4, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        ///     Material normal texture: Set = 2, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        ///     Acceleration structure: Set = 3, Binding = 0, Type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
-        ///     Storage output image: Set = 3, Binding = 1, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Scene vertex buffer: Set = 3, Binding = 2, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Scene index buffer: Set = 3, Binding = 3, Type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        ///     Scene material buffer: Set = 3, Binding = 4, Type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        ///     Scene texture array: Set = 3, Binding = 5, Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        ///     Output storage image: Set = 4, Binding = 0, Type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+        /// <table>
+        /// <caption id="descriptor-layout">Descriptor layout</caption>
+        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
+        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        /// <tr><td> Model matrix (mat4) <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        /// <tr><td> Material params (struct MaterialParams) <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        /// <tr><td> Material diffuse texture <td> 2 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+        /// <tr><td> Material specular texture <td> 2 <td> 2 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material ambient texture <td> 2 <td> 3 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material emission texture <td> 2 <td> 4 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material normal texture <td> 2 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Acceleration structure <td> 3 <td> 0 <td> VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
+        /// <tr><td> Storage output image <td> 3 <td> 1 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        /// <tr><td> Scene vertex buffer <td> 3 <td> 2 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        /// <tr><td> Scene index buffer <td> 3 <td> 3 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        /// <tr><td> Scene material buffer <td> 3 <td> 4 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        /// <tr><td> Scene texture array <td> 3 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Output storage image <td> 4 <td> 0 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+        /// </table>
         ///
-        ///     NB: Set 3 and 4 is only available when using ray tracing
+        /// NB: Set 3 and 4 are only available when using ray tracing
         ///
         /// </summary>
         /// <param name="pDevice">Device to use</param>
@@ -316,30 +331,30 @@ namespace Mandrill
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler);
 
         /// <summary>
-        /// Get the layout used by the scene.
+        /// Get the layout used by the scene (as described in the comments for the Scene() constructor above).
         ///
         /// The layout is as follows:
         ///
         /// Set.Binding: Descriptor type [usage]
         ///
-        /// 0.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Camera matrices]
-        /// 1.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Model matrix]
-        /// 2.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER          [Material parameters]
-        /// 2.1: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material diffuse texture]
-        /// 2.2: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material specular texture]
-        /// 2.3: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material ambient texture]
-        /// 2.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material emission texture]
-        /// 2.5: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material normal texture]
+        /// 0.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Camera matrices] <br>
+        /// 1.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Model matrix] <br>
+        /// 2.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER          [Material parameters] <br>
+        /// 2.1: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material diffuse texture] <br>
+        /// 2.2: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material specular texture] <br>
+        /// 2.3: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material ambient texture] <br>
+        /// 2.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material emission texture] <br>
+        /// 2.5: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material normal texture] <br>
         ///
         /// If ray-tracing support is requested, the following is also available:
         ///
-        /// 3.0: VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR      [Acceleration structure]
-        /// 3.1: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene vertex buffer]
-        /// 3.2: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene index buffer]
-        /// 3.3: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene material buffer]
-        /// 3.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (array)  [Scene texture array]
-        /// 3.5: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Instance data buffer]
-        /// 4.0: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE                   [Output storage image]
+        /// 3.0: VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR      [Acceleration structure] <br>
+        /// 3.1: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene vertex buffer] <br>
+        /// 3.2: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene index buffer] <br>
+        /// 3.3: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene material buffer] <br>
+        /// 3.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (array)  [Scene texture array] <br>
+        /// 3.5: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Instance data buffer] <br>
+        /// 4.0: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE                   [Output storage image] <br>
         ///
         /// </summary>
         /// <returns>Pointer to layout</returns>
@@ -471,6 +486,10 @@ namespace Mandrill
     private:
         friend Node;
 
+        std::vector<uint32_t> loadFromOBJ(const std::filesystem::path& path,
+                                          const std::filesystem::path& materialPath = "");
+        std::vector<uint32_t> loadFromGLTF(const std::filesystem::path& path,
+                                           const std::filesystem::path& materialPath = "");
         void addTexture(std::string texturePath);
         void createDescriptors();
 

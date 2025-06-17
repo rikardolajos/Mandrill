@@ -10,16 +10,16 @@
 
 namespace Mandrill
 {
-
+    /// <summary>
+    /// Base class for a Mandrill application. This class provides the basic functionality to create a window and
+    /// handling user input. This class should be inherited by any application using Mandrill, and all the pure virtual
+    /// functions have to be overriden.
+    /// </summary>
     class MANDRILL_API App
     {
     public:
         /// <summary>
         /// Create a new Mandrill app.
-        ///
-        /// This class should be inherited by any application using Mandrill, and all the pure virtual functions have to
-        /// be overriden.
-        ///
         /// </summary>
         /// <param name="title">Title to be shown in the window frame</param>
         /// <param name="width">Width of window</param>

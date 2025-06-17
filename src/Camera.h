@@ -16,6 +16,9 @@ namespace Mandrill
         glm::mat4 proj_inv;
     };
 
+    /// <summary>
+    /// Camera class for managing camera properties and transformations in a 3D scene.
+    /// </summary>
     class Camera
     {
     public:

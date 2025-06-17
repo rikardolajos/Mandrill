@@ -7,6 +7,10 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Buffer class for managing Vulkan buffers. This class handles the creation and destruction of buffers, as well as
+    /// basic memory management.
+    /// </summary>
     class Buffer
     {
     public:

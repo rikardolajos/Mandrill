@@ -7,6 +7,12 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan. Passes can either be
+    /// created with explicit color and depth attachments, or with implicit attachments that are created based on a
+    /// given extent and format. The pass can be used to begin and end rendering commands, as well as transitioning
+    /// images for rendering or blitting.
+    /// </summary>
     class Pass
     {
     public:

@@ -6,15 +6,16 @@
 #include "Pipeline.h"
 
 #include "tiny_obj_loader.h"
+#include "tinygltf/tiny_gltf.h"
 
 using namespace Mandrill;
 
-enum MaterialTextureBit {
-    DIFFUSE_TEXTURE_BIT = 1 << 0,
-    SPECULAR_TEXTURE_BIT = 1 << 1,
-    AMBIENT_TEXTURE_BIT = 1 << 2,
-    EMISSION_TEXTURE_BIT = 1 << 3,
-    NORMAL_TEXTURE_BIT = 1 << 4,
+enum class MaterialTextureBit : uint32_t {
+    Diffuse = 1 << 0,
+    Specular = 1 << 1,
+    Ambient = 1 << 2,
+    Emission = 1 << 3,
+    Normal = 1 << 4,
 };
 
 Node::Node()
@@ -103,7 +104,7 @@ ptr<Node> Scene::addNode()
 uint32_t Scene::addMaterial(Material material)
 {
     auto setTexture = [this](std::unordered_map<std::string, ptr<Texture>>& loadedTextures, std::string texturePath,
-                             enum MaterialTextureBit bit, ptr<Texture> pMissingTexture) {
+                             MaterialTextureBit bit, ptr<Texture> pMissingTexture) {
         if (!texturePath.empty()) {
             addTexture(texturePath);
         } else {
@@ -113,11 +114,11 @@ uint32_t Scene::addMaterial(Material material)
 
     material.params.hasTexture = 0;
 
-    setTexture(mTextures, material.diffuseTexturePath, DIFFUSE_TEXTURE_BIT, mpMissingTexture);
-    setTexture(mTextures, material.specularTexturePath, SPECULAR_TEXTURE_BIT, mpMissingTexture);
-    setTexture(mTextures, material.ambientTexturePath, AMBIENT_TEXTURE_BIT, mpMissingTexture);
-    setTexture(mTextures, material.emissionTexturePath, EMISSION_TEXTURE_BIT, mpMissingTexture);
-    setTexture(mTextures, material.normalTexturePath, NORMAL_TEXTURE_BIT, mpMissingTexture);
+    setTexture(mTextures, material.diffuseTexturePath, MaterialTextureBit::Diffuse, mpMissingTexture);
+    setTexture(mTextures, material.specularTexturePath, MaterialTextureBit::Specular, mpMissingTexture);
+    setTexture(mTextures, material.ambientTexturePath, MaterialTextureBit::Ambient, mpMissingTexture);
+    setTexture(mTextures, material.emissionTexturePath, MaterialTextureBit::Emission, mpMissingTexture);
+    setTexture(mTextures, material.normalTexturePath, MaterialTextureBit::Normal, mpMissingTexture);
 
     mMaterials.push_back(material);
 
@@ -148,6 +149,11 @@ template <typename T, typename... Rest> inline void hashCombine(std::size_t& see
 namespace std
 {
     template <> struct hash<Vertex> {
+        /// <summary>
+        /// Genereate a hash for a vertex.
+        /// </summary>
+        /// <param name="vertex">Vertex used as hash input</param>
+        /// <returns>Hash value</returns>
         size_t operator()(Vertex const& vertex) const
         {
             size_t h = 0;
@@ -164,193 +170,13 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
 
     Log::Info("Loading {}", path.string());
 
-    tinyobj::ObjReaderConfig readerConfig;
-    readerConfig.mtl_search_path = materialPath.string();
-    readerConfig.triangulate = true;
-
-    tinyobj::ObjReader reader;
-
-    if (!reader.ParseFromFile(path.string(), readerConfig)) {
-        if (!reader.Error().empty()) {
-            Log::Error("TinyObjReader: {}", reader.Error());
-        }
-        Log::Error("Failed to load {}", path.string());
-    }
-
-    if (!reader.Warning().empty()) {
-        Log::Warning("TinyObjReader: {}", reader.Warning());
-    }
-
-    auto& attrib = reader.GetAttrib();
-    auto& shapes = reader.GetShapes();
-    auto& materials = reader.GetMaterials();
-
-    // Loop over shapes
-    for (auto& shape : shapes) {
-        // One mesh per material in shape
-        std::set<int> matIDs;
-        for (int matID : shape.mesh.material_ids) {
-            matIDs.insert(matID);
-        }
-
-        std::vector<Mesh> shapeMesh(matIDs.size());
-
-        // Loop over faces
-        size_t indexOffset = 0;
-        std::vector<uint32_t> indices(matIDs.size(), 0);
-        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
-            size_t fv = size_t(shape.mesh.num_face_vertices[f]);
-            int materialIndex = shape.mesh.material_ids[f];
-
-            // Loop over vertices in the face
-            for (size_t v = 0; v < fv; v++) {
-                Vertex vert = {};
-
-                tinyobj::index_t idx = shape.mesh.indices[indexOffset + v];
-                vert.position.x = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
-                vert.position.y = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
-                vert.position.z = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
-
-                if (idx.normal_index >= 0) {
-                    vert.normal.x = attrib.normals[3 * size_t(idx.normal_index) + 0];
-                    vert.normal.y = attrib.normals[3 * size_t(idx.normal_index) + 1];
-                    vert.normal.z = attrib.normals[3 * size_t(idx.normal_index) + 2];
-                }
-
-                if (idx.texcoord_index >= 0) {
-                    vert.texcoord.x = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
-                    vert.texcoord.y = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
-                }
-
-                auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
-                shapeMesh[meshIndex].vertices.push_back(vert);
-                shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
-                shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
-                indices[meshIndex] += 1;
-            }
-
-            indexOffset += fv;
-        }
-
-        for (auto& mesh : shapeMesh) {
-            mMeshes.push_back(mesh);
-            newMeshIndices.push_back(count(mMeshes) - 1);
-        }
-    }
-
-    // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
-            Vertex& v0 = mesh.vertices[j + 0];
-            Vertex& v1 = mesh.vertices[j + 1];
-            Vertex& v2 = mesh.vertices[j + 2];
-
-            glm::vec3 e1 = v1.position - v0.position;
-            glm::vec3 e2 = v2.position - v0.position;
-
-            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
-            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
-
-            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
-
-            glm::vec3 t =
-                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
-                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
-            glm::vec3 b =
-                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
-                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
-
-            mesh.vertices[j + 0].tangent = t;
-            mesh.vertices[j + 1].tangent = t;
-            mesh.vertices[j + 2].tangent = t;
-
-            mesh.vertices[j + 0].binormal = b;
-            mesh.vertices[j + 1].binormal = b;
-            mesh.vertices[j + 2].binormal = b;
-        }
-    }
-
-    // Remove duplicates
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        std::unordered_map<Vertex, uint32_t> uniqueVertices;
-        std::vector<Vertex> newVertices;
-        std::vector<uint32_t> newIndices;
-        uint32_t index = 0;
-        for (uint32_t j = 0; j < count(mesh.indices); j++) {
-            Vertex v = mesh.vertices[j];
-
-            if (uniqueVertices.count(v) == 0) {
-                uniqueVertices[v] = index;
-                newVertices.push_back(v);
-                index += 1;
-            }
-
-            newIndices.push_back(uniqueVertices[v]);
-        }
-
-        mesh.vertices = newVertices;
-        mesh.indices = newIndices;
-    }
-
-    // Load materials
-    for (auto& material : materials) {
-        Material mat;
-        mat.params.diffuse.r = material.diffuse[0];
-        mat.params.diffuse.g = material.diffuse[1];
-        mat.params.diffuse.b = material.diffuse[2];
-
-        mat.params.specular.r = material.specular[0];
-        mat.params.specular.g = material.specular[1];
-        mat.params.specular.b = material.specular[2];
-
-        mat.params.ambient.r = material.ambient[0];
-        mat.params.ambient.g = material.ambient[1];
-        mat.params.ambient.b = material.ambient[2];
-
-        mat.params.emission.r = material.emission[0];
-        mat.params.emission.g = material.emission[1];
-        mat.params.emission.b = material.emission[2];
-
-        mat.params.shininess = material.shininess;
-        mat.params.indexOfRefraction = material.ior;
-        mat.params.opacity = material.dissolve;
-
-        auto setTexture = [this, path, materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                                     std::string textureName, ptr<Texture> pMissingTexture,
-                                                     std::string& textureKey) {
-            if (!textureName.empty()) {
-                auto fullPath =
-                    std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
-                textureKey = fullPath.string();
-                addTexture(textureKey);
-                return true;
-            }
-
-            loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
-            return false;
-        };
-
-        mat.params.hasTexture = 0;
-
-        if (setTexture(mTextures, material.diffuse_texname, mpMissingTexture, mat.diffuseTexturePath)) {
-            mat.params.hasTexture |= DIFFUSE_TEXTURE_BIT;
-        }
-        if (setTexture(mTextures, material.specular_texname, mpMissingTexture, mat.specularTexturePath)) {
-            mat.params.hasTexture |= SPECULAR_TEXTURE_BIT;
-        }
-        if (setTexture(mTextures, material.ambient_texname, mpMissingTexture, mat.ambientTexturePath)) {
-            mat.params.hasTexture |= AMBIENT_TEXTURE_BIT;
-        }
-        if (setTexture(mTextures, material.emissive_texname, mpMissingTexture, mat.emissionTexturePath)) {
-            mat.params.hasTexture |= EMISSION_TEXTURE_BIT;
-        }
-        if (setTexture(mTextures, material.normal_texname, mpMissingTexture, mat.normalTexturePath)) {
-            mat.params.hasTexture |= NORMAL_TEXTURE_BIT;
-        }
-
-        mMaterials.push_back(mat);
+    if (path.extension() == ".obj") {
+        newMeshIndices = loadFromOBJ(path, materialPath);
+    } else if (path.extension() == ".gltf" || path.extension() == ".glb") {
+        newMeshIndices = loadFromGLTF(path, materialPath);
+    } else {
+        Log::Error("Unsupported file format: {}", path.extension().string());
+        return {};
     }
 
     // Add to statistics
@@ -587,6 +413,283 @@ ptr<Layout> Scene::getLayout()
     }
 
     return make_ptr<Layout>(mpDevice, desc);
+}
+
+std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, const std::filesystem::path& materialPath)
+{
+    std::vector<uint32_t> newMeshIndices;
+
+    tinyobj::ObjReaderConfig readerConfig;
+    readerConfig.mtl_search_path = materialPath.string();
+    readerConfig.triangulate = true;
+
+    tinyobj::ObjReader reader;
+
+    if (!reader.ParseFromFile(path.string(), readerConfig)) {
+        if (!reader.Error().empty()) {
+            Log::Error("TinyObjReader: {}", reader.Error());
+        }
+        Log::Error("Failed to load {}", path.string());
+    }
+
+    if (!reader.Warning().empty()) {
+        Log::Warning("TinyObjReader: {}", reader.Warning());
+    }
+
+    auto& attrib = reader.GetAttrib();
+    auto& shapes = reader.GetShapes();
+    auto& materials = reader.GetMaterials();
+
+    // Loop over shapes
+    for (auto& shape : shapes) {
+        // One mesh per material in shape
+        std::set<int> matIDs;
+        for (int matID : shape.mesh.material_ids) {
+            matIDs.insert(matID);
+        }
+
+        std::vector<Mesh> shapeMesh(matIDs.size());
+
+        // Loop over faces
+        size_t indexOffset = 0;
+        std::vector<uint32_t> indices(matIDs.size(), 0);
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
+            size_t fv = size_t(shape.mesh.num_face_vertices[f]);
+            int materialIndex = shape.mesh.material_ids[f];
+
+            // Loop over vertices in the face
+            for (size_t v = 0; v < fv; v++) {
+                Vertex vert = {};
+
+                tinyobj::index_t idx = shape.mesh.indices[indexOffset + v];
+                vert.position.x = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
+                vert.position.y = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
+                vert.position.z = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
+
+                if (idx.normal_index >= 0) {
+                    vert.normal.x = attrib.normals[3 * size_t(idx.normal_index) + 0];
+                    vert.normal.y = attrib.normals[3 * size_t(idx.normal_index) + 1];
+                    vert.normal.z = attrib.normals[3 * size_t(idx.normal_index) + 2];
+                }
+
+                if (idx.texcoord_index >= 0) {
+                    vert.texcoord.x = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
+                    vert.texcoord.y = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
+                }
+
+                auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
+                shapeMesh[meshIndex].vertices.push_back(vert);
+                shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
+                shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
+                indices[meshIndex] += 1;
+            }
+
+            indexOffset += fv;
+        }
+
+        for (auto& mesh : shapeMesh) {
+            mMeshes.push_back(mesh);
+            newMeshIndices.push_back(count(mMeshes) - 1);
+        }
+    }
+
+    // Calculate tangent space for each face (triangle)
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
+        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
+        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
+            Vertex& v0 = mesh.vertices[j + 0];
+            Vertex& v1 = mesh.vertices[j + 1];
+            Vertex& v2 = mesh.vertices[j + 2];
+
+            glm::vec3 e1 = v1.position - v0.position;
+            glm::vec3 e2 = v2.position - v0.position;
+
+            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
+            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
+
+            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+
+            glm::vec3 t =
+                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
+                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
+            glm::vec3 b =
+                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
+                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
+
+            mesh.vertices[j + 0].tangent = t;
+            mesh.vertices[j + 1].tangent = t;
+            mesh.vertices[j + 2].tangent = t;
+
+            mesh.vertices[j + 0].binormal = b;
+            mesh.vertices[j + 1].binormal = b;
+            mesh.vertices[j + 2].binormal = b;
+        }
+    }
+
+    // Remove duplicates
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
+        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
+        std::unordered_map<Vertex, uint32_t> uniqueVertices;
+        std::vector<Vertex> newVertices;
+        std::vector<uint32_t> newIndices;
+        uint32_t index = 0;
+        for (uint32_t j = 0; j < count(mesh.indices); j++) {
+            Vertex v = mesh.vertices[j];
+
+            if (uniqueVertices.count(v) == 0) {
+                uniqueVertices[v] = index;
+                newVertices.push_back(v);
+                index += 1;
+            }
+
+            newIndices.push_back(uniqueVertices[v]);
+        }
+
+        mesh.vertices = newVertices;
+        mesh.indices = newIndices;
+    }
+
+    // Load materials
+    for (auto& material : materials) {
+        Material mat;
+        mat.params.diffuse.r = material.diffuse[0];
+        mat.params.diffuse.g = material.diffuse[1];
+        mat.params.diffuse.b = material.diffuse[2];
+
+        mat.params.specular.r = material.specular[0];
+        mat.params.specular.g = material.specular[1];
+        mat.params.specular.b = material.specular[2];
+
+        mat.params.ambient.r = material.ambient[0];
+        mat.params.ambient.g = material.ambient[1];
+        mat.params.ambient.b = material.ambient[2];
+
+        mat.params.emission.r = material.emission[0];
+        mat.params.emission.g = material.emission[1];
+        mat.params.emission.b = material.emission[2];
+
+        mat.params.shininess = material.shininess;
+        mat.params.indexOfRefraction = material.ior;
+        mat.params.opacity = material.dissolve;
+
+        auto setTexture = [this, path, materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                                     std::string textureName, ptr<Texture> pMissingTexture,
+                                                     std::string& textureKey) {
+            if (!textureName.empty()) {
+                auto fullPath =
+                    std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
+                textureKey = fullPath.string();
+                addTexture(textureKey);
+                return true;
+            }
+
+            loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
+            return false;
+        };
+
+        mat.params.hasTexture = 0;
+
+        if (setTexture(mTextures, material.diffuse_texname, mpMissingTexture, mat.diffuseTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Diffuse);
+        }
+        if (setTexture(mTextures, material.specular_texname, mpMissingTexture, mat.specularTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Specular);
+        }
+        if (setTexture(mTextures, material.ambient_texname, mpMissingTexture, mat.ambientTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Ambient);
+        }
+        if (setTexture(mTextures, material.emissive_texname, mpMissingTexture, mat.emissionTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Emission);
+        }
+        if (setTexture(mTextures, material.normal_texname, mpMissingTexture, mat.normalTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Normal);
+        }
+
+        mMaterials.push_back(mat);
+    }
+
+    return newMeshIndices;
+}
+
+std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, const std::filesystem::path& materialPath)
+{
+    // std::vector<uint32_t> newMeshIndices;
+
+    // tinygltf::Model model;
+    // tinygltf::TinyGLTF loader;
+    // std::string err;
+    // std::string warn;
+
+    // bool ret = false;
+    // if (path.extension() == ".gltf") {
+    //     ret = loader.LoadASCIIFromFile(&model, &err, &warn, path.string());
+    // } else if (path.extension() == ".glb") {
+    //     ret = loader.LoadBinaryFromFile(&model, &err, &warn, path.string());
+    // }
+
+    // if (!warn.empty()) {
+    //     Log::Warning("TinyGLTF: {}", warn);
+    // }
+
+    // if (!err.empty()) {
+    //     Log::Error("TinyGLTF: {}", err);
+    // }
+
+    // if (!ret) {
+    //     Log::Error("Failed to load {}", path.string());
+    //     return {};
+    // }
+
+    //// Loop over meshes
+    // for (const auto& mesh : model.meshes) {
+    //     // Loop over primitives in the mesh
+    //     for (const auto& primitive : mesh.primitives) {
+    //         Mesh newMesh;
+    //         // Get material index
+    //         if (primitive.material >= 0 && primitive.material < count(model.materials)) {
+    //             newMesh.materialIndex = addMaterial(model.materials[primitive.material]);
+    //         } else {
+    //             newMesh.materialIndex = 0; // Default material
+    //         }
+    //         // Get vertex attributes
+    //         if (primitive.attributes.count("POSITION") > 0) {
+    //             const auto& accessor = model.accessors[primitive.attributes.at("POSITION")];
+    //             const auto& bufferView = model.bufferViews[accessor.bufferView];
+    //             const auto& buffer = model.buffers[bufferView.buffer];
+    //             const float* positions =
+    //                 reinterpret_cast<const float*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
+    //             for (size_t i = 0; i < accessor.count; i++) {
+    //                 Vertex vertex;
+    //                 vertex.position.x = positions[i * 3 + 0];
+    //                 vertex.position.y = positions[i * 3 + 1];
+    //                 vertex.position.z = positions[i * 3 + 2];
+    //                 newMesh.vertices.push_back(vertex);
+    //             }
+    //         }
+    //         if (primitive.attributes.count("NORMAL") > 0) {
+    //             const auto& accessor = model.accessors[primitive.attributes.at("NORMAL")];
+    //             const auto& bufferView = model.bufferViews[accessor.bufferView];
+    //             const auto& buffer = model.buffers[bufferView.buffer];
+    //             const float* normals =
+    //                 reinterpret_cast<const float*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
+    //             for (size_t i = 0; i < accessor.count; i++) {
+    //                 newMesh.vertices[i].normal.x = normals[i * 3 + 0];
+    //                 newMesh.vertices[i].normal.y = normals[i * 3 + 1];
+    //                 newMesh.vertices[i].normal.z = normals[i * 3 + 2];
+    //             }
+    //         }
+    //         if (primitive.attributes.count("TEXCOORD_0") > 0) {
+    //             const auto& accessor = model.accessors[primitive.attributes.at("TEXCOORD_0")];
+    //             const auto& bufferView = model.bufferViews[accessor.bufferView];
+    //             const auto& buffer = model.buffers[bufferView.buffer];
+    //             const float* texcoords =
+    //                 reinterpret_cast<const float*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
+    //         }
+    //     }
+    // }
+
+    // return newMeshIndices;
+    return {};
 }
 
 void Scene::addTexture(std::string texturePath)

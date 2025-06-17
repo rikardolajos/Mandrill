@@ -69,6 +69,9 @@ namespace Mandrill
         }
     };
 
+    /// <summary>
+    /// Pipeline class for managing Vulkan graphics pipelines.
+    /// </summary>
     class Pipeline
     {
     public:

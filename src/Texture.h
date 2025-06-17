@@ -8,6 +8,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Texture class for managing textures in Vulkan.
+    /// </summary>
     class Texture
     {
     public:
@@ -55,7 +58,6 @@ namespace Mandrill
         /// Set the sampler for the texture.
         /// </summary>
         /// <param name="pSampler">Sampler to use</param>
-        /// <returns></returns>
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler)
         {
             mImageInfo.sampler = pSampler->getSampler();

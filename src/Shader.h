@@ -7,11 +7,33 @@
 namespace Mandrill
 {
     struct ShaderDesc {
+        /// <summary>
+        /// Path to shader source code
+        /// </summary>
         std::filesystem::path filename;
+
+        /// <summary>
+        /// Entry point of shader (typically "main")
+        /// </summary>
         std::string entry;
+
+        /// <summary>
+        /// Shader stage
+        /// </summary>
         VkShaderStageFlagBits stageFlags;
+
+        /// <summary>
+        /// Optional specialization info constants
+        /// </summary>
         VkSpecializationInfo* pSpecializationInfo;
 
+        /// <summary>
+        /// Shader description constructor, used to create a shader module.
+        /// </summary>
+        /// <param name="filename">Path to shader source code</param>
+        /// <param name="entry">Entry point of shader (typically "main")</param>
+        /// <param name="stageFlags">Shader stage</param>
+        /// <param name="pSpecializationInfo">Optional setup for specialization constants</param>
         MANDRILL_API ShaderDesc(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags,
                                 VkSpecializationInfo* pSpecializationInfo = nullptr)
             : filename(filename), entry(entry), stageFlags(stageFlags), pSpecializationInfo(pSpecializationInfo)
@@ -19,6 +41,10 @@ namespace Mandrill
         }
     };
 
+    /// <summary>
+    /// Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot reloading
+    /// of shader source code during execution.
+    /// </summary>
     class Shader
     {
     public:
@@ -39,7 +65,6 @@ namespace Mandrill
         /// <summary>
         /// Reload shader code from disk and recompile it.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void reload();
 
         /// <summary>

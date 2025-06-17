@@ -4,6 +4,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Namespace with error checking functions for Mandrill.
+    /// </summary>
     namespace Check
     {
         /// <summary>

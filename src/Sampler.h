@@ -6,6 +6,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Sampler class for managing texture samplers in Vulkan.
+    /// </summary>
     class Sampler
     {
     public:

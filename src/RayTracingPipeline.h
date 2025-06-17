@@ -78,6 +78,9 @@ namespace Mandrill
         }
     };
 
+    /// <summary>
+    /// Ray tracing pipeline class that manages the creation and usage of a ray tracing pipeline in Vulkan.
+    /// </summary>
     class RayTracingPipeline : public Pipeline
     {
     public:

@@ -11,6 +11,9 @@ namespace Mandrill
         VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStucture;
     };
 
+    /// <summary>
+    /// Device class abstracting the physical and logical Vulkan device, as well as handling extensions and features.
+    /// </summary>
     class Device
     {
     public:

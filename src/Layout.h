@@ -13,6 +13,15 @@ namespace Mandrill
         VkShaderStageFlags stage;
         uint32_t arrayCount;
 
+        /// <summary>
+        /// Layout description constructor, used to create a layout.
+        /// </summary>
+        /// <param name="set">Desctiptor set</param>
+        /// <param name="binding">Set binding</param>
+        /// <param name="type">Descriptor tpye</param>
+        /// <param name="stage">Shader stage</param>
+        /// <param name="arrayCount">If descriptor array, array length</param>
+        /// <returns></returns>
         MANDRILL_API LayoutDesc(uint32_t set, uint32_t binding, VkDescriptorType type, VkShaderStageFlags stage,
                                 uint32_t arrayCount = 0)
             : set(set), binding(binding), type(type), stage(stage), arrayCount(arrayCount)
@@ -20,6 +29,9 @@ namespace Mandrill
         }
     };
 
+    /// <summary>
+    /// Layout class that abstracts the handling of descriptor set layouts and push constants in Vulkan.
+    /// </summary>
     class Layout
     {
     public:
@@ -61,7 +73,6 @@ namespace Mandrill
         /// Add a new push constant range.
         /// </summary>
         /// <param name="pushConstantRange">Push constant range to add</param>
-        /// <returns></returns>
         MANDRILL_API void addPushConstantRange(VkPushConstantRange pushConstantRange)
         {
             mPushConstantRanges.push_back(pushConstantRange);

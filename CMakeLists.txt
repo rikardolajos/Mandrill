@@ -9,8 +9,9 @@ if (POLICY CMP0141)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project("Mandrill" VERSION 2025.4.0)
+project("Mandrill" VERSION 2025.6.0)
 
+# Whether sample apps should be built or not
 option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)
 
 set(MANDRILL_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -78,5 +79,30 @@ if (NOT MANDRILL_EXCLUDE_APPS)
     add_subdirectory(app)
 endif()
 
-configure_file(res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
-configure_file(res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)
+
+# Generate documentation
+option(MANDRILL_BUILD_DOC "Build documentation" ON)
+configure_file(${CMAKE_SOURCE_DIR}/doc/doxygen-awesome.css ${CMAKE_BINARY_DIR}/doc/doxygen-awesome.css COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/doc/doxygen-awesome-sidebar-only.css ${CMAKE_BINARY_DIR}/doc/doxygen-awesome-sidebar-only.css COPYONLY)
+
+if (MANDRILL_BUILD_DOC)
+    find_package(Doxygen)
+    if (DOXYGEN_FOUND)
+
+        set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/doc/Doxyfile.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile)
+
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+        message("Doxygen build started")
+
+        add_custom_target(doc_doxygen ALL
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM )
+    else (DOXYGEN_FOUND)
+      message("Doxygen need to be installed to generate the doxygen documentation")
+    endif (DOXYGEN_FOUND)
+endif(MANDRILL_BUILD_DOC)

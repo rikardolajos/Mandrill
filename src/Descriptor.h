@@ -56,6 +56,9 @@ namespace Mandrill
         }
     };
 
+    /// <summary>
+    /// Descriptor class for managing Vulkan descriptor sets.
+    /// </summary>
     class Descriptor
     {
     public:

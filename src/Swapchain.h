@@ -9,6 +9,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Swapchain class for managing the swapchain and its images.
+    /// </summary>
     class Swapchain
     {
     public:
@@ -29,7 +32,6 @@ namespace Mandrill
         /// <summary>
         /// Recreate the swapchain, for instance if window size changed.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void recreate();
 
         /// <summary>
@@ -43,14 +45,12 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer which was acquired with acquireNextImage()</param>
         /// <param name="pImage">Image to blit to the swapchain image</param>
-        /// <returns></returns>
         MANDRILL_API void present(VkCommandBuffer cmd, ptr<Image> pImage);
 
         /// <summary>
         /// Request a screenshot from the next rendered frame. This call must be paired with a call to
         /// waitForScreenshot(). See App::takeScreenshot() for proper usage.
         /// </summary>
-        /// <returns>Vector to pixel data containing screenshot</returns>
         MANDRILL_API void requestScreenshot();
 
         /// <summary>

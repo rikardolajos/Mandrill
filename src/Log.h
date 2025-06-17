@@ -4,6 +4,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Log class for logging messages in Mandrill.
+    /// </summary>
     class MANDRILL_API Log
     {
     public:

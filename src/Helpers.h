@@ -10,6 +10,9 @@
 
 namespace Mandrill
 {
+    /// <summary>
+    /// Class with Vulkan helper functions. This class provides static functions that can be called directly without creating an object.
+    /// </summary>
     class MANDRILL_API Helpers
     {
     public:
@@ -259,7 +262,7 @@ namespace Mandrill
         /// </summary>
         /// <param name="reset">If true, the random seed is reset</param>
         /// <returns>A random value</returns>
-        inline float random(bool reset = false)
+        inline static float random(bool reset = false)
         {
             static std::random_device dev;
             static std::mt19937 rng(dev());
