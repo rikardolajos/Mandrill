@@ -1,5 +1,10 @@
 ﻿name: Build & Deploy Doxygen
 
+# Grant write rights so the Pages action can push
+permissions:
+  contents: write
+  pages: write
+
 on:
   push:
     branches:
