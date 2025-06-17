@@ -35,7 +35,9 @@ jobs:
       - name: Prepare for Pages
         run: |
           mkdir -p out
-          cp -r doc/html/* out/
+          pwd
+          ls
+          cp -r html/* out/
 
       - name: Deploy to gh‑pages branch
         uses: peaceiris/actions-gh-pages@v4
