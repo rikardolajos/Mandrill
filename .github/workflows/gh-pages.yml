@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen cmake
+          sudo apt-get install -y doxygen cmake libwayland-dev libxkbcommon-dev xorg-dev
 
       - name: Install Vulkan SDK
         uses: humbletim/install-vulkan-sdk@v1.2
