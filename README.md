@@ -10,6 +10,10 @@ New apps can be created in the same folder, but it is recommened to create a new
 Mandrill uses [GLFW](https://github.com/glfw/glfw) for window handling and [Dear ImGUI](https://github.com/ocornut/imgui) for user interaction through an immediate mode user interface.
 Image loading is provided through [stb](https://github.com/nothings/stb).
 
+## API Reference
+
+The Mandrill API reference is available on the GitHub Pages site: [Mandrill API](https://rikardolajos.github.io/Mandrill/)
+
 ## Build
 
 Clone the repo, and make sure to also initialize the submodules:
