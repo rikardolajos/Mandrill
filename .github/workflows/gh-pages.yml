@@ -19,6 +19,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen cmake
 
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.2
+        with:
+          version: latest
+          cache: true
+
       - name: Configure & build docs
         run: |
           mkdir build
