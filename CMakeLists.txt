@@ -79,19 +79,19 @@ if (NOT MANDRILL_EXCLUDE_APPS)
     add_subdirectory(app)
 endif()
 
-configure_file(${CMAKE_SOURCE_DIR}/res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)
+configure_file(res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
+configure_file(res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)
 
 # Generate documentation
 option(MANDRILL_BUILD_DOC "Build documentation" ON)
-configure_file(${CMAKE_SOURCE_DIR}/doc/doxygen-awesome.css ${CMAKE_BINARY_DIR}/doc/doxygen-awesome.css COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/doc/doxygen-awesome-sidebar-only.css ${CMAKE_BINARY_DIR}/doc/doxygen-awesome-sidebar-only.css COPYONLY)
+configure_file(doc/doxygen-awesome.css ${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen-awesome.css COPYONLY)
+configure_file(doc/doxygen-awesome-sidebar-only.css ${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen-awesome-sidebar-only.css COPYONLY)
 
 if (MANDRILL_BUILD_DOC)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
 
-        set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/doc/Doxyfile.in)
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
         set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile)
 
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
