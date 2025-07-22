@@ -224,7 +224,7 @@ void Pass::createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Imag
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
         .colorAttachmentCount = count(mColorAttachments),
         .pColorAttachmentFormats = mFormats.data(),
-        .depthAttachmentFormat = mpDepthAttachment->getFormat(),
+        .depthAttachmentFormat = mpDepthAttachment ? mpDepthAttachment->getFormat() : VK_FORMAT_UNDEFINED,
     };
 }
 
