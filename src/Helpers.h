@@ -215,17 +215,15 @@ namespace Mandrill
         /// <summary>
         /// Copy an image to a buffer.
         /// </summary>
-        /// <param name="pDevice">Device to use</param>
+        /// <param name="cmd">Command buffer to use</param>
         /// <param name="image">Image to use</param>
         /// <param name="buffer">Buffer to use</param>
         /// <param name="width">Width of image</param>
         /// <param name="height">Height of image</param>
         /// <param name="depth">Depth of image</param>
-        inline static void copyImageToBuffer(ptr<Device> pDevice, VkImage image, VkBuffer buffer, uint32_t width,
+        inline static void copyImageToBuffer(VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width,
                                              uint32_t height, uint32_t depth)
         {
-            VkCommandBuffer cmd = cmdBegin(pDevice);
-
             VkBufferImageCopy region = {
                 .bufferOffset = 0,
                 .bufferRowLength = 0,
@@ -242,8 +240,6 @@ namespace Mandrill
             };
 
             vkCmdCopyImageToBuffer(cmd, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
-
-            cmdEnd(pDevice, cmd);
         }
 
         /// <summary>
