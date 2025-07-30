@@ -7,7 +7,7 @@ var searchData=
   ['compile_4',['compile',['../classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec',1,'Mandrill::Scene']]],
   ['copybuffertoimage_5',['copyBufferToImage',['../classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990',1,'Mandrill::Helpers']]],
   ['copyfromhost_6',['copyFromHost',['../classMandrill_1_1Buffer.html#a0abf038144595e0433ed4f91c98f91f7',1,'Mandrill::Buffer']]],
-  ['copyimagetobuffer_7',['copyImageToBuffer',['../classMandrill_1_1Helpers.html#a8b2e0796a50054c3802ebf93a148ba46',1,'Mandrill::Helpers']]],
+  ['copyimagetobuffer_7',['copyImageToBuffer',['../classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d',1,'Mandrill::Helpers']]],
   ['creategui_8',['createGUI',['../classMandrill_1_1App.html#ae24d320a1b3b14e9e838c87e52f27dab',1,'Mandrill::App']]],
   ['createimageview_9',['createImageView',['../classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f',1,'Mandrill::Image']]]
 ];
