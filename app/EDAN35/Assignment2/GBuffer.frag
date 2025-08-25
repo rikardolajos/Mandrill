@@ -47,6 +47,7 @@ void main() {
     if ((materialParams.hasTexture & NORMAL_TEXTURE_BIT) != 0) {
         mat3 TBN = mat3(normalize(inTangent), normalize(inBinormal), normalize(inNormal));
         vec3 normal = texture(normalTexture, inTexCoord).rgb * 2.0 - 1.0;
+        normal.y *= -1.0; // Normal map for Sponza is in DirectX convention, flip it
         outNormal.xyz = normalize(inNormalMatrix * TBN * normal) * 0.5 + 0.5;
     } else {
         outNormal = vec4(inNormalMatrix * inNormal, 1.0) * 0.5 + 0.5;

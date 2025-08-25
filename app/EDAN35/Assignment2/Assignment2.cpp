@@ -152,7 +152,8 @@ public:
             std::make_shared<Pipeline>(mpDevice, mpResolvePass, mpResolveLayout, pResolveShader, pipelineDesc));
 
         // Create a sampler that will be used to render materials
-        mpSampler = std::make_shared<Sampler>(mpDevice);
+        mpSampler =
+            std::make_shared<Sampler>(mpDevice, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR);
 
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
