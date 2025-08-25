@@ -4,18 +4,18 @@ layout(location = 0) in vec2 inUV;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(input_attachment_index = 0, set = 0, binding = 0) uniform subpassInput inPosition;
-layout(input_attachment_index = 1, set = 0, binding = 1) uniform subpassInput inNormal;
-layout(input_attachment_index = 2, set = 0, binding = 2) uniform subpassInput inAlbedo;
+layout(set = 0, binding = 0) uniform sampler2D inPosition;
+layout(set = 0, binding = 1) uniform sampler2D inNormal;
+layout(set = 0, binding = 2) uniform sampler2D inAlbedo;
 
 layout(push_constant) uniform PushConstant {
     uint renderMode;
 } pushConstant;
 
 void main() {
-    vec3 fragPos = subpassLoad(inPosition).rgb;
-    vec3 normal = subpassLoad(inNormal).rgb;
-    vec3 albedo = subpassLoad(inAlbedo).rgb;
+    vec3 fragPos = texture(inPosition, inUV).rgb;
+    vec3 normal = texture(inNormal, inUV).rgb;
+    vec3 albedo = texture(inAlbedo, inUV).rgb;
 
     vec3 lightPos = vec3(0.0, 5.0, 0.0);
 
