@@ -702,7 +702,9 @@ void Scene::addTexture(std::string texturePath)
         return;
     }
 
-    auto pTexture = make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, true);
+    bool generateMipmaps = true;
+    auto pTexture =
+        make_ptr<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, generateMipmaps);
     mTextures.insert(std::make_pair(texturePath, pTexture));
 }
 
