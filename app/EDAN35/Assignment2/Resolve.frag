@@ -25,6 +25,7 @@ void main() {
 
     vec3 diffuse = albedo * max(0.0, dot(N, L));
 
+    fragColor.a = 1.0;
     if (pushConstant.renderMode == 1) {
         fragColor.rgb = fragPos;
     } else if (pushConstant.renderMode == 2) {
