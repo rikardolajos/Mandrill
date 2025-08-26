@@ -214,7 +214,7 @@ void Texture::generateMipmaps(VkCommandBuffer cmd)
             .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             .regionCount = 1,
             .pRegions = &region,
-            .filter = VK_FILTER_NEAREST,
+            .filter = VK_FILTER_LINEAR,
         };
 
         vkCmdBlitImage2(cmd, &blitImageInfo);
