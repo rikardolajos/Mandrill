@@ -174,8 +174,6 @@ void Texture::generateMipmaps(VkCommandBuffer cmd)
         Log::Error("Texture image format does not support linear blitting");
     }
 
-    // VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
-
     VkImageSubresourceRange subresourceRange = {
         .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
         .levelCount = 1,
@@ -240,6 +238,4 @@ void Texture::generateMipmaps(VkCommandBuffer cmd)
                           VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
                           VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, &subresourceRange);
-
-    // Helpers::cmdEnd(mpDevice, cmd);
 }
