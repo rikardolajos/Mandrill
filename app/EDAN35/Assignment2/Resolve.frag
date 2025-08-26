@@ -13,9 +13,10 @@ layout(push_constant) uniform PushConstant {
 } pushConstant;
 
 void main() {
-    vec3 fragPos = texture(inPosition, inUV).rgb;
-    vec3 normal = texture(inNormal, inUV).rgb;
-    vec3 albedo = texture(inAlbedo, inUV).rgb;
+    ivec2 coord = ivec2(gl_FragCoord.xy);
+    vec3 fragPos = texelFetch(inPosition, coord, 0).rgb;
+    vec3 normal = texelFetch(inNormal, coord, 0).rgb;
+    vec3 albedo = texelFetch(inAlbedo, coord, 0).rgb;
 
     vec3 lightPos = vec3(0.0, 5.0, 0.0);
 
