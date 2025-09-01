@@ -64,7 +64,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AccelerationStructure_8h_source.html",
-"functions.html"
+"files.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

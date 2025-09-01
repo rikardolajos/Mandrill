@@ -112,6 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa0840c3cb5c7159be6d992adecd2097c" id="r_aa0840c3cb5c7159be6d992adecd2097c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c">~Node</a> ()</td></tr>
 <tr class="memdesc:aa0840c3cb5c7159be6d992adecd2097c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene node.  <br /></td></tr>
 <tr class="separator:aa0840c3cb5c7159be6d992adecd2097c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3997a25702e17af4d811187534ed49e" id="r_ae3997a25702e17af4d811187534ed49e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">drawMeshes</a> (VkCommandBuffer cmd, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
+<tr class="memdesc:ae3997a25702e17af4d811187534ed49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use.  <br /></td></tr>
+<tr class="separator:ae3997a25702e17af4d811187534ed49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f5f5798621e293331b552af9fab83c3" id="r_a1f5f5798621e293331b552af9fab83c3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
 <tr class="memdesc:a1f5f5798621e293331b552af9fab83c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a node in the scene.  <br /></td></tr>
 <tr class="separator:a1f5f5798621e293331b552af9fab83c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -209,6 +212,44 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">meshIndex</td><td>Mesh index that was received during mesh creation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="ae3997a25702e17af4d811187534ed49e" name="ae3997a25702e17af4d811187534ed49e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3997a25702e17af4d811187534ed49e">&#9670;&#160;</a></span>drawMeshes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Node::drawMeshes </td>
+          <td>(</td>
+          <td class="paramtype">VkCommandBuffer&#160;</td>
+          <td class="paramname"><em>cmd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>pScene</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>Command buffer to use for drawing</td></tr>
+    <tr><td class="paramname">pScene</td><td><a class="el" href="classMandrill_1_1Scene.html" title="Scene class that manages a collection of nodes, materials, meshes, and rendering operations.">Scene</a> which the node belongs to</td></tr>
   </table>
   </dd>
 </dl>
