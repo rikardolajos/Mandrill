@@ -29,6 +29,22 @@ Node::~Node()
 {
 }
 
+void Node::drawMeshes(VkCommandBuffer cmd, const ptr<const Scene> pScene) const
+{
+    for (auto meshIndex : mMeshIndices) {
+        const Mesh& mesh = pScene->mMeshes[meshIndex];
+
+        // Bind vertex and index buffers
+        std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
+        std::array<VkDeviceSize, 1> offsets = {mesh.deviceVerticesOffset};
+        vkCmdBindVertexBuffers(cmd, 0, count(vertexBuffers), vertexBuffers.data(), offsets.data());
+        vkCmdBindIndexBuffer(cmd, pScene->mpIndexBuffer->getBuffer(), mesh.deviceIndicesOffset, VK_INDEX_TYPE_UINT32);
+
+        // Draw mesh
+        vkCmdDrawIndexed(cmd, count(mesh.indices), 1, 0, 0, 0);
+    }
+}
+
 void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene) const
 {
     if (!mVisible || !mpPipeline) {

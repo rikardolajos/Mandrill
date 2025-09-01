@@ -103,6 +103,15 @@ namespace Mandrill
         MANDRILL_API ~Node();
 
         /// <summary>
+        /// Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of Node::render() if
+        /// you want more control over which pipeline and descriptors to use.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use for drawing</param>
+        /// <param name="pScene">Scene which the node belongs to</param>
+        /// <returns></returns>
+        MANDRILL_API void drawMeshes(VkCommandBuffer cmd, const ptr<const Scene> pScene) const;
+
+        /// <summary>
         /// Render a node in the scene.
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
