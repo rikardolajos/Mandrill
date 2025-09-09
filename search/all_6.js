@@ -55,7 +55,7 @@ var searchData=
   ['getqueuefamily_52',['getQueueFamily',['../classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1',1,'Mandrill::Device']]],
   ['getraygensbt_53',['getRayGenSBT',['../classMandrill_1_1RayTracingPipeline.html#a9ab12270b47123959b21e9e8e04330df',1,'Mandrill::RayTracingPipeline']]],
   ['getsamplecount_54',['getsamplecount',['../classMandrill_1_1Pass.html#ad9d8a565d026e7fbeec4de874a5bf547',1,'Mandrill::Pass::getSampleCount()'],['../classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636',1,'Mandrill::Device::getSampleCount()']]],
-  ['getsampler_55',['getsampler',['../classMandrill_1_1Sampler.html#a72c25954eb3917602a4accbfd458c78f',1,'Mandrill::Sampler::getSampler()'],['../classMandrill_1_1Texture.html#a4214721b55776edb3c7fd9786e528b9e',1,'Mandrill::Texture::getSampler()']]],
+  ['getsampler_55',['getsampler',['../classMandrill_1_1Sampler.html#a72c25954eb3917602a4accbfd458c78f',1,'Mandrill::Sampler::getSampler()'],['../classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde',1,'Mandrill::Texture::getSampler()']]],
   ['getset_56',['getSet',['../classMandrill_1_1Descriptor.html#a989bc1e53a819d34859de18b05a8eeff',1,'Mandrill::Descriptor']]],
   ['getsize_57',['getSize',['../classMandrill_1_1Buffer.html#a8b83fe5c3683b4c64629e313110868bc',1,'Mandrill::Buffer']]],
   ['getstages_58',['getStages',['../classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865',1,'Mandrill::Shader']]],

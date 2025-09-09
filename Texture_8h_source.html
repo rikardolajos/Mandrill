@@ -135,65 +135,67 @@ $(document).ready(function(){initNavTree('Texture_8h_source.html',''); initResiz
 <div class="foldopen" id="foldopen00061" data-start="{" data-end="}">
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#af2cb8429990504743bc46d5b464b2415">   61</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Texture.html#af2cb8429990504743bc46d5b464b2415">setSampler</a>(<span class="keyword">const</span> ptr&lt;Sampler&gt; pSampler)</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        {</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            mImageInfo.sampler = pSampler-&gt;getSampler();</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            mpSampler = pSampler;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            mImageInfo.sampler = pSampler-&gt;getSampler();</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        }</div>
 </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a4214721b55776edb3c7fd9786e528b9e">   70</a></span>        MANDRILL_API VkSampler <a class="code hl_function" href="classMandrill_1_1Texture.html#a4214721b55776edb3c7fd9786e528b9e">getSampler</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            <span class="keywordflow">return</span> mImageInfo.sampler;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde">   71</a></span>        MANDRILL_API ptr&lt;Sampler&gt; <a class="code hl_function" href="classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde">getSampler</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            <span class="keywordflow">return</span> mpSampler;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        }</div>
 </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="foldopen" id="foldopen00079" data-start="{" data-end="}">
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">   79</a></span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">getImage</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">return</span> mpImage;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">   80</a></span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">getImage</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            <span class="keywordflow">return</span> mpImage;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        }</div>
 </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="foldopen" id="foldopen00088" data-start="{" data-end="}">
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">   88</a></span>        MANDRILL_API VkImageView <a class="code hl_function" href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">getImageView</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">return</span> mImageInfo.imageView;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        }</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">   89</a></span>        MANDRILL_API VkImageView <a class="code hl_function" href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">getImageView</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="keywordflow">return</span> mImageInfo.imageView;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        }</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">   98</a></span>        MANDRILL_API VkWriteDescriptorSet <a class="code hl_function" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">getWriteDescriptor</a>(uint32_t binding)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            VkWriteDescriptorSet descriptor = {</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                .dstBinding = binding,</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                .dstArrayElement = 0,</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                .descriptorCount = 1,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                .pImageInfo = &amp;mImageInfo,</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            };</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            <span class="keywordflow">return</span> descriptor;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">   99</a></span>        MANDRILL_API VkWriteDescriptorSet <a class="code hl_function" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">getWriteDescriptor</a>(uint32_t binding)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            VkWriteDescriptorSet descriptor = {</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                .dstBinding = binding,</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                .dstArrayElement = 0,</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                .descriptorCount = 1,</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                .pImageInfo = &amp;mImageInfo,</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            };</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            <span class="keywordflow">return</span> descriptor;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        }</div>
 </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordtype">void</span> create(VkFormat format, <span class="keyword">const</span> <span class="keywordtype">void</span>* pData, uint32_t width, uint32_t height, uint32_t depth,</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                    uint32_t bytesPerPixel, <span class="keywordtype">bool</span> mipmaps);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <span class="keywordtype">void</span> generateMipmaps(VkCommandBuffer cmd);</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        ptr&lt;Image&gt; mpImage;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        VkDescriptorImageInfo mImageInfo;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    };</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordtype">void</span> create(VkFormat format, <span class="keyword">const</span> <span class="keywordtype">void</span>* pData, uint32_t width, uint32_t height, uint32_t depth,</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                    uint32_t bytesPerPixel, <span class="keywordtype">bool</span> mipmaps);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="keywordtype">void</span> generateMipmaps(VkCommandBuffer cmd);</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        ptr&lt;Image&gt; mpImage;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        VkDescriptorImageInfo mImageInfo;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        ptr&lt;Sampler&gt; mpSampler;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    };</div>
 </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Texture_html"><div class="ttname"><a href="classMandrill_1_1Texture.html">Mandrill::Texture</a></div><div class="ttdoc">Texture class for managing textures in Vulkan.</div><div class="ttdef"><b>Definition</b> Texture.h:15</div></div>
 <div class="ttc" id="aclassMandrill_1_1Texture_html_a09c4bcb7462f64c1d20fa69dba3cee8a"><div class="ttname"><a href="classMandrill_1_1Texture.html#a09c4bcb7462f64c1d20fa69dba3cee8a">Mandrill::Texture::~Texture</a></div><div class="ttdeci">MANDRILL_API ~Texture()</div><div class="ttdoc">Destructor for texture.</div><div class="ttdef"><b>Definition</b> Texture.cpp:106</div></div>
-<div class="ttc" id="aclassMandrill_1_1Texture_html_a27057d66e43feec35a34001745064448"><div class="ttname"><a href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">Mandrill::Texture::getImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Image &gt; getImage() const</div><div class="ttdoc">Get the image of the texture.</div><div class="ttdef"><b>Definition</b> Texture.h:79</div></div>
-<div class="ttc" id="aclassMandrill_1_1Texture_html_a4214721b55776edb3c7fd9786e528b9e"><div class="ttname"><a href="classMandrill_1_1Texture.html#a4214721b55776edb3c7fd9786e528b9e">Mandrill::Texture::getSampler</a></div><div class="ttdeci">MANDRILL_API VkSampler getSampler() const</div><div class="ttdoc">Get the sampler handle currently in use by the texture.</div><div class="ttdef"><b>Definition</b> Texture.h:70</div></div>
-<div class="ttc" id="aclassMandrill_1_1Texture_html_a4ef75172a7a11f5d7da6dad9e0f024b2"><div class="ttname"><a href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">Mandrill::Texture::getImageView</a></div><div class="ttdeci">MANDRILL_API VkImageView getImageView() const</div><div class="ttdoc">Get the image view handle.</div><div class="ttdef"><b>Definition</b> Texture.h:88</div></div>
-<div class="ttc" id="aclassMandrill_1_1Texture_html_ab9cbd74a9f79686db231593feda126dc"><div class="ttname"><a href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">Mandrill::Texture::getWriteDescriptor</a></div><div class="ttdeci">MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const</div><div class="ttdoc">Get the write descriptor set. Useful when using push descriptors.</div><div class="ttdef"><b>Definition</b> Texture.h:98</div></div>
+<div class="ttc" id="aclassMandrill_1_1Texture_html_a27057d66e43feec35a34001745064448"><div class="ttname"><a href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">Mandrill::Texture::getImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Image &gt; getImage() const</div><div class="ttdoc">Get the image of the texture.</div><div class="ttdef"><b>Definition</b> Texture.h:80</div></div>
+<div class="ttc" id="aclassMandrill_1_1Texture_html_a4ef75172a7a11f5d7da6dad9e0f024b2"><div class="ttname"><a href="classMandrill_1_1Texture.html#a4ef75172a7a11f5d7da6dad9e0f024b2">Mandrill::Texture::getImageView</a></div><div class="ttdeci">MANDRILL_API VkImageView getImageView() const</div><div class="ttdoc">Get the image view handle.</div><div class="ttdef"><b>Definition</b> Texture.h:89</div></div>
+<div class="ttc" id="aclassMandrill_1_1Texture_html_a9634fcdf3113375f71c73b0d4d5d9fde"><div class="ttname"><a href="classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde">Mandrill::Texture::getSampler</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Sampler &gt; getSampler() const</div><div class="ttdoc">Get the sampler handle currently in use by the texture.</div><div class="ttdef"><b>Definition</b> Texture.h:71</div></div>
+<div class="ttc" id="aclassMandrill_1_1Texture_html_ab9cbd74a9f79686db231593feda126dc"><div class="ttname"><a href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">Mandrill::Texture::getWriteDescriptor</a></div><div class="ttdeci">MANDRILL_API VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const</div><div class="ttdoc">Get the write descriptor set. Useful when using push descriptors.</div><div class="ttdef"><b>Definition</b> Texture.h:99</div></div>
 <div class="ttc" id="aclassMandrill_1_1Texture_html_af2cb8429990504743bc46d5b464b2415"><div class="ttname"><a href="classMandrill_1_1Texture.html#af2cb8429990504743bc46d5b464b2415">Mandrill::Texture::setSampler</a></div><div class="ttdeci">MANDRILL_API void setSampler(const ptr&lt; Sampler &gt; pSampler)</div><div class="ttdoc">Set the sampler for the texture.</div><div class="ttdef"><b>Definition</b> Texture.h:61</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
