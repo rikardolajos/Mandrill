@@ -60,16 +60,17 @@ namespace Mandrill
         /// <param name="pSampler">Sampler to use</param>
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler)
         {
+            mpSampler = pSampler;
             mImageInfo.sampler = pSampler->getSampler();
         }
 
         /// <summary>
         /// Get the sampler handle currently in use by the texture.
         /// </summary>
-        /// <returns>Vulkan sampler handle</returns>
-        MANDRILL_API VkSampler getSampler() const
+        /// <returns>Sampler in use</returns>
+        MANDRILL_API ptr<Sampler> getSampler() const
         {
-            return mImageInfo.sampler;
+            return mpSampler;
         }
 
         /// <summary>
@@ -118,5 +119,6 @@ namespace Mandrill
 
         ptr<Image> mpImage;
         VkDescriptorImageInfo mImageInfo;
+        ptr<Sampler> mpSampler;
     };
 } // namespace Mandrill

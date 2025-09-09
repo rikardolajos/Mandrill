@@ -2,7 +2,7 @@
 
 using namespace Mandrill;
 
-class Assignment2 : public App
+class DeferredShading : public App
 {
 public:
     enum {
@@ -12,15 +12,16 @@ public:
 
     struct PushConstants {
         int renderMode;
+        float time;
     };
 
     static std::shared_ptr<Image> createColorAttachmentImage(std::shared_ptr<Device> pDevice, uint32_t width,
-                                                             uint32_t height)
+                                                             uint32_t height, VkFormat format)
     {
-        return std::make_shared<Image>(pDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_B8G8R8A8_UNORM,
-                                       VK_IMAGE_TILING_OPTIMAL,
-                                       VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        return std::make_shared<Image>(
+            pDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     }
 
     void transitionAttachmentsForGBuffer(VkCommandBuffer cmd)
@@ -28,8 +29,8 @@ public:
         for (auto& attachment : mColorAttachments) {
             Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
                                   VK_ACCESS_2_SHADER_READ_BIT, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                  VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+                                  VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_GENERAL,
+                                  VK_IMAGE_LAYOUT_GENERAL);
         }
     }
 
@@ -38,8 +39,7 @@ public:
         for (auto& attachment : mColorAttachments) {
             Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                                   VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
-                                  VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                                  VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
         }
     }
 
@@ -50,9 +50,9 @@ public:
         VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
 
         mColorAttachments.clear();
-        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
-        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
-        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height));
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R16G16B16A16_SFLOAT));
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R16G16B16A16_SFLOAT));
+        mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R8G8B8A8_UNORM));
         mpDepthAttachment = std::make_shared<Image>(
             mpDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -67,7 +67,7 @@ public:
             // Transition to correct layout for descriptor creation
             Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
                                   VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT, VK_ACCESS_2_SHADER_READ_BIT,
-                                  VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                                  VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
         }
 
         // Transition depth attachment for depth use
@@ -90,13 +90,14 @@ public:
         // Create descriptor for resolve pass input attachments
         std::vector<DescriptorDesc> descriptorDesc;
         for (auto& attachment : mColorAttachments) {
-            descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, attachment);
+            descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, attachment);
+            descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
         }
         mpColorAttachmentDescriptor =
             std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpResolveLayout->getDescriptorSetLayouts()[0]);
     }
 
-    Assignment2() : App("Assignment2: Deferred Shading and Shadow Maps", 1280, 720)
+    DeferredShading() : App("Deferred Shading", 1920, 1080)
     {
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
@@ -112,9 +113,9 @@ public:
 
         // 3 color attachments: position, normal, albedo
         std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
+        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
         mpResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
 
         // Add push constant to layout so we can set render mode in resolve pipeline
@@ -132,13 +133,13 @@ public:
 
         // Create two shaders (and pipelines) for G-buffer and resolve pass respectively
         std::vector<ShaderDesc> shaderDesc;
-        shaderDesc.emplace_back("Assignment2/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc.emplace_back("Assignment2/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shaderDesc.emplace_back("DeferredShading/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc.emplace_back("DeferredShading/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         auto pGBufferShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         shaderDesc.clear();
-        shaderDesc.emplace_back("Assignment2/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
-        shaderDesc.emplace_back("Assignment2/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
+        shaderDesc.emplace_back("DeferredShading/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
+        shaderDesc.emplace_back("DeferredShading/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
         auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
         // Create pipelines
@@ -182,7 +183,7 @@ public:
         App::createGUI(mpDevice, mpResolvePass);
     }
 
-    ~Assignment2()
+    ~DeferredShading()
     {
         App::destroyGUI(mpDevice);
     }
@@ -234,6 +235,7 @@ public:
         // Push constants
         PushConstants pushConstants = {
             .renderMode = mRenderMode,
+            .time = mTime,
         };
         vkCmdPushConstants(cmd, mPipelines[RESOLVE_PASS]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof(PushConstants), &pushConstants);
@@ -308,7 +310,7 @@ private:
 
 int main()
 {
-    Assignment2 app = Assignment2();
+    DeferredShading app = DeferredShading();
     app.run();
     return 0;
 }
