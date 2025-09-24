@@ -420,6 +420,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     VkPhysicalDeviceVulkan13Features vk13Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
         .pNext = &vk12Features,
+        .shaderDemoteToHelperInvocation = VK_TRUE,
         .synchronization2 = VK_TRUE,
         .dynamicRendering = VK_TRUE,
     };
