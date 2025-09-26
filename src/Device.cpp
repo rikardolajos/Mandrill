@@ -243,7 +243,9 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
         }
 
         if (!found) {
-            Log::Error("The requested extension {} is not available", e);
+            if (print) {
+                Log::Error("The requested extension {} is not available", e);
+            }
             result = false;
         }
     }
