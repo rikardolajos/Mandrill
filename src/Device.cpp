@@ -212,21 +212,24 @@ void Device::createInstance()
 }
 
 // Check if device supports requested extensions
-static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::vector<const char*> requestedExtensions)
+static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::vector<const char*> requestedExtensions,
+                                        bool print = false)
 {
     uint32_t n;
     Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &n, nullptr));
     std::vector<VkExtensionProperties> availableExtensions(n);
     Check::Vk(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &n, availableExtensions.data()));
 
-    Log::Info("Requesting device extensions ({}):", count(requestedExtensions));
-    for (auto& e : requestedExtensions) {
-        Log::Info(" * {}", e);
-    }
+    if (print) {
+        Log::Info("Requesting device extensions ({}):", count(requestedExtensions));
+        for (auto& e : requestedExtensions) {
+            Log::Info(" * {}", e);
+        }
 
-    Log::Debug("Available device extensions ({}):", n);
-    for (auto& e : availableExtensions) {
-        Log::Debug(" * {}", e.extensionName);
+        Log::Debug("Available device extensions ({}):", n);
+        for (auto& e : availableExtensions) {
+            Log::Debug(" * {}", e.extensionName);
+        }
     }
 
     bool result = true;
@@ -349,7 +352,8 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     }
 
     // Check for ray tracing support
-    mRayTracingSupport = checkDeviceExtensionSupport(mPhysicalDevice, raytracingExtensions);
+    bool print = false;
+    mRayTracingSupport = checkDeviceExtensionSupport(mPhysicalDevice, raytracingExtensions, print);
 
     if (mRayTracingSupport) {
         deviceExtensions.insert(deviceExtensions.end(), raytracingExtensions.begin(), raytracingExtensions.end());
@@ -358,7 +362,8 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     }
 
     // Check for extension support
-    if (!checkDeviceExtensionSupport(mPhysicalDevice, deviceExtensions)) {
+    print = true;
+    if (!checkDeviceExtensionSupport(mPhysicalDevice, deviceExtensions, print)) {
         Log::Error("The chosen physical device does not support the requested extensions");
         return;
     }
