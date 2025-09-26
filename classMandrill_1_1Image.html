@@ -152,6 +152,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Image</b> ()
 <tr class="memitem:a503e845cac5e5f21bbc95c686a1bb643" id="r_a503e845cac5e5f21bbc95c686a1bb643"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#a503e845cac5e5f21bbc95c686a1bb643">getDepth</a> () const</td></tr>
 <tr class="memdesc:a503e845cac5e5f21bbc95c686a1bb643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the image.  <br /></td></tr>
 <tr class="separator:a503e845cac5e5f21bbc95c686a1bb643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ae31bcf22e9bdfe601fe99878a07979" id="r_a3ae31bcf22e9bdfe601fe99878a07979"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979">getPitch</a> () const</td></tr>
+<tr class="memdesc:a3ae31bcf22e9bdfe601fe99878a07979"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bytes between each row of the image. Only valid for linear tiled images.  <br /></td></tr>
+<tr class="separator:a3ae31bcf22e9bdfe601fe99878a07979"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af41248d237516c2c2dbd331126284782" id="r_af41248d237516c2c2dbd331126284782"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">getMipLevels</a> () const</td></tr>
 <tr class="memdesc:af41248d237516c2c2dbd331126284782"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mipmap levels of the image.  <br /></td></tr>
 <tr class="separator:af41248d237516c2c2dbd331126284782"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -600,6 +603,34 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Image</b> ()
 
 <p>Get the mipmap levels of the image. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> mipmap levels</dd></dl>
+
+</div>
+</div>
+<a id="a3ae31bcf22e9bdfe601fe99878a07979" name="a3ae31bcf22e9bdfe601fe99878a07979"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ae31bcf22e9bdfe601fe99878a07979">&#9670;&#160;</a></span>getPitch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Image::getPitch </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of bytes between each row of the image. Only valid for linear tiled images. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> pitch</dd></dl>
 
 </div>
 </div>

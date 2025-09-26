@@ -14,6 +14,7 @@ var classMandrill_1_1Swapchain =
     [ "getImageViews", "classMandrill_1_1Swapchain.html#a5e3555405ec194f1523a310e45d9d8db", null ],
     [ "getInFlightIndex", "classMandrill_1_1Swapchain.html#ac01efc58d498c2aad50ef1f1e466cbbf", null ],
     [ "getPreviousInFlightIndex", "classMandrill_1_1Swapchain.html#a7b634cc5b379f5c1684240309637f878", null ],
+    [ "getScreenshotImagePitch", "classMandrill_1_1Swapchain.html#acf7e5c042b911695a24638484b64f30d", null ],
     [ "getSwapchain", "classMandrill_1_1Swapchain.html#a26e4ecef0ab7c1d569d75e84d0fabcb6", null ],
     [ "present", "classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c", null ],
     [ "recreate", "classMandrill_1_1Swapchain.html#a22c8b321d6dc6bf715ce5ae006c90bc4", null ],

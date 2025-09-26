@@ -169,6 +169,9 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
 <tr class="memitem:a2f377538a4be5eec73c1b387fde2f026" id="r_a2f377538a4be5eec73c1b387fde2f026"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026">recreated</a> () const</td></tr>
 <tr class="memdesc:a2f377538a4be5eec73c1b387fde2f026"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the swapchain was recreated during the last frame. This is reset in <a class="el" href="classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c" title="Present a rendered image to the swapchain image.">present()</a>.  <br /></td></tr>
 <tr class="separator:a2f377538a4be5eec73c1b387fde2f026"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf7e5c042b911695a24638484b64f30d" id="r_acf7e5c042b911695a24638484b64f30d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#acf7e5c042b911695a24638484b64f30d">getScreenshotImagePitch</a> () const</td></tr>
+<tr class="memdesc:acf7e5c042b911695a24638484b64f30d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the pitch (number of bytes per row) of the screenshot stage image.  <br /></td></tr>
+<tr class="separator:acf7e5c042b911695a24638484b64f30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Swapchain.html" title="Swapchain class for managing the swapchain and its images.">Swapchain</a> class for managing the swapchain and its images. </p>
@@ -536,6 +539,34 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
 
 <p>Get the index of the previous frame that was in flight. This is useful when indexing after calling <a class="el" href="classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c" title="Present a rendered image to the swapchain image.">present()</a>, like when querying for timestamps. </p>
 <dl class="section return"><dt>Returns</dt><dd>Index of previous frame in flight</dd></dl>
+
+</div>
+</div>
+<a id="acf7e5c042b911695a24638484b64f30d" name="acf7e5c042b911695a24638484b64f30d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf7e5c042b911695a24638484b64f30d">&#9670;&#160;</a></span>getScreenshotImagePitch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Swapchain::getScreenshotImagePitch </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the pitch (number of bytes per row) of the screenshot stage image. </p>
+<dl class="section return"><dt>Returns</dt><dd>Pitch in bytes</dd></dl>
 
 </div>
 </div>

@@ -12,6 +12,7 @@ var classMandrill_1_1Image =
     [ "getImageView", "classMandrill_1_1Image.html#a16e2bde2cc2e5c81e4bda3bbf49db413", null ],
     [ "getMemory", "classMandrill_1_1Image.html#a2682dce13d43df4ce4da631f27880f00", null ],
     [ "getMipLevels", "classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782", null ],
+    [ "getPitch", "classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979", null ],
     [ "getProperties", "classMandrill_1_1Image.html#a6ee6de76b6c7ffbf9181d41188ba5d54", null ],
     [ "getUsage", "classMandrill_1_1Image.html#a7524de6c7e8c395d5bbf7d776732be40", null ],
     [ "getWidth", "classMandrill_1_1Image.html#aedffe56ef9b9a82c257b8f7808b0e536", null ],

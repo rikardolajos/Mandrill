@@ -210,50 +210,59 @@ $(document).ready(function(){initNavTree('Image_8h_source.html',''); initResizab
 </div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
 <div class="foldopen" id="foldopen00172" data-start="{" data-end="}">
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">  172</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">getMipLevels</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979">  172</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979">getPitch</a>()<span class="keyword"> const</span></div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            <span class="keywordflow">return</span> mMipLevels;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            <span class="keywordflow">return</span> mPitch;</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        }</div>
 </div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        VkImage mImage;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        VkImageView mImageView;</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        VkImageUsageFlags mUsage;</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        VkMemoryPropertyFlags mProperties;</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        VkDeviceMemory mMemory;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keywordtype">bool</span> mOwnMemory;</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        <span class="keywordtype">void</span>* mpHostMap;</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        uint32_t mWidth;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        uint32_t mHeight;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        uint32_t mDepth;</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        uint32_t mMipLevels;</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        VkFormat mFormat;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        VkImageTiling mTiling;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    };</div>
+<div class="foldopen" id="foldopen00181" data-start="{" data-end="}">
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">  181</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">getMipLevels</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>            <span class="keywordflow">return</span> mMipLevels;</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        }</div>
 </div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        VkImage mImage;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        VkImageView mImageView;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        VkImageUsageFlags mUsage;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        VkMemoryPropertyFlags mProperties;</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        VkDeviceMemory mMemory;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keywordtype">bool</span> mOwnMemory;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordtype">void</span>* mpHostMap;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        uint32_t mWidth;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        uint32_t mHeight;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        uint32_t mDepth;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        uint32_t mPitch;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        uint32_t mMipLevels;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        VkFormat mFormat;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        VkImageTiling mTiling;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    };</div>
+</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html"><div class="ttname"><a href="classMandrill_1_1Image.html">Mandrill::Image</a></div><div class="ttdoc">Image class for managing Vulkan images. This class handles the creation and destruction of images,...</div><div class="ttdef"><b>Definition</b> Image.h:15</div></div>
-<div class="ttc" id="aclassMandrill_1_1Image_html_a0294f63700543e11c0f0da85601c7ae5"><div class="ttname"><a href="classMandrill_1_1Image.html#a0294f63700543e11c0f0da85601c7ae5">Mandrill::Image::~Image</a></div><div class="ttdeci">MANDRILL_API ~Image()</div><div class="ttdoc">Destructor for image.</div><div class="ttdef"><b>Definition</b> Image.cpp:78</div></div>
+<div class="ttc" id="aclassMandrill_1_1Image_html_a0294f63700543e11c0f0da85601c7ae5"><div class="ttname"><a href="classMandrill_1_1Image.html#a0294f63700543e11c0f0da85601c7ae5">Mandrill::Image::~Image</a></div><div class="ttdeci">MANDRILL_API ~Image()</div><div class="ttdoc">Destructor for image.</div><div class="ttdef"><b>Definition</b> Image.cpp:101</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a16e2bde2cc2e5c81e4bda3bbf49db413"><div class="ttname"><a href="classMandrill_1_1Image.html#a16e2bde2cc2e5c81e4bda3bbf49db413">Mandrill::Image::getImageView</a></div><div class="ttdeci">MANDRILL_API VkImageView getImageView() const</div><div class="ttdoc">Get the VkImageView handle.</div><div class="ttdef"><b>Definition</b> Image.h:87</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a2682dce13d43df4ce4da631f27880f00"><div class="ttname"><a href="classMandrill_1_1Image.html#a2682dce13d43df4ce4da631f27880f00">Mandrill::Image::getMemory</a></div><div class="ttdeci">MANDRILL_API VkDeviceMemory getMemory() const</div><div class="ttdoc">Get the device memory.</div><div class="ttdef"><b>Definition</b> Image.h:96</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a2cfebd445b7da3c942a9b5c7f08c172a"><div class="ttname"><a href="classMandrill_1_1Image.html#a2cfebd445b7da3c942a9b5c7f08c172a">Mandrill::Image::getFormat</a></div><div class="ttdeci">MANDRILL_API VkFormat getFormat() const</div><div class="ttdoc">Get the format of the image.</div><div class="ttdef"><b>Definition</b> Image.h:136</div></div>
+<div class="ttc" id="aclassMandrill_1_1Image_html_a3ae31bcf22e9bdfe601fe99878a07979"><div class="ttname"><a href="classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979">Mandrill::Image::getPitch</a></div><div class="ttdeci">MANDRILL_API uint32_t getPitch() const</div><div class="ttdoc">Get the number of bytes between each row of the image. Only valid for linear tiled images.</div><div class="ttdef"><b>Definition</b> Image.h:172</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a503e845cac5e5f21bbc95c686a1bb643"><div class="ttname"><a href="classMandrill_1_1Image.html#a503e845cac5e5f21bbc95c686a1bb643">Mandrill::Image::getDepth</a></div><div class="ttdeci">MANDRILL_API uint32_t getDepth() const</div><div class="ttdoc">Get the depth of the image.</div><div class="ttdef"><b>Definition</b> Image.h:163</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a53454546470487eea45b11e28fde0699"><div class="ttname"><a href="classMandrill_1_1Image.html#a53454546470487eea45b11e28fde0699">Mandrill::Image::getHostMap</a></div><div class="ttdeci">MANDRILL_API void * getHostMap() const</div><div class="ttdoc">If the buffer memory is host-coherent, this returns the pointor to the memory.</div><div class="ttdef"><b>Definition</b> Image.h:123</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a6ee6de76b6c7ffbf9181d41188ba5d54"><div class="ttname"><a href="classMandrill_1_1Image.html#a6ee6de76b6c7ffbf9181d41188ba5d54">Mandrill::Image::getProperties</a></div><div class="ttdeci">MANDRILL_API VkMemoryPropertyFlags getProperties() const</div><div class="ttdoc">Get the memory property flags.</div><div class="ttdef"><b>Definition</b> Image.h:114</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a7524de6c7e8c395d5bbf7d776732be40"><div class="ttname"><a href="classMandrill_1_1Image.html#a7524de6c7e8c395d5bbf7d776732be40">Mandrill::Image::getUsage</a></div><div class="ttdeci">MANDRILL_API VkImageUsageFlags getUsage() const</div><div class="ttdoc">Get the image usage flags.</div><div class="ttdef"><b>Definition</b> Image.h:105</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_a98efa1338bf3ff4730abaeff78220ff2"><div class="ttname"><a href="classMandrill_1_1Image.html#a98efa1338bf3ff4730abaeff78220ff2">Mandrill::Image::setImageView</a></div><div class="ttdeci">MANDRILL_API void setImageView(VkImageView imageView)</div><div class="ttdoc">Use this function if image view is created externally.</div><div class="ttdef"><b>Definition</b> Image.h:78</div></div>
-<div class="ttc" id="aclassMandrill_1_1Image_html_a9c1741192ce8eee5618bfe594d65106f"><div class="ttname"><a href="classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f">Mandrill::Image::createImageView</a></div><div class="ttdeci">MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags)</div><div class="ttdoc">Create a default image view for Image object.</div><div class="ttdef"><b>Definition</b> Image.cpp:97</div></div>
+<div class="ttc" id="aclassMandrill_1_1Image_html_a9c1741192ce8eee5618bfe594d65106f"><div class="ttname"><a href="classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f">Mandrill::Image::createImageView</a></div><div class="ttdeci">MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags)</div><div class="ttdoc">Create a default image view for Image object.</div><div class="ttdef"><b>Definition</b> Image.cpp:120</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_ab5f84e8992b00140708f0e354bf878cf"><div class="ttname"><a href="classMandrill_1_1Image.html#ab5f84e8992b00140708f0e354bf878cf">Mandrill::Image::getImage</a></div><div class="ttdeci">MANDRILL_API VkImage getImage() const</div><div class="ttdoc">Get the VkImage handle.</div><div class="ttdef"><b>Definition</b> Image.h:69</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_abf8066ceaef2c3fbfe3f29f206e014dd"><div class="ttname"><a href="classMandrill_1_1Image.html#abf8066ceaef2c3fbfe3f29f206e014dd">Mandrill::Image::getHeight</a></div><div class="ttdeci">MANDRILL_API uint32_t getHeight() const</div><div class="ttdoc">Get the height of the image.</div><div class="ttdef"><b>Definition</b> Image.h:154</div></div>
 <div class="ttc" id="aclassMandrill_1_1Image_html_aedffe56ef9b9a82c257b8f7808b0e536"><div class="ttname"><a href="classMandrill_1_1Image.html#aedffe56ef9b9a82c257b8f7808b0e536">Mandrill::Image::getWidth</a></div><div class="ttdeci">MANDRILL_API uint32_t getWidth() const</div><div class="ttdoc">Get the width of the image.</div><div class="ttdef"><b>Definition</b> Image.h:145</div></div>
-<div class="ttc" id="aclassMandrill_1_1Image_html_af41248d237516c2c2dbd331126284782"><div class="ttname"><a href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">Mandrill::Image::getMipLevels</a></div><div class="ttdeci">MANDRILL_API uint32_t getMipLevels() const</div><div class="ttdoc">Get the mipmap levels of the image.</div><div class="ttdef"><b>Definition</b> Image.h:172</div></div>
+<div class="ttc" id="aclassMandrill_1_1Image_html_af41248d237516c2c2dbd331126284782"><div class="ttname"><a href="classMandrill_1_1Image.html#af41248d237516c2c2dbd331126284782">Mandrill::Image::getMipLevels</a></div><div class="ttdeci">MANDRILL_API uint32_t getMipLevels() const</div><div class="ttdoc">Get the mipmap levels of the image.</div><div class="ttdef"><b>Definition</b> Image.h:181</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
