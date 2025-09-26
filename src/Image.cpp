@@ -56,7 +56,7 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
         };
         VkSubresourceLayout layout;
         vkGetImageSubresourceLayout(mpDevice->getDevice(), mImage, &subresource, &layout);
-        mPitch = layout.rowPitch;
+        mPitch = static_cast<uint32_t>(layout.rowPitch);
     }
 }
 
@@ -94,7 +94,7 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
         };
         VkSubresourceLayout layout;
         vkGetImageSubresourceLayout(mpDevice->getDevice(), mImage, &subresource, &layout);
-        mPitch = layout.rowPitch;
+        mPitch = static_cast<uint32_t>(layout.rowPitch);
     }
 }
 
