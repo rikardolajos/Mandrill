@@ -179,6 +179,15 @@ namespace Mandrill
             return mRecreated;
         }
 
+        /// <summary>
+        /// Get the pitch (number of bytes per row) of the screenshot stage image.
+        /// </summary>
+        /// <returns>Pitch in bytes</returns>
+        MANDRILL_API uint32_t getScreenshotImagePitch() const
+        {
+            return mScreenshotStageImage->getPitch();
+        }
+
     private:
         void querySupport();
         void createSwapchain();
@@ -187,6 +196,7 @@ namespace Mandrill
         void destroySyncObjects();
         void createDescriptor();
         void destroyDescriptor();
+        void createScreenshotStageImage();
 
         ptr<Device> mpDevice;
 

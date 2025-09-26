@@ -166,6 +166,15 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the number of bytes between each row of the image. Only valid for linear tiled images.
+        /// </summary>
+        /// <returns>Image pitch</returns>
+        MANDRILL_API uint32_t getPitch() const
+        {
+            return mPitch;
+        }
+
+        /// <summary>
         /// Get the mipmap levels of the image.
         /// </summary>
         /// <returns>Image mipmap levels</returns>
@@ -190,6 +199,7 @@ namespace Mandrill
         uint32_t mWidth;
         uint32_t mHeight;
         uint32_t mDepth;
+        uint32_t mPitch;
 
         uint32_t mMipLevels;
         VkFormat mFormat;

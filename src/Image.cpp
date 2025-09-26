@@ -8,8 +8,9 @@ using namespace Mandrill;
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
              VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
              VkMemoryPropertyFlags properties)
-    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format),
-      mTiling(tiling), mUsage(usage), mProperties(properties), mImageView(VK_NULL_HANDLE), mOwnMemory(true), mpHostMap(nullptr)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mPitch(0), mMipLevels(mipLevels),
+      mFormat(format), mTiling(tiling), mUsage(usage), mProperties(properties), mImageView(VK_NULL_HANDLE),
+      mOwnMemory(true), mpHostMap(nullptr)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -46,14 +47,25 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
     if (mProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) {
         Check::Vk(vkMapMemory(mpDevice->getDevice(), mMemory, 0, memReqs.size, 0, &mpHostMap));
     }
+
+    if (mTiling == VK_IMAGE_TILING_LINEAR) {
+        VkImageSubresource subresource = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .mipLevel = 0,
+            .arrayLayer = 0,
+        };
+        VkSubresourceLayout layout;
+        vkGetImageSubresourceLayout(mpDevice->getDevice(), mImage, &subresource, &layout);
+        mPitch = layout.rowPitch;
+    }
 }
 
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
              VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
              VkDeviceMemory memory, VkDeviceSize offset)
-    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mMipLevels(mipLevels), mFormat(format),
-      mTiling(tiling), mUsage(usage), mProperties(0), mImageView(VK_NULL_HANDLE), mMemory(memory), mOwnMemory(false),
-      mpHostMap(nullptr)
+    : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mPitch(0), mMipLevels(mipLevels),
+      mFormat(format), mTiling(tiling), mUsage(usage), mProperties(0), mImageView(VK_NULL_HANDLE), mMemory(memory),
+      mOwnMemory(false), mpHostMap(nullptr)
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -73,6 +85,17 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
 
     Check::Vk(vkCreateImage(mpDevice->getDevice(), &ci, nullptr, &mImage));
     Check::Vk(vkBindImageMemory(mpDevice->getDevice(), mImage, mMemory, offset));
+
+    if (mTiling == VK_IMAGE_TILING_LINEAR) {
+        VkImageSubresource subresource = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .mipLevel = 0,
+            .arrayLayer = 0,
+        };
+        VkSubresourceLayout layout;
+        vkGetImageSubresourceLayout(mpDevice->getDevice(), mImage, &subresource, &layout);
+        mPitch = layout.rowPitch;
+    }
 }
 
 Image::~Image()

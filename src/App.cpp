@@ -591,7 +591,7 @@ static void acquireAndSaveScreenshot(ptr<Swapchain> pSwapchain)
     std::strftime(timestamp, 64, "%G-%m-%d_%H-%M-%S", std::localtime(&t));
     std::filesystem::path filename = std::format("Screenshot_{}.png", timestamp);
     stbi_write_png(filename.string().c_str(), pSwapchain->getExtent().width, pSwapchain->getExtent().height, 4,
-                   data.data(), pSwapchain->getExtent().width * 4);
+                   data.data(), pSwapchain->getScreenshotImagePitch());
     auto fullpath = std::filesystem::current_path() / filename;
 
     Log::Info("Screenshot saved to {}", fullpath.string());

@@ -69,17 +69,7 @@ Swapchain::Swapchain(ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pD
     createSwapchain();
     createSyncObjects(framesInFlight);
     createDescriptor();
-
-    mScreenshotStageImage =
-        make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
-                        VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-    VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
-    Helpers::imageBarrier(cmd, mScreenshotStageImage->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
-                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
-                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    Helpers::cmdEnd(mpDevice, cmd);
+    createScreenshotStageImage();
 }
 
 Swapchain::~Swapchain()
@@ -109,6 +99,7 @@ void Swapchain::recreate()
     createSwapchain();
     createSyncObjects(framesInFlight);
     createDescriptor();
+    createScreenshotStageImage();
 
     mRecreated = true;
 }
@@ -210,7 +201,8 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
         if (mScreenshotState == ScreenshotState::Requested) {
             Log::Debug("Thread render: Queue for blitting");
 
-            blitImageInfo.dstImage = mScreenshotStageImage->getImage(), vkCmdBlitImage2(cmd, &blitImageInfo);
+            blitImageInfo.dstImage = mScreenshotStageImage->getImage();
+            vkCmdBlitImage2(cmd, &blitImageInfo);
 
             mScreenshotState = ScreenshotState::QueuedForBlitting;
             mScreenshotInFlightIndex = mInFlightIndex;
@@ -273,7 +265,7 @@ std::vector<uint8_t> Swapchain::waitForScreenshot()
     std::unique_lock lock(mScreenshotMutex);
     mScreenshotAvailableCV.wait(lock, [this] { return mScreenshotState == ScreenshotState::BlittedToStage; });
 
-    std::vector<uint8_t> data(mExtent.width * mExtent.height * 4);
+    std::vector<uint8_t> data(mScreenshotStageImage->getPitch() * mScreenshotStageImage->getHeight());
     uint8_t* pData = static_cast<uint8_t*>(mScreenshotStageImage->getHostMap());
     std::memcpy(data.data(), pData, data.size());
 
@@ -511,4 +503,18 @@ void Swapchain::destroyDescriptor()
     vkFreeDescriptorSets(mpDevice->getDevice(), mDescriptorPool, count(mDescriptorSets), mDescriptorSets.data());
     vkDestroyDescriptorPool(mpDevice->getDevice(), mDescriptorPool, nullptr);
     vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mDescriptorSetLayout, nullptr);
+}
+
+void Swapchain::createScreenshotStageImage()
+{
+    mScreenshotStageImage =
+        make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
+                        VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+    Helpers::imageBarrier(cmd, mScreenshotStageImage->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Helpers::cmdEnd(mpDevice, cmd);
 }
