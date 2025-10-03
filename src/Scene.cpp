@@ -65,7 +65,7 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
     uint32_t nodeDescriptorOffset =
         static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * pScene->mpSwapchain->getInFlightIndex());
 
-#ifdef MANDRILL_DEBUG
+#ifdef _DEBUG
     if (!mpDescriptor) {
         Log::Error("Node::render() - No descriptor set bound to node. When using ray tracing, descriptors are not "
                    "created until the acceleration structure has been built.");
