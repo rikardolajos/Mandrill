@@ -64,7 +64,15 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
 
     uint32_t nodeDescriptorOffset =
         static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * pScene->mpSwapchain->getInFlightIndex());
-    pDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
+
+#ifdef MANDRILL_DEBUG
+    if (!mpDescriptor) {
+        Log::Error("Node::render() - No descriptor set bound to node. When using ray tracing, descriptors are not "
+                   "created until the acceleration structure has been built.");
+    }
+#endif
+
+    mpDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
 
     if (pScene->mpEnvironmentMapDescriptor) {
         pScene->mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 3);
@@ -742,7 +750,7 @@ void Scene::createDescriptors()
 
         // Set layout for set 1
         auto layout = pLayout->getDescriptorSetLayouts()[1];
-        node.pDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
+        node.mpDescriptor = std::make_unique<Descriptor>(mpDevice, desc, layout);
     }
 
     // Materials

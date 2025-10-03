@@ -196,8 +196,7 @@ namespace Mandrill
 
         glm::mat4 mTransform;
         glm::mat4* mpTransformDevice;
-        ptr<Descriptor> pDescriptor;
-        std::vector<VkDescriptorSet> mDescriptors;
+        ptr<Descriptor> mpDescriptor;
 
         bool mVisible;
 
