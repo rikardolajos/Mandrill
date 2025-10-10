@@ -50,21 +50,53 @@ namespace Mandrill
     }};
 
     struct PipelineDesc {
+        // Vertex input state
         std::vector<VkVertexInputBindingDescription> bindingDescriptions;
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-        VkPolygonMode polygonMode;
-        VkBool32 depthTest;
-        VkBool32 blend;
-        VkBool32 alphaToCoverage;
+        // Input assembly state
+        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        VkBool32 primitiveRestartEnable = VK_FALSE;
+        // Rasterization state
+        VkBool32 depthClampEnable = VK_FALSE;
+        VkBool32 rasterizerDiscardEnable = VK_FALSE;
+        VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL;
+        VkBool32 depthBiasEnable = VK_FALSE;
+        float depthBiasConstantFactor = 0.0f;
+        float depthBiasClamp = 0.0f;
+        float depthBiasSlopeFactor = 1.0f;
+        // Multisample state (samples are set in Pass)
+        VkBool32 sampleShadingEnable = VK_FALSE;
+        float minSampleShading = 1.0f;
+        VkSampleMask* pSampleMask = nullptr;
+        VkBool32 alphaToCoverageEnable = VK_FALSE;
+        VkBool32 alphaToOneEnableEnable = VK_FALSE;
+        // Color blend attachment state
+        VkBool32 blendEnable = VK_FALSE;
+        VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        VkBlendOp colorBlendOp = VK_BLEND_OP_ADD;
+        VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD;
+        VkColorComponentFlags colorWriteMask =
+            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        // Depth-stencil state
+        VkBool32 depthTestEnable = VK_TRUE;
+        VkBool32 depthWriteEnable = VK_TRUE;
+        VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS;
+        VkBool32 depthBoundsTestEnable = VK_FALSE;
+        VkBool32 stencilTestEnable = VK_FALSE;
+        float minDepthBounds = 0.0f;
+        float maxDepthBounds = 1.0f;
+        // Color blend state
+        VkBool32 logicOpEnable = VK_FALSE;
+        VkLogicOp logicOp = VK_LOGIC_OP_COPY;
 
         MANDRILL_API
         PipelineDesc(
             std::vector<VkVertexInputBindingDescription> bindingDescriptions = defaultBindingDescriptions,
-            std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions,
-            VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,
-            VkBool32 alphaToCoverage = VK_FALSE)
-            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions),
-              polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage)
+            std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions)
+            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions)
         {
         }
     };
@@ -168,13 +200,9 @@ namespace Mandrill
         VkPipelineLayout mPipelineLayout;
 
     private:
-        VkPolygonMode mPolygonMode;
-        VkBool32 mDepthTest;
-        VkBool32 mBlend;
-        VkBool32 mAlphaToCoverage;
+        PipelineDesc mDesc;
 
-        std::vector<VkVertexInputBindingDescription> mBindingDescriptions;
-        std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
+        // Dynamic states
         VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;
         VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         float mLineWidth = 1.0f;

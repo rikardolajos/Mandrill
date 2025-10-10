@@ -57,8 +57,8 @@ public:
         std::vector<VkVertexInputBindingDescription> emptyBindingDescription;
         std::vector<VkVertexInputAttributeDescription> emptyAttributeDescription;
         PipelineDesc pipelineDesc = PipelineDesc(emptyBindingDescription, emptyAttributeDescription);
-        pipelineDesc.depthTest = VK_FALSE;
-        pipelineDesc.blend = VK_FALSE;
+        pipelineDesc.depthTestEnable = VK_FALSE;
+        pipelineDesc.blendEnable = VK_FALSE;
 
         // Create a pipeline for environment map
         std::vector<ShaderDesc> shaderDesc;
@@ -89,8 +89,8 @@ public:
                                 &mSpecializationInfo);
         pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
 
-        pipelineDesc.depthTest = VK_TRUE;
-        pipelineDesc.blend = VK_TRUE;
+        pipelineDesc.depthTestEnable = VK_TRUE;
+        pipelineDesc.blendEnable = VK_TRUE;
         mpRayMarchingPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
 
         mPipelines = {mpEnvironmentMapPipeline, mpRayMarchingPipeline};

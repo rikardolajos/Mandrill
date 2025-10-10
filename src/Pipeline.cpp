@@ -7,10 +7,7 @@ using namespace Mandrill;
 
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
                    const PipelineDesc& desc)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpPass(pPass), mPipeline(nullptr),
-      mBindingDescriptions(desc.bindingDescriptions), mAttributeDescriptions(desc.attributeDescriptions),
-      mPolygonMode(desc.polygonMode), mDepthTest(desc.depthTest), mBlend(desc.blend),
-      mAlphaToCoverage(desc.alphaToCoverage)
+    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpPass(pPass), mPipeline(nullptr), mDesc(desc)
 {
     const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
     const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
@@ -73,16 +70,16 @@ void Pipeline::createPipeline()
 {
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = count(mBindingDescriptions),
-        .pVertexBindingDescriptions = mBindingDescriptions.data(),
-        .vertexAttributeDescriptionCount = count(mAttributeDescriptions),
-        .pVertexAttributeDescriptions = mAttributeDescriptions.data(),
+        .vertexBindingDescriptionCount = count(mDesc.bindingDescriptions),
+        .pVertexBindingDescriptions = mDesc.bindingDescriptions.data(),
+        .vertexAttributeDescriptionCount = count(mDesc.attributeDescriptions),
+        .pVertexAttributeDescriptions = mDesc.attributeDescriptions.data(),
     };
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-        .primitiveRestartEnable = VK_FALSE,
+        .topology = mDesc.topology,
+        .primitiveRestartEnable = mDesc.primitiveRestartEnable,
     };
 
     std::vector<VkDynamicState> dynamicStates = {
@@ -104,41 +101,46 @@ void Pipeline::createPipeline()
 
     VkPipelineRasterizationStateCreateInfo rasterizer = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-        .depthClampEnable = VK_FALSE,
-        .rasterizerDiscardEnable = VK_FALSE,
-        .polygonMode = mPolygonMode,
-        .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-        .depthBiasEnable = VK_FALSE,
+        .depthClampEnable = mDesc.depthClampEnable,
+        .rasterizerDiscardEnable = mDesc.rasterizerDiscardEnable,
+        .polygonMode = mDesc.polygonMode,
+        .frontFace = mFrontFace,
+        .depthBiasEnable = mDesc.depthBiasEnable,
+        .depthBiasConstantFactor = mDesc.depthBiasConstantFactor,
+        .depthBiasClamp = mDesc.depthBiasClamp,
+        .depthBiasSlopeFactor = mDesc.depthBiasSlopeFactor,
     };
 
     VkPipelineMultisampleStateCreateInfo multisampling = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .rasterizationSamples = mpPass->getSampleCount(),
-        .sampleShadingEnable = VK_FALSE,
-        .alphaToCoverageEnable = mAlphaToCoverage,
+        .sampleShadingEnable = mDesc.sampleShadingEnable,
+        .minSampleShading = mDesc.minSampleShading,
+        .pSampleMask = mDesc.pSampleMask,
+        .alphaToCoverageEnable = mDesc.alphaToCoverageEnable,
+        .alphaToOneEnable = mDesc.alphaToOneEnableEnable,
     };
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment = {
-        .blendEnable = mBlend,
-        .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
-        .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-        .colorBlendOp = VK_BLEND_OP_ADD,
-        .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-        .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-        .alphaBlendOp = VK_BLEND_OP_ADD,
-        .colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+        .blendEnable = mDesc.blendEnable,
+        .srcColorBlendFactor = mDesc.srcColorBlendFactor,
+        .dstColorBlendFactor = mDesc.dstColorBlendFactor,
+        .colorBlendOp = mDesc.colorBlendOp,
+        .srcAlphaBlendFactor = mDesc.srcAlphaBlendFactor,
+        .dstAlphaBlendFactor = mDesc.dstAlphaBlendFactor,
+        .alphaBlendOp = mDesc.alphaBlendOp,
+        .colorWriteMask = mDesc.colorWriteMask,
     };
 
     VkPipelineDepthStencilStateCreateInfo depthStencil = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        .depthTestEnable = mDepthTest,
-        .depthWriteEnable = VK_TRUE,
-        .depthCompareOp = VK_COMPARE_OP_LESS,
-        .depthBoundsTestEnable = VK_FALSE,
-        .stencilTestEnable = VK_FALSE,
-        .minDepthBounds = 0.0f,
-        .maxDepthBounds = 1.0f,
+        .depthTestEnable = mDesc.depthTestEnable,
+        .depthWriteEnable = mDesc.depthWriteEnable,
+        .depthCompareOp = mDesc.depthCompareOp,
+        .depthBoundsTestEnable = mDesc.depthBoundsTestEnable,
+        .stencilTestEnable = mDesc.stencilTestEnable,
+        .minDepthBounds = mDesc.minDepthBounds,
+        .maxDepthBounds = mDesc.maxDepthBounds,
     };
 
     std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
@@ -148,7 +150,8 @@ void Pipeline::createPipeline()
 
     VkPipelineColorBlendStateCreateInfo colorBlending = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-        .logicOpEnable = VK_FALSE,
+        .logicOpEnable = mDesc.logicOpEnable,
+        .logicOp = mDesc.logicOp,
         .attachmentCount = count(colorBlendAttachmentStates),
         .pAttachments = colorBlendAttachmentStates.data(),
     };

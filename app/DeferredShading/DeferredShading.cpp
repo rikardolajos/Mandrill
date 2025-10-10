@@ -144,11 +144,11 @@ public:
 
         // Create pipelines
         PipelineDesc pipelineDesc;
-        pipelineDesc.depthTest = VK_TRUE;
+        pipelineDesc.depthTestEnable = VK_TRUE;
         mPipelines.emplace_back(
             std::make_shared<Pipeline>(mpDevice, mpGBufferPass, pGBufferLayout, pGBufferShader, pipelineDesc));
 
-        pipelineDesc.depthTest = VK_FALSE;
+        pipelineDesc.depthTestEnable = VK_FALSE;
         mPipelines.emplace_back(
             std::make_shared<Pipeline>(mpDevice, mpResolvePass, mpResolveLayout, pResolveShader, pipelineDesc));
 

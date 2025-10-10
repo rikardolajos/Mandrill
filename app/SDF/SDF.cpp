@@ -41,8 +41,8 @@ public:
         std::vector<VkVertexInputBindingDescription> emptyBindingDescription;
         std::vector<VkVertexInputAttributeDescription> emptyAttributeDescription;
         PipelineDesc pipelineDesc = PipelineDesc(emptyBindingDescription, emptyAttributeDescription);
-        pipelineDesc.depthTest = VK_FALSE;
-        pipelineDesc.blend = VK_FALSE;
+        pipelineDesc.depthTestEnable = VK_FALSE;
+        pipelineDesc.blendEnable = VK_FALSE;
 
         // Create a pipeline
         std::vector<ShaderDesc> shaderDesc;
