@@ -152,112 +152,140 @@ $(document).ready(function(){initNavTree('Pipeline_8h_source.html',''); initResi
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    }};</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">struct </span>PipelineDesc {</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        std::vector&lt;VkVertexInputBindingDescription&gt; bindingDescriptions;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        std::vector&lt;VkVertexInputAttributeDescription&gt; attributeDescriptions;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        VkPolygonMode polygonMode;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        VkBool32 depthTest;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        VkBool32 blend;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        VkBool32 alphaToCoverage;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        MANDRILL_API</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        PipelineDesc(</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            std::vector&lt;VkVertexInputBindingDescription&gt; bindingDescriptions = defaultBindingDescriptions,</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            std::vector&lt;VkVertexInputAttributeDescription&gt; attributeDescriptions = defaultAttributeDescriptions,</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL, VkBool32 depthTest = VK_TRUE, VkBool32 blend = VK_FALSE,</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            VkBool32 alphaToCoverage = VK_FALSE)</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions),</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>              polygonMode(polygonMode), depthTest(depthTest), blend(blend), alphaToCoverage(alphaToCoverage)</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        {</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    };</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="foldopen" id="foldopen00075" data-start="{" data-end="};">
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html">   75</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    {</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a>)</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a>(ptr&lt;Device&gt; pDevice, ptr&lt;Pass&gt; pPass, ptr&lt;Layout&gt; pLayout, ptr&lt;Shader&gt; pShader,</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                              <span class="keyword">const</span> PipelineDesc&amp; desc = PipelineDesc());</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec">~Pipeline</a>();</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a93b5448770092422acaa54415a0573e1">bind</a>(VkCommandBuffer cmd);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991">recreate</a>();</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="foldopen" id="foldopen00113" data-start="{" data-end="}">
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">  113</a></span>        MANDRILL_API VkPipeline <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">getPipeline</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <span class="keywordflow">return</span> mPipeline;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="comment">// Vertex input state</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        std::vector&lt;VkVertexInputBindingDescription&gt; bindingDescriptions;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        std::vector&lt;VkVertexInputAttributeDescription&gt; attributeDescriptions;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="comment">// Input assembly state</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        VkBool32 primitiveRestartEnable = VK_FALSE;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="comment">// Rasterization state</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        VkBool32 depthClampEnable = VK_FALSE;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        VkBool32 rasterizerDiscardEnable = VK_FALSE;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        VkBool32 depthBiasEnable = VK_FALSE;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordtype">float</span> depthBiasConstantFactor = 0.0f;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordtype">float</span> depthBiasClamp = 0.0f;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordtype">float</span> depthBiasSlopeFactor = 1.0f;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="comment">// Multisample state (samples are set in Pass)</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        VkBool32 sampleShadingEnable = VK_FALSE;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordtype">float</span> minSampleShading = 1.0f;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        VkSampleMask* pSampleMask = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        VkBool32 alphaToCoverageEnable = VK_FALSE;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        VkBool32 alphaToOneEnableEnable = VK_FALSE;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="comment">// Color blend attachment state</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        VkBool32 blendEnable = VK_FALSE;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        VkBlendOp colorBlendOp = VK_BLEND_OP_ADD;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        VkColorComponentFlags colorWriteMask =</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="comment">// Depth-stencil state</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        VkBool32 depthTestEnable = VK_TRUE;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        VkBool32 depthWriteEnable = VK_TRUE;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        VkBool32 depthBoundsTestEnable = VK_FALSE;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        VkBool32 stencilTestEnable = VK_FALSE;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keywordtype">float</span> minDepthBounds = 0.0f;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keywordtype">float</span> maxDepthBounds = 1.0f;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="comment">// Color blend state</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        VkBool32 logicOpEnable = VK_FALSE;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        VkLogicOp logicOp = VK_LOGIC_OP_COPY;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        MANDRILL_API</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        PipelineDesc(</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            std::vector&lt;VkVertexInputBindingDescription&gt; bindingDescriptions = defaultBindingDescriptions,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            std::vector&lt;VkVertexInputAttributeDescription&gt; attributeDescriptions = defaultAttributeDescriptions)</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions)</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        }</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    };</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="foldopen" id="foldopen00107" data-start="{" data-end="};">
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html">  107</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a>)</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Pipeline.html">Pipeline</a>(ptr&lt;Device&gt; pDevice, ptr&lt;Pass&gt; pPass, ptr&lt;Layout&gt; pLayout, ptr&lt;Shader&gt; pShader,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                              <span class="keyword">const</span> PipelineDesc&amp; desc = PipelineDesc());</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec">~Pipeline</a>();</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a93b5448770092422acaa54415a0573e1">bind</a>(VkCommandBuffer cmd);</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991">recreate</a>();</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="foldopen" id="foldopen00145" data-start="{" data-end="}">
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">  145</a></span>        MANDRILL_API VkPipeline <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">getPipeline</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            <span class="keywordflow">return</span> mPipeline;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
 </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
-<div class="foldopen" id="foldopen00122" data-start="{" data-end="}">
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">  122</a></span>        MANDRILL_API VkPipelineLayout <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">getLayout</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            <span class="keywordflow">return</span> mPipelineLayout;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        }</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="foldopen" id="foldopen00154" data-start="{" data-end="}">
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">  154</a></span>        MANDRILL_API VkPipelineLayout <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">getLayout</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            <span class="keywordflow">return</span> mPipelineLayout;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        }</div>
 </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
-<div class="foldopen" id="foldopen00132" data-start="{" data-end="}">
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">  132</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">setCullMode</a>(VkCullModeFlagBits cullMode)</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        {</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>            mCullMode = cullMode;</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        }</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="foldopen" id="foldopen00164" data-start="{" data-end="}">
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">  164</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">setCullMode</a>(VkCullModeFlagBits cullMode)</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        {</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            mCullMode = cullMode;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        }</div>
 </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
-<div class="foldopen" id="foldopen00142" data-start="{" data-end="}">
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">  142</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">setFrontFace</a>(VkFrontFace frontFace)</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        {</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>            mFrontFace = frontFace;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        }</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="foldopen" id="foldopen00174" data-start="{" data-end="}">
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">  174</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">setFrontFace</a>(VkFrontFace frontFace)</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        {</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            mFrontFace = frontFace;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        }</div>
 </div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">  152</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">setLineWidth</a>(<span class="keywordtype">float</span> lineWidth)</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        {</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            mLineWidth = lineWidth;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        }</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="foldopen" id="foldopen00184" data-start="{" data-end="}">
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">  184</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">setLineWidth</a>(<span class="keywordtype">float</span> lineWidth)</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        {</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            mLineWidth = lineWidth;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        }</div>
 </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        <span class="keyword">virtual</span> <span class="keywordtype">void</span> createPipeline();</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        <span class="keyword">virtual</span> <span class="keywordtype">void</span> destroyPipeline();</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        ptr&lt;Pass&gt; mpPass;</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        ptr&lt;Shader&gt; mpShader;</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        ptr&lt;Layout&gt; mpLayout;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        VkPipeline mPipeline;</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        VkPipelineLayout mPipelineLayout;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        VkPolygonMode mPolygonMode;</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        VkBool32 mDepthTest;</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        VkBool32 mBlend;</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        VkBool32 mAlphaToCoverage;</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        std::vector&lt;VkVertexInputBindingDescription&gt; mBindingDescriptions;</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        std::vector&lt;VkVertexInputAttributeDescription&gt; mAttributeDescriptions;</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="keywordtype">float</span> mLineWidth = 1.0f;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    };</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="keyword">virtual</span> <span class="keywordtype">void</span> createPipeline();</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        <span class="keyword">virtual</span> <span class="keywordtype">void</span> destroyPipeline();</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        ptr&lt;Pass&gt; mpPass;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        ptr&lt;Shader&gt; mpShader;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        ptr&lt;Layout&gt; mpLayout;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        VkPipeline mPipeline;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        VkPipelineLayout mPipelineLayout;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        PipelineDesc mDesc;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="comment">// Dynamic states</span></div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        VkCullModeFlagBits mCullMode = VK_CULL_MODE_NONE;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        VkFrontFace mFrontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        <span class="keywordtype">float</span> mLineWidth = 1.0f;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    };</div>
 </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>} <span class="comment">// namespace Mandrill</span></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html"><div class="ttname"><a href="classMandrill_1_1Pipeline.html">Mandrill::Pipeline</a></div><div class="ttdoc">Pipeline class for managing Vulkan graphics pipelines.</div><div class="ttdef"><b>Definition</b> Pipeline.h:76</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a0c81b34bd2d1f62e4d45915b3ef4df2d"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">Mandrill::Pipeline::setFrontFace</a></div><div class="ttdeci">MANDRILL_API void setFrontFace(VkFrontFace frontFace)</div><div class="ttdoc">Set the front face.</div><div class="ttdef"><b>Definition</b> Pipeline.h:142</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a1686b42f20ac25534224cfd049f1ddfc"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">Mandrill::Pipeline::getPipeline</a></div><div class="ttdeci">MANDRILL_API VkPipeline getPipeline() const</div><div class="ttdoc">Get the pipeline handle.</div><div class="ttdef"><b>Definition</b> Pipeline.h:113</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a2bf63c57b6317f352a52f1ee0db2744d"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">Mandrill::Pipeline::getLayout</a></div><div class="ttdeci">MANDRILL_API VkPipelineLayout getLayout() const</div><div class="ttdoc">Get the pipeline layout handle.</div><div class="ttdef"><b>Definition</b> Pipeline.h:122</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a31b07f0921a5b67575c1eca5d2605128"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">Mandrill::Pipeline::setLineWidth</a></div><div class="ttdeci">MANDRILL_API void setLineWidth(float lineWidth)</div><div class="ttdoc">Set line width.</div><div class="ttdef"><b>Definition</b> Pipeline.h:152</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a527044d53a20f851d0579fbf313a2dec"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec">Mandrill::Pipeline::~Pipeline</a></div><div class="ttdeci">MANDRILL_API ~Pipeline()</div><div class="ttdoc">Destructor for pipeline.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:33</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a93b5448770092422acaa54415a0573e1"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a93b5448770092422acaa54415a0573e1">Mandrill::Pipeline::bind</a></div><div class="ttdeci">MANDRILL_API void bind(VkCommandBuffer cmd)</div><div class="ttdoc">Bind a pipeline for rendering and set its dynamic states.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:39</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_acacb8f33e38a3b864094078a5f38ac63"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">Mandrill::Pipeline::setCullMode</a></div><div class="ttdeci">MANDRILL_API void setCullMode(VkCullModeFlagBits cullMode)</div><div class="ttdoc">Set the cull mode.</div><div class="ttdef"><b>Definition</b> Pipeline.h:132</div></div>
-<div class="ttc" id="aclassMandrill_1_1Pipeline_html_ae21ee10e655ee38bd92b292291d32991"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991">Mandrill::Pipeline::recreate</a></div><div class="ttdeci">MANDRILL_API void recreate()</div><div class="ttdoc">Recreate a pipeline. Call this if shader source code has changed and should be reloaded.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:65</div></div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html"><div class="ttname"><a href="classMandrill_1_1Pipeline.html">Mandrill::Pipeline</a></div><div class="ttdoc">Pipeline class for managing Vulkan graphics pipelines.</div><div class="ttdef"><b>Definition</b> Pipeline.h:108</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a0c81b34bd2d1f62e4d45915b3ef4df2d"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a0c81b34bd2d1f62e4d45915b3ef4df2d">Mandrill::Pipeline::setFrontFace</a></div><div class="ttdeci">MANDRILL_API void setFrontFace(VkFrontFace frontFace)</div><div class="ttdoc">Set the front face.</div><div class="ttdef"><b>Definition</b> Pipeline.h:174</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a1686b42f20ac25534224cfd049f1ddfc"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">Mandrill::Pipeline::getPipeline</a></div><div class="ttdeci">MANDRILL_API VkPipeline getPipeline() const</div><div class="ttdoc">Get the pipeline handle.</div><div class="ttdef"><b>Definition</b> Pipeline.h:145</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a2bf63c57b6317f352a52f1ee0db2744d"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">Mandrill::Pipeline::getLayout</a></div><div class="ttdeci">MANDRILL_API VkPipelineLayout getLayout() const</div><div class="ttdoc">Get the pipeline layout handle.</div><div class="ttdef"><b>Definition</b> Pipeline.h:154</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a31b07f0921a5b67575c1eca5d2605128"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a31b07f0921a5b67575c1eca5d2605128">Mandrill::Pipeline::setLineWidth</a></div><div class="ttdeci">MANDRILL_API void setLineWidth(float lineWidth)</div><div class="ttdoc">Set line width.</div><div class="ttdef"><b>Definition</b> Pipeline.h:184</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a527044d53a20f851d0579fbf313a2dec"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec">Mandrill::Pipeline::~Pipeline</a></div><div class="ttdeci">MANDRILL_API ~Pipeline()</div><div class="ttdoc">Destructor for pipeline.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:30</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_a93b5448770092422acaa54415a0573e1"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#a93b5448770092422acaa54415a0573e1">Mandrill::Pipeline::bind</a></div><div class="ttdeci">MANDRILL_API void bind(VkCommandBuffer cmd)</div><div class="ttdoc">Bind a pipeline for rendering and set its dynamic states.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:36</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_acacb8f33e38a3b864094078a5f38ac63"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63">Mandrill::Pipeline::setCullMode</a></div><div class="ttdeci">MANDRILL_API void setCullMode(VkCullModeFlagBits cullMode)</div><div class="ttdoc">Set the cull mode.</div><div class="ttdef"><b>Definition</b> Pipeline.h:164</div></div>
+<div class="ttc" id="aclassMandrill_1_1Pipeline_html_ae21ee10e655ee38bd92b292291d32991"><div class="ttname"><a href="classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991">Mandrill::Pipeline::recreate</a></div><div class="ttdeci">MANDRILL_API void recreate()</div><div class="ttdoc">Recreate a pipeline. Call this if shader source code has changed and should be reloaded.</div><div class="ttdef"><b>Definition</b> Pipeline.cpp:62</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
