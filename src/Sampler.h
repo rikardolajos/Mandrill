@@ -26,7 +26,7 @@ namespace Mandrill
         /// <param name="addressModeW">Address mode/wrapping mode W</param>
         MANDRILL_API Sampler(ptr<Device> pDevice, VkFilter magFilter = VK_FILTER_LINEAR,
                              VkFilter minFilter = VK_FILTER_LINEAR,
-                             VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+                             VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
                              VkSamplerAddressMode addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
                              VkSamplerAddressMode addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
                              VkSamplerAddressMode addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT);
