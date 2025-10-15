@@ -1,16 +1,16 @@
 var classMandrill_1_1Scene =
 [
-    [ "Scene", "classMandrill_1_1Scene.html#abbef9ea5303a5314510f812d4892e1f8", null ],
+    [ "Scene", "classMandrill_1_1Scene.html#a57a9900040a65a9aae46d99c8a6d8612", null ],
     [ "~Scene", "classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1", null ],
     [ "addMaterial", "classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac", null ],
     [ "addMesh", "classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364", null ],
     [ "addMeshFromFile", "classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18", null ],
     [ "addNode", "classMandrill_1_1Scene.html#aa30fa985b88cee63bf8c54dc95719620", null ],
-    [ "bindRayTracingDescriptors", "classMandrill_1_1Scene.html#a8ed6a8560a342a2918c190f820d496eb", null ],
-    [ "compile", "classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec", null ],
-    [ "getAccelerationStructure", "classMandrill_1_1Scene.html#a0e9bf228035541f011cc36c7133a42e5", null ],
+    [ "bindRayTracingDescriptors", "classMandrill_1_1Scene.html#a40fd82a0b65816031e3d43a1a8ddc2d1", null ],
+    [ "compile", "classMandrill_1_1Scene.html#aea7a8f2c2cd5568c2c8e4ac641e24f0c", null ],
+    [ "createDescriptors", "classMandrill_1_1Scene.html#ac65e9735e15daeb89f72d2380db9c7f2", null ],
+    [ "createRayTracingDescriptors", "classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c", null ],
     [ "getIndexCount", "classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89", null ],
-    [ "getLayout", "classMandrill_1_1Scene.html#aac6f976743282c08d7addcf6f40d2d10", null ],
     [ "getMaterialCount", "classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e", null ],
     [ "getMeshCount", "classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b", null ],
     [ "getMeshIndexAddress", "classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237", null ],
@@ -21,9 +21,8 @@ var classMandrill_1_1Scene =
     [ "getNodes", "classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21", null ],
     [ "getTextureCount", "classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969", null ],
     [ "getVertexCount", "classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31", null ],
-    [ "render", "classMandrill_1_1Scene.html#ad2fa266b86ef436f2f4b8d6dc8c6be52", null ],
+    [ "render", "classMandrill_1_1Scene.html#ad291460447237daa22026a462f388814", null ],
     [ "setEnvironmentMap", "classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7", null ],
     [ "setSampler", "classMandrill_1_1Scene.html#a7a358eda1b1cd23d09ba91fe6e209062", null ],
-    [ "syncToDevice", "classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d", null ],
-    [ "updateAccelerationStructure", "classMandrill_1_1Scene.html#a23fa26a06ac4fdc71cacb00df180015b", null ]
+    [ "syncToDevice", "classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d", null ]
 ];

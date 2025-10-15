@@ -2,7 +2,7 @@ var searchData=
 [
   ['sampleapp_0',['SampleApp',['../index.html#autotoc_md7',1,'']]],
   ['sampler_1',['sampler',['../classMandrill_1_1Sampler.html',1,'Mandrill::Sampler'],['../classMandrill_1_1Sampler.html#aa07ba78388945aa7799feeb330c99dc0',1,'Mandrill::Sampler::Sampler()']]],
-  ['scene_2',['scene',['../classMandrill_1_1Scene.html',1,'Mandrill::Scene'],['../classMandrill_1_1Scene.html#abbef9ea5303a5314510f812d4892e1f8',1,'Mandrill::Scene::Scene()']]],
+  ['scene_2',['scene',['../classMandrill_1_1Scene.html',1,'Mandrill::Scene'],['../classMandrill_1_1Scene.html#a57a9900040a65a9aae46d99c8a6d8612',1,'Mandrill::Scene::Scene()']]],
   ['sceneviewer_3',['SceneViewer',['../index.html#autotoc_md8',1,'']]],
   ['sdf_4',['SDF',['../index.html#autotoc_md9',1,'']]],
   ['setcullmode_5',['setCullMode',['../classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63',1,'Mandrill::Pipeline']]],

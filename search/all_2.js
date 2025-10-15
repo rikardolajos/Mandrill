@@ -1,13 +1,28 @@
 var searchData=
 [
-  ['camera_0',['camera',['../classMandrill_1_1Camera.html',1,'Mandrill::Camera'],['../classMandrill_1_1Camera.html#a66a53f4f70f969f6b9d9cb5ff7c19614',1,'Mandrill::Camera::Camera(ptr&lt; Device &gt; pDevice, GLFWwindow *pWindow, ptr&lt; Swapchain &gt; pSwapchain)']]],
+  ['camera_0',['camera',['../classMandrill_1_1Camera.html#a66a53f4f70f969f6b9d9cb5ff7c19614',1,'Mandrill::Camera::Camera()'],['../classMandrill_1_1Camera.html',1,'Mandrill::Camera']]],
   ['capturemouse_1',['captureMouse',['../classMandrill_1_1Camera.html#ae15384bab360985073066dc0a3fbaa15',1,'Mandrill::Camera']]],
   ['cmdbegin_2',['cmdBegin',['../classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce',1,'Mandrill::Helpers']]],
   ['cmdend_3',['cmdEnd',['../classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8',1,'Mandrill::Helpers']]],
-  ['compile_4',['compile',['../classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec',1,'Mandrill::Scene']]],
+  ['compile_4',['compile',['../classMandrill_1_1Scene.html#aea7a8f2c2cd5568c2c8e4ac641e24f0c',1,'Mandrill::Scene']]],
   ['copybuffertoimage_5',['copyBufferToImage',['../classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990',1,'Mandrill::Helpers']]],
   ['copyfromhost_6',['copyFromHost',['../classMandrill_1_1Buffer.html#a0abf038144595e0433ed4f91c98f91f7',1,'Mandrill::Buffer']]],
   ['copyimagetobuffer_7',['copyImageToBuffer',['../classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d',1,'Mandrill::Helpers']]],
-  ['creategui_8',['createGUI',['../classMandrill_1_1App.html#ae24d320a1b3b14e9e838c87e52f27dab',1,'Mandrill::App']]],
-  ['createimageview_9',['createImageView',['../classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f',1,'Mandrill::Image']]]
+  ['createaccelerationstructure_8',['createAccelerationStructure',['../classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744',1,'Mandrill::Device']]],
+  ['createbuffer_9',['createBuffer',['../classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900',1,'Mandrill::Device']]],
+  ['createcamera_10',['createCamera',['../classMandrill_1_1Device.html#a43d3819bb05dd5dbed94ded01183eff3',1,'Mandrill::Device']]],
+  ['createdescriptor_11',['createdescriptor',['../classMandrill_1_1Camera.html#a0ff4dbc5cc157b5576747804ac021a68',1,'Mandrill::Camera::createDescriptor()'],['../classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191',1,'Mandrill::Device::createDescriptor()']]],
+  ['createdescriptors_12',['createDescriptors',['../classMandrill_1_1Scene.html#ac65e9735e15daeb89f72d2380db9c7f2',1,'Mandrill::Scene']]],
+  ['creategui_13',['createGUI',['../classMandrill_1_1App.html#ae24d320a1b3b14e9e838c87e52f27dab',1,'Mandrill::App']]],
+  ['createimage_14',['createimage',['../classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff',1,'Mandrill::Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)'],['../classMandrill_1_1Device.html#a2b370bbfad75811b51588da347bb8342',1,'Mandrill::Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)']]],
+  ['createimageview_15',['createImageView',['../classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f',1,'Mandrill::Image']]],
+  ['createpass_16',['createpass',['../classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5',1,'Mandrill::Device::createPass(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)'],['../classMandrill_1_1Device.html#a71db23d2d4e114d95cee216a69b08195',1,'Mandrill::Device::createPass(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount=1, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)'],['../classMandrill_1_1Device.html#a9b19d40bce2bccfda7bc6ee549ae5f60',1,'Mandrill::Device::createPass(VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)']]],
+  ['createpipeline_17',['createPipeline',['../classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62',1,'Mandrill::Device']]],
+  ['createraytracingdescriptors_18',['createRayTracingDescriptors',['../classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c',1,'Mandrill::Scene']]],
+  ['createraytracingpipeline_19',['createRayTracingPipeline',['../classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd',1,'Mandrill::Device']]],
+  ['createsampler_20',['createSampler',['../classMandrill_1_1Device.html#a403f2321255446b7560924fcbdc1482e',1,'Mandrill::Device']]],
+  ['createscene_21',['createScene',['../classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08',1,'Mandrill::Device']]],
+  ['createshader_22',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
+  ['createswapchain_23',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
+  ['createtexture_24',['createtexture',['../classMandrill_1_1Device.html#a79f96ba1aabd5f29d21d2a9c1b26d32b',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)'],['../classMandrill_1_1Device.html#a401f8d7505a50c1d15562f54e4e752af',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps=false)']]]
 ];

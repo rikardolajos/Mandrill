@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.6.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.10.0</span>
    </div>
   </td>
  </tr>
@@ -113,6 +113,9 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> ()</td></tr>
 <tr class="memdesc:ad1897942d0ccf91052386388a497349f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor of camera. <br /></td></tr>
 <tr class="separator:ad1897942d0ccf91052386388a497349f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ff4dbc5cc157b5576747804ac021a68" id="r_a0ff4dbc5cc157b5576747804ac021a68"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a0ff4dbc5cc157b5576747804ac021a68">createDescriptor</a> (VkDescriptorSetLayout layout)</td></tr>
+<tr class="memdesc:a0ff4dbc5cc157b5576747804ac021a68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
+<tr class="separator:a0ff4dbc5cc157b5576747804ac021a68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a57f2889b7264fb2d82f6e8c4ab2fe0" id="r_a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a3a57f2889b7264fb2d82f6e8c4ab2fe0">updateAspectRatio</a> ()</td></tr>
 <tr class="memdesc:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.  <br /></td></tr>
 <tr class="separator:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,9 +164,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:adfed60c4c1e4f315df70c75aa013b0ca" id="r_adfed60c4c1e4f315df70c75aa013b0ca"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca">getDescriptor</a> () const</td></tr>
 <tr class="memdesc:adfed60c4c1e4f315df70c75aa013b0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:adfed60c4c1e4f315df70c75aa013b0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a6e46970453798a57f76955fe74d4ba" id="r_a5a6e46970453798a57f76955fe74d4ba"><td class="memItemLeft" align="right" valign="top">VkWriteDescriptorSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a5a6e46970453798a57f76955fe74d4ba">getWriteDescriptor</a> (uint32_t binding) const</td></tr>
-<tr class="memdesc:a5a6e46970453798a57f76955fe74d4ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the write descriptor of the camera. Use this with when using push descriptors.  <br /></td></tr>
-<tr class="separator:a5a6e46970453798a57f76955fe74d4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> class for managing camera properties and transformations in a 3D scene. </p>
@@ -241,6 +241,33 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">capture</td><td>State to set</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a0ff4dbc5cc157b5576747804ac021a68" name="a0ff4dbc5cc157b5576747804ac021a68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ff4dbc5cc157b5576747804ac021a68">&#9670;&#160;</a></span>createDescriptor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::createDescriptor </td>
+          <td>(</td>
+          <td class="paramtype">VkDescriptorSetLayout&#160;</td>
+          <td class="paramname"><em>layout</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layout</td><td><a class="el" href="classMandrill_1_1Layout.html" title="Layout class that abstracts the handling of descriptor set layouts and push constants in Vulkan.">Layout</a> to use for the descriptor</td></tr>
   </table>
   </dd>
 </dl>
@@ -385,41 +412,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 <p>Get the view matrix of the camera. </p>
 <dl class="section return"><dt>Returns</dt><dd>View matrix</dd></dl>
-
-</div>
-</div>
-<a id="a5a6e46970453798a57f76955fe74d4ba" name="a5a6e46970453798a57f76955fe74d4ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a6e46970453798a57f76955fe74d4ba">&#9670;&#160;</a></span>getWriteDescriptor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">VkWriteDescriptorSet Mandrill::Camera::getWriteDescriptor </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>binding</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the write descriptor of the camera. Use this with when using push descriptors. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">binding</td><td>Binding where the descriptor will be placed</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Write descriptor</dd></dl>
 
 </div>
 </div>

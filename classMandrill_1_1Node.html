@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.6.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.10.0</span>
    </div>
   </td>
  </tr>
@@ -113,11 +113,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa0840c3cb5c7159be6d992adecd2097c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene node.  <br /></td></tr>
 <tr class="separator:aa0840c3cb5c7159be6d992adecd2097c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3997a25702e17af4d811187534ed49e" id="r_ae3997a25702e17af4d811187534ed49e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">drawMeshes</a> (VkCommandBuffer cmd, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
-<tr class="memdesc:ae3997a25702e17af4d811187534ed49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use.  <br /></td></tr>
+<tr class="memdesc:ae3997a25702e17af4d811187534ed49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use.  <br /></td></tr>
 <tr class="separator:ae3997a25702e17af4d811187534ed49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f5f5798621e293331b552af9fab83c3" id="r_a1f5f5798621e293331b552af9fab83c3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
-<tr class="memdesc:a1f5f5798621e293331b552af9fab83c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a node in the scene.  <br /></td></tr>
-<tr class="separator:a1f5f5798621e293331b552af9fab83c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fcbe2723d8a40f659e7cbea431431e9" id="r_a0fcbe2723d8a40f659e7cbea431431e9"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
+<tr class="memdesc:a0fcbe2723d8a40f659e7cbea431431e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a node in the scene.  <br /></td></tr>
+<tr class="separator:a0fcbe2723d8a40f659e7cbea431431e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a104d961fda6e0de1c4dbf1ecd2203d04" id="r_a104d961fda6e0de1c4dbf1ecd2203d04"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">addMesh</a> (uint32_t meshIndex)</td></tr>
 <tr class="memdesc:a104d961fda6e0de1c4dbf1ecd2203d04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a mesh to the node.  <br /></td></tr>
 <tr class="separator:a104d961fda6e0de1c4dbf1ecd2203d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -245,7 +245,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a1f5f5798621e293331b552af9fab83c3" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use. </p>
+<p>Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of <a class="el" href="classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9" title="Render a node in the scene.">Node::render()</a> if you want more control over which pipeline and descriptors to use. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cmd</td><td>Command buffer to use for drawing</td></tr>
@@ -341,8 +341,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1f5f5798621e293331b552af9fab83c3" name="a1f5f5798621e293331b552af9fab83c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f5f5798621e293331b552af9fab83c3">&#9670;&#160;</a></span>render()</h2>
+<a id="a0fcbe2723d8a40f659e7cbea431431e9" name="a0fcbe2723d8a40f659e7cbea431431e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fcbe2723d8a40f659e7cbea431431e9">&#9670;&#160;</a></span>render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -358,6 +358,12 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td>
           <td class="paramname"><em>pCamera</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -378,6 +384,7 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">cmd</td><td>Command buffer to use for rendering</td></tr>
     <tr><td class="paramname">pCamera</td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> that defines which camera matrices to use</td></tr>
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
     <tr><td class="paramname">pScene</td><td><a class="el" href="classMandrill_1_1Scene.html" title="Scene class that manages a collection of nodes, materials, meshes, and rendering operations.">Scene</a> which the node belongs to</td></tr>
   </table>
   </dd>

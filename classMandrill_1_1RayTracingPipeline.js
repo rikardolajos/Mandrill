@@ -1,6 +1,6 @@
 var classMandrill_1_1RayTracingPipeline =
 [
-    [ "RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html#a294769f3c6e8e534ff4502d90a82e597", null ],
+    [ "RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html#af9c3a5e8d0eb9ba307c50a52d7275e9b", null ],
     [ "bind", "classMandrill_1_1RayTracingPipeline.html#a378cc839adf89b86768534b398b1e1d4", null ],
     [ "getCallSBT", "classMandrill_1_1RayTracingPipeline.html#ac8bc56c41f1f0a00c1b875f53763e044", null ],
     [ "getHitSBT", "classMandrill_1_1RayTracingPipeline.html#a0b3763d304868da1a9ec4e4944b669e9", null ],

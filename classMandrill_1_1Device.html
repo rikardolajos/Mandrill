@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.6.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.10.0</span>
    </div>
   </td>
  </tr>
@@ -103,6 +103,8 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Device.html',''); ini
  <a href="classMandrill_1_1Device.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Device_8h_source.html">Device.h</a>&gt;</code></p>
+
+<p>Inherits std::enable_shared_from_this&lt; Device &gt;.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -152,6 +154,57 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a4ddddd83776fdce2fa38b217afc60636" id="r_a4ddddd83776fdce2fa38b217afc60636"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkSampleCountFlagBits&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636">getSampleCount</a> () const</td></tr>
 <tr class="memdesc:a4ddddd83776fdce2fa38b217afc60636"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the multisample anti-aliasing sample count.  <br /></td></tr>
 <tr class="separator:a4ddddd83776fdce2fa38b217afc60636"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42cc76f0d4596e77bc9668aa7c230744" id="r_a42cc76f0d4596e77bc9668aa7c230744"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744">createAccelerationStructure</a> (std::weak_ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; wpScene, VkBuildAccelerationStructureFlagsKHR flags)</td></tr>
+<tr class="memdesc:a42cc76f0d4596e77bc9668aa7c230744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new acceleration structure.  <br /></td></tr>
+<tr class="separator:a42cc76f0d4596e77bc9668aa7c230744"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae57d77ea4fd291683f97f090c4005900" id="r_ae57d77ea4fd291683f97f090c4005900"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">createBuffer</a> (VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</td></tr>
+<tr class="memdesc:ae57d77ea4fd291683f97f090c4005900"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new buffer.  <br /></td></tr>
+<tr class="separator:ae57d77ea4fd291683f97f090c4005900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43d3819bb05dd5dbed94ded01183eff3" id="r_a43d3819bb05dd5dbed94ded01183eff3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a43d3819bb05dd5dbed94ded01183eff3">createCamera</a> (GLFWwindow *pWindow, ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt; pSwapchain)</td></tr>
+<tr class="memdesc:a43d3819bb05dd5dbed94ded01183eff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
+<tr class="separator:a43d3819bb05dd5dbed94ded01183eff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add6654c463a2a2f114093b2661f5d191" id="r_add6654c463a2a2f114093b2661f5d191"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">createDescriptor</a> (const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</td></tr>
+<tr class="memdesc:add6654c463a2a2f114093b2661f5d191"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new descriptor.  <br /></td></tr>
+<tr class="separator:add6654c463a2a2f114093b2661f5d191"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44f2e58304516061696846e5d1f032ff" id="r_a44f2e58304516061696846e5d1f032ff"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a> (uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)</td></tr>
+<tr class="memdesc:a44f2e58304516061696846e5d1f032ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> and allocate memory for it.  <br /></td></tr>
+<tr class="separator:a44f2e58304516061696846e5d1f032ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b370bbfad75811b51588da347bb8342" id="r_a2b370bbfad75811b51588da347bb8342"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a2b370bbfad75811b51588da347bb8342">createImage</a> (uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)</td></tr>
+<tr class="memdesc:a2b370bbfad75811b51588da347bb8342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> using memory that has already been allocated.  <br /></td></tr>
+<tr class="separator:a2b370bbfad75811b51588da347bb8342"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacb32843af581be3fa55cfe3fa6d06f5" id="r_aacb32843af581be3fa55cfe3fa6d06f5"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a> (std::vector&lt; ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; &gt; colorAttachments, ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pDepthAttachment)</td></tr>
+<tr class="memdesc:aacb32843af581be3fa55cfe3fa6d06f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a pass with explicit color and depth attachments.  <br /></td></tr>
+<tr class="separator:aacb32843af581be3fa55cfe3fa6d06f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71db23d2d4e114d95cee216a69b08195" id="r_a71db23d2d4e114d95cee216a69b08195"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a71db23d2d4e114d95cee216a69b08195">createPass</a> (VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount=1, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)</td></tr>
+<tr class="memdesc:a71db23d2d4e114d95cee216a69b08195"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a pass with implicit attachments, given a certain extent and format. Same format will be used for all color attachments.  <br /></td></tr>
+<tr class="separator:a71db23d2d4e114d95cee216a69b08195"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b19d40bce2bccfda7bc6ee549ae5f60" id="r_a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a9b19d40bce2bccfda7bc6ee549ae5f60">createPass</a> (VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)</td></tr>
+<tr class="memdesc:a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a pass with implicit attachments, given a certain extent and format. The list of formats will create mathcing color attachments.  <br /></td></tr>
+<tr class="separator:a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8e0c3e643ba9f83456fe0004f08a62" id="r_a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pipeline.html">Pipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; pPass, ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const PipelineDesc &amp;desc)</td></tr>
+<tr class="memdesc:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new pipeline.  <br /></td></tr>
+<tr class="separator:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5983cdc34f15dc641865618476750bcd" id="r_a5983cdc34f15dc641865618476750bcd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1RayTracingPipeline.html">RayTracingPipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const RayTracingPipelineDesc &amp;desc)</td></tr>
+<tr class="memdesc:a5983cdc34f15dc641865618476750bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new ray tracing pipeline.  <br /></td></tr>
+<tr class="separator:a5983cdc34f15dc641865618476750bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a403f2321255446b7560924fcbdc1482e" id="r_a403f2321255446b7560924fcbdc1482e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a403f2321255446b7560924fcbdc1482e">createSampler</a> (VkFilter magFilter=VK_FILTER_LINEAR, VkFilter minFilter=VK_FILTER_LINEAR, VkSamplerMipmapMode mipmapMode=VK_SAMPLER_MIPMAP_MODE_LINEAR, VkSamplerAddressMode addressModeU=VK_SAMPLER_ADDRESS_MODE_REPEAT, VkSamplerAddressMode addressModeV=VK_SAMPLER_ADDRESS_MODE_REPEAT, VkSamplerAddressMode addressModeW=VK_SAMPLER_ADDRESS_MODE_REPEAT)</td></tr>
+<tr class="memdesc:a403f2321255446b7560924fcbdc1482e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture sampler.  <br /></td></tr>
+<tr class="separator:a403f2321255446b7560924fcbdc1482e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a72ce7b4a1610eef8fe28dd86a07f08" id="r_a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">createScene</a> ()</td></tr>
+<tr class="memdesc:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new scene.  <br /></td></tr>
+<tr class="separator:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42372a30f593de4d78fbac6927a4ec27" id="r_a42372a30f593de4d78fbac6927a4ec27"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27">createShader</a> (const std::vector&lt; ShaderDesc &gt; &amp;desc)</td></tr>
+<tr class="memdesc:a42372a30f593de4d78fbac6927a4ec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
+<tr class="separator:a42372a30f593de4d78fbac6927a4ec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1df1772aee358eb7a41359c0e6ee2904" id="r_a1df1772aee358eb7a41359c0e6ee2904"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a> (uint32_t framesInFlight=2)</td></tr>
+<tr class="memdesc:a1df1772aee358eb7a41359c0e6ee2904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain.  <br /></td></tr>
+<tr class="separator:a1df1772aee358eb7a41359c0e6ee2904"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79f96ba1aabd5f29d21d2a9c1b26d32b" id="r_a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a79f96ba1aabd5f29d21d2a9c1b26d32b">createTexture</a> (TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</td></tr>
+<tr class="memdesc:a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a file.  <br /></td></tr>
+<tr class="separator:a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a401f8d7505a50c1d15562f54e4e752af" id="r_a401f8d7505a50c1d15562f54e4e752af"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a401f8d7505a50c1d15562f54e4e752af">createTexture</a> (TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps=false)</td></tr>
+<tr class="memdesc:a401f8d7505a50c1d15562f54e4e752af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a buffer.  <br /></td></tr>
+<tr class="separator:a401f8d7505a50c1d15562f54e4e752af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> class abstracting the physical and logical Vulkan device, as well as handling extensions and features. </p>
@@ -208,6 +261,849 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a42cc76f0d4596e77bc9668aa7c230744" name="a42cc76f0d4596e77bc9668aa7c230744"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42cc76f0d4596e77bc9668aa7c230744">&#9670;&#160;</a></span>createAccelerationStructure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt; Device::createAccelerationStructure </td>
+          <td>(</td>
+          <td class="paramtype">std::weak_ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>wpScene</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkBuildAccelerationStructureFlagsKHR&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new acceleration structure. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">wpScene</td><td><a class="el" href="classMandrill_1_1Scene.html" title="Scene class that manages a collection of nodes, materials, meshes, and rendering operations.">Scene</a> to create the acceleration structure of</td></tr>
+    <tr><td class="paramname">flags</td><td>Flags for building acceleration structure</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae57d77ea4fd291683f97f090c4005900" name="ae57d77ea4fd291683f97f090c4005900"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae57d77ea4fd291683f97f090c4005900">&#9670;&#160;</a></span>createBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt; Device::createBuffer </td>
+          <td>(</td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkBufferUsageFlags&#160;</td>
+          <td class="paramname"><em>usage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkMemoryPropertyFlags&#160;</td>
+          <td class="paramname"><em>properties</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>Size of buffer in bytes</td></tr>
+    <tr><td class="paramname">usage</td><td>How the buffer will be used</td></tr>
+    <tr><td class="paramname">properties</td><td>What properties the memory should have</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new buffer</dd></dl>
+
+</div>
+</div>
+<a id="a43d3819bb05dd5dbed94ded01183eff3" name="a43d3819bb05dd5dbed94ded01183eff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43d3819bb05dd5dbed94ded01183eff3">&#9670;&#160;</a></span>createCamera()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; Device::createCamera </td>
+          <td>(</td>
+          <td class="paramtype">GLFWwindow *&#160;</td>
+          <td class="paramname"><em>pWindow</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td>
+          <td class="paramname"><em>pSwapchain</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pWindow</td><td>Window to use</td></tr>
+    <tr><td class="paramname">pSwapchain</td><td><a class="el" href="classMandrill_1_1Swapchain.html" title="Swapchain class for managing the swapchain and its images.">Swapchain</a> to use</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new camera</dd></dl>
+
+</div>
+</div>
+<a id="add6654c463a2a2f114093b2661f5d191" name="add6654c463a2a2f114093b2661f5d191"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add6654c463a2a2f114093b2661f5d191">&#9670;&#160;</a></span>createDescriptor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt; Device::createDescriptor </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; DescriptorDesc &gt; &amp;&#160;</td>
+          <td class="paramname"><em>desc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDescriptorSetLayout&#160;</td>
+          <td class="paramname"><em>layout</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new descriptor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">desc</td><td>Description of the descriptor being created</td></tr>
+    <tr><td class="paramname">layout</td><td><a class="el" href="classMandrill_1_1Layout.html" title="Layout class that abstracts the handling of descriptor set layouts and push constants in Vulkan.">Layout</a> to use</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new descriptor</dd></dl>
+
+</div>
+</div>
+<a id="a2b370bbfad75811b51588da347bb8342" name="a2b370bbfad75811b51588da347bb8342"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b370bbfad75811b51588da347bb8342">&#9670;&#160;</a></span>createImage() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; Device::createImage </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>height</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>mipLevels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSampleCountFlagBits&#160;</td>
+          <td class="paramname"><em>samples</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkImageTiling&#160;</td>
+          <td class="paramname"><em>tiling</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkImageUsageFlags&#160;</td>
+          <td class="paramname"><em>usage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceMemory&#160;</td>
+          <td class="paramname"><em>memory</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>offset</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> using memory that has already been allocated. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>Width of image</td></tr>
+    <tr><td class="paramname">height</td><td>Height of image</td></tr>
+    <tr><td class="paramname">depth</td><td>Depth of image</td></tr>
+    <tr><td class="paramname">mipLevels</td><td>Number of mipmapping levels</td></tr>
+    <tr><td class="paramname">samples</td><td>Number of samples</td></tr>
+    <tr><td class="paramname">format</td><td><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> format</td></tr>
+    <tr><td class="paramname">tiling</td><td>Tiling mode to use</td></tr>
+    <tr><td class="paramname">usage</td><td>How the image will be used</td></tr>
+    <tr><td class="paramname">memory</td><td>Allocated memory to use for image</td></tr>
+    <tr><td class="paramname">offset</td><td>Where in the allocated memory the image should be stored</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new image</dd></dl>
+
+</div>
+</div>
+<a id="a44f2e58304516061696846e5d1f032ff" name="a44f2e58304516061696846e5d1f032ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44f2e58304516061696846e5d1f032ff">&#9670;&#160;</a></span>createImage() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; Device::createImage </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>height</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>mipLevels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSampleCountFlagBits&#160;</td>
+          <td class="paramname"><em>samples</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkImageTiling&#160;</td>
+          <td class="paramname"><em>tiling</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkImageUsageFlags&#160;</td>
+          <td class="paramname"><em>usage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkMemoryPropertyFlags&#160;</td>
+          <td class="paramname"><em>properties</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> and allocate memory for it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>Width of image</td></tr>
+    <tr><td class="paramname">height</td><td>Height of image</td></tr>
+    <tr><td class="paramname">depth</td><td>Depth of image</td></tr>
+    <tr><td class="paramname">mipLevels</td><td>Number of mipmapping levels</td></tr>
+    <tr><td class="paramname">samples</td><td>Number of samples</td></tr>
+    <tr><td class="paramname">format</td><td><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> format</td></tr>
+    <tr><td class="paramname">tiling</td><td>Tiling mode to use</td></tr>
+    <tr><td class="paramname">usage</td><td>How the image will be used</td></tr>
+    <tr><td class="paramname">properties</td><td>Which memory properties to require</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new image</dd></dl>
+
+</div>
+</div>
+<a id="aacb32843af581be3fa55cfe3fa6d06f5" name="aacb32843af581be3fa55cfe3fa6d06f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacb32843af581be3fa55cfe3fa6d06f5">&#9670;&#160;</a></span>createPass() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; Device::createPass </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; &gt;&#160;</td>
+          <td class="paramname"><em>colorAttachments</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td>
+          <td class="paramname"><em>pDepthAttachment</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a pass with explicit color and depth attachments. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colorAttachments</td><td>Vector of image to use as color attachments</td></tr>
+    <tr><td class="paramname">pDepthAttachment</td><td>Depth attachment to use, can be nullptr</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new pass</dd></dl>
+
+</div>
+</div>
+<a id="a9b19d40bce2bccfda7bc6ee549ae5f60" name="a9b19d40bce2bccfda7bc6ee549ae5f60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b19d40bce2bccfda7bc6ee549ae5f60">&#9670;&#160;</a></span>createPass() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; Device::createPass </td>
+          <td>(</td>
+          <td class="paramtype">VkExtent2D&#160;</td>
+          <td class="paramname"><em>extent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; VkFormat &gt;&#160;</td>
+          <td class="paramname"><em>formats</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>depthAttachment</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSampleCountFlagBits&#160;</td>
+          <td class="paramname"><em>sampleCount</em> = <code>VK_SAMPLE_COUNT_1_BIT</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a pass with implicit attachments, given a certain extent and format. The list of formats will create mathcing color attachments. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">extent</td><td>Resolution of attachments</td></tr>
+    <tr><td class="paramname">formats</td><td>List of formats</td></tr>
+    <tr><td class="paramname">depthAttachment</td><td>If depth attachment should be created</td></tr>
+    <tr><td class="paramname">sampleCount</td><td>Multisampling count</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new pass</dd></dl>
+
+</div>
+</div>
+<a id="a71db23d2d4e114d95cee216a69b08195" name="a71db23d2d4e114d95cee216a69b08195"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71db23d2d4e114d95cee216a69b08195">&#9670;&#160;</a></span>createPass() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; Device::createPass </td>
+          <td>(</td>
+          <td class="paramtype">VkExtent2D&#160;</td>
+          <td class="paramname"><em>extent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>colorAttachmentCount</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>depthAttachment</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSampleCountFlagBits&#160;</td>
+          <td class="paramname"><em>sampleCount</em> = <code>VK_SAMPLE_COUNT_1_BIT</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a pass with implicit attachments, given a certain extent and format. Same format will be used for all color attachments. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">extent</td><td>Resolution of attachments</td></tr>
+    <tr><td class="paramname">format</td><td>Format of color attachment</td></tr>
+    <tr><td class="paramname">colorAttachmentCount</td><td>Number of color attachments</td></tr>
+    <tr><td class="paramname">depthAttachment</td><td>If depth attachment should be created</td></tr>
+    <tr><td class="paramname">sampleCount</td><td>Multisampling count</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new pass</dd></dl>
+
+</div>
+</div>
+<a id="a8f8e0c3e643ba9f83456fe0004f08a62" name="a8f8e0c3e643ba9f83456fe0004f08a62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f8e0c3e643ba9f83456fe0004f08a62">&#9670;&#160;</a></span>createPipeline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Pipeline.html">Pipeline</a> &gt; Device::createPipeline </td>
+          <td>(</td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt;&#160;</td>
+          <td class="paramname"><em>pPass</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td>
+          <td class="paramname"><em>pShader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PipelineDesc &amp;&#160;</td>
+          <td class="paramname"><em>desc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new pipeline. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pPass</td><td><a class="el" href="classMandrill_1_1Pass.html" title="Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan....">Pass</a> to use</td></tr>
+    <tr><td class="paramname">pShader</td><td><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> to use</td></tr>
+    <tr><td class="paramname">desc</td><td>Description of pipeline</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new pipeline</dd></dl>
+
+</div>
+</div>
+<a id="a5983cdc34f15dc641865618476750bcd" name="a5983cdc34f15dc641865618476750bcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5983cdc34f15dc641865618476750bcd">&#9670;&#160;</a></span>createRayTracingPipeline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1RayTracingPipeline.html">RayTracingPipeline</a> &gt; Device::createRayTracingPipeline </td>
+          <td>(</td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td>
+          <td class="paramname"><em>pShader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RayTracingPipelineDesc &amp;&#160;</td>
+          <td class="paramname"><em>desc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new ray tracing pipeline. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pShader</td><td><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> to use</td></tr>
+    <tr><td class="paramname">desc</td><td>Description of pipeline</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new ray-tracing pipeline</dd></dl>
+
+</div>
+</div>
+<a id="a403f2321255446b7560924fcbdc1482e" name="a403f2321255446b7560924fcbdc1482e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a403f2321255446b7560924fcbdc1482e">&#9670;&#160;</a></span>createSampler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt; Device::createSampler </td>
+          <td>(</td>
+          <td class="paramtype">VkFilter&#160;</td>
+          <td class="paramname"><em>magFilter</em> = <code>VK_FILTER_LINEAR</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFilter&#160;</td>
+          <td class="paramname"><em>minFilter</em> = <code>VK_FILTER_LINEAR</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerMipmapMode&#160;</td>
+          <td class="paramname"><em>mipmapMode</em> = <code>VK_SAMPLER_MIPMAP_MODE_LINEAR</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>addressModeU</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>addressModeV</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>addressModeW</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new texture sampler. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">magFilter</td><td>Magnification filter</td></tr>
+    <tr><td class="paramname">minFilter</td><td>Minification filter</td></tr>
+    <tr><td class="paramname">mipmapMode</td><td>MIP map mode</td></tr>
+    <tr><td class="paramname">addressModeU</td><td>Address mode/wrapping mode U</td></tr>
+    <tr><td class="paramname">addressModeV</td><td>Address mode/wrapping mode V</td></tr>
+    <tr><td class="paramname">addressModeW</td><td>Address mode/wrapping mode W</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new sampler</dd></dl>
+
+</div>
+</div>
+<a id="a8a72ce7b4a1610eef8fe28dd86a07f08" name="a8a72ce7b4a1610eef8fe28dd86a07f08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a72ce7b4a1610eef8fe28dd86a07f08">&#9670;&#160;</a></span>createScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; Device::createScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new scene. </p>
+<dl class="section return"><dt>Returns</dt><dd>A new scene</dd></dl>
+
+</div>
+</div>
+<a id="a42372a30f593de4d78fbac6927a4ec27" name="a42372a30f593de4d78fbac6927a4ec27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42372a30f593de4d78fbac6927a4ec27">&#9670;&#160;</a></span>createShader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; Device::createShader </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; ShaderDesc &gt; &amp;&#160;</td>
+          <td class="paramname"><em>desc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">desc</td><td>Description of shader being created</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new shader</dd></dl>
+
+</div>
+</div>
+<a id="a1df1772aee358eb7a41359c0e6ee2904" name="a1df1772aee358eb7a41359c0e6ee2904"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1df1772aee358eb7a41359c0e6ee2904">&#9670;&#160;</a></span>createSwapchain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt; Device::createSwapchain </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>framesInFlight</em> = <code>2</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new swapchain. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">framesInFlight</td><td>How many frames in flight that should be used</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new swapchain</dd></dl>
+
+</div>
+</div>
+<a id="a79f96ba1aabd5f29d21d2a9c1b26d32b" name="a79f96ba1aabd5f29d21d2a9c1b26d32b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79f96ba1aabd5f29d21d2a9c1b26d32b">&#9670;&#160;</a></span>createTexture() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTexture </td>
+          <td>(</td>
+          <td class="paramtype">TextureType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new texture from a file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>Type of texture</td></tr>
+    <tr><td class="paramname">format</td><td>Format to use</td></tr>
+    <tr><td class="paramname">path</td><td>Path to texture file</td></tr>
+    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new texture</dd></dl>
+
+</div>
+</div>
+<a id="a401f8d7505a50c1d15562f54e4e752af" name="a401f8d7505a50c1d15562f54e4e752af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a401f8d7505a50c1d15562f54e4e752af">&#9670;&#160;</a></span>createTexture() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTexture </td>
+          <td>(</td>
+          <td class="paramtype">TextureType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>pData</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>height</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>depth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>channels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new texture from a buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>Type of texture</td></tr>
+    <tr><td class="paramname">format</td><td>Format to use</td></tr>
+    <tr><td class="paramname">pData</td><td>Pointer to texture data</td></tr>
+    <tr><td class="paramname">width</td><td>Width of texture</td></tr>
+    <tr><td class="paramname">height</td><td>Height of texture</td></tr>
+    <tr><td class="paramname">depth</td><td>Depth of texture</td></tr>
+    <tr><td class="paramname">channels</td><td>Number of channels in texture</td></tr>
+    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new texture</dd></dl>
+
+</div>
+</div>
 <a id="aa29da1889ceb8a261d9e265f3bf1cdd2" name="aa29da1889ceb8a261d9e265f3bf1cdd2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa29da1889ceb8a261d9e265f3bf1cdd2">&#9670;&#160;</a></span>getCommandPool()</h2>
 

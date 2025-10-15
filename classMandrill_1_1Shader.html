@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.6.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.10.0</span>
    </div>
   </td>
  </tr>
@@ -117,12 +117,27 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Shader</b> (
 MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</b> ()</td></tr>
 <tr class="memdesc:a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reload shader code from disk and recompile it. <br /></td></tr>
 <tr class="separator:a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7aa1cbabf306188e986569d9ba9d4a2" id="r_af7aa1cbabf306188e986569d9ba9d4a2"><td class="memItemLeft" align="right" valign="top"><a id="af7aa1cbabf306188e986569d9ba9d4a2" name="af7aa1cbabf306188e986569d9ba9d4a2"></a>
+MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>bind</b> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt; pDescriptor, uint32_t set)</td></tr>
+<tr class="separator:af7aa1cbabf306188e986569d9ba9d4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa118cffbe1952109a2a3af0d87658ab" id="r_aaa118cffbe1952109a2a3af0d87658ab"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; VkShaderModule &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">getModules</a> () const</td></tr>
 <tr class="memdesc:aaa118cffbe1952109a2a3af0d87658ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get shader module handles.  <br /></td></tr>
 <tr class="separator:aaa118cffbe1952109a2a3af0d87658ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a784ce04e322bd1f545fc42324d590865" id="r_a784ce04e322bd1f545fc42324d590865"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; VkPipelineShaderStageCreateInfo &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">getStages</a> () const</td></tr>
 <tr class="memdesc:a784ce04e322bd1f545fc42324d590865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get pipeline shader stage create infos.  <br /></td></tr>
 <tr class="separator:a784ce04e322bd1f545fc42324d590865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab76dcdb010b19b5a96bfbc30a84b4476" id="r_ab76dcdb010b19b5a96bfbc30a84b4476"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkDescriptorSetLayout&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">getDescriptorSetLayout</a> (uint32_t set) const</td></tr>
+<tr class="memdesc:ab76dcdb010b19b5a96bfbc30a84b4476"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor set layout of one set.  <br /></td></tr>
+<tr class="separator:ab76dcdb010b19b5a96bfbc30a84b4476"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a761b955eb7735ea9abd41abdd6685658" id="r_a761b955eb7735ea9abd41abdd6685658"><td class="memItemLeft" align="right" valign="top">MANDRILL_API const std::vector&lt; VkDescriptorSetLayout &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">getDescriptorSetLayouts</a> () const</td></tr>
+<tr class="memdesc:a761b955eb7735ea9abd41abdd6685658"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor set layouts.  <br /></td></tr>
+<tr class="separator:a761b955eb7735ea9abd41abdd6685658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ddb1089630ab8cc39297ddf07cfaad1" id="r_a3ddb1089630ab8cc39297ddf07cfaad1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API const std::vector&lt; VkPushConstantRange &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">getPushConstantRanges</a> () const</td></tr>
+<tr class="memdesc:a3ddb1089630ab8cc39297ddf07cfaad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the push constant ranges.  <br /></td></tr>
+<tr class="separator:a3ddb1089630ab8cc39297ddf07cfaad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4647edd2f83e6c0483942795e121f43a" id="r_a4647edd2f83e6c0483942795e121f43a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkPipelineLayout&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">getPipelineLayout</a> () const</td></tr>
+<tr class="memdesc:a4647edd2f83e6c0483942795e121f43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get tthe pipeline layout.  <br /></td></tr>
+<tr class="separator:a4647edd2f83e6c0483942795e121f43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot reloading of shader source code during execution. </p>
@@ -165,6 +180,63 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab76dcdb010b19b5a96bfbc30a84b4476" name="ab76dcdb010b19b5a96bfbc30a84b4476"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab76dcdb010b19b5a96bfbc30a84b4476">&#9670;&#160;</a></span>getDescriptorSetLayout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API VkDescriptorSetLayout Mandrill::Shader::getDescriptorSetLayout </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>set</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the descriptor set layout of one set. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of descriptor set layouts</dd></dl>
+
+</div>
+</div>
+<a id="a761b955eb7735ea9abd41abdd6685658" name="a761b955eb7735ea9abd41abdd6685658"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a761b955eb7735ea9abd41abdd6685658">&#9670;&#160;</a></span>getDescriptorSetLayouts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API const std::vector&lt; VkDescriptorSetLayout &gt; &amp; Mandrill::Shader::getDescriptorSetLayouts </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the descriptor set layouts. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of descriptor set layouts</dd></dl>
+
+</div>
+</div>
 <a id="aaa118cffbe1952109a2a3af0d87658ab" name="aaa118cffbe1952109a2a3af0d87658ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa118cffbe1952109a2a3af0d87658ab">&#9670;&#160;</a></span>getModules()</h2>
 
@@ -190,6 +262,62 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 
 <p>Get shader module handles. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of shader module handles</dd></dl>
+
+</div>
+</div>
+<a id="a4647edd2f83e6c0483942795e121f43a" name="a4647edd2f83e6c0483942795e121f43a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4647edd2f83e6c0483942795e121f43a">&#9670;&#160;</a></span>getPipelineLayout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API VkPipelineLayout Mandrill::Shader::getPipelineLayout </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get tthe pipeline layout. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Pipeline.html" title="Pipeline class for managing Vulkan graphics pipelines.">Pipeline</a> layout</dd></dl>
+
+</div>
+</div>
+<a id="a3ddb1089630ab8cc39297ddf07cfaad1" name="a3ddb1089630ab8cc39297ddf07cfaad1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ddb1089630ab8cc39297ddf07cfaad1">&#9670;&#160;</a></span>getPushConstantRanges()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API const std::vector&lt; VkPushConstantRange &gt; &amp; Mandrill::Shader::getPushConstantRanges </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the push constant ranges. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of push constant ranges</dd></dl>
 
 </div>
 </div>

@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.6.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2025.10.0</span>
    </div>
   </td>
  </tr>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div>
 
 <h3><a id="index_g" name="index_g"></a>- g -</h3><ul>
-<li>getAccelerationStructure()&#160;:&#160;<a class="el" href="classMandrill_1_1AccelerationStructure.html#a4bd7453418bc1dc95933a7e3e00ccc5a">Mandrill::AccelerationStructure</a>, <a class="el" href="classMandrill_1_1Scene.html#a0e9bf228035541f011cc36c7133a42e5">Mandrill::Scene</a></li>
+<li>getAccelerationStructure()&#160;:&#160;<a class="el" href="classMandrill_1_1AccelerationStructure.html#a4bd7453418bc1dc95933a7e3e00ccc5a">Mandrill::AccelerationStructure</a></li>
 <li>getBuffer()&#160;:&#160;<a class="el" href="classMandrill_1_1Buffer.html#a1b2a113fbee0c167bc1640bd88b2dde3">Mandrill::Buffer</a></li>
 <li>getCallSBT()&#160;:&#160;<a class="el" href="classMandrill_1_1RayTracingPipeline.html#ac8bc56c41f1f0a00c1b875f53763e044">Mandrill::RayTracingPipeline</a></li>
 <li>getColorAttachments()&#160;:&#160;<a class="el" href="classMandrill_1_1Pass.html#aafe0b999926502888f980bbd90228e2d">Mandrill::Pass</a></li>
@@ -103,7 +103,8 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>getCursorDelta()&#160;:&#160;<a class="el" href="classMandrill_1_1App.html#a4288e1a3c270def0e7c088a7ddba21ba">Mandrill::App</a></li>
 <li>getDepth()&#160;:&#160;<a class="el" href="classMandrill_1_1Image.html#a503e845cac5e5f21bbc95c686a1bb643">Mandrill::Image</a></li>
 <li>getDescriptor()&#160;:&#160;<a class="el" href="classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca">Mandrill::Camera</a></li>
-<li>getDescriptorSetLayouts()&#160;:&#160;<a class="el" href="classMandrill_1_1Layout.html#a5f2b7e37ec71f2365c0d2a28460b50e0">Mandrill::Layout</a></li>
+<li>getDescriptorSetLayout()&#160;:&#160;<a class="el" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">Mandrill::Shader</a></li>
+<li>getDescriptorSetLayouts()&#160;:&#160;<a class="el" href="classMandrill_1_1Layout.html#a5f2b7e37ec71f2365c0d2a28460b50e0">Mandrill::Layout</a>, <a class="el" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">Mandrill::Shader</a></li>
 <li>getDevice()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">Mandrill::Device</a></li>
 <li>getDeviceAddress()&#160;:&#160;<a class="el" href="classMandrill_1_1Buffer.html#a32153196623c290c6adf80663d0a4285">Mandrill::Buffer</a></li>
 <li>getDirection()&#160;:&#160;<a class="el" href="classMandrill_1_1Camera.html#a8499b00e5db4e7ec887a7f25532e7cea">Mandrill::Camera</a></li>
@@ -123,7 +124,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>getIndexCount()&#160;:&#160;<a class="el" href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">Mandrill::Scene</a></li>
 <li>getInFlightIndex()&#160;:&#160;<a class="el" href="classMandrill_1_1Swapchain.html#ac01efc58d498c2aad50ef1f1e466cbbf">Mandrill::Swapchain</a></li>
 <li>getInstance()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">Mandrill::Device</a></li>
-<li>getLayout()&#160;:&#160;<a class="el" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">Mandrill::Pipeline</a>, <a class="el" href="classMandrill_1_1Scene.html#aac6f976743282c08d7addcf6f40d2d10">Mandrill::Scene</a></li>
+<li>getLayout()&#160;:&#160;<a class="el" href="classMandrill_1_1Pipeline.html#a2bf63c57b6317f352a52f1ee0db2744d">Mandrill::Pipeline</a></li>
 <li>getMaterialCount()&#160;:&#160;<a class="el" href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">Mandrill::Scene</a></li>
 <li>getMemory()&#160;:&#160;<a class="el" href="classMandrill_1_1Buffer.html#ab6af20d7b06ef53c20f7f58fa7c1dac9">Mandrill::Buffer</a>, <a class="el" href="classMandrill_1_1Image.html#a2682dce13d43df4ce4da631f27880f00">Mandrill::Image</a></li>
 <li>getMeshCount()&#160;:&#160;<a class="el" href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">Mandrill::Scene</a></li>
@@ -140,13 +141,14 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>getOutput()&#160;:&#160;<a class="el" href="classMandrill_1_1Pass.html#abfa8d20c0329d2a0e5186f36fea0630b">Mandrill::Pass</a></li>
 <li>getPhysicalDevice()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">Mandrill::Device</a></li>
 <li>getPipeline()&#160;:&#160;<a class="el" href="classMandrill_1_1Pipeline.html#a1686b42f20ac25534224cfd049f1ddfc">Mandrill::Pipeline</a></li>
+<li>getPipelineLayout()&#160;:&#160;<a class="el" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">Mandrill::Shader</a></li>
 <li>getPipelineRenderingCreateInfo()&#160;:&#160;<a class="el" href="classMandrill_1_1Pass.html#a4bf9f904dd7aeaac3a8d72ab7e377992">Mandrill::Pass</a></li>
 <li>getPitch()&#160;:&#160;<a class="el" href="classMandrill_1_1Image.html#a3ae31bcf22e9bdfe601fe99878a07979">Mandrill::Image</a></li>
 <li>getPosition()&#160;:&#160;<a class="el" href="classMandrill_1_1Camera.html#a1a60552025657d495efa00aa6b556a4a">Mandrill::Camera</a></li>
 <li>getPreviousInFlightIndex()&#160;:&#160;<a class="el" href="classMandrill_1_1Swapchain.html#a7b634cc5b379f5c1684240309637f878">Mandrill::Swapchain</a></li>
 <li>getProjectionMatrix()&#160;:&#160;<a class="el" href="classMandrill_1_1Camera.html#a8f3f96196c78c1940789ca5af176f863">Mandrill::Camera</a></li>
 <li>getProperties()&#160;:&#160;<a class="el" href="classMandrill_1_1Buffer.html#a825f3495a7b44e22307a028ed94fc378">Mandrill::Buffer</a>, <a class="el" href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">Mandrill::Device</a>, <a class="el" href="classMandrill_1_1Image.html#a6ee6de76b6c7ffbf9181d41188ba5d54">Mandrill::Image</a></li>
-<li>getPushConstantRanges()&#160;:&#160;<a class="el" href="classMandrill_1_1Layout.html#a26b06458e29cd32bc58659e14a7ac386">Mandrill::Layout</a></li>
+<li>getPushConstantRanges()&#160;:&#160;<a class="el" href="classMandrill_1_1Layout.html#a26b06458e29cd32bc58659e14a7ac386">Mandrill::Layout</a>, <a class="el" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">Mandrill::Shader</a></li>
 <li>getQueue()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">Mandrill::Device</a></li>
 <li>getQueueFamily()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">Mandrill::Device</a></li>
 <li>getRayGenSBT()&#160;:&#160;<a class="el" href="classMandrill_1_1RayTracingPipeline.html#a9ab12270b47123959b21e9e8e04330df">Mandrill::RayTracingPipeline</a></li>
@@ -154,6 +156,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>getSampler()&#160;:&#160;<a class="el" href="classMandrill_1_1Sampler.html#a72c25954eb3917602a4accbfd458c78f">Mandrill::Sampler</a>, <a class="el" href="classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde">Mandrill::Texture</a></li>
 <li>getScreenshotImagePitch()&#160;:&#160;<a class="el" href="classMandrill_1_1Swapchain.html#acf7e5c042b911695a24638484b64f30d">Mandrill::Swapchain</a></li>
 <li>getSet()&#160;:&#160;<a class="el" href="classMandrill_1_1Descriptor.html#a989bc1e53a819d34859de18b05a8eeff">Mandrill::Descriptor</a></li>
+<li>getShader()&#160;:&#160;<a class="el" href="classMandrill_1_1Pipeline.html#a8d96aaca0d09ceb62da026c13153c167">Mandrill::Pipeline</a></li>
 <li>getSize()&#160;:&#160;<a class="el" href="classMandrill_1_1Buffer.html#a8b83fe5c3683b4c64629e313110868bc">Mandrill::Buffer</a></li>
 <li>getStages()&#160;:&#160;<a class="el" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">Mandrill::Shader</a></li>
 <li>getSurface()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">Mandrill::Device</a></li>
@@ -167,7 +170,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>getVsync()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">Mandrill::Device</a></li>
 <li>getWidth()&#160;:&#160;<a class="el" href="classMandrill_1_1Image.html#aedffe56ef9b9a82c257b8f7808b0e536">Mandrill::Image</a></li>
 <li>getWindow()&#160;:&#160;<a class="el" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">Mandrill::Device</a></li>
-<li>getWriteDescriptor()&#160;:&#160;<a class="el" href="classMandrill_1_1AccelerationStructure.html#a4bb5bbbd8a759818f1be0d31cdaf7bcb">Mandrill::AccelerationStructure</a>, <a class="el" href="classMandrill_1_1Camera.html#a5a6e46970453798a57f76955fe74d4ba">Mandrill::Camera</a>, <a class="el" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">Mandrill::Texture</a></li>
+<li>getWriteDescriptor()&#160;:&#160;<a class="el" href="classMandrill_1_1AccelerationStructure.html#a4bb5bbbd8a759818f1be0d31cdaf7bcb">Mandrill::AccelerationStructure</a>, <a class="el" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">Mandrill::Texture</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
