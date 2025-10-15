@@ -4,7 +4,7 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include "windows.h"
+#include <windows.h>
 #endif
 
 #define GLFW_INCLUDE_VULKAN
@@ -12,8 +12,11 @@
 
 #if defined(_WIN64)
 #define GLFW_EXPOSE_NATIVE_WIN32
-#include "GLFW/glfw3native.h"
+#include <GLFW/glfw3native.h>
 #endif
+
+#include <shaderc/shaderc.hpp>
+#include <spirv-reflect/spirv_reflect.h>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

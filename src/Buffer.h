@@ -41,6 +41,8 @@ namespace Mandrill
         /// <returns></returns>
         MANDRILL_API void copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);
 
+        MANDRILL_API void createDescriptor();
+
         /// <summary>
         /// Get the buffer handle.
         /// </summary>

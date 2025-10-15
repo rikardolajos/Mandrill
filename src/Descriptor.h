@@ -15,15 +15,49 @@ namespace Mandrill
         std::variant<ptr<Buffer>, ptr<Image>, ptr<Texture>, ptr<std::vector<ptr<Texture>>>, ptr<AccelerationStructure>>
             pResource;
         VkDeviceSize offset = 0;
-        VkDeviceSize range;
-        VkBufferView bufferView = nullptr;
+        VkDeviceSize range = VK_WHOLE_SIZE;
+        VkBufferView bufferView = nullptr; // Not implemented
         VkImageView imageView = nullptr;
         VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        uint32_t arrayCount;
+        uint32_t arrayCount = 0;
 
-        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource, VkDeviceSize offset = 0,
-                                    VkDeviceSize range = VK_WHOLE_SIZE, uint32_t arrayCount = 0)
-            : type(type), offset(offset), range(range), arrayCount(arrayCount)
+        /// <summary>
+        /// Descriptor description for a buffer descriptor. To get a *_DYNAMIC type, name the desctriptor block so that
+        /// it ends with *Dynamic. See the SampleApp with CameraUniformDynamic and Mes´hUniformDynamic blocks in the
+        /// vertex shader.
+        /// </summary>
+        /// <param name="type">Type of descriptor</param>
+        /// <param name="pResource">Buffer to use</param>
+        /// <param name="offset">Offset into buffer</param>
+        /// <param name="range">Range of descriptor</param>
+        /// <returns></returns>
+        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<Buffer> pResource, VkDeviceSize offset = 0,
+                                    VkDeviceSize range = VK_WHOLE_SIZE)
+            : type(type), offset(offset), range(range)
+        {
+            switch (type) {
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+                this->pResource = pResource;
+                break;
+            default:
+                Log::Error("DescriptorDesc: DescriptorType and Resource mismatch\n");
+            }
+        }
+
+        /// <summary>
+        /// Descriptor description for other resources. To get a *_DYNAMIC type, name the desctriptor block so that
+        /// it ends with *Dynamic. See the SampleApp with CameraUniformDynamic and Mes´hUniformDynamic blocks in the
+        /// vertex shader.
+        /// </summary>
+        /// <param name="type">Type of descriptor</param>
+        /// <param name="pResource">Resource to use</param>
+        /// <param name="arrayCount">If this descriptor should be an array (only for Textures)</param>
+        /// <returns></returns>
+        MANDRILL_API DescriptorDesc(VkDescriptorType type, ptr<void> pResource, uint32_t arrayCount = 0)
+            : type(type), arrayCount(arrayCount)
         {
             switch (type) {
             case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
@@ -47,7 +81,7 @@ namespace Mandrill
                 this->pResource = std::static_pointer_cast<AccelerationStructure>(pResource);
                 break;
             default:
-                Log::Error("DescriptorDesc: Resource not supported\n");
+                Log::Error("DescriptorDesc: DescriptorType not supported\n");
             }
         }
 

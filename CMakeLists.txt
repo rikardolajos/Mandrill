@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.13)
+﻿cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -14,7 +14,7 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-project("Mandrill" VERSION 2025.6.0)
+project("Mandrill" VERSION 2025.10.0)
 
 # Whether sample apps should be built or not
 option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)
@@ -58,9 +58,8 @@ function(add_shaders TARGET)
     add_dependencies(${TARGET} ${TARGET}Shaders)
 endfunction()
 
-find_package(Vulkan REQUIRED COMPONENTS glslc)
+find_package(Vulkan REQUIRED COMPONENTS glslc shaderc_combined)
 include_directories(${Vulkan_INCLUDE_DIRS})
-link_libraries(${Vulkan_LIBRARIES})
 
 find_package(OpenVDB QUIET)
 if (OpenVDB_FOUND)

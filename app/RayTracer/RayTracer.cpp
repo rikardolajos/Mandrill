@@ -11,11 +11,11 @@ public:
 
     static std::shared_ptr<Image> createImage(std::shared_ptr<Device> pDevice, std::shared_ptr<Swapchain> pSwapchain)
     {
-        auto image = std::make_shared<Image>(
-            pDevice, pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, 1, VK_SAMPLE_COUNT_1_BIT,
-            VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        auto image = pDevice->createImage(pSwapchain->getExtent().width, pSwapchain->getExtent().height, 1, 1,
+                                          VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+                                          VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+                                              VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+                                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         image->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
         return image;
     }
@@ -27,7 +27,7 @@ public:
         std::vector<DescriptorDesc> descriptorDesc;
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, pImage);
         descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-        return std::make_shared<Descriptor>(pDevice, descriptorDesc, setLayout);
+        return pDevice->createDescriptor(descriptorDesc, setLayout);
     }
 
     RayTracer() : App("Ray Tracer", 1920, 1080)
@@ -35,55 +35,23 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+        // Create a swapchain with 2 frames in flight (default)
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass for rendering GUI (depth attachment is not needed)
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), VK_FORMAT_R8G8B8A8_UNORM, 1, false);
+        const uint32_t colorAttachmentCount = 1;
+        const bool depthAttachemnt = false;
+        mpPass = mpDevice->createPass(mpSwapchain->getExtent(), VK_FORMAT_R8G8B8A8_UNORM, colorAttachmentCount,
+                                      depthAttachemnt);
+
+        // Create a sampler that will be used to render materials
+        mpSampler = mpDevice->createSampler();
 
         // Create an image to render to
         mpImage = createImage(mpDevice, mpSwapchain);
 
-        // Create a scene (with ray-tracing support)
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain, true);
-
-        // Create a sampler that will be used to render materials
-        mpSampler = std::make_shared<Sampler>(mpDevice);
-
-        // Load scene
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
-        // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\viking_room\\viking_room.obj");
-        // auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
-        auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
-        std::shared_ptr<Node> pNode = mpScene->addNode();
-        for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
-        }
-
-        // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
-
-        mpCube = mpScene->addNode();
-        for (auto meshIndex : meshIndices2) {
-            mpCube->addMesh(meshIndex);
-        }
-
-        mpScene->setSampler(mpSampler);
-        mpScene->compile();
-        mpScene->syncToDevice();
-
-        // Load environment map
-        mpEnvironmentMap = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
-                                                     "D:\\scenes\\hdris\\lilienstein_4k.hdr");
-        mpEnvironmentMap->setSampler(mpSampler);
-        mpScene->setEnvironmentMap(mpEnvironmentMap);
-
         // Setup specialization constants with scene information for ray gen shader
-        mSpecializationConstants.push_back(mpScene->getVertexCount());   // VERTEX_COUNT
-        mSpecializationConstants.push_back(mpScene->getIndexCount());    // INDEX_COUNT
-        mSpecializationConstants.push_back(mpScene->getMaterialCount()); // MATERIAL_COUNT
-        mSpecializationConstants.push_back(mpScene->getTextureCount());  // TEXTURE_COUNT
-        mSpecializationConstants.push_back(mpScene->getMeshCount());     // MESH_COUNT
+        mSpecializationConstants.resize(5, 1);
 
         for (uint32_t i = 0; i < mSpecializationConstants.size(); i++) {
             VkSpecializationMapEntry entry = {
@@ -95,7 +63,7 @@ public:
         }
 
         mSpecializationInfo = {
-            .mapEntryCount = static_cast<uint32_t>(mSpecializationMapEntries.size()),
+            .mapEntryCount = count(mSpecializationMapEntries),
             .pMapEntries = mSpecializationMapEntries.data(),
             .dataSize = mSpecializationConstants.size() * sizeof(uint32_t),
             .pData = mSpecializationConstants.data(),
@@ -107,34 +75,68 @@ public:
         shaderDesc.emplace_back("RayTracer/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
         shaderDesc.emplace_back("RayTracer/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                                 &mSpecializationInfo);
-        auto pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pShader = mpDevice->createShader(shaderDesc);
 
-        // Create pipeline description with recursion depth and shader groups
+        // Create pipeline with recursion depth and shader groups
         RayTracingPipelineDesc pipelineDesc(1, 1, 1);
         pipelineDesc.setRayGen(0);
         pipelineDesc.setMissGroup(0, 1);
         pipelineDesc.setHitGroup(0, 2);
+        mpPipeline = mpDevice->createRayTracingPipeline(pShader, pipelineDesc);
 
-        // Create ray-tracing pipeline
-        auto pLayout = mpScene->getLayout();
+        // Create a scene and load scene
+        mpScene = mpDevice->createScene();
+        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        std::shared_ptr<Node> pNode = mpScene->addNode();
+        for (auto meshIndex : meshIndices) {
+            pNode->addMesh(meshIndex);
+        }
 
-        VkPushConstantRange pushConstantRange = {
-            .stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-            .offset = 0,
-            .size = sizeof(PushConstants),
-        };
-        pLayout->addPushConstantRange(pushConstantRange);
+        // Scale down the model
+        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
-        mpPipeline = std::make_shared<RayTracingPipeline>(mpDevice, pLayout, pShader, pipelineDesc);
+        // Add second node
+        auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
+        mpCube = mpScene->addNode();
+        for (auto meshIndex : meshIndices2) {
+            mpCube->addMesh(meshIndex);
+        }
+
+        mpScene->setSampler(mpSampler);
+        mpScene->compile(mpSwapchain->getFramesInFlightCount());
+        mpScene->syncToDevice();
+
+        // Load environment map
+        mpEnvironmentMap = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
+                                                   "D:\\scenes\\hdris\\lilienstein_4k.hdr");
+        mpEnvironmentMap->setSampler(mpSampler);
+        mpScene->setEnvironmentMap(mpEnvironmentMap);
+
+        // Set specialization constants now that the scene parameters are calculated
+        mSpecializationConstants[0] = mpScene->getVertexCount();   // VERTEX_COUNT
+        mSpecializationConstants[1] = mpScene->getIndexCount();    // INDEX_COUNT
+        mSpecializationConstants[2] = mpScene->getMaterialCount(); // MATERIAL_COUNT
+        mSpecializationConstants[3] = mpScene->getTextureCount();  // TEXTURE_COUNT
+        mSpecializationConstants[4] = mpScene->getMeshCount();     // MESH_COUNT
+        mpPipeline->recreate();                                    // Rebuild layouts
+
+        // Create acceleration structure
+        mpAccelerationStructure =
+            mpDevice->createAccelerationStructure(mpScene, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+
+        // Create descriptors when layouts are defined
+        mpScene->createRayTracingDescriptors(pShader->getDescriptorSetLayouts(), mpAccelerationStructure,
+                                             mpSwapchain->getFramesInFlightCount());
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+        mpCamera->createDescriptor(pShader->getDescriptorSetLayout(0));
 
-        // Image descriptor (layout is in set 5 from scene)
-        mImageDescriptorSetLayout = pLayout->getDescriptorSetLayouts()[5];
+        // Image descriptor (layout is in set 3)
+        mImageDescriptorSetLayout = pShader->getDescriptorSetLayout(3);
         mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
 
         // Initialize GUI
@@ -161,7 +163,7 @@ public:
         mpCube->setTransform(transform);
 
         // Update acceleration structure
-        mpScene->updateAccelerationStructure();
+        mpAccelerationStructure->update(VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
     }
 
     void render() override
@@ -192,8 +194,8 @@ public:
                            &pushConstants);
 
         // Bind descriptors
-        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
-        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 5);
+        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout(), mpSwapchain->getInFlightIndex());
+        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 3);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -261,6 +263,7 @@ private:
     std::shared_ptr<Descriptor> mpImageDescriptor;
     VkDescriptorSetLayout mImageDescriptorSetLayout;
 
+    std::shared_ptr<AccelerationStructure> mpAccelerationStructure;
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
     std::shared_ptr<Sampler> mpSampler;

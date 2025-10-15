@@ -44,12 +44,12 @@ public:
         size_t verticesSize = mVertices.size() * sizeof(mVertices[0]);
         size_t indicesSize = mIndices.size() * sizeof(mIndices[0]);
 
-        mpVertexBuffer = std::make_shared<Buffer>(mpDevice, verticesSize,
-                                                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-        mpIndexBuffer = std::make_shared<Buffer>(mpDevice, indicesSize,
-                                                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        mpVertexBuffer =
+            mpDevice->createBuffer(verticesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        mpIndexBuffer =
+            mpDevice->createBuffer(indicesSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         mpVertexBuffer->copyFromHost(mVertices.data(), verticesSize);
         mpIndexBuffer->copyFromHost(mIndices.data(), indicesSize);
@@ -60,39 +60,34 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+        // Create a swapchain with 2 frames in flight (default)
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
-                                        mpDevice->getSampleCount());
-
-        // Create a layout matching the shader inputs
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-                                VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-        layoutDesc.emplace_back(1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
-        layoutDesc.emplace_back(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
+        uint32_t colorAttachmentCount = 1;
+        bool depthAttachment = true;
+        mpPass = mpDevice->createPass(mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), colorAttachmentCount,
+                                      depthAttachment, mpDevice->getSampleCount());
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pShader = mpDevice->createShader(shaderDesc);
 
         // Create a pipeline for rendering using the shader
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader);
+        mpPipeline = mpDevice->createPipeline(mpPass, pShader, PipelineDesc());
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
+        mpCamera->createDescriptor(pShader->getDescriptorSetLayout(0));
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
         // Create a texture and bind a sampler to it
-        mpTexture = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
-        mpSampler = std::make_shared<Sampler>(mpDevice);
+        mpTexture = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, "icon.png");
+        mpSampler = mpDevice->createSampler();
         mpTexture->setSampler(mpSampler);
 
         // Vertices in scene
@@ -101,16 +96,14 @@ public:
         // Uniform for sending model matrix to shaders
         VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
         VkDeviceSize size = Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getFramesInFlightCount();
-        mpUniform =
-            std::make_shared<Buffer>(mpDevice, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        mpUniform = mpDevice->createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         // Descriptor set for model matrix and texture
         std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniform);
-        descriptorDesc.back().range = sizeof(glm::mat4);
+        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniform, 0, sizeof(glm::mat4));
         descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = std::make_shared<Descriptor>(mpDevice, descriptorDesc, pLayout->getDescriptorSetLayouts()[1]);
+        mpDescriptor = mpDevice->createDescriptor(descriptorDesc, pShader->getDescriptorSetLayout(1));
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);

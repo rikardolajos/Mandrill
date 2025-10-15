@@ -1,13 +1,13 @@
 #version 460
 
-layout(set = 0, binding = 0) uniform CameraUniforms {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;
     mat4 proj_inv;
 } camera;
 
-layout(set = 1, binding = 0) uniform MeshUniforms {
+layout(set = 1, binding = 0) uniform MeshUniformDynamic {
     mat4 model;
 } mesh;
 

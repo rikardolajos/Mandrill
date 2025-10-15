@@ -6,9 +6,9 @@
 
 using namespace Mandrill;
 
-RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout, ptr<Shader> pShader,
+RayTracingPipeline::RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader,
                                        const RayTracingPipelineDesc& desc)
-    : Pipeline(pDevice, nullptr, pLayout, pShader), mMaxRecursionDepth(desc.maxRecursionDepth),
+    : Pipeline(pDevice, nullptr, pShader), mMaxRecursionDepth(desc.maxRecursionDepth),
       mMissGroupCount(desc.missGroupCount), mHitGroupCount(desc.hitGroupCount), mShaderGroups(desc.shaderGroups),
       mGroupSizeAligned(0)
 {
@@ -58,7 +58,7 @@ void RayTracingPipeline::createPipeline()
         .groupCount = count(mShaderGroups),
         .pGroups = mShaderGroups.data(),
         .maxPipelineRayRecursionDepth = mMaxRecursionDepth,
-        .layout = mPipelineLayout,
+        .layout = mpShader->getPipelineLayout(),
     };
 
     vkCreateRayTracingPipelinesKHR(mpDevice->getDevice(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline);

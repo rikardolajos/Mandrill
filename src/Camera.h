@@ -38,6 +38,13 @@ namespace Mandrill
         MANDRILL_API ~Camera();
 
         /// <summary>
+        /// Create the descriptor for the camera, containing the view and projection matrices, and their invertations.
+        /// </summary>
+        /// <param name="layout">Layout to use for the descriptor</param>
+        /// <returns></returns>
+        MANDRILL_API void createDescriptor(VkDescriptorSetLayout layout);
+
+        /// <summary>
         /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
         /// </summary>
         /// <returns></returns>
@@ -189,25 +196,6 @@ namespace Mandrill
             return mpDescriptor;
         }
 
-        /// <summary>
-        /// Get the write descriptor of the camera. Use this with when using push descriptors.
-        /// </summary>
-        /// <param name="binding">Binding where the descriptor will be placed</param>
-        /// <returns>Write descriptor</returns>
-        VkWriteDescriptorSet getWriteDescriptor(uint32_t binding) const
-        {
-            VkWriteDescriptorSet write = {
-                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                .dstBinding = binding,
-                .dstArrayElement = 0,
-                .descriptorCount = 1,
-                .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                .pBufferInfo = &mBufferInfo,
-            };
-
-            return write;
-        }
-
     private:
         ptr<Device> mpDevice;
         GLFWwindow* mpWindow;
@@ -225,7 +213,5 @@ namespace Mandrill
 
         ptr<Buffer> mpUniforms;
         ptr<Descriptor> mpDescriptor;
-        VkDescriptorSetLayout mLayout;
-        VkDescriptorBufferInfo mBufferInfo;
     };
 } // namespace Mandrill

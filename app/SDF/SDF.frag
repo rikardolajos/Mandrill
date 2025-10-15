@@ -104,7 +104,7 @@ vec3 shade(vec3 p, vec3 rd, Material mat) {
 
 vec3 getRayDir(vec2 uv, vec3 ro, vec3 lookAt) {
     vec3 f = normalize(lookAt - ro);
-    vec3 r = normalize(cross(vec3(0,-1,0), f));
+    vec3 r = normalize(cross(vec3(0.0, -1.0, 0.0), f));
     vec3 u = cross(f, r);
     return normalize(uv.x * r + uv.y * u + 1.5 * f);
 }

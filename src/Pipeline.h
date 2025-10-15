@@ -114,10 +114,9 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="pPass">Pass to use</param>
-        /// <param name="pLayout">Layout to use</param>
         /// <param name="pShader">Shader to use</param>
         /// <param name="desc">Description of pipeline</param>
-        MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
+        MANDRILL_API Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Shader> pShader,
                               const PipelineDesc& desc = PipelineDesc());
 
         /// <summary>
@@ -148,12 +147,21 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the shader module of the pipeline.
+        /// </summary>
+        /// <returns>Pipeline's shader</returns>
+        MANDRILL_API ptr<Shader> getShader() const
+        {
+            return mpShader;
+        }
+
+        /// <summary>
         /// Get the pipeline layout handle.
         /// </summary>
         /// <returns>Pipeline layout handle</returns>
         MANDRILL_API VkPipelineLayout getLayout() const
         {
-            return mPipelineLayout;
+            return mpShader->getPipelineLayout();
         }
 
         /// <summary>
@@ -197,7 +205,6 @@ namespace Mandrill
         ptr<Layout> mpLayout;
 
         VkPipeline mPipeline;
-        VkPipelineLayout mPipelineLayout;
 
     private:
         PipelineDesc mDesc;

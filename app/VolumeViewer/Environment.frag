@@ -8,14 +8,14 @@ layout(location = 0) in vec2 inTexCoord;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(set = 0, binding = 0) uniform CameraUniforms {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;
     mat4 proj_inv;
 } camera;
 
-layout(set = 0, binding = 1) uniform sampler2D environmentMap;
+layout(set = 1, binding = 0) uniform sampler2D environmentMap;
 
 layout(push_constant) uniform PushConstant {
 	mat4 model_inv;

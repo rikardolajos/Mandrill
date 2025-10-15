@@ -7,7 +7,7 @@
 #define M_1_PI  0.318309886183790671538
 #define M_1_2PI 0.5 * M_1_PI
 
-layout(set = 3, binding = 0) uniform sampler2D environmentMap;
+layout(set = 2, binding = 0) uniform sampler2D environmentMap;
 
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 

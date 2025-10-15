@@ -32,37 +32,17 @@ Camera::Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapcha
     mpUniforms = std::make_shared<Buffer>(mpDevice, mpSwapchain->getFramesInFlightCount() * sizeof(CameraMatrices),
                                           VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-    VkDescriptorSetLayoutBinding binding = {
-        .binding = 0,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-        .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS | VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-    };
-
-    VkDescriptorSetLayoutCreateInfo ci = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .bindingCount = 1,
-        .pBindings = &binding,
-    };
-
-    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mLayout));
-
-    std::vector<DescriptorDesc> desc;
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms);
-    desc.back().range = sizeof(CameraMatrices);
-    mpDescriptor = std::make_shared<Descriptor>(mpDevice, desc, mLayout);
-
-    // The buffer info allows for using this as push descriptor too
-    mBufferInfo.buffer = mpUniforms->getBuffer();
-    mBufferInfo.offset = 0;
-    mBufferInfo.range = 4 * sizeof(glm::mat4);
 }
 
 Camera::~Camera()
 {
-    Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
-    vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mLayout, nullptr);
+}
+
+void Camera::createDescriptor(VkDescriptorSetLayout layout)
+{
+    std::vector<DescriptorDesc> desc;
+    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
+    mpDescriptor = mpDevice->createDescriptor(desc, layout);
 }
 
 void Camera::updateAspectRatio()

@@ -90,10 +90,9 @@ namespace Mandrill
         /// Create a new ray tracing pipeline.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="pLayout">Layout to use</param>
         /// <param name="pShader">Shader to use</param>
         /// <param name="desc">Description of pipeline</param>
-        MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Layout> pLayout, ptr<Shader> pShader,
+        MANDRILL_API RayTracingPipeline(ptr<Device> pDevice, ptr<Shader> pShader,
                                         const RayTracingPipelineDesc& desc = RayTracingPipelineDesc());
 
         /// <summary>

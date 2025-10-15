@@ -8,14 +8,14 @@ layout(constant_id = 0) const int MAX_STEPS = 1000;
 layout(constant_id = 1) const float STEP_SIZE = 0.002;
 layout(constant_id = 2) const float DENSITY = 1.0;
 
-layout(set = 0, binding = 0) uniform CameraUniforms {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;
     mat4 proj_inv;
 } camera;
 
-layout(set = 0, binding = 2) uniform sampler3D volume;
+layout(set = 1, binding = 0) uniform sampler3D volume;
 
 layout(push_constant) uniform PushConstant {
 	mat4 model_inv;

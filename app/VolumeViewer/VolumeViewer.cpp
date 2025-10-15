@@ -28,30 +28,12 @@ public:
         };
         mpDevice = std::make_shared<Device>(mpWindow, extensions);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
-
-        // Create a layout (push descriptor):
-        // Set 0, binding 0: Camera matrices
-        // Set 0, binding 1: Environment map texture
-        // Set 0, binding 2: Volume density 3D texture
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
-        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
-
-        auto pLayout =
-            std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
-        VkPushConstantRange pushConstantRange = {
-            .stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS,
-            .offset = 0,
-            .size = sizeof(PushConstant),
-        };
-        pLayout->addPushConstantRange(pushConstantRange);
+        // Create a swapchain with 2 frames in flight (default)
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
-                                        mpDevice->getSampleCount());
+        mpPass = mpDevice->createPass(mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
+                                      mpDevice->getSampleCount());
 
         // Prepare vertex binding and attribute descriptions with empty vectors (only fullscreen triangles are used)
         std::vector<VkVertexInputBindingDescription> emptyBindingDescription;
@@ -64,8 +46,8 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/Environment.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
-        mpEnvironmentMapPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
+        auto pEnvMapShader = mpDevice->createShader(shaderDesc);
+        mpEnvironmentMapPipeline = mpDevice->createPipeline(mpPass, pEnvMapShader, pipelineDesc);
 
         // Specialization constants for ray marching shader
         mSpecializationConstants = {.maxSteps = 1000, .stepSize = 0.01f, .density = 1.0f};
@@ -87,28 +69,28 @@ public:
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/RayMarcher.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT,
                                 &mSpecializationInfo);
-        pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pRayMarchShader = mpDevice->createShader(shaderDesc);
 
         pipelineDesc.depthTestEnable = VK_TRUE;
         pipelineDesc.blendEnable = VK_TRUE;
-        mpRayMarchingPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
+        mpRayMarchingPipeline = mpDevice->createPipeline(mpPass, pRayMarchShader, pipelineDesc);
 
         mPipelines = {mpEnvironmentMapPipeline, mpRayMarchingPipeline};
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+        mpCamera->createDescriptor(pRayMarchShader->getDescriptorSetLayout(0));
 
         // Create sampler for environment map
-        mpEnvironmentMapSampler = std::make_shared<Sampler>(mpDevice);
+        mpEnvironmentMapSampler = mpDevice->createSampler();
 
         // Create a sampler that will be used to sample volume
-        mpVolumeSampler =
-            std::make_shared<Sampler>(mpDevice, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR,
-                                      VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                                      VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+        mpVolumeSampler = mpDevice->createSampler(
+            VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -138,18 +120,12 @@ public:
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        // Push descriptors
-        std::vector<VkWriteDescriptorSet> writes = {
-            mpCamera->getWriteDescriptor(0),
-        };
-        if (mpEnvironmentMap) {
-            writes.push_back(mpEnvironmentMap->getWriteDescriptor(1));
-        }
-        if (mpVolume) {
-            writes.push_back(mpVolume->getWriteDescriptor(2));
-        }
-        vkCmdPushDescriptorSetKHR(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpEnvironmentMapPipeline->getLayout(), 0,
-                                  count(writes), writes.data());
+        //  Camera descriptor
+        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
+                                                                mpSwapchain->getInFlightIndex());
+        mpCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpEnvironmentMapPipeline->getLayout(), 0,
+                                        cameraDescriptorOffset);
 
         // Push constants
         glm::vec3 volumeDim(1.0f);
@@ -165,18 +141,21 @@ public:
             .gridMax = gridMax,
             .viewport = glm::vec2(mWidth, mHeight),
         };
-        vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_ALL_GRAPHICS, 0,
+        vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstant, &pushConstant);
 
         // Render environment map
         if (mpEnvironmentMap) {
             mpEnvironmentMapPipeline->bind(cmd);
+            mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                             mpEnvironmentMapPipeline->getLayout(), 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
 
         // Render volume
         if (mpVolume) {
             mpRayMarchingPipeline->bind(cmd);
+            mpVolumeDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRayMarchingPipeline->getLayout(), 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
 
@@ -199,11 +178,17 @@ public:
             if (ImGui::Button("Load##Volume")) {
                 mVolumePath = OpenFile(mpWindow, "OpenVDB file (*.vdb)\0*.VDB\0All (*.*)\0*.*\0");
                 if (!mVolumePath.empty()) {
-                    mpVolume = std::make_shared<Texture>(mpDevice, Texture::Type::Texture3D, VK_FORMAT_R32_SFLOAT,
+                    mpVolume = std::make_shared<Texture>(mpDevice, TextureType::Texture3D, VK_FORMAT_R32_SFLOAT,
                                                          mVolumePath, false);
                     mpVolume->setSampler(mpVolumeSampler);
+
+                    std::vector<DescriptorDesc> desc;
+                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
+                    mpVolumeDescriptor =
+                        mpDevice->createDescriptor(desc, mpRayMarchingPipeline->getShader()->getDescriptorSetLayout(1));
+
                     glm::vec3 volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
-                                          mpVolume->getImage()->getDepth());
+                                                    mpVolume->getImage()->getDepth());
                     mVolumeModelScale = 1.0f / glm::max(volumeDim.x, glm::max(volumeDim.y, volumeDim.z));
                 }
             }
@@ -235,9 +220,14 @@ public:
                 mEnvironmentMapPath =
                     OpenFile(mpWindow, "Supported image files (*.hdr, *.png)\0*.HDR;*.PNG\0All (*.*)\0*.*\0");
                 if (!mEnvironmentMapPath.empty()) {
-                    mpEnvironmentMap = std::make_shared<Texture>(mpDevice, Texture::Type::Texture2D,
+                    mpEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
                                                                  VK_FORMAT_R8G8B8A8_UNORM, mEnvironmentMapPath, false);
                     mpEnvironmentMap->setSampler(mpEnvironmentMapSampler);
+
+                    std::vector<DescriptorDesc> desc;
+                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
+                    mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
+                        desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
                 }
             }
             ImGui::SameLine();
@@ -274,6 +264,7 @@ private:
     std::shared_ptr<Texture> mpEnvironmentMap;
     std::filesystem::path mEnvironmentMapPath;
     std::shared_ptr<Sampler> mpEnvironmentMapSampler;
+    std::shared_ptr<Descriptor> mpEnvironmentMapDescriptor;
 
     std::shared_ptr<Pipeline> mpRayMarchingPipeline;
     std::shared_ptr<Texture> mpVolume;
@@ -282,6 +273,7 @@ private:
     float mVolumeModelScale = 1.0;
     glm::vec3 mVolumeModelPosition = glm::vec3(0.0f);
     glm::mat4 mVolumeModelMatrix = glm::mat4(1.0f);
+    std::shared_ptr<Descriptor> mpVolumeDescriptor;
 
     std::vector<VkSpecializationMapEntry> mSpecializationMapEntries;
     VkSpecializationInfo mSpecializationInfo;

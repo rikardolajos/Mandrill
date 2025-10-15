@@ -9,7 +9,8 @@
 
 using namespace Mandrill;
 
-Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
+Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const std::filesystem::path& path,
+                 bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
     std::filesystem::path fullPath = path;
@@ -20,11 +21,11 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
     Log::Info("Loading texture from {}", path.string());
 
     switch (type) {
-    case Type::Texture1D: {
+    case TextureType::Texture1D: {
         Log::Error("Texture1D cannot be read from file");
         break;
     }
-    case Type::Texture2D: {
+    case TextureType::Texture2D: {
         stbi_set_flip_vertically_on_load(1);
 
         std::string pathStr = fullPath.string();
@@ -42,7 +43,7 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
         stbi_image_free(pData);
         break;
     }
-    case Type::Texture3D: {
+    case TextureType::Texture3D: {
 #ifdef MANDRILL_USE_OPENVDB
         openvdb::io::File file(path.string());
         file.open();
@@ -89,14 +90,15 @@ Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::fil
 #endif
         break;
     }
-    case Type::CubeMap: {
+    case TextureType::CubeMap: {
         Log::Error("Not implemented");
         break;
     }
     }
 }
 
-Texture::Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* pData, uint32_t width, uint32_t height,
+Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const void* pData, uint32_t width,
+                 uint32_t height,
                  uint32_t depth, uint32_t channels, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {

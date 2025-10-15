@@ -116,9 +116,11 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <param name="pScene">Scene which the node belongs to</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
+                                 const ptr<const Scene> pScene) const;
 
         /// <summary>
         /// Add a mesh to the node.
@@ -213,36 +215,10 @@ namespace Mandrill
 
         /// <summary>
         /// Create a new scene.
-        ///
-        /// The scene will use descriptor sets as follows:
-        /// <table>
-        /// <caption id="descriptor-layout">Descriptor layout</caption>
-        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
-        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        /// <tr><td> Model matrix (mat4) <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        /// <tr><td> Material params (struct MaterialParams) <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        /// <tr><td> Material diffuse texture <td> 2 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-        /// <tr><td> Material specular texture <td> 2 <td> 2 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material ambient texture <td> 2 <td> 3 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material emission texture <td> 2 <td> 4 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material normal texture <td> 2 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Acceleration structure <td> 3 <td> 0 <td> VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
-        /// <tr><td> Storage output image <td> 3 <td> 1 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        /// <tr><td> Scene vertex buffer <td> 3 <td> 2 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        /// <tr><td> Scene index buffer <td> 3 <td> 3 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        /// <tr><td> Scene material buffer <td> 3 <td> 4 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        /// <tr><td> Scene texture array <td> 3 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Output storage image <td> 4 <td> 0 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-        /// </table>
-        ///
-        /// NB: Set 3 and 4 are only available when using ray tracing
-        ///
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="pSwapchain">Swapchain is used to determine how many descriptors will be used</param>
-        /// <param name="supportRayTracing">Prepare scene for handling acceleration sturctures</param>
         /// <returns></returns>
-        MANDRILL_API Scene(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, bool supportRayTracing = false);
+        MANDRILL_API Scene(ptr<Device> pDevice);
 
         /// <summary>
         /// Destructor for scene.
@@ -255,8 +231,9 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <returns></returns>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera) const;
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex) const;
 
         /// <summary>
         /// Add a node to the scene.
@@ -286,50 +263,94 @@ namespace Mandrill
         /// </summary>
         /// <param name="path">Path to the OBJ-file</param>
         /// <param name="materialPath">Path to where the material files are stored (leave to default if the materials
-        /// are in the same directory as the OBJ-file)</param> <returns>List of mesh indices that can be added to a node
-        /// in the scene</returns>
+        /// are in the same directory as the OBJ-file)</param>
+        /// <returns>List of mesh indices that can be added to a node in the scene</returns>
         MANDRILL_API std::vector<uint32_t> addMeshFromFile(const std::filesystem::path& path,
                                                            const std::filesystem::path& materialPath = "");
 
         /// <summary>
         /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.
         /// </summary>
+        /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
+        /// needed</param>
         /// <returns></returns>
-        MANDRILL_API void compile();
+        MANDRILL_API void compile(uint32_t frameInFlightCount);
+
+        /// <summary>
+        /// Create desciptors for scene.
+        ///
+        /// The scene will use descriptor sets as follows:
+        /// <table>
+        /// <caption> Descriptor Layout </caption>
+        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
+        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        /// <tr><td> Model matrix (mat4) <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        /// <tr><td> Material params (struct MaterialParams) <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+        /// <tr><td> Material diffuse texture <td> 2 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+        /// <tr><td> Material specular texture <td> 2 <td> 2 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material ambient texture <td> 2 <td> 3 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material emission texture <td> 2 <td> 4 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Material normal texture <td> 2 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <tr><td> Environment map texture <td> 3 <td> 0 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// </table>
+        /// </summary>
+        /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
+        /// Shader::getDescriptorSetLayouts())</param>
+        /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
+        /// needed</param>
+        /// <returns></returns>
+        MANDRILL_API void createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+                                            uint32_t frameInFlightCount);
+
+        /// <summary>
+        /// Create ray-tracing desciptors for scene.
+        ///
+        /// The scene will use descriptor sets as follows:
+        /// <table>
+        /// <caption> Ray-tracing Descriptor Layout </caption>
+        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
+        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+        /// <tr><td> Acceleration structure <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
+        /// <tr><td> Global vertex buffer <td> 1 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        /// <tr><td> Global index buffer <td> 1 <td> 2 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        /// <tr><td> Instance data (vertex and index offsets) <td> 1 <td> 3 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        /// <tr><td> Global material buffer <td> 1 <td> 4 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+        /// <tr><td> Global texture array <td> 1 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (Array)
+        /// <tr><td> Environment map texture <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// </table>
+        /// </summary>
+        /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
+        /// Shader::getDescriptorSetLayouts())</param> <param name="pAccelerationStructure">Acceleration structure to
+        /// bind</param> <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
+        /// needed</param>
+        /// <returns></returns>
+        MANDRILL_API void createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+                                                      const ptr<AccelerationStructure> pAccelerationStructure,
+                                                      uint32_t frameInFlightCount);
 
         /// <summary>
         /// Synchronize buffers to device.
         ///
-        /// Upload all buffers from host to device. This function should be called after updates have been done to
+        /// Upload all buffers from host to device. This function should be called after updates have been made to
         /// the scene.
         ///
-        /// Node transforms and material parameters are kept host coherent and can be changed without requiring a new
-        /// sync.
+        /// Node transforms and material parameters are kept host coherent and can be changed without requiring a
+        /// new sync.
         ///
         /// </summary>
         /// <returns></returns>
         MANDRILL_API void syncToDevice();
 
         /// <summary>
-        /// Build and update acceleration structure of the scene. This is needed for ray tracing the scene. First time
-        /// called, it will build a new acceleration structure. Subsequent calls will update the TLAS to account for
-        /// updates in the instance transforms.
+        /// Bind ray-tracing descriptors.
         /// </summary>
-        /// <param name="flags">Flags used for building acceleration structure</param>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="pCamera">Camera to use</param>
+        /// <param name="layout">Pipeline layout</param>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <returns></returns>
-        MANDRILL_API void updateAccelerationStructure(
-            VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
-
-        /// <summary>
-        /// Bind descriptors for ray tracing.
-        ///
-        /// This will bind the descriptor sets 0 (camera matrices) and 3 (acceleration structure and scene buffers).
-        /// Descriptor set 4 should contain the storage image to render the ray-traced image to, and has to be bound
-        /// elsewhere.
-        ///
-        /// </summary>
-        /// <returns></returns>
-        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout);
+        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
+                                                    uint32_t frameInFlightIndex);
 
         /// <summary>
         /// Set sampler to use for rendering materials.
@@ -337,36 +358,6 @@ namespace Mandrill
         /// <param name="pSampler">Sampler to be used for all materials</param>
         /// <returns></returns>
         MANDRILL_API void setSampler(const ptr<Sampler> pSampler);
-
-        /// <summary>
-        /// Get the layout used by the scene (as described in the comments for the Scene() constructor above).
-        ///
-        /// The layout is as follows:
-        ///
-        /// Set.Binding: Descriptor type [usage]
-        ///
-        /// 0.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Camera matrices] <br>
-        /// 1.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC  [Model matrix] <br>
-        /// 2.0: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER          [Material parameters] <br>
-        /// 2.1: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material diffuse texture] <br>
-        /// 2.2: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material specular texture] <br>
-        /// 2.3: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material ambient texture] <br>
-        /// 2.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material emission texture] <br>
-        /// 2.5: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER  [Material normal texture] <br>
-        ///
-        /// If ray-tracing support is requested, the following is also available:
-        ///
-        /// 3.0: VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR      [Acceleration structure] <br>
-        /// 3.1: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene vertex buffer] <br>
-        /// 3.2: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene index buffer] <br>
-        /// 3.3: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Scene material buffer] <br>
-        /// 3.4: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (array)  [Scene texture array] <br>
-        /// 3.5: VK_DESCRIPTOR_TYPE_STORAGE_BUFFER                  [Instance data buffer] <br>
-        /// 4.0: VK_DESCRIPTOR_TYPE_STORAGE_IMAGE                   [Output storage image] <br>
-        ///
-        /// </summary>
-        /// <returns>Pointer to layout</returns>
-        MANDRILL_API ptr<Layout> getLayout();
 
         /// <summary>
         /// Get the list of all nodes in the scene.
@@ -473,15 +464,6 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the acceleration structure of the scene.
-        /// </summary>
-        /// <returns>Pointer to acceleration structure or nullptr</returns>
-        MANDRILL_API ptr<AccelerationStructure> getAccelerationStructure() const
-        {
-            return mpAccelerationStructure;
-        }
-
-        /// <summary>
         /// Set an environment map for the scene.
         /// </summary>
         /// <param name="pTexture">Texture to use as environment map</param>
@@ -499,10 +481,8 @@ namespace Mandrill
         std::vector<uint32_t> loadFromGLTF(const std::filesystem::path& path,
                                            const std::filesystem::path& materialPath = "");
         void addTexture(std::string texturePath);
-        void createDescriptors();
 
         ptr<Device> mpDevice;
-        ptr<Swapchain> mpSwapchain;
 
         std::vector<Mesh> mMeshes;
         std::vector<Node> mNodes;
@@ -518,8 +498,6 @@ namespace Mandrill
 
         ptr<Texture> mpMissingTexture;
 
-        bool mSupportRayTracing;
-        ptr<AccelerationStructure> mpAccelerationStructure;
         ptr<Descriptor> mpRayTracingDescriptor;
         ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
         ptr<Buffer> mpInstanceDataBuffer;

@@ -19,23 +19,12 @@ public:
         };
         mpDevice = std::make_shared<Device>(mpWindow, extensions);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
-
-        // Create a layout (push descriptor):
-        std::vector<LayoutDesc> layoutDesc;
-        auto pLayout =
-            std::make_shared<Layout>(mpDevice, layoutDesc, VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR);
-        VkPushConstantRange pushConstantRange = {
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .offset = 0,
-            .size = sizeof(PushConstant),
-        };
-        pLayout->addPushConstantRange(pushConstantRange);
+        // Create a swapchain with 2 frames in flight (default)
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
-                                        mpDevice->getSampleCount());
+        mpPass = mpDevice->createPass(mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
+                                      mpDevice->getSampleCount());
 
         // Prepare vertex binding and attribute descriptions with empty vectors (only fullscreen triangles are used)
         std::vector<VkVertexInputBindingDescription> emptyBindingDescription;
@@ -48,8 +37,8 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SDF/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SDF/SDF.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
-        mpPipeline = std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc);
+        auto pShader = mpDevice->createShader(shaderDesc);
+        mpPipeline = mpDevice->createPipeline(mpPass, pShader, pipelineDesc);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);

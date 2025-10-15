@@ -11,15 +11,16 @@ public:
     };
 
     struct PushConstants {
+        glm::vec3 lineColor;
+        int _pad0;
         int renderMode;
         int discardOnZeroAlpha;
-        alignas(16) glm::vec3 lineColor;
     };
 
     void loadScene()
     {
         // Create a new scene
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
+        mpScene = mpDevice->createScene();        
 
         // Load meshes from the scene path
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
@@ -37,7 +38,11 @@ public:
         mpScene->setSampler(mpSampler);
 
         // Calculate and allocate buffers
-        mpScene->compile();
+        mpScene->compile(mpSwapchain->getFramesInFlightCount());
+
+        // Create descriptors
+        mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
+                                   mpSwapchain->getFramesInFlightCount());
 
         // Sync to GPU
         mpScene->syncToDevice();
@@ -48,48 +53,41 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
-
-        // Create a scene so we can access the layout, the actual scene will be loaded later
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
-        auto pLayout = mpScene->getLayout();
+        // Create a swapchain with 2 frames in flight (default)
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
-        mpPass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), 1, true,
-                                        mpDevice->getSampleCount());
-
-        // Add push constant to layout so we can set render mode in shader
-        VkPushConstantRange pushConstantRange = {
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .offset = 0,
-            .size = sizeof(PushConstants),
-        };
-        pLayout->addPushConstantRange(pushConstantRange);
+        uint32_t colorAttachmentCount = 1;
+        bool depthAttachment = true;
+        mpPass = mpDevice->createPass(mpSwapchain->getExtent(), mpSwapchain->getImageFormat(), colorAttachmentCount,
+                                      depthAttachment, mpDevice->getSampleCount());
 
         // Create a shader module with vertex and fragment shader
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        std::shared_ptr<Shader> pShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pShader = mpDevice->createShader(shaderDesc);
 
         // Create a pipeline filled polygon rendering
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader));
+        mPipelines.emplace_back(mpDevice->createPipeline(mpPass, pShader, PipelineDesc()));
 
         // Create a pipeline for line rendering
         PipelineDesc pipelineDesc;
         pipelineDesc.polygonMode = VK_POLYGON_MODE_LINE;
-        mPipelines.emplace_back(std::make_shared<Pipeline>(mpDevice, mpPass, pLayout, pShader, pipelineDesc));
+        mPipelines.emplace_back(mpDevice->createPipeline(mpPass, pShader, pipelineDesc));
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+        mpCamera->createDescriptor(pShader->getDescriptorSetLayout(0));
 
         // Create a sampler that will be used to render materials
-        mpSampler =
-            std::make_shared<Sampler>(mpDevice, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR);
+        mpSampler = mpDevice->createSampler();
+
+        // Start with an empty scene
+        mpScene = mpDevice->createScene();
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -127,7 +125,7 @@ public:
                            sizeof pushConstants, &pushConstants);
 
         // Render scene
-        mpScene->render(cmd, mpCamera);
+        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
 
         // Render lines
         if (mDrawPolygonLines) {
@@ -137,16 +135,16 @@ public:
             }
 
             PushConstants pushConstants = {
+                .lineColor = mLineColor,
                 .renderMode = 9,
                 .discardOnZeroAlpha = mDiscardOnZeroAlpha,
-                .lineColor = mLineColor,
             };
             vkCmdPushConstants(cmd, mPipelines[PIPELINE_LINE]->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                                sizeof pushConstants, &pushConstants);
 
             mPipelines[PIPELINE_LINE]->setLineWidth(mLineWidth);
 
-            mpScene->render(cmd, mpCamera);
+            mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
 
             // Reset pipeline
             for (auto& node : mpScene->getNodes()) {
@@ -218,7 +216,7 @@ public:
                                                       mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST
                                                                : VK_SAMPLER_MIPMAP_MODE_LINEAR);
                 mpScene->setSampler(mpSampler);
-                mpScene->compile();
+                mpScene->compile(mpSwapchain->getFramesInFlightCount());
                 mpScene->syncToDevice();
             }
 

@@ -3,16 +3,16 @@
 
 #include "RayPayload.glsl"
 
-layout(set = 0, binding = 0) uniform CameraUniforms {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;
     mat4 proj_inv;
 } camera;
 
-layout(set = 4, binding = 0) uniform accelerationStructureEXT scene;
+layout(set = 1, binding = 0) uniform accelerationStructureEXT scene;
 
-layout(set = 5, binding = 0, rgba8) uniform image2D image;
+layout(set = 3, binding = 0, rgba8) uniform image2D image;
 
 layout(push_constant) uniform PushConstant {
     uint renderMode;

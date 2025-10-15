@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "Descriptor.h"
 #include "Device.h"
 
 namespace Mandrill
@@ -67,6 +68,8 @@ namespace Mandrill
         /// </summary>
         MANDRILL_API void reload();
 
+        MANDRILL_API void bind(VkCommandBuffer cmd, ptr<Descriptor> pDescriptor, uint32_t set);
+
         /// <summary>
         /// Get shader module handles.
         /// </summary>
@@ -85,18 +88,58 @@ namespace Mandrill
             return mStages;
         }
 
+        /// <summary>
+        /// Get the descriptor set layout of one set.
+        /// </summary>
+        /// <returns>Vector of descriptor set layouts</returns>
+        MANDRILL_API VkDescriptorSetLayout getDescriptorSetLayout(uint32_t set) const
+        {
+            return mDescriptorSetLayouts[set];
+        }
+
+        /// <summary>
+        /// Get the descriptor set layouts.
+        /// </summary>
+        /// <returns>Vector of descriptor set layouts</returns>
+        MANDRILL_API const std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() const
+        {
+            return mDescriptorSetLayouts;
+        }
+
+        /// <summary>
+        /// Get the push constant ranges.
+        /// </summary>
+        /// <returns>Vector of push constant ranges</returns>
+        MANDRILL_API const std::vector<VkPushConstantRange>& getPushConstantRanges() const
+        {
+            return mPushConstantRanges;
+        }
+
+        /// <summary>
+        /// Get tthe pipeline layout.
+        /// </summary>
+        /// <returns>Pipeline layout</returns>
+        MANDRILL_API VkPipelineLayout getPipelineLayout() const
+        {
+            return mPipelineLayout;
+        }
+
     private:
-        void createModulesAndStages();
-        VkShaderModule loadModuleFromFile(const std::filesystem::path& input);
+        void createShader();
 
         ptr<Device> mpDevice;
 
         std::vector<VkShaderModule> mModules;
+        std::vector<ptr<spv_reflect::ShaderModule>> mReflections;
         std::vector<VkPipelineShaderStageCreateInfo> mStages;
 
         std::vector<std::string> mEntries;
         std::vector<std::filesystem::path> mSrcFilenames;
         std::vector<VkShaderStageFlagBits> mStageFlags;
         std::vector<VkSpecializationInfo*> mSpecializationInfos;
+
+        std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts; // One per set
+        std::vector<VkPushConstantRange> mPushConstantRanges;
+        VkPipelineLayout mPipelineLayout;
     };
 } // namespace Mandrill

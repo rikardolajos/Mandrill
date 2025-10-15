@@ -18,10 +18,10 @@ public:
     static std::shared_ptr<Image> createColorAttachmentImage(std::shared_ptr<Device> pDevice, uint32_t width,
                                                              uint32_t height, VkFormat format)
     {
-        return std::make_shared<Image>(
-            pDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        return pDevice->createImage(width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
+                                    VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT |
+                                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     }
 
     void transitionAttachmentsForGBuffer(VkCommandBuffer cmd)
@@ -53,10 +53,10 @@ public:
         mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R16G16B16A16_SFLOAT));
         mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R16G16B16A16_SFLOAT));
         mColorAttachments.push_back(createColorAttachmentImage(mpDevice, width, height, VK_FORMAT_R8G8B8A8_UNORM));
-        mpDepthAttachment = std::make_shared<Image>(
-            mpDevice, width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        mpDepthAttachment =
+            mpDevice->createImage(width, height, 1, 1, VK_SAMPLE_COUNT_1_BIT, depthFormat, VK_IMAGE_TILING_OPTIMAL,
+                                  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         // Create image views and transition image layouts
         VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
@@ -86,15 +86,17 @@ public:
             VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, &depthSubresourceRange);
 
         Helpers::cmdEnd(mpDevice, cmd);
+    }
 
-        // Create descriptor for resolve pass input attachments
+    void createAttachmentDescriptor()
+    {
         std::vector<DescriptorDesc> descriptorDesc;
         for (auto& attachment : mColorAttachments) {
             descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, attachment);
             descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
         }
-        mpColorAttachmentDescriptor =
-            std::make_shared<Descriptor>(mpDevice, descriptorDesc, mpResolveLayout->getDescriptorSetLayouts()[0]);
+        mpColorAttachmentDescriptor = mpDevice->createDescriptor(
+            descriptorDesc, mPipelines[RESOLVE_PASS]->getShader()->getDescriptorSetLayout(0));
     }
 
     DeferredShading() : App("Deferred Shading", 1920, 1080)
@@ -102,59 +104,43 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight
-        mpSwapchain = std::make_shared<Swapchain>(mpDevice, 2);
+        // Create a swapchain with 2 frames in flight (default
+        mpSwapchain = mpDevice->createSwapchain();
 
         // Create scene
-        mpScene = std::make_shared<Scene>(mpDevice, mpSwapchain);
+        mpScene = mpDevice->createScene();
 
-        // Create layouts for rendering the scene in first pass and resolve in the second pass
-        auto pGBufferLayout = mpScene->getLayout();
-
-        // 3 color attachments: position, normal, albedo
-        std::vector<LayoutDesc> layoutDesc;
-        layoutDesc.emplace_back(0, 0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
-        layoutDesc.emplace_back(0, 2, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_FRAGMENT_BIT);
-        mpResolveLayout = std::make_shared<Layout>(mpDevice, layoutDesc);
-
-        // Add push constant to layout so we can set render mode in resolve pipeline
-        VkPushConstantRange pushConstantRange = {
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .offset = 0,
-            .size = sizeof(PushConstants),
-        };
-        mpResolveLayout->addPushConstantRange(pushConstantRange);
+        // Create the attachments
+        createAttachments();
 
         // Create two passes
-        createAttachments();
-        mpGBufferPass = std::make_shared<Pass>(mpDevice, mColorAttachments, mpDepthAttachment);
-        mpResolvePass = std::make_shared<Pass>(mpDevice, mpSwapchain->getExtent(), mpSwapchain->getImageFormat());
+        mpGBufferPass = mpDevice->createPass(mColorAttachments, mpDepthAttachment);
+        mpResolvePass = mpDevice->createPass(mpSwapchain->getExtent(), mpSwapchain->getImageFormat());
 
         // Create two shaders (and pipelines) for G-buffer and resolve pass respectively
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("DeferredShading/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("DeferredShading/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pGBufferShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pGBufferShader = mpDevice->createShader(shaderDesc);
 
         shaderDesc.clear();
         shaderDesc.emplace_back("DeferredShading/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("DeferredShading/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pResolveShader = std::make_shared<Shader>(mpDevice, shaderDesc);
+        auto pResolveShader = mpDevice->createShader(shaderDesc);
 
         // Create pipelines
         PipelineDesc pipelineDesc;
         pipelineDesc.depthTestEnable = VK_TRUE;
-        mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, mpGBufferPass, pGBufferLayout, pGBufferShader, pipelineDesc));
+        mPipelines.emplace_back(mpDevice->createPipeline(mpGBufferPass, pGBufferShader, pipelineDesc));
 
         pipelineDesc.depthTestEnable = VK_FALSE;
-        mPipelines.emplace_back(
-            std::make_shared<Pipeline>(mpDevice, mpResolvePass, mpResolveLayout, pResolveShader, pipelineDesc));
+        mPipelines.emplace_back(mpDevice->createPipeline(mpResolvePass, pResolveShader, pipelineDesc));
+
+        // Create descriptor for resolve pass input attachments
+        createAttachmentDescriptor();
 
         // Create a sampler that will be used to render materials
-        mpSampler =
-            std::make_shared<Sampler>(mpDevice, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR);
+        mpSampler = mpDevice->createSampler();
 
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
@@ -167,17 +153,20 @@ public:
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->setSampler(mpSampler);
-        mpScene->compile();
+        mpScene->compile(mpSwapchain->getFramesInFlightCount());
+        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts(),
+                                   mpSwapchain->getFramesInFlightCount());
         mpScene->syncToDevice();
 
         // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
-        mpCamera = std::make_shared<Camera>(mpDevice, mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+        mpCamera->createDescriptor(pGBufferShader->getDescriptorSetLayout(0));
 
         // Initialize GUI
         App::createGUI(mpDevice, mpResolvePass);
@@ -201,6 +190,7 @@ public:
         if (mpSwapchain->recreated()) {
             mpCamera->updateAspectRatio();
             createAttachments();
+            createAttachmentDescriptor();
             mpGBufferPass->update(mColorAttachments, mpDepthAttachment);
             mpResolvePass->update(mpSwapchain->getExtent());
         }
@@ -215,7 +205,7 @@ public:
         mpGBufferPass->begin(cmd, glm::vec4(0.2f, 0.6f, 1.0f, 1.0f));
 
         // Render scene
-        mpScene->render(cmd, mpCamera);
+        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
 
         // End the G-Buffer pass without any implicit image transitions
         vkCmdEndRendering(cmd);
@@ -293,8 +283,6 @@ private:
     std::shared_ptr<Pass> mpGBufferPass;
     std::shared_ptr<Pass> mpResolvePass;
     std::vector<std::shared_ptr<Pipeline>> mPipelines;
-
-    std::shared_ptr<Layout> mpResolveLayout;
 
     std::vector<std::shared_ptr<Image>> mColorAttachments;
     std::shared_ptr<Descriptor> mpColorAttachmentDescriptor;

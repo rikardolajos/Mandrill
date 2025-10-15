@@ -81,7 +81,7 @@ namespace Mandrill
     private:
         ptr<Device> mpDevice;
 
-        std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
+        std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts; // One per set
         std::vector<VkPushConstantRange> mPushConstantRanges;
     };
 } // namespace Mandrill

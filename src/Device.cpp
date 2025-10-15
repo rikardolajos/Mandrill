@@ -1,8 +1,19 @@
 #include "Device.h"
 
+#include "AccelerationStructure.h"
+#include "Buffer.h"
+#include "Descriptor.h"
 #include "Error.h"
 #include "Extension.h"
+#include "Image.h"
 #include "Log.h"
+#include "Pass.h"
+#include "Pipeline.h"
+#include "RayTracingPipeline.h"
+#include "Sampler.h"
+#include "Scene.h"
+#include "Shader.h"
+#include "Texture.h"
 
 #if MANDRILL_LINUX
 #include <csignal>
@@ -491,4 +502,103 @@ void Device::createExtensionProcAddrs()
     vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetDeviceProcAddr(mDevice, "vkCmdTraceRaysKHR"));
     vkSetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(
         vkGetDeviceProcAddr(mDevice, "vkSetDebugUtilsObjectNameEXT"));
+}
+
+ptr<AccelerationStructure> Device::createAccelerationStructure(std::weak_ptr<Scene> wpScene,
+                                                               VkBuildAccelerationStructureFlagsKHR flags)
+{
+    return make_ptr<AccelerationStructure>(shared_from_this(), wpScene, flags);
+}
+
+ptr<Buffer> Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
+{
+    return make_ptr<Buffer>(shared_from_this(), size, usage, properties);
+}
+
+ptr<Camera> Device::createCamera(GLFWwindow* pWindow, ptr<Swapchain> pSwapchain)
+{
+    return make_ptr<Camera>(shared_from_this(), pWindow, pSwapchain);
+}
+
+ptr<Descriptor> Device::createDescriptor(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout)
+{
+    return make_ptr<Descriptor>(shared_from_this(), desc, layout);
+}
+
+ptr<Image> Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+                               VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
+                               VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
+{
+    return make_ptr<Image>(shared_from_this(), width, height, depth, mipLevels, samples, format, tiling, usage,
+                           properties);
+}
+
+ptr<Image> Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+                               VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
+                               VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset)
+{
+    return make_ptr<Image>(shared_from_this(), width, height, depth, mipLevels, samples, format, tiling, usage, memory,
+                           offset);
+}
+
+ptr<Pass> Device::createPass(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
+{
+    return make_ptr<Pass>(shared_from_this(), colorAttachments, pDepthAttachment);
+}
+
+ptr<Pass> Device::createPass(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount, bool depthAttachment,
+                             VkSampleCountFlagBits sampleCount)
+{
+    return make_ptr<Pass>(shared_from_this(), extent, format, colorAttachmentCount, depthAttachment, sampleCount);
+}
+
+ptr<Pass> Device::createPass(VkExtent2D extent, std::vector<VkFormat> formats, bool depthAttachment,
+                             VkSampleCountFlagBits sampleCount)
+{
+    return make_ptr<Pass>(shared_from_this(), extent, formats, depthAttachment, sampleCount);
+}
+
+ptr<Pipeline> Device::createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc)
+{
+    return make_ptr<Pipeline>(shared_from_this(), pPass, pShader, desc);
+}
+
+ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader,
+                                                         const RayTracingPipelineDesc& desc)
+{
+    return make_ptr<RayTracingPipeline>(shared_from_this(), pShader, desc);
+}
+
+ptr<Sampler> Device::createSampler(VkFilter magFilter, VkFilter minFilter, VkSamplerMipmapMode mipmapMode,
+                                   VkSamplerAddressMode addressModeU, VkSamplerAddressMode addressModeV,
+                                   VkSamplerAddressMode addressModeW)
+{
+    return make_ptr<Sampler>(shared_from_this(), magFilter, minFilter, mipmapMode, addressModeU, addressModeV,
+                             addressModeW);
+}
+
+ptr<Texture> Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
+{
+    return make_ptr<Texture>(shared_from_this(), type, format, path, mipmaps);
+}
+
+ptr<Scene> Device::createScene()
+{
+    return make_ptr<Scene>(shared_from_this());
+}
+
+ptr<Shader> Device::createShader(const std::vector<ShaderDesc>& desc)
+{
+    return make_ptr<Shader>(shared_from_this(), desc);
+}
+
+ptr<Swapchain> Device::createSwapchain(uint32_t framesInFlight)
+{
+    return make_ptr<Swapchain>(shared_from_this(), framesInFlight);
+}
+
+ptr<Texture> Device::createTexture(TextureType type, VkFormat format, const void* pData, uint32_t width,
+                                   uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps)
+{
+    return make_ptr<Texture>(shared_from_this(), type, format, pData, width, height, depth, channels, mipmaps);
 }

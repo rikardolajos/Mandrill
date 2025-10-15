@@ -4,8 +4,8 @@
 #include "RayPayload.glsl"
 
 // Specialization constant should be generated from scene information
-layout (constant_id = 0) const uint VERTEX_COUNT = 24;
-layout (constant_id = 1) const uint INDEX_COUNT = 36;
+layout (constant_id = 0) const uint VERTEX_COUNT = 1;
+layout (constant_id = 1) const uint INDEX_COUNT = 1;
 layout (constant_id = 2) const uint MATERIAL_COUNT = 1;
 layout (constant_id = 3) const uint TEXTURE_COUNT = 1;
 layout (constant_id = 4) const uint MESH_COUNT = 1;
@@ -19,12 +19,21 @@ struct Vertex {
     float _padding; // To enforce same size and alignment as host
 };
 
-layout(set = 4, binding = 1, std430) readonly buffer VertexBuffer {
+layout(set = 1, binding = 1, std430) readonly buffer VertexBuffer {
 	Vertex vertices[VERTEX_COUNT];
 };
 
-layout(set = 4, binding = 2, std430) readonly buffer IndexBuffer {
+layout(set = 1, binding = 2, std430) readonly buffer IndexBuffer {
 	uint indices[INDEX_COUNT];
+};
+
+struct InstanceData {
+    uint verticesOffset;
+    uint indicesOffset;
+};
+
+layout(set = 1, binding = 3, std430) readonly buffer InstanceDataBuffer {
+	InstanceData instanceDatas[MESH_COUNT];
 };
 
 const uint DIFFUSE_TEXTURE_BIT = 1 << 0;
@@ -56,20 +65,11 @@ struct Material {
     uint _padding2;
 };
 
-layout(set = 4, binding = 3, std430) readonly buffer MaterialBuffer {
+layout(set = 1, binding = 4, std430) readonly buffer MaterialBuffer {
 	Material materials[MATERIAL_COUNT];
 };
 
-layout(set = 4, binding = 4) uniform sampler2D textures[TEXTURE_COUNT];
-
-struct InstanceData {
-    uint verticesOffset;
-    uint indicesOffset;
-};
-
-layout(set = 4, binding = 5, std430) readonly buffer InstanceDataBuffer {
-	InstanceData instanceDatas[MESH_COUNT];
-};
+layout(set = 1, binding = 5) uniform sampler2D textures[TEXTURE_COUNT];
 
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 hitAttributeEXT vec3 attribs;

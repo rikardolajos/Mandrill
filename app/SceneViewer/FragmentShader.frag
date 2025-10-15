@@ -28,9 +28,10 @@ layout(set = 2, binding = 5) uniform sampler2D normalTexture;
 layout(set = 3, binding = 0) uniform sampler2D environmentMap;
 
 layout(push_constant) uniform PushConstant {
+    vec3 lineColor;
+    int _pad0;
     uint renderMode;
     uint discardOnZeroAlpha;
-    vec3 lineColor;
 } pushConstant;
 
 const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;

@@ -5,23 +5,10 @@
 
 using namespace Mandrill;
 
-Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, ptr<Shader> pShader,
+Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Shader> pShader,
                    const PipelineDesc& desc)
-    : mpDevice(pDevice), mpShader(pShader), mpLayout(pLayout), mpPass(pPass), mPipeline(nullptr), mDesc(desc)
+    : mpDevice(pDevice), mpPass(pPass), mpShader(pShader), mPipeline(nullptr), mDesc(desc)
 {
-    const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = mpLayout->getDescriptorSetLayouts();
-    const std::vector<VkPushConstantRange>& pushConstantLayout = mpLayout->getPushConstantRanges();
-
-    VkPipelineLayoutCreateInfo ci = {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = count(descriptorSetLayouts),
-        .pSetLayouts = descriptorSetLayouts.data(),
-        .pushConstantRangeCount = count(pushConstantLayout),
-        .pPushConstantRanges = pushConstantLayout.data(),
-    };
-
-    Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
-
     if (pPass) {
         createPipeline();
     }
@@ -30,7 +17,6 @@ Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Layout> pLayout, pt
 Pipeline::~Pipeline()
 {
     destroyPipeline();
-    vkDestroyPipelineLayout(mpDevice->getDevice(), mPipelineLayout, nullptr);
 }
 
 void Pipeline::bind(VkCommandBuffer cmd)
@@ -172,7 +158,7 @@ void Pipeline::createPipeline()
         .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = &dynamicState,
-        .layout = mPipelineLayout,
+        .layout = mpShader->getPipelineLayout(),
         .renderPass = nullptr,
     };
     Check::Vk(vkCreateGraphicsPipelines(mpDevice->getDevice(), VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline));

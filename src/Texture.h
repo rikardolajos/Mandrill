@@ -8,19 +8,19 @@
 
 namespace Mandrill
 {
+    enum class MANDRILL_API TextureType : uint32_t {
+        Texture1D,
+        Texture2D,
+        Texture3D,
+        CubeMap,
+    };
+
     /// <summary>
     /// Texture class for managing textures in Vulkan.
     /// </summary>
     class Texture
     {
     public:
-        enum class MANDRILL_API Type {
-            Texture1D,
-            Texture2D,
-            Texture3D,
-            CubeMap,
-        };
-
         MANDRILL_NON_COPYABLE(Texture)
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Mandrill
         /// <param name="format">Format to use</param>
         /// <param name="path">Path to texture file</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
-        MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const std::filesystem::path& path,
+        MANDRILL_API Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const std::filesystem::path& path,
                              bool mipmaps = false);
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Mandrill
         /// <param name="depth">Depth of texture</param>
         /// <param name="channels">Number of channels in texture</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
-        MANDRILL_API Texture(ptr<Device> pDevice, Type type, VkFormat format, const void* pData, uint32_t width,
+        MANDRILL_API Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const void* pData, uint32_t width,
                              uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps = false);
 
         /// <summary>

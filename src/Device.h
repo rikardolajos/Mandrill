@@ -4,6 +4,26 @@
 
 namespace Mandrill
 {
+    // Forward declarations for factory methods
+    class AccelerationStructure;
+    class Buffer;
+    class Camera;
+    struct DescriptorDesc;
+    class Descriptor;
+    class Image;
+    class Pass;
+    struct PipelineDesc;
+    class Pipeline;
+    struct RayTracingPipelineDesc;
+    class RayTracingPipeline;
+    class Sampler;
+    struct ShaderDesc;
+    class Shader;
+    class Scene;
+    class Swapchain;
+    enum class TextureType : uint32_t;
+    class Texture;
+
     struct MANDRILL_API DeviceProperties {
         VkPhysicalDeviceProperties physicalDevice;
         VkPhysicalDeviceMemoryProperties memory;
@@ -14,7 +34,7 @@ namespace Mandrill
     /// <summary>
     /// Device class abstracting the physical and logical Vulkan device, as well as handling extensions and features.
     /// </summary>
-    class Device
+    class Device : public std::enable_shared_from_this<Device>
     {
     public:
         MANDRILL_NON_COPYABLE(Device)
@@ -151,6 +171,193 @@ namespace Mandrill
         /// </summary>
         /// <returns>Sample count</returns>
         MANDRILL_API VkSampleCountFlagBits getSampleCount() const;
+
+        /// <summary>
+        /// Create a new acceleration structure.
+        /// </summary>
+        /// <param name="wpScene">Scene to create the acceleration structure of</param>
+        /// <param name="flags">Flags for building acceleration structure</param>
+        MANDRILL_API ptr<AccelerationStructure> createAccelerationStructure(std::weak_ptr<Scene> wpScene,
+                                                                            VkBuildAccelerationStructureFlagsKHR flags);
+
+        /// <summary>
+        /// Create a new buffer.
+        /// </summary>
+        /// <param name="size">Size of buffer in bytes</param>
+        /// <param name="usage">How the buffer will be used</param>
+        /// <param name="properties">What properties the memory should have</param>
+        /// <returns>A new buffer</returns>
+        MANDRILL_API ptr<Buffer> createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                                              VkMemoryPropertyFlags properties);
+
+        /// <summary>
+        /// Create a new camera.
+        /// </summary>
+        /// <param name="pWindow">Window to use</param>
+        /// <param name="pSwapchain">Swapchain to use</param>
+        /// <returns>A new camera</returns>
+        MANDRILL_API ptr<Camera> createCamera(GLFWwindow* pWindow, ptr<Swapchain> pSwapchain);
+
+        /// <summary>
+        /// Create a new descriptor.
+        /// </summary>
+        /// <param name="desc">Description of the descriptor being created</param>
+        /// <param name="layout">Layout to use</param>
+        /// <returns>A new descriptor</returns>
+        MANDRILL_API ptr<Descriptor> createDescriptor(const std::vector<DescriptorDesc>& desc,
+                                                      VkDescriptorSetLayout layout);
+
+        /// <summary>
+        /// Create a new Image and allocate memory for it.
+        /// </summary>
+        /// <param name="width">Width of image</param>
+        /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
+        /// <param name="mipLevels">Number of mipmapping levels</param>
+        /// <param name="samples">Number of samples</param>
+        /// <param name="format">Image format</param>
+        /// <param name="tiling">Tiling mode to use</param>
+        /// <param name="usage">How the image will be used</param>
+        /// <param name="properties">Which memory properties to require</param>
+        /// <returns>A new image</returns>
+        MANDRILL_API ptr<Image> createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
+                                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
+
+        /// <summary>
+        /// Create a new Image using memory that has already been allocated.
+        /// </summary>
+        /// <param name="width">Width of image</param>
+        /// <param name="height">Height of image</param>
+        /// <param name="depth">Depth of image</param>
+        /// <param name="mipLevels">Number of mipmapping levels</param>
+        /// <param name="samples">Number of samples</param>
+        /// <param name="format">Image format</param>
+        /// <param name="tiling">Tiling mode to use</param>
+        /// <param name="usage">How the image will be used</param>
+        /// <param name="memory">Allocated memory to use for image</param>
+        /// <param name="offset">Where in the allocated memory the image should be stored</param>
+        /// <returns>A new image</returns>
+        MANDRILL_API ptr<Image> createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
+                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
+                                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);
+
+        /// <summary>
+        /// Create a pass with explicit color and depth attachments.
+        /// </summary>
+        /// <param name="colorAttachments">Vector of image to use as color attachments</param>
+        /// <param name="pDepthAttachment">Depth attachment to use, can be nullptr</param>
+        /// <returns>A new pass</returns>
+        MANDRILL_API ptr<Pass> createPass(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment);
+
+        /// <summary>
+        /// Create a pass with implicit attachments, given a certain extent and format. Same format will be used for all
+        /// color attachments.
+        /// </summary>
+        /// <param name="extent">Resolution of attachments</param>
+        /// <param name="format">Format of color attachment</param>
+        /// <param name="colorAttachmentCount">Number of color attachments</param>
+        /// <param name="depthAttachment">If depth attachment should be created</param>
+        /// <param name="sampleCount">Multisampling count</param>
+        /// <returns>A new pass</returns>
+        MANDRILL_API ptr<Pass> createPass(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount = 1,
+                                          bool depthAttachment = true,
+                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+
+        /// <summary>
+        /// Create a pass with implicit attachments, given a certain extent and format. The list of formats will create
+        /// mathcing color attachments.
+        /// </summary>
+        /// <param name="extent">Resolution of attachments</param>
+        /// <param name="formats">List of formats</param>
+        /// <param name="depthAttachment">If depth attachment should be created</param>
+        /// <param name="sampleCount">Multisampling count</param>
+        /// <returns>A new pass</returns>
+        MANDRILL_API ptr<Pass> createPass(VkExtent2D extent, std::vector<VkFormat> formats, bool depthAttachment = true,
+                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+
+        /// <summary>
+        /// Create a new pipeline.
+        /// </summary>
+        /// <param name="pPass">Pass to use</param>
+        /// <param name="pShader">Shader to use</param>
+        /// <param name="desc">Description of pipeline</param>
+        /// <returns>A new pipeline</returns>
+        MANDRILL_API ptr<Pipeline> createPipeline(ptr<Pass> pPass, ptr<Shader> pShader,
+                                                  const PipelineDesc& desc);
+
+        /// <summary>
+        /// Create a new ray tracing pipeline.
+        /// </summary>
+        /// <param name="pShader">Shader to use</param>
+        /// <param name="desc">Description of pipeline</param>
+        /// <returns>A new ray-tracing pipeline</returns>
+        MANDRILL_API ptr<RayTracingPipeline>
+        createRayTracingPipeline(ptr<Shader> pShader, const RayTracingPipelineDesc& desc);
+
+        /// <summary>
+        /// Create a new texture sampler.
+        /// </summary>
+        /// <param name="magFilter">Magnification filter</param>
+        /// <param name="minFilter">Minification filter</param>
+        /// <param name="mipmapMode">MIP map mode</param>
+        /// <param name="addressModeU">Address mode/wrapping mode U</param>
+        /// <param name="addressModeV">Address mode/wrapping mode V</param>
+        /// <param name="addressModeW">Address mode/wrapping mode W</param>
+        /// <returns>A new sampler</returns>
+        MANDRILL_API ptr<Sampler> createSampler(VkFilter magFilter = VK_FILTER_LINEAR,
+                                                VkFilter minFilter = VK_FILTER_LINEAR,
+                                                VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+                                                VkSamplerAddressMode addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                                                VkSamplerAddressMode addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                                                VkSamplerAddressMode addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+        /// <summary>
+        /// Create a new scene.
+        /// </summary>
+        /// <returns>A new scene</returns>
+        MANDRILL_API ptr<Scene> createScene();
+
+        /// <summary>
+        /// Create a new shader.
+        /// </summary>
+        /// <param name="desc">Description of shader being created</param>
+        /// <returns>A new shader</returns>
+        MANDRILL_API ptr<Shader> createShader(const std::vector<ShaderDesc>& desc);
+
+        /// <summary>
+        /// Create a new swapchain.
+        /// </summary>
+        /// <param name="framesInFlight">How many frames in flight that should be used</param>
+        /// <returns>A new swapchain</returns>
+        MANDRILL_API ptr<Swapchain> createSwapchain(uint32_t framesInFlight = 2);
+
+        /// <summary>
+        /// Create a new texture from a file.
+        /// </summary>
+        /// <param name="type">Type of texture</param>
+        /// <param name="format">Format to use</param>
+        /// <param name="path">Path to texture file</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
+        /// <returns>A new texture</returns>
+        MANDRILL_API ptr<Texture> createTexture(TextureType type, VkFormat format, const std::filesystem::path& path,
+                                                bool mipmaps = false);
+
+        /// <summary>
+        /// Create a new texture from a buffer.
+        /// </summary>
+        /// <param name="type">Type of texture</param>
+        /// <param name="format">Format to use</param>
+        /// <param name="pData">Pointer to texture data</param>
+        /// <param name="width">Width of texture</param>
+        /// <param name="height">Height of texture</param>
+        /// <param name="depth">Depth of texture</param>
+        /// <param name="channels">Number of channels in texture</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
+        /// <returns>A new texture</returns>
+        MANDRILL_API ptr<Texture> createTexture(TextureType type, VkFormat format, const void* pData, uint32_t width,
+                                                uint32_t height, uint32_t depth, uint32_t channels,
+                                                bool mipmaps = false);
 
     private:
 #if defined(_DEBUG)
