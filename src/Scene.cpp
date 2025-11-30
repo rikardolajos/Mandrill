@@ -56,13 +56,8 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
 
     mpPipeline->bind(cmd);
 
-    // Bind descriptor set for camera matrices, node transform, and environment map
+    // Bind descriptor set for node transform
     VkDeviceSize alignment = pScene->mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    uint32_t cameraDescriptorOffset =
-        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
-    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
-                                   cameraDescriptorOffset);
-
     uint32_t nodeDescriptorOffset =
         static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * frameInFlightIndex);
 
@@ -70,14 +65,11 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
     if (!mpDescriptor) {
         Log::Error("Node::render() - No descriptor set bound to node. When using ray tracing, descriptors are not "
                    "created until the acceleration structure has been built.");
+        return;
     }
 #endif
 
     mpDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
-
-    if (pScene->mpEnvironmentMapDescriptor) {
-        pScene->mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 3);
-    }
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
@@ -111,6 +103,21 @@ Scene::~Scene()
 
 void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex) const
 {
+    if (mNodes.empty()) {
+        return;
+    }
+
+    // Bind descriptor set for camera matrices and environment map
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    uint32_t cameraDescriptorOffset =
+        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
+    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 0,
+                                   cameraDescriptorOffset);
+
+    if (mpEnvironmentMapDescriptor) {
+        mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 3);
+    }
+
     for (auto& node : mNodes) {
         node.render(cmd, pCamera, frameInFlightIndex, shared_from_this());
     }
