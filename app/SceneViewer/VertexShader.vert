@@ -31,7 +31,5 @@ void main() {
     outTangent = normalize(vertexTangent);
     outBinormal = normalize(vertexBinormal);
 
-    mat4 model = mat4(0.01);
-
-    gl_Position = camera.proj * camera.view * model * vec4(vertexPosition, 1.0);
+    gl_Position = camera.proj * camera.view * mesh.model * vec4(vertexPosition, 1.0);
 }

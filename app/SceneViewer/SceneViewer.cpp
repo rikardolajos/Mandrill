@@ -20,18 +20,19 @@ public:
     void loadScene()
     {
         // Create a new scene
-        mpScene = mpDevice->createScene();        
+        mpScene = mpDevice->createScene();
 
         // Load meshes from the scene path
         auto meshIndices = mpScene->addMeshFromFile(mScenePath);
 
         // Add a node to the scene
-        std::shared_ptr<Node> pNode = mpScene->addNode();
-        pNode->setPipeline(mPipelines[PIPELINE_FILL]);
+        mpNode = mpScene->addNode();
+        mpNode->setPipeline(mPipelines[PIPELINE_FILL]);
+        mpNode->setTransform(glm::mat4(mSceneScale));
 
         // Add all the meshes to the node
         for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
+            mpNode->addMesh(meshIndex);
         }
 
         // Indicate which sampler should be used to handle textures
@@ -216,11 +217,20 @@ public:
                                                       mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST
                                                                : VK_SAMPLER_MIPMAP_MODE_LINEAR);
                 mpScene->setSampler(mpSampler);
-                mpScene->compile(mpSwapchain->getFramesInFlightCount());
-                mpScene->syncToDevice();
+
+                if (!mScenePath.empty()) {
+                    mpScene->compile(mpSwapchain->getFramesInFlightCount());
+                    mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
+                                               mpSwapchain->getFramesInFlightCount());
+                    mpScene->syncToDevice();
+                }
             }
 
             ImGui::Checkbox("Discard pixel if diffuse alpha channel is 0", &mDiscardOnZeroAlpha);
+
+            if (ImGui::SliderFloat("Scene scale", &mSceneScale, 0.01f, 10.0f)) {
+                mpNode->setTransform(glm::scale(glm::vec3(mSceneScale)));
+            }
 
             if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
                 mpCamera->setMoveSpeed(mCameraMoveSpeed);
@@ -256,8 +266,10 @@ private:
 
     std::shared_ptr<Sampler> mpSampler;
 
-    std::shared_ptr<Scene> mpScene;
     std::filesystem::path mScenePath;
+    std::shared_ptr<Scene> mpScene;
+    std::shared_ptr<Node> mpNode;
+    float mSceneScale = 1.0f;
 
     int mRenderMode = 0;
     bool mDiscardOnZeroAlpha = false;
