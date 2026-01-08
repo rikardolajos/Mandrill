@@ -324,7 +324,7 @@ void Shader::createShader()
     }
 
     // Collect descriptor set layouts
-    std::vector<std::vector<SpvReflectDescriptorBinding*>> descriptorSets;
+    std::vector<std::map<uint32_t, SpvReflectDescriptorBinding*>> descriptorSets;
     std::vector<VkShaderStageFlags> stageFlags;
     std::vector<std::vector<uint32_t>> bindingCount;
     for (size_t i = 0; i < mReflections.size(); i++) {
@@ -353,7 +353,7 @@ void Shader::createShader()
         mSpecializationInfos[i]->pMapEntries->constantID;
 
         for (auto& binding : bindings) {
-            descriptorSets[binding->set].push_back(binding);
+            descriptorSets[binding->set].emplace(binding->binding, binding);
             stageFlags[binding->set] |= static_cast<VkShaderStageFlagBits>(mReflections[i]->GetShaderStage());
 
             if (binding->array.dims_count == 0) {
