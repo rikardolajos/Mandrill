@@ -133,7 +133,7 @@ public:
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(pShader->getDescriptorSetLayout(0));
+        mpCamera->createDescriptor(VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 
         // Image descriptor (layout is in set 3)
         mImageDescriptorSetLayout = pShader->getDescriptorSetLayout(3);

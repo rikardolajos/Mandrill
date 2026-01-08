@@ -82,7 +82,7 @@ public:
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(pShader->getDescriptorSetLayout(0));
+        mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
 
         // Create a sampler that will be used to render materials
         mpSampler = mpDevice->createSampler();

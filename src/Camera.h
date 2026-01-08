@@ -40,9 +40,9 @@ namespace Mandrill
         /// <summary>
         /// Create the descriptor for the camera, containing the view and projection matrices, and their invertations.
         /// </summary>
-        /// <param name="layout">Layout to use for the descriptor</param>
+        /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
         /// <returns></returns>
-        MANDRILL_API void createDescriptor(VkDescriptorSetLayout layout);
+        MANDRILL_API void createDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
         /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
@@ -213,5 +213,6 @@ namespace Mandrill
 
         ptr<Buffer> mpUniforms;
         ptr<Descriptor> mpDescriptor;
+        VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
     };
 } // namespace Mandrill

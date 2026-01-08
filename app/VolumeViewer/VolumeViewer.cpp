@@ -82,7 +82,7 @@ public:
         mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(pRayMarchShader->getDescriptorSetLayout(0));
+        mpCamera->createDescriptor(VK_SHADER_STAGE_FRAGMENT_BIT);
 
         // Create sampler for environment map
         mpEnvironmentMapSampler = mpDevice->createSampler();

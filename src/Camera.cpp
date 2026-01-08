@@ -36,13 +36,32 @@ Camera::Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapcha
 
 Camera::~Camera()
 {
+    if (mDescriptorSetLayout != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mDescriptorSetLayout, nullptr);
+    }
 }
 
-void Camera::createDescriptor(VkDescriptorSetLayout layout)
+void Camera::createDescriptor(VkShaderStageFlags stageFlags)
 {
+
+    VkDescriptorSetLayoutBinding binding = {
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .descriptorCount = 1,
+        .stageFlags = stageFlags,
+    };
+
+    VkDescriptorSetLayoutCreateInfo ci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = 1,
+        .pBindings = &binding,
+    };
+
+    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mDescriptorSetLayout));
+
     std::vector<DescriptorDesc> desc;
     desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
-    mpDescriptor = mpDevice->createDescriptor(desc, layout);
+    mpDescriptor = mpDevice->createDescriptor(desc, mDescriptorSetLayout);
 }
 
 void Camera::updateAspectRatio()
