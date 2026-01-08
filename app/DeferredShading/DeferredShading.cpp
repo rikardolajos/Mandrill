@@ -179,6 +179,8 @@ public:
 
     void update(float delta)
     {
+        mpSwapchain->waitForFence();
+
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
             mpCamera->update(delta, getCursorDelta());
         }

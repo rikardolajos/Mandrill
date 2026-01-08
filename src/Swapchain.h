@@ -34,6 +34,8 @@ namespace Mandrill
         /// </summary>
         MANDRILL_API void recreate();
 
+        MANDRILL_API void waitForFence();
+
         /// <summary>
         /// Acquire the next image in the swapchain to render to.
         /// </summary>

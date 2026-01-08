@@ -104,7 +104,7 @@ void Swapchain::recreate()
     mRecreated = true;
 }
 
-VkCommandBuffer Swapchain::acquireNextImage()
+MANDRILL_API void Swapchain::waitForFence()
 {
     // Wait for the current frame to not be in flight
     Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
@@ -129,7 +129,10 @@ VkCommandBuffer Swapchain::acquireNextImage()
         mScreenshotAvailableCV.wait(lock, [this]() { return mScreenshotState == ScreenshotState::CopiedToHost; });
         mScreenshotState = ScreenshotState::Idle;
     }
+}
 
+VkCommandBuffer Swapchain::acquireNextImage()
+{
     // Acquire index of next image in the swapchain
     VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
                                             mPresentFinishedSemaphores[mInFlightIndex], nullptr, &mImageIndex);

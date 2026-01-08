@@ -117,6 +117,9 @@ public:
 
     void update(float delta)
     {
+        // Wait for GPU to finish rendering and using shared resources
+        mpSwapchain->waitForFence();
+
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
             mpCamera->update(delta, getCursorDelta());
         }

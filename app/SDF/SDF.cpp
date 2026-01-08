@@ -51,6 +51,7 @@ public:
 
     void update(float delta)
     {
+        mpSwapchain->waitForFence();
     }
 
     void render() override
