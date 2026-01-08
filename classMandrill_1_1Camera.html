@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.0</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.1</span>
    </div>
   </td>
  </tr>
@@ -112,9 +112,9 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> ()</td></tr>
 <tr class="memdesc:ad1897942d0ccf91052386388a497349f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor of camera. <br /></td></tr>
 <tr class="separator:ad1897942d0ccf91052386388a497349f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ff4dbc5cc157b5576747804ac021a68" id="r_a0ff4dbc5cc157b5576747804ac021a68"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a0ff4dbc5cc157b5576747804ac021a68">createDescriptor</a> (VkDescriptorSetLayout layout)</td></tr>
-<tr class="memdesc:a0ff4dbc5cc157b5576747804ac021a68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
-<tr class="separator:a0ff4dbc5cc157b5576747804ac021a68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec558d6ced1e0fef3e89576e405ac21b" id="r_aec558d6ced1e0fef3e89576e405ac21b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#aec558d6ced1e0fef3e89576e405ac21b">createDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
+<tr class="memdesc:aec558d6ced1e0fef3e89576e405ac21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
+<tr class="separator:aec558d6ced1e0fef3e89576e405ac21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a57f2889b7264fb2d82f6e8c4ab2fe0" id="r_a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a3a57f2889b7264fb2d82f6e8c4ab2fe0">updateAspectRatio</a> ()</td></tr>
 <tr class="memdesc:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.  <br /></td></tr>
 <tr class="separator:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -247,8 +247,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 </div>
 </div>
-<a id="a0ff4dbc5cc157b5576747804ac021a68" name="a0ff4dbc5cc157b5576747804ac021a68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ff4dbc5cc157b5576747804ac021a68">&#9670;&#160;</a></span>createDescriptor()</h2>
+<a id="aec558d6ced1e0fef3e89576e405ac21b" name="aec558d6ced1e0fef3e89576e405ac21b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec558d6ced1e0fef3e89576e405ac21b">&#9670;&#160;</a></span>createDescriptor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -256,8 +256,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
         <tr>
           <td class="memname">void Camera::createDescriptor </td>
           <td>(</td>
-          <td class="paramtype">VkDescriptorSetLayout&#160;</td>
-          <td class="paramname"><em>layout</em></td><td>)</td>
+          <td class="paramtype">VkShaderStageFlags&#160;</td>
+          <td class="paramname"><em>stageFlags</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -266,7 +266,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <p>Create the descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">layout</td><td><a class="el" href="classMandrill_1_1Layout.html" title="Layout class that abstracts the handling of descriptor set layouts and push constants in Vulkan.">Layout</a> to use for the descriptor</td></tr>
+    <tr><td class="paramname">stageFlags</td><td>Which shader stages the camera matrices will be used in</td></tr>
   </table>
   </dd>
 </dl>
