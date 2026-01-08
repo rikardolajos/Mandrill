@@ -121,7 +121,7 @@ void App::createGUI(ptr<Device> pDevice, ptr<Pass> pPass)
 
     // Create fonts texture
     ImGuiIO& io = ImGui::GetIO();
-    mFont = io.Fonts->AddFontFromFileTTF("Roboto.ttf", 16);
+    mFont = io.Fonts->AddFontFromFileTTF(GetResourcePath("fonts/Roboto.ttf").string().c_str(), 16);
 
     ImGui_ImplVulkan_CreateFontsTexture();
 
@@ -543,7 +543,8 @@ void App::initGLFW(const std::string& title, uint32_t width, uint32_t height)
     }
 
     GLFWimage image = {};
-    image.pixels = stbi_load("icon.png", &image.width, &image.height, nullptr, 4);
+    image.pixels =
+        stbi_load(GetResourcePath("textures/icon.png").string().c_str(), &image.width, &image.height, nullptr, 4);
     if (image.pixels) {
         glfwSetWindowIcon(mpWindow, 1, &image);
         stbi_image_free(image.pixels);

@@ -147,6 +147,26 @@ namespace Mandrill
         return path.remove_filename();
     }
 
+    /// <summary>
+    /// Get the resource directory path. This is the root folder for resources like models and textures.
+    /// </summary>
+    /// <returns>Path to resource directory</returns>
+    static inline std::filesystem::path GetResourceDirectory()
+    {
+        const std::filesystem::path resourceDir = MANDRILL_RESOURCE_DIR;
+        return resourceDir;
+    }
+
+    /// <summary>
+    /// Get the path to a specific resource. Use this for models and textures.
+    /// </summary>
+    /// <param name="resource">Resource to fetch</param>
+    /// <returns>Path to resource</returns>
+    static inline std::filesystem::path GetResourcePath(std::string_view resource)
+    {
+        return GetResourceDirectory() / resource;
+    }
+
 #if MANDRILL_LINUX
 #define LPCSTR const char*
 #endif

@@ -143,7 +143,7 @@ public:
         mpSampler = mpDevice->createSampler();
 
         // Load scene
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
         std::shared_ptr<Node> pNode = mpScene->addNode();
         pNode->setPipeline(mPipelines[GBUFFER_PASS]); // Render scene with first pass pipeline
         for (auto meshIndex : meshIndices) {

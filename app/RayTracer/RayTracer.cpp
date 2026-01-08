@@ -86,7 +86,7 @@ public:
 
         // Create a scene and load scene
         mpScene = mpDevice->createScene();
-        auto meshIndices = mpScene->addMeshFromFile("D:\\scenes\\crytek_sponza\\sponza.obj");
+        auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
         std::shared_ptr<Node> pNode = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
             pNode->addMesh(meshIndex);
@@ -96,7 +96,7 @@ public:
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
         // Add second node
-        auto meshIndices2 = mpScene->addMeshFromFile("D:\\scenes\\pbr_box\\pbr_box.obj");
+        auto meshIndices2 = mpScene->addMeshFromFile(GetResourcePath("scenes/pbr_box/pbr_box.obj"));
         mpCube = mpScene->addNode();
         for (auto meshIndex : meshIndices2) {
             mpCube->addMesh(meshIndex);
@@ -108,7 +108,7 @@ public:
 
         // Load environment map
         mpEnvironmentMap = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
-                                                   "D:\\scenes\\hdris\\lilienstein_4k.hdr");
+                                                   GetResourcePath("hdris/lilienstein_4k.hdr"));
         mpEnvironmentMap->setSampler(mpSampler);
         mpScene->setEnvironmentMap(mpEnvironmentMap);
 

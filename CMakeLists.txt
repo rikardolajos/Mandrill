@@ -14,7 +14,7 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-project("Mandrill" VERSION 2025.10.0)
+project("Mandrill" VERSION 2026.1.0)
 
 # Whether sample apps should be built or not
 option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)
@@ -83,8 +83,15 @@ if (NOT MANDRILL_EXCLUDE_APPS)
     add_subdirectory(app)
 endif()
 
-configure_file(res/icon.png ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/icon.png COPYONLY)
-configure_file(res/Roboto.ttf ${MANDRILL_RUNTIME_OUTPUT_DIRECTORY}/Roboto.ttf COPYONLY)
+# Download resources
+message(STATUS "Downloading Mandrill resources...")
+include(FetchContent)
+FetchContent_Declare(resources
+    URL https://fileadmin.cs.lth.se/cs/Education/EDAF80/assignments/MandrillResources.zip
+    URL_HASH SHA256=2f093ed1de41fc311274d605550d8fd369d793a3799c725a7d77913465978808
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res"
+)
+FetchContent_MakeAvailable(resources)
 
 # Generate documentation
 option(MANDRILL_BUILD_DOC "Build documentation" ON)

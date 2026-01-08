@@ -365,3 +365,6 @@ FodyWeavers.xsd
 
 # Visual Studio Code
 .vscode
+
+# Ignore resources
+res/
