@@ -264,7 +264,8 @@ static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::ve
     return result;
 }
 
-static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t requiredFamilyFlags)
+static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+                                    VkQueueFlags requiredFamilyFlags)
 {
     uint32_t count;
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, nullptr);
@@ -382,7 +383,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     }
 
     mQueueFamilyIndex = getQueueFamilyIndex(mPhysicalDevice, mSurface,
-                                            VK_QUEUE_GRAPHICS_BIT && VK_QUEUE_COMPUTE_BIT && VK_QUEUE_TRANSFER_BIT);
+                                            VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
 
     float queuePriority = 1.0f;
     VkDeviceQueueCreateInfo queueCreateInfo = {
