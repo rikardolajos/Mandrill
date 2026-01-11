@@ -11,9 +11,8 @@ var searchData=
   ['_7enode_8',['~Node',['../classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c',1,'Mandrill::Node']]],
   ['_7epass_9',['~Pass',['../classMandrill_1_1Pass.html#abe2fe9b29d21424fe4b410fc8e98606c',1,'Mandrill::Pass']]],
   ['_7epipeline_10',['~Pipeline',['../classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec',1,'Mandrill::Pipeline']]],
-  ['_7esampler_11',['~Sampler',['../classMandrill_1_1Sampler.html#afbbbd238b78dd3024686c852b69fa64e',1,'Mandrill::Sampler']]],
-  ['_7escene_12',['~Scene',['../classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1',1,'Mandrill::Scene']]],
-  ['_7eshader_13',['~Shader',['../classMandrill_1_1Shader.html#aff01df87e8a102f270b5b135a295e59d',1,'Mandrill::Shader']]],
-  ['_7eswapchain_14',['~Swapchain',['../classMandrill_1_1Swapchain.html#a5848dea9c4317e57363760ed0c052ea7',1,'Mandrill::Swapchain']]],
-  ['_7etexture_15',['~Texture',['../classMandrill_1_1Texture.html#a09c4bcb7462f64c1d20fa69dba3cee8a',1,'Mandrill::Texture']]]
+  ['_7escene_11',['~Scene',['../classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1',1,'Mandrill::Scene']]],
+  ['_7eshader_12',['~Shader',['../classMandrill_1_1Shader.html#aff01df87e8a102f270b5b135a295e59d',1,'Mandrill::Shader']]],
+  ['_7eswapchain_13',['~Swapchain',['../classMandrill_1_1Swapchain.html#a5848dea9c4317e57363760ed0c052ea7',1,'Mandrill::Swapchain']]],
+  ['_7etexture_14',['~Texture',['../classMandrill_1_1Texture.html#a09c4bcb7462f64c1d20fa69dba3cee8a',1,'Mandrill::Texture']]]
 ];

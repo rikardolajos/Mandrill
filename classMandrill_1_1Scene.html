@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.1</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.2</span>
    </div>
   </td>
  </tr>
@@ -143,12 +143,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a40fd82a0b65816031e3d43a1a8ddc2d1" id="r_a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a40fd82a0b65816031e3d43a1a8ddc2d1">bindRayTracingDescriptors</a> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, VkPipelineLayout layout, uint32_t frameInFlightIndex)</td></tr>
 <tr class="memdesc:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind ray-tracing descriptors.  <br /></td></tr>
 <tr class="separator:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a358eda1b1cd23d09ba91fe6e209062" id="r_a7a358eda1b1cd23d09ba91fe6e209062"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a7a358eda1b1cd23d09ba91fe6e209062">setSampler</a> (const ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt; pSampler)</td></tr>
-<tr class="memdesc:a7a358eda1b1cd23d09ba91fe6e209062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sampler to use for rendering materials.  <br /></td></tr>
-<tr class="separator:a7a358eda1b1cd23d09ba91fe6e209062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fdf0c2227fb958e7aea078773a52f21" id="r_a5fdf0c2227fb958e7aea078773a52f21"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; <a class="el" href="classMandrill_1_1Node.html">Node</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">getNodes</a> ()</td></tr>
 <tr class="memdesc:a5fdf0c2227fb958e7aea078773a52f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of all nodes in the scene.  <br /></td></tr>
 <tr class="separator:a5fdf0c2227fb958e7aea078773a52f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84813b375bf18cf7576b634e98ec5b85" id="r_a84813b375bf18cf7576b634e98ec5b85"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::unordered_map&lt; std::string, ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">getTextures</a> ()</td></tr>
+<tr class="memdesc:a84813b375bf18cf7576b634e98ec5b85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all textures in the scene.  <br /></td></tr>
+<tr class="separator:a84813b375bf18cf7576b634e98ec5b85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa94c110ecb52ac4681ca92b0295bd31" id="r_afa94c110ecb52ac4681ca92b0295bd31"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">getVertexCount</a> () const</td></tr>
 <tr class="memdesc:afa94c110ecb52ac4681ca92b0295bd31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of vertices in the scene.  <br /></td></tr>
 <tr class="separator:afa94c110ecb52ac4681ca92b0295bd31"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -885,6 +885,34 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a84813b375bf18cf7576b634e98ec5b85" name="a84813b375bf18cf7576b634e98ec5b85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84813b375bf18cf7576b634e98ec5b85">&#9670;&#160;</a></span>getTextures()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API std::unordered_map&lt; std::string, ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; &gt; &amp; Mandrill::Scene::getTextures </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get all textures in the scene. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unordered map of textures</dd></dl>
+
+</div>
+</div>
 <a id="afa94c110ecb52ac4681ca92b0295bd31" name="afa94c110ecb52ac4681ca92b0295bd31"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa94c110ecb52ac4681ca92b0295bd31">&#9670;&#160;</a></span>getVertexCount()</h2>
 
@@ -986,33 +1014,6 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pTexture</td><td><a class="el" href="classMandrill_1_1Texture.html" title="Texture class for managing textures in Vulkan.">Texture</a> to use as environment map</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="a7a358eda1b1cd23d09ba91fe6e209062" name="a7a358eda1b1cd23d09ba91fe6e209062"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a358eda1b1cd23d09ba91fe6e209062">&#9670;&#160;</a></span>setSampler()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::setSampler </td>
-          <td>(</td>
-          <td class="paramtype">const ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt;&#160;</td>
-          <td class="paramname"><em>pSampler</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Set sampler to use for rendering materials. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pSampler</td><td><a class="el" href="classMandrill_1_1Sampler.html" title="Sampler class for managing texture samplers in Vulkan.">Sampler</a> to be used for all materials</td></tr>
   </table>
   </dd>
 </dl>

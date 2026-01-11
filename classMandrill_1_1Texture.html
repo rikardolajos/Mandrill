@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.1</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.2</span>
    </div>
   </td>
  </tr>
@@ -115,12 +115,9 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> ()</td></tr>
 <tr class="memdesc:a09c4bcb7462f64c1d20fa69dba3cee8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for texture. <br /></td></tr>
 <tr class="separator:a09c4bcb7462f64c1d20fa69dba3cee8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2cb8429990504743bc46d5b464b2415" id="r_af2cb8429990504743bc46d5b464b2415"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#af2cb8429990504743bc46d5b464b2415">setSampler</a> (const ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt; pSampler)</td></tr>
-<tr class="memdesc:af2cb8429990504743bc46d5b464b2415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the sampler for the texture.  <br /></td></tr>
-<tr class="separator:af2cb8429990504743bc46d5b464b2415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9634fcdf3113375f71c73b0d4d5d9fde" id="r_a9634fcdf3113375f71c73b0d4d5d9fde"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a9634fcdf3113375f71c73b0d4d5d9fde">getSampler</a> () const</td></tr>
-<tr class="memdesc:a9634fcdf3113375f71c73b0d4d5d9fde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the sampler handle currently in use by the texture.  <br /></td></tr>
-<tr class="separator:a9634fcdf3113375f71c73b0d4d5d9fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4214721b55776edb3c7fd9786e528b9e" id="r_a4214721b55776edb3c7fd9786e528b9e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkSampler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a4214721b55776edb3c7fd9786e528b9e">getSampler</a> () const</td></tr>
+<tr class="memdesc:a4214721b55776edb3c7fd9786e528b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the sampler handle currently in use by the texture.  <br /></td></tr>
+<tr class="separator:a4214721b55776edb3c7fd9786e528b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27057d66e43feec35a34001745064448" id="r_a27057d66e43feec35a34001745064448"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a27057d66e43feec35a34001745064448">getImage</a> () const</td></tr>
 <tr class="memdesc:a27057d66e43feec35a34001745064448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the image of the texture.  <br /></td></tr>
 <tr class="separator:a27057d66e43feec35a34001745064448"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,6 +127,18 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 <tr class="memitem:ab9cbd74a9f79686db231593feda126dc" id="r_ab9cbd74a9f79686db231593feda126dc"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkWriteDescriptorSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#ab9cbd74a9f79686db231593feda126dc">getWriteDescriptor</a> (uint32_t binding) const</td></tr>
 <tr class="memdesc:ab9cbd74a9f79686db231593feda126dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the write descriptor set. Useful when using push descriptors.  <br /></td></tr>
 <tr class="separator:ab9cbd74a9f79686db231593feda126dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10d68046a000f0c8d9e77ac391a61769" id="r_a10d68046a000f0c8d9e77ac391a61769"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a10d68046a000f0c8d9e77ac391a61769">setMagFilter</a> (VkFilter filter)</td></tr>
+<tr class="memdesc:a10d68046a000f0c8d9e77ac391a61769"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the magnification filter.  <br /></td></tr>
+<tr class="separator:a10d68046a000f0c8d9e77ac391a61769"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affad5aea08d8f01b32db8ebcd0f30ee3" id="r_affad5aea08d8f01b32db8ebcd0f30ee3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#affad5aea08d8f01b32db8ebcd0f30ee3">setMinFilter</a> (VkFilter filter)</td></tr>
+<tr class="memdesc:affad5aea08d8f01b32db8ebcd0f30ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minification filter.  <br /></td></tr>
+<tr class="separator:affad5aea08d8f01b32db8ebcd0f30ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634654ad659a0bc65ee90002b3500b9a" id="r_a634654ad659a0bc65ee90002b3500b9a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a634654ad659a0bc65ee90002b3500b9a">setMipmapMode</a> (VkSamplerMipmapMode mode)</td></tr>
+<tr class="memdesc:a634654ad659a0bc65ee90002b3500b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the mipmap mode.  <br /></td></tr>
+<tr class="separator:a634654ad659a0bc65ee90002b3500b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54ac5a1725c376715cb80971b230acf9" id="r_a54ac5a1725c376715cb80971b230acf9"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a54ac5a1725c376715cb80971b230acf9">setAddressMode</a> (VkSamplerAddressMode modeU, VkSamplerAddressMode modeV, VkSamplerAddressMode modeW)</td></tr>
+<tr class="memdesc:a54ac5a1725c376715cb80971b230acf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the address mode for U, V and W coordinates.  <br /></td></tr>
+<tr class="separator:a54ac5a1725c376715cb80971b230acf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Texture.html" title="Texture class for managing textures in Vulkan.">Texture</a> class for managing textures in Vulkan. </p>
@@ -335,8 +344,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 
 </div>
 </div>
-<a id="a9634fcdf3113375f71c73b0d4d5d9fde" name="a9634fcdf3113375f71c73b0d4d5d9fde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9634fcdf3113375f71c73b0d4d5d9fde">&#9670;&#160;</a></span>getSampler()</h2>
+<a id="a4214721b55776edb3c7fd9786e528b9e" name="a4214721b55776edb3c7fd9786e528b9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4214721b55776edb3c7fd9786e528b9e">&#9670;&#160;</a></span>getSampler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -345,7 +354,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt; Mandrill::Texture::getSampler </td>
+          <td class="memname">MANDRILL_API VkSampler Mandrill::Texture::getSampler </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -359,7 +368,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 </div><div class="memdoc">
 
 <p>Get the sampler handle currently in use by the texture. </p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Sampler.html" title="Sampler class for managing texture samplers in Vulkan.">Sampler</a> in use</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Sampler in use</dd></dl>
 
 </div>
 </div>
@@ -398,8 +407,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 
 </div>
 </div>
-<a id="af2cb8429990504743bc46d5b464b2415" name="af2cb8429990504743bc46d5b464b2415"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2cb8429990504743bc46d5b464b2415">&#9670;&#160;</a></span>setSampler()</h2>
+<a id="a54ac5a1725c376715cb80971b230acf9" name="a54ac5a1725c376715cb80971b230acf9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54ac5a1725c376715cb80971b230acf9">&#9670;&#160;</a></span>setAddressMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -408,10 +417,63 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MANDRILL_API void Mandrill::Texture::setSampler </td>
+          <td class="memname">MANDRILL_API void Mandrill::Texture::setAddressMode </td>
           <td>(</td>
-          <td class="paramtype">const ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt;&#160;</td>
-          <td class="paramname"><em>pSampler</em></td><td>)</td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>modeU</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>modeV</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkSamplerAddressMode&#160;</td>
+          <td class="paramname"><em>modeW</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the address mode for U, V and W coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">modeU</td><td>U address mode</td></tr>
+    <tr><td class="paramname">modeV</td><td>V address mode</td></tr>
+    <tr><td class="paramname">modeW</td><td>W address mode</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a10d68046a000f0c8d9e77ac391a61769" name="a10d68046a000f0c8d9e77ac391a61769"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d68046a000f0c8d9e77ac391a61769">&#9670;&#160;</a></span>setMagFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API void Mandrill::Texture::setMagFilter </td>
+          <td>(</td>
+          <td class="paramtype">VkFilter&#160;</td>
+          <td class="paramname"><em>filter</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -422,13 +484,84 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 </table>
 </div><div class="memdoc">
 
-<p>Set the sampler for the texture. </p>
+<p>Set the magnification filter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pSampler</td><td><a class="el" href="classMandrill_1_1Sampler.html" title="Sampler class for managing texture samplers in Vulkan.">Sampler</a> to use</td></tr>
+    <tr><td class="paramname">filter</td><td>Magnification filter</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="affad5aea08d8f01b32db8ebcd0f30ee3" name="affad5aea08d8f01b32db8ebcd0f30ee3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affad5aea08d8f01b32db8ebcd0f30ee3">&#9670;&#160;</a></span>setMinFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API void Mandrill::Texture::setMinFilter </td>
+          <td>(</td>
+          <td class="paramtype">VkFilter&#160;</td>
+          <td class="paramname"><em>filter</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the minification filter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filter</td><td>Minification filter</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a634654ad659a0bc65ee90002b3500b9a" name="a634654ad659a0bc65ee90002b3500b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a634654ad659a0bc65ee90002b3500b9a">&#9670;&#160;</a></span>setMipmapMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API void Mandrill::Texture::setMipmapMode </td>
+          <td>(</td>
+          <td class="paramtype">VkSamplerMipmapMode&#160;</td>
+          <td class="paramname"><em>mode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the mipmap mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>Mipmap mode</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>

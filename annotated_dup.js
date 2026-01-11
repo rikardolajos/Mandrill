@@ -15,7 +15,6 @@ var annotated_dup =
       [ "Pass", "classMandrill_1_1Pass.html", "classMandrill_1_1Pass" ],
       [ "Pipeline", "classMandrill_1_1Pipeline.html", "classMandrill_1_1Pipeline" ],
       [ "RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html", "classMandrill_1_1RayTracingPipeline" ],
-      [ "Sampler", "classMandrill_1_1Sampler.html", "classMandrill_1_1Sampler" ],
       [ "Scene", "classMandrill_1_1Scene.html", "classMandrill_1_1Scene" ],
       [ "Shader", "classMandrill_1_1Shader.html", "classMandrill_1_1Shader" ],
       [ "Swapchain", "classMandrill_1_1Swapchain.html", "classMandrill_1_1Swapchain" ],

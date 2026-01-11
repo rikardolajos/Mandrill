@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.1</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.1.2</span>
    </div>
   </td>
  </tr>
@@ -186,9 +186,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a5983cdc34f15dc641865618476750bcd" id="r_a5983cdc34f15dc641865618476750bcd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1RayTracingPipeline.html">RayTracingPipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const RayTracingPipelineDesc &amp;desc)</td></tr>
 <tr class="memdesc:a5983cdc34f15dc641865618476750bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new ray tracing pipeline.  <br /></td></tr>
 <tr class="separator:a5983cdc34f15dc641865618476750bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a403f2321255446b7560924fcbdc1482e" id="r_a403f2321255446b7560924fcbdc1482e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a403f2321255446b7560924fcbdc1482e">createSampler</a> (VkFilter magFilter=VK_FILTER_LINEAR, VkFilter minFilter=VK_FILTER_LINEAR, VkSamplerMipmapMode mipmapMode=VK_SAMPLER_MIPMAP_MODE_LINEAR, VkSamplerAddressMode addressModeU=VK_SAMPLER_ADDRESS_MODE_REPEAT, VkSamplerAddressMode addressModeV=VK_SAMPLER_ADDRESS_MODE_REPEAT, VkSamplerAddressMode addressModeW=VK_SAMPLER_ADDRESS_MODE_REPEAT)</td></tr>
-<tr class="memdesc:a403f2321255446b7560924fcbdc1482e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture sampler.  <br /></td></tr>
-<tr class="separator:a403f2321255446b7560924fcbdc1482e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a72ce7b4a1610eef8fe28dd86a07f08" id="r_a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">createScene</a> ()</td></tr>
 <tr class="memdesc:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new scene.  <br /></td></tr>
 <tr class="separator:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -828,72 +825,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A new ray-tracing pipeline</dd></dl>
-
-</div>
-</div>
-<a id="a403f2321255446b7560924fcbdc1482e" name="a403f2321255446b7560924fcbdc1482e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a403f2321255446b7560924fcbdc1482e">&#9670;&#160;</a></span>createSampler()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Sampler.html">Sampler</a> &gt; Device::createSampler </td>
-          <td>(</td>
-          <td class="paramtype">VkFilter&#160;</td>
-          <td class="paramname"><em>magFilter</em> = <code>VK_FILTER_LINEAR</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkFilter&#160;</td>
-          <td class="paramname"><em>minFilter</em> = <code>VK_FILTER_LINEAR</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkSamplerMipmapMode&#160;</td>
-          <td class="paramname"><em>mipmapMode</em> = <code>VK_SAMPLER_MIPMAP_MODE_LINEAR</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkSamplerAddressMode&#160;</td>
-          <td class="paramname"><em>addressModeU</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkSamplerAddressMode&#160;</td>
-          <td class="paramname"><em>addressModeV</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkSamplerAddressMode&#160;</td>
-          <td class="paramname"><em>addressModeW</em> = <code>VK_SAMPLER_ADDRESS_MODE_REPEAT</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Create a new texture sampler. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">magFilter</td><td>Magnification filter</td></tr>
-    <tr><td class="paramname">minFilter</td><td>Minification filter</td></tr>
-    <tr><td class="paramname">mipmapMode</td><td>MIP map mode</td></tr>
-    <tr><td class="paramname">addressModeU</td><td>Address mode/wrapping mode U</td></tr>
-    <tr><td class="paramname">addressModeV</td><td>Address mode/wrapping mode V</td></tr>
-    <tr><td class="paramname">addressModeW</td><td>Address mode/wrapping mode W</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A new sampler</dd></dl>
 
 </div>
 </div>

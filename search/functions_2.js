@@ -20,9 +20,8 @@ var searchData=
   ['createpipeline_17',['createPipeline',['../classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62',1,'Mandrill::Device']]],
   ['createraytracingdescriptors_18',['createRayTracingDescriptors',['../classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c',1,'Mandrill::Scene']]],
   ['createraytracingpipeline_19',['createRayTracingPipeline',['../classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd',1,'Mandrill::Device']]],
-  ['createsampler_20',['createSampler',['../classMandrill_1_1Device.html#a403f2321255446b7560924fcbdc1482e',1,'Mandrill::Device']]],
-  ['createscene_21',['createScene',['../classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08',1,'Mandrill::Device']]],
-  ['createshader_22',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
-  ['createswapchain_23',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
-  ['createtexture_24',['createtexture',['../classMandrill_1_1Device.html#a79f96ba1aabd5f29d21d2a9c1b26d32b',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)'],['../classMandrill_1_1Device.html#a401f8d7505a50c1d15562f54e4e752af',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps=false)']]]
+  ['createscene_20',['createScene',['../classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08',1,'Mandrill::Device']]],
+  ['createshader_21',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
+  ['createswapchain_22',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
+  ['createtexture_23',['createtexture',['../classMandrill_1_1Device.html#a79f96ba1aabd5f29d21d2a9c1b26d32b',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)'],['../classMandrill_1_1Device.html#a401f8d7505a50c1d15562f54e4e752af',1,'Mandrill::Device::createTexture(TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps=false)']]]
 ];

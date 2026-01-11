@@ -17,7 +17,6 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "Pass.h", "Pass_8h_source.html", null ],
     [ "Pipeline.h", "Pipeline_8h_source.html", null ],
     [ "RayTracingPipeline.h", "RayTracingPipeline_8h_source.html", null ],
-    [ "Sampler.h", "Sampler_8h_source.html", null ],
     [ "Scene.h", "Scene_8h_source.html", null ],
     [ "Shader.h", "Shader_8h_source.html", null ],
     [ "Swapchain.h", "Swapchain_8h_source.html", null ],

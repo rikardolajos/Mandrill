@@ -15,7 +15,6 @@ var hierarchy =
     [ "Mandrill::Pipeline", "classMandrill_1_1Pipeline.html", [
       [ "Mandrill::RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html", null ]
     ] ],
-    [ "Mandrill::Sampler", "classMandrill_1_1Sampler.html", null ],
     [ "Mandrill::Scene", "classMandrill_1_1Scene.html", null ],
     [ "Mandrill::Shader", "classMandrill_1_1Shader.html", null ],
     [ "Mandrill::Swapchain", "classMandrill_1_1Swapchain.html", null ],
