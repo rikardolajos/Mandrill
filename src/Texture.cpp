@@ -95,18 +95,22 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
         break;
     }
     }
+    createSampler();
 }
 
 Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const void* pData, uint32_t width,
-                 uint32_t height,
-                 uint32_t depth, uint32_t channels, bool mipmaps)
+                 uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
     create(format, pData, width, height, depth, channels, mipmaps);
+    createSampler();
 }
 
 Texture::~Texture()
 {
+    vkDeviceWaitIdle(mpDevice->getDevice());
+
+    vkDestroySampler(mpDevice->getDevice(), mSampler, nullptr);
 }
 
 void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
@@ -240,4 +244,34 @@ void Texture::generateMipmaps(VkCommandBuffer cmd)
                           VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
                           VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, &subresourceRange);
+}
+
+void Texture::createSampler()
+{
+    if (mSampler != VK_NULL_HANDLE) {
+        vkDestroySampler(mpDevice->getDevice(), mSampler, nullptr);
+    }
+
+    VkSamplerCreateInfo ci = {
+        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+        .magFilter = mMagFilter,
+        .minFilter = mMinFilter,
+        .mipmapMode = mMipmapMode,
+        .addressModeU = mAddressModeU,
+        .addressModeV = mAddressModeV,
+        .addressModeW = mAddressModeW,
+        .mipLodBias = 0.0f,
+        .anisotropyEnable = VK_TRUE,
+        .maxAnisotropy = mpDevice->getProperties().physicalDevice.limits.maxSamplerAnisotropy,
+        .compareEnable = VK_FALSE,
+        .compareOp = VK_COMPARE_OP_ALWAYS,
+        .minLod = 0.0f,
+        .maxLod = VK_LOD_CLAMP_NONE,
+        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+        .unnormalizedCoordinates = VK_FALSE,
+    };
+
+    Check::Vk(vkCreateSampler(mpDevice->getDevice(), &ci, nullptr, &mSampler));
+
+    mImageInfo.sampler = mSampler;
 }

@@ -44,9 +44,6 @@ public:
         mpPass = mpDevice->createPass(mpSwapchain->getExtent(), VK_FORMAT_R8G8B8A8_UNORM, colorAttachmentCount,
                                       depthAttachemnt);
 
-        // Create a sampler that will be used to render materials
-        mpSampler = mpDevice->createSampler();
-
         // Create an image to render to
         mpImage = createImage(mpDevice, mpSwapchain);
 
@@ -102,14 +99,12 @@ public:
             mpCube->addMesh(meshIndex);
         }
 
-        mpScene->setSampler(mpSampler);
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
         mpScene->syncToDevice();
 
         // Load environment map
         mpEnvironmentMap = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
                                                    GetResourcePath("hdris/lilienstein_4k.hdr"));
-        mpEnvironmentMap->setSampler(mpSampler);
         mpScene->setEnvironmentMap(mpEnvironmentMap);
 
         // Set specialization constants now that the scene parameters are calculated
@@ -268,7 +263,6 @@ private:
     std::shared_ptr<AccelerationStructure> mpAccelerationStructure;
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
-    std::shared_ptr<Sampler> mpSampler;
 
     std::shared_ptr<Texture> mpEnvironmentMap;
 

@@ -10,7 +10,6 @@
 #include "Pass.h"
 #include "Pipeline.h"
 #include "RayTracingPipeline.h"
-#include "Sampler.h"
 #include "Scene.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -568,14 +567,6 @@ ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader,
                                                          const RayTracingPipelineDesc& desc)
 {
     return make_ptr<RayTracingPipeline>(shared_from_this(), pShader, desc);
-}
-
-ptr<Sampler> Device::createSampler(VkFilter magFilter, VkFilter minFilter, VkSamplerMipmapMode mipmapMode,
-                                   VkSamplerAddressMode addressModeU, VkSamplerAddressMode addressModeV,
-                                   VkSamplerAddressMode addressModeW)
-{
-    return make_ptr<Sampler>(shared_from_this(), magFilter, minFilter, mipmapMode, addressModeU, addressModeV,
-                             addressModeW);
 }
 
 ptr<Texture> Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path& path, bool mipmaps)

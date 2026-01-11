@@ -45,7 +45,7 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
                 iis.resize(desc[d].arrayCount);
                 for (uint32_t t = 0; t < desc[d].arrayCount; t++) {
                     iis[t] = {
-                        .sampler = textures->at(t)->getSampler()->getSampler(),
+                        .sampler = textures->at(t)->getSampler(),
                         .imageView = textures->at(t)->getImageView(),
                         .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     };
@@ -54,7 +54,7 @@ Descriptor::Descriptor(ptr<Device> pDevice, const std::vector<DescriptorDesc>& d
             } else {
                 iis.resize(1);
                 iis[0] = {
-                    .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler()->getSampler(),
+                    .sampler = std::get<ptr<Texture>>(desc[d].pResource)->getSampler(),
                     .imageView = desc[d].imageView ? desc[d].imageView
                                                    : std::get<ptr<Texture>>(desc[d].pResource)->getImageView(),
                     .imageLayout = desc[d].imageLayout ? desc[d].imageLayout : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,

@@ -35,9 +35,6 @@ public:
             mpNode->addMesh(meshIndex);
         }
 
-        // Indicate which sampler should be used to handle textures
-        mpScene->setSampler(mpSampler);
-
         // Calculate and allocate buffers
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
 
@@ -84,9 +81,6 @@ public:
         mpCamera->setFov(60.0f);
         mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
 
-        // Create a sampler that will be used to render materials
-        mpSampler = mpDevice->createSampler();
-
         // Start with an empty scene
         mpScene = mpDevice->createScene();
 
@@ -102,6 +96,27 @@ public:
     void update(float delta)
     {
         mpSwapchain->waitForFence();
+
+        if (mChangeSampler) {
+            mChangeSampler = false;
+
+            // We have for all the frames in flight to be idle before changing samplers
+            vkDeviceWaitIdle(mpDevice->getDevice());
+            for (auto& texture : mpScene->getTextures()) {
+                texture.second->setMagFilter(mMagFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR);
+                texture.second->setMinFilter(mMinFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR);
+                texture.second->setMipmapMode(mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST
+                                                       : VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            }
+
+            // Since we changed samplers, we need to re-create descriptors
+            if (!mScenePath.empty()) {
+                mpScene->compile(mpSwapchain->getFramesInFlightCount());
+                mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
+                                           mpSwapchain->getFramesInFlightCount());
+                mpScene->syncToDevice();
+            }
+        }
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
             mpCamera->update(delta, getCursorDelta());
@@ -199,33 +214,17 @@ public:
                 ImGui::SliderFloat("Line width", &mLineWidth, 1.0f, 10.0f);
             }
 
-            bool newSampler = false;
             const char* magFilters[] = {"Linear", "Nearest"};
             if (ImGui::Combo("Mag filter", &mMagFilter, magFilters, IM_ARRAYSIZE(magFilters))) {
-                newSampler = true;
+                mChangeSampler = true;
             }
             const char* minFilters[] = {"Linear", "Nearest"};
             if (ImGui::Combo("Min filter", &mMinFilter, minFilters, IM_ARRAYSIZE(minFilters))) {
-                newSampler = true;
+                mChangeSampler = true;
             }
             const char* mipModes[] = {"Linear", "Nearest"};
             if (ImGui::Combo("Mip mode", &mMipMode, mipModes, IM_ARRAYSIZE(mipModes))) {
-                newSampler = true;
-            }
-
-            if (newSampler) {
-                mpSampler = std::make_shared<Sampler>(mpDevice, mMagFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
-                                                      mMinFilter ? VK_FILTER_NEAREST : VK_FILTER_LINEAR,
-                                                      mMipMode ? VK_SAMPLER_MIPMAP_MODE_NEAREST
-                                                               : VK_SAMPLER_MIPMAP_MODE_LINEAR);
-                mpScene->setSampler(mpSampler);
-
-                if (!mScenePath.empty()) {
-                    mpScene->compile(mpSwapchain->getFramesInFlightCount());
-                    mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
-                                               mpSwapchain->getFramesInFlightCount());
-                    mpScene->syncToDevice();
-                }
+                mChangeSampler = true;
             }
 
             ImGui::Checkbox("Discard pixel if diffuse alpha channel is 0", &mDiscardOnZeroAlpha);
@@ -266,8 +265,6 @@ private:
     std::shared_ptr<Camera> mpCamera;
     float mCameraMoveSpeed = 1.0f;
 
-    std::shared_ptr<Sampler> mpSampler;
-
     std::filesystem::path mScenePath;
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Node> mpNode;
@@ -279,6 +276,7 @@ private:
     glm::vec3 mLineColor = glm::vec3(0.0f, 1.0f, 0.0f);
     float mLineWidth = 1.0f;
     int mFrontFace = 0;
+    bool mChangeSampler = false;
     int mCullMode = 0;
     int mMagFilter = 0;
     int mMinFilter = 0;

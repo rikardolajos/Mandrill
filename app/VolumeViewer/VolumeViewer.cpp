@@ -84,14 +84,6 @@ public:
         mpCamera->setFov(60.0f);
         mpCamera->createDescriptor(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        // Create sampler for environment map
-        mpEnvironmentMapSampler = mpDevice->createSampler();
-
-        // Create a sampler that will be used to sample volume
-        mpVolumeSampler = mpDevice->createSampler(
-            VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
-
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
     }
@@ -182,7 +174,9 @@ public:
                 if (!mVolumePath.empty()) {
                     mpVolume = std::make_shared<Texture>(mpDevice, TextureType::Texture3D, VK_FORMAT_R32_SFLOAT,
                                                          mVolumePath, false);
-                    mpVolume->setSampler(mpVolumeSampler);
+                    mpVolume->setAddressMode(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+                                             VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+                                             VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
 
                     std::vector<DescriptorDesc> desc;
                     desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
@@ -224,7 +218,6 @@ public:
                 if (!mEnvironmentMapPath.empty()) {
                     mpEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
                                                                  VK_FORMAT_R8G8B8A8_UNORM, mEnvironmentMapPath, false);
-                    mpEnvironmentMap->setSampler(mpEnvironmentMapSampler);
 
                     std::vector<DescriptorDesc> desc;
                     desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
@@ -265,13 +258,11 @@ private:
     std::shared_ptr<Pipeline> mpEnvironmentMapPipeline;
     std::shared_ptr<Texture> mpEnvironmentMap;
     std::filesystem::path mEnvironmentMapPath;
-    std::shared_ptr<Sampler> mpEnvironmentMapSampler;
     std::shared_ptr<Descriptor> mpEnvironmentMapDescriptor;
 
     std::shared_ptr<Pipeline> mpRayMarchingPipeline;
     std::shared_ptr<Texture> mpVolume;
     std::filesystem::path mVolumePath;
-    std::shared_ptr<Sampler> mpVolumeSampler;
     float mVolumeModelScale = 1.0;
     glm::vec3 mVolumeModelPosition = glm::vec3(0.0f);
     glm::mat4 mVolumeModelMatrix = glm::mat4(1.0f);

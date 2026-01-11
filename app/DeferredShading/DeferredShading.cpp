@@ -139,9 +139,6 @@ public:
         // Create descriptor for resolve pass input attachments
         createAttachmentDescriptor();
 
-        // Create a sampler that will be used to render materials
-        mpSampler = mpDevice->createSampler();
-
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
         std::shared_ptr<Node> pNode = mpScene->addNode();
@@ -152,7 +149,6 @@ public:
         // Scale down the model
         pNode->setTransform(glm::scale(glm::vec3(0.01f)));
 
-        mpScene->setSampler(mpSampler);
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
         mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts(),
                                    mpSwapchain->getFramesInFlightCount());
@@ -291,7 +287,6 @@ private:
 
     std::shared_ptr<Image> mpDepthAttachment;
 
-    std::shared_ptr<Sampler> mpSampler;
     std::shared_ptr<Scene> mpScene;
     std::shared_ptr<Camera> mpCamera;
 

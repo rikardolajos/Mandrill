@@ -4,7 +4,6 @@
 
 #include "Device.h"
 #include "Image.h"
-#include "Sampler.h"
 
 namespace Mandrill
 {
@@ -55,22 +54,12 @@ namespace Mandrill
         MANDRILL_API ~Texture();
 
         /// <summary>
-        /// Set the sampler for the texture.
-        /// </summary>
-        /// <param name="pSampler">Sampler to use</param>
-        MANDRILL_API void setSampler(const ptr<Sampler> pSampler)
-        {
-            mpSampler = pSampler;
-            mImageInfo.sampler = pSampler->getSampler();
-        }
-
-        /// <summary>
         /// Get the sampler handle currently in use by the texture.
         /// </summary>
         /// <returns>Sampler in use</returns>
-        MANDRILL_API ptr<Sampler> getSampler() const
+        MANDRILL_API VkSampler getSampler() const
         {
-            return mpSampler;
+            return mSampler;
         }
 
         /// <summary>
@@ -110,15 +99,72 @@ namespace Mandrill
             return descriptor;
         }
 
+        /// <summary>
+        /// Set the magnification filter.
+        /// </summary>
+        /// <param name="filter">Magnification filter</param>
+        /// <returns></returns>
+        MANDRILL_API void setMagFilter(VkFilter filter)
+        {
+            mMagFilter = filter;
+            createSampler();
+        }
+
+        /// <summary>
+        /// Set the minification filter.
+        /// </summary>
+        /// <param name="filter">Minification filter</param>
+        /// <returns></returns>
+        MANDRILL_API void setMinFilter(VkFilter filter)
+        {
+            mMinFilter = filter;
+            createSampler();
+        }
+
+        /// <summary>
+        /// Set the mipmap mode.
+        /// </summary>
+        /// <param name="mode">Mipmap mode</param>
+        /// <returns></returns>
+        MANDRILL_API void setMipmapMode(VkSamplerMipmapMode mode)
+        {
+            mMipmapMode = mode;
+            createSampler();
+        }
+
+        /// <summary>
+        /// Set the address mode for U, V and W coordinates.
+        /// </summary>
+        /// <param name="modeU">U address mode</param>
+        /// <param name="modeV">V address mode</param>
+        /// <param name="modeW">W address mode</param>
+        /// <returns></returns>
+        MANDRILL_API void setAddressMode(VkSamplerAddressMode modeU, VkSamplerAddressMode modeV,
+                                         VkSamplerAddressMode modeW)
+        {
+            mAddressModeU = modeU;
+            mAddressModeV = modeV;
+            mAddressModeW = modeW;
+            createSampler();
+        }
+
     private:
         void create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
                     uint32_t bytesPerPixel, bool mipmaps);
         void generateMipmaps(VkCommandBuffer cmd);
+        void createSampler();
 
         ptr<Device> mpDevice;
 
         ptr<Image> mpImage;
         VkDescriptorImageInfo mImageInfo;
-        ptr<Sampler> mpSampler;
+
+        VkSampler mSampler = VK_NULL_HANDLE;
+        VkFilter mMagFilter = VK_FILTER_LINEAR;
+        VkFilter mMinFilter = VK_FILTER_LINEAR;
+        VkSamplerMipmapMode mMipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        VkSamplerAddressMode mAddressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        VkSamplerAddressMode mAddressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        VkSamplerAddressMode mAddressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     };
 } // namespace Mandrill

@@ -15,7 +15,6 @@
 #include "Pass.h"
 #include "Pipeline.h"
 #include "RayTracingPipeline.h"
-#include "Sampler.h"
 #include "Scene.h"
 #include "Shader.h"
 #include "Swapchain.h"

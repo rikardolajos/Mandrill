@@ -88,8 +88,6 @@ public:
         // Create a texture and bind a sampler to it
         mpTexture = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
                                             GetResourcePath("textures/icon.png"));
-        mpSampler = mpDevice->createSampler();
-        mpTexture->setSampler(mpSampler);
 
         // Vertices in scene
         setupVertexBuffers();
@@ -228,7 +226,6 @@ private:
 
     std::shared_ptr<Camera> mpCamera;
 
-    std::shared_ptr<Sampler> mpSampler;
     std::shared_ptr<Texture> mpTexture;
 
     std::shared_ptr<Buffer> mpVertexBuffer;

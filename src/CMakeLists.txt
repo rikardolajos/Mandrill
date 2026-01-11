@@ -30,8 +30,6 @@ add_library(Mandrill SHARED
 	"Pipeline.h"
 	"RayTracingPipeline.cpp"
 	"RayTracingPipeline.h"
-	"Sampler.cpp"
-	"Sampler.h"
 	"Scene.cpp"
 	"Scene.h"
 	"Shader.cpp"

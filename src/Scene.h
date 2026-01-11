@@ -7,7 +7,6 @@
 #include "Descriptor.h"
 #include "Device.h"
 #include "Layout.h"
-#include "Sampler.h"
 #include "Swapchain.h"
 #include "Texture.h"
 
@@ -353,19 +352,21 @@ namespace Mandrill
                                                     uint32_t frameInFlightIndex);
 
         /// <summary>
-        /// Set sampler to use for rendering materials.
-        /// </summary>
-        /// <param name="pSampler">Sampler to be used for all materials</param>
-        /// <returns></returns>
-        MANDRILL_API void setSampler(const ptr<Sampler> pSampler);
-
-        /// <summary>
         /// Get the list of all nodes in the scene.
         /// </summary>
         /// <returns>Vector of nodes</returns>
         MANDRILL_API std::vector<Node>& getNodes()
         {
             return mNodes;
+        }
+
+        /// <summary>
+        /// Get all textures in the scene.
+        /// </summary>
+        /// <returns>Unordered map of textures</returns>
+        MANDRILL_API std::unordered_map<std::string, ptr<Texture>>& getTextures()
+        {
+            return mTextures;
         }
 
         /// <summary>

@@ -438,15 +438,6 @@ void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, 
     }
 }
 
-void Scene::setSampler(const ptr<Sampler> pSampler)
-{
-    mpMissingTexture->setSampler(pSampler);
-
-    for (auto& texture : mTextures) {
-        texture.second->setSampler(pSampler);
-    }
-}
-
 std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, const std::filesystem::path& materialPath)
 {
     std::vector<uint32_t> newMeshIndices;
