@@ -1,6 +1,6 @@
 # Mandrill
 
-<img align="right" width="128" height="128" src="res/icon.png" alt=" " onerror="this.remove()">
+<img align="right" width="128" height="128" src="https://rikardolajos.github.io/Mandrill/icon.png" alt=" " onerror="this.remove()">
 
 This is an education and research graphics framework written and used at Lund University.
 Mandrill uses the Vulkan API and lightly abstracts some of its most commonly used features without restricting the low-level controll offered by using Vulkan.
