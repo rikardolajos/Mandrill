@@ -249,6 +249,7 @@ void Texture::generateMipmaps(VkCommandBuffer cmd)
 void Texture::createSampler()
 {
     if (mSampler != VK_NULL_HANDLE) {
+        vkDeviceWaitIdle(mpDevice->getDevice());
         vkDestroySampler(mpDevice->getDevice(), mSampler, nullptr);
     }
 
