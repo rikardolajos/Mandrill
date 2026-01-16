@@ -196,12 +196,12 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a1df1772aee358eb7a41359c0e6ee2904" id="r_a1df1772aee358eb7a41359c0e6ee2904"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a> (uint32_t framesInFlight=2)</td></tr>
 <tr class="memdesc:a1df1772aee358eb7a41359c0e6ee2904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain.  <br /></td></tr>
 <tr class="separator:a1df1772aee358eb7a41359c0e6ee2904"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79f96ba1aabd5f29d21d2a9c1b26d32b" id="r_a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a79f96ba1aabd5f29d21d2a9c1b26d32b">createTexture</a> (TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</td></tr>
-<tr class="memdesc:a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a file.  <br /></td></tr>
-<tr class="separator:a79f96ba1aabd5f29d21d2a9c1b26d32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a401f8d7505a50c1d15562f54e4e752af" id="r_a401f8d7505a50c1d15562f54e4e752af"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a401f8d7505a50c1d15562f54e4e752af">createTexture</a> (TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps=false)</td></tr>
-<tr class="memdesc:a401f8d7505a50c1d15562f54e4e752af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a buffer.  <br /></td></tr>
-<tr class="separator:a401f8d7505a50c1d15562f54e4e752af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bde5d20fd6e42b0fe49463dd11be333" id="r_a5bde5d20fd6e42b0fe49463dd11be333"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">createTextureFromFile</a> (TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</td></tr>
+<tr class="memdesc:a5bde5d20fd6e42b0fe49463dd11be333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a file.  <br /></td></tr>
+<tr class="separator:a5bde5d20fd6e42b0fe49463dd11be333"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b8998f1102e62cce22b2c69ad9c7865" id="r_a8b8998f1102e62cce22b2c69ad9c7865"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">createTextureFromBuffer</a> (TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps=false)</td></tr>
+<tr class="memdesc:a8b8998f1102e62cce22b2c69ad9c7865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a buffer.  <br /></td></tr>
+<tr class="separator:a8b8998f1102e62cce22b2c69ad9c7865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> class abstracting the physical and logical Vulkan device, as well as handling extensions and features. </p>
@@ -903,66 +903,14 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
-<a id="a79f96ba1aabd5f29d21d2a9c1b26d32b" name="a79f96ba1aabd5f29d21d2a9c1b26d32b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79f96ba1aabd5f29d21d2a9c1b26d32b">&#9670;&#160;</a></span>createTexture() <span class="overload">[1/2]</span></h2>
+<a id="a8b8998f1102e62cce22b2c69ad9c7865" name="a8b8998f1102e62cce22b2c69ad9c7865"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b8998f1102e62cce22b2c69ad9c7865">&#9670;&#160;</a></span>createTextureFromBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTexture </td>
-          <td>(</td>
-          <td class="paramtype">TextureType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">VkFormat&#160;</td>
-          <td class="paramname"><em>format</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Create a new texture from a file. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>Type of texture</td></tr>
-    <tr><td class="paramname">format</td><td>Format to use</td></tr>
-    <tr><td class="paramname">path</td><td>Path to texture file</td></tr>
-    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A new texture</dd></dl>
-
-</div>
-</div>
-<a id="a401f8d7505a50c1d15562f54e4e752af" name="a401f8d7505a50c1d15562f54e4e752af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a401f8d7505a50c1d15562f54e4e752af">&#9670;&#160;</a></span>createTexture() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTexture </td>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTextureFromBuffer </td>
           <td>(</td>
           <td class="paramtype">TextureType&#160;</td>
           <td class="paramname"><em>type</em>, </td>
@@ -1001,7 +949,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>channels</em>, </td>
+          <td class="paramname"><em>bytesPerPixel</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1026,7 +974,59 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
     <tr><td class="paramname">width</td><td>Width of texture</td></tr>
     <tr><td class="paramname">height</td><td>Height of texture</td></tr>
     <tr><td class="paramname">depth</td><td>Depth of texture</td></tr>
-    <tr><td class="paramname">channels</td><td>Number of channels in texture</td></tr>
+    <tr><td class="paramname">bytesPerPixel</td><td>Number bytes per pixel</td></tr>
+    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new texture</dd></dl>
+
+</div>
+</div>
+<a id="a5bde5d20fd6e42b0fe49463dd11be333" name="a5bde5d20fd6e42b0fe49463dd11be333"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bde5d20fd6e42b0fe49463dd11be333">&#9670;&#160;</a></span>createTextureFromFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTextureFromFile </td>
+          <td>(</td>
+          <td class="paramtype">TextureType&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkFormat&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new texture from a file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>Type of texture</td></tr>
+    <tr><td class="paramname">format</td><td>Format to use</td></tr>
+    <tr><td class="paramname">path</td><td>Path to texture file</td></tr>
     <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
   </table>
   </dd>
