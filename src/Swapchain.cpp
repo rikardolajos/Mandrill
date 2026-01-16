@@ -108,7 +108,6 @@ MANDRILL_API void Swapchain::waitForFence()
 {
     // Wait for the current frame to not be in flight
     Check::Vk(vkWaitForFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex], VK_TRUE, UINT64_MAX));
-    Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
 
     // When the fence is reached, the screenshot has finished the copy
     bool waitForScreenshotCopy = false;
@@ -133,6 +132,9 @@ MANDRILL_API void Swapchain::waitForFence()
 
 VkCommandBuffer Swapchain::acquireNextImage()
 {
+    waitForFence();
+    Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
+
     // Acquire index of next image in the swapchain
     VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
                                             mPresentFinishedSemaphores[mInFlightIndex], nullptr, &mImageIndex);
