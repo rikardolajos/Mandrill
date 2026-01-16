@@ -93,8 +93,12 @@ Scene::Scene(ptr<Device> pDevice) : mpDevice(pDevice), mVertexCount(0), mIndexCo
 {
     const uint8_t data[] = {0xff, 0x00, 0xff, 0xff, 0x88, 0x00, 0xff, 0xff,
                             0x88, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0xff};
-    mpMissingTexture =
-        make_ptr<Texture>(pDevice, TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, 2, 2, 1, 4, false);
+    const uint32_t width = 2;
+    const uint32_t height = 2;
+    const uint32_t depth = 1;
+    const uint32_t bytesPerPixel = 4;
+    mpMissingTexture = pDevice->createTextureFromBuffer(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, width,
+                                                        height, depth, bytesPerPixel);
 }
 
 Scene::~Scene()
@@ -727,6 +731,6 @@ void Scene::addTexture(std::string texturePath)
 
     bool generateMipmaps = true;
     auto pTexture =
-        mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, generateMipmaps);
+        mpDevice->createTextureFromFile(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, texturePath, generateMipmaps);
     mTextures.insert(std::make_pair(texturePath, pTexture));
 }

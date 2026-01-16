@@ -103,8 +103,8 @@ public:
         mpScene->syncToDevice();
 
         // Load environment map
-        mpEnvironmentMap = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
-                                                   GetResourcePath("hdris/lilienstein_4k.hdr"));
+        mpEnvironmentMap = mpDevice->createTextureFromFile(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
+                                                           GetResourcePath("hdris/lilienstein_4k.hdr"));
         mpScene->setEnvironmentMap(mpEnvironmentMap);
 
         // Set specialization constants now that the scene parameters are calculated

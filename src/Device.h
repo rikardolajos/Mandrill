@@ -283,8 +283,7 @@ namespace Mandrill
         /// <param name="pShader">Shader to use</param>
         /// <param name="desc">Description of pipeline</param>
         /// <returns>A new pipeline</returns>
-        MANDRILL_API ptr<Pipeline> createPipeline(ptr<Pass> pPass, ptr<Shader> pShader,
-                                                  const PipelineDesc& desc);
+        MANDRILL_API ptr<Pipeline> createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc);
 
         /// <summary>
         /// Create a new ray tracing pipeline.
@@ -292,8 +291,8 @@ namespace Mandrill
         /// <param name="pShader">Shader to use</param>
         /// <param name="desc">Description of pipeline</param>
         /// <returns>A new ray-tracing pipeline</returns>
-        MANDRILL_API ptr<RayTracingPipeline>
-        createRayTracingPipeline(ptr<Shader> pShader, const RayTracingPipelineDesc& desc);
+        MANDRILL_API ptr<RayTracingPipeline> createRayTracingPipeline(ptr<Shader> pShader,
+                                                                      const RayTracingPipelineDesc& desc);
 
         /// <summary>
         /// Create a new scene.
@@ -323,8 +322,8 @@ namespace Mandrill
         /// <param name="path">Path to texture file</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
         /// <returns>A new texture</returns>
-        MANDRILL_API ptr<Texture> createTexture(TextureType type, VkFormat format, const std::filesystem::path& path,
-                                                bool mipmaps = false);
+        MANDRILL_API ptr<Texture> createTextureFromFile(TextureType type, VkFormat format,
+                                                        const std::filesystem::path& path, bool mipmaps = false);
 
         /// <summary>
         /// Create a new texture from a buffer.
@@ -335,12 +334,12 @@ namespace Mandrill
         /// <param name="width">Width of texture</param>
         /// <param name="height">Height of texture</param>
         /// <param name="depth">Depth of texture</param>
-        /// <param name="channels">Number of channels in texture</param>
+        /// <param name="bytesPerPixel">Number bytes per pixel</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
         /// <returns>A new texture</returns>
-        MANDRILL_API ptr<Texture> createTexture(TextureType type, VkFormat format, const void* pData, uint32_t width,
-                                                uint32_t height, uint32_t depth, uint32_t channels,
-                                                bool mipmaps = false);
+        MANDRILL_API ptr<Texture> createTextureFromBuffer(TextureType type, VkFormat format, const void* pData,
+                                                          uint32_t width, uint32_t height, uint32_t depth,
+                                                          uint32_t bytesPerPixel, bool mipmaps = false);
 
     private:
 #if defined(_DEBUG)

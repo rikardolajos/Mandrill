@@ -86,8 +86,8 @@ public:
         mpCamera->setFov(60.0f);
 
         // Create a texture and bind a sampler to it
-        mpTexture = mpDevice->createTexture(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
-                                            GetResourcePath("textures/icon.png"));
+        mpTexture = mpDevice->createTextureFromFile(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
+                                                    GetResourcePath("textures/icon.png"));
 
         // Vertices in scene
         setupVertexBuffers();

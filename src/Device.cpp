@@ -563,15 +563,9 @@ ptr<Pipeline> Device::createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const
     return make_ptr<Pipeline>(shared_from_this(), pPass, pShader, desc);
 }
 
-ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader,
-                                                         const RayTracingPipelineDesc& desc)
+ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader, const RayTracingPipelineDesc& desc)
 {
     return make_ptr<RayTracingPipeline>(shared_from_this(), pShader, desc);
-}
-
-ptr<Texture> Device::createTexture(TextureType type, VkFormat format, const std::filesystem::path& path, bool mipmaps)
-{
-    return make_ptr<Texture>(shared_from_this(), type, format, path, mipmaps);
 }
 
 ptr<Scene> Device::createScene()
@@ -589,8 +583,14 @@ ptr<Swapchain> Device::createSwapchain(uint32_t framesInFlight)
     return make_ptr<Swapchain>(shared_from_this(), framesInFlight);
 }
 
-ptr<Texture> Device::createTexture(TextureType type, VkFormat format, const void* pData, uint32_t width,
-                                   uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps)
+ptr<Texture> Device::createTextureFromFile(TextureType type, VkFormat format, const std::filesystem::path& path,
+                                           bool mipmaps)
 {
-    return make_ptr<Texture>(shared_from_this(), type, format, pData, width, height, depth, channels, mipmaps);
+    return make_ptr<Texture>(shared_from_this(), type, format, path, mipmaps);
+}
+
+ptr<Texture> Device::createTextureFromBuffer(TextureType type, VkFormat format, const void* pData, uint32_t width,
+                                             uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps)
+{
+    return make_ptr<Texture>(shared_from_this(), type, format, pData, width, height, depth, bytesPerPixel, mipmaps);
 }
