@@ -43,10 +43,10 @@ namespace Mandrill
         /// <param name="width">Width of texture</param>
         /// <param name="height">Height of texture</param>
         /// <param name="depth">Depth of texture</param>
-        /// <param name="channels">Number of channels in texture</param>
+        /// <param name="bytesPerPixel">Number of bytes per pixel</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
         MANDRILL_API Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const void* pData, uint32_t width,
-                             uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps = false);
+                             uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps = false);
 
         /// <summary>
         /// Destructor for texture.

@@ -99,10 +99,10 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
 }
 
 Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const void* pData, uint32_t width,
-                 uint32_t height, uint32_t depth, uint32_t channels, bool mipmaps)
+                 uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
-    create(format, pData, width, height, depth, channels, mipmaps);
+    create(format, pData, width, height, depth, bytesPerPixel, mipmaps);
     createSampler();
 }
 
