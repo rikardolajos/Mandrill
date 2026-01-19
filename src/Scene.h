@@ -258,11 +258,11 @@ namespace Mandrill
                                       uint32_t materialIndex);
 
         /// <summary>
-        /// Add several meshes to a scene by reading them from an OBJ-file.
+        /// Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file.
         /// </summary>
-        /// <param name="path">Path to the OBJ-file</param>
+        /// <param name="path">Path to the file</param>
         /// <param name="materialPath">Path to where the material files are stored (leave to default if the materials
-        /// are in the same directory as the OBJ-file)</param>
+        /// are in the same directory as the OBJ-file, no effect for GLTF/GLB)</param>
         /// <returns>List of mesh indices that can be added to a node in the scene</returns>
         MANDRILL_API std::vector<uint32_t> addMeshFromFile(const std::filesystem::path& path,
                                                            const std::filesystem::path& materialPath = "");

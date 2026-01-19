@@ -827,24 +827,24 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
     // Load materials
     for (auto& material : model.materials) {
         Material mat;
-        mat.params.diffuse.r = material.pbrMetallicRoughness.baseColorFactor[0];
-        mat.params.diffuse.g = material.pbrMetallicRoughness.baseColorFactor[1];
-        mat.params.diffuse.b = material.pbrMetallicRoughness.baseColorFactor[2];
+        mat.params.diffuse.r = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[0]);
+        mat.params.diffuse.g = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[1]);
+        mat.params.diffuse.b = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[2]);
 
-        mat.params.specular.r = material.pbrMetallicRoughness.metallicFactor;
-        mat.params.specular.g = material.pbrMetallicRoughness.roughnessFactor;
+        mat.params.specular.r = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
+        mat.params.specular.g = static_cast<float>(material.pbrMetallicRoughness.roughnessFactor);
         mat.params.specular.b = 0.0f;
 
         mat.params.ambient.r = 0.0f;
         mat.params.ambient.g = 0.0f;
         mat.params.ambient.b = 0.0f;
 
-        mat.params.emission.r = material.emissiveFactor[0];
-        mat.params.emission.g = material.emissiveFactor[0];
-        mat.params.emission.b = material.emissiveFactor[0];
+        mat.params.emission.r = static_cast<float>(material.emissiveFactor[0]);
+        mat.params.emission.g = static_cast<float>(material.emissiveFactor[0]);
+        mat.params.emission.b = static_cast<float>(material.emissiveFactor[0]);
 
-        mat.params.shininess = material.pbrMetallicRoughness.metallicFactor;
-        mat.params.indexOfRefraction = getExtensionValue(material, "KHR_materials_ior", "ior");
+        mat.params.shininess = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
+        mat.params.indexOfRefraction = static_cast<float>(getExtensionValue(material, "KHR_materials_ior", "ior"));
         mat.params.opacity = 1.0f - getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor");
 
         auto setTexture = [this, path, materialPath,
