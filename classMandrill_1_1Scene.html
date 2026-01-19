@@ -127,7 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:acf3af028d73c323af9d6d2759a800364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a mesh to the scene.  <br /></td></tr>
 <tr class="separator:acf3af028d73c323af9d6d2759a800364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2715b11db38a70753f26d66b32581e18" id="r_a2715b11db38a70753f26d66b32581e18"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">addMeshFromFile</a> (const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</td></tr>
-<tr class="memdesc:a2715b11db38a70753f26d66b32581e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add several meshes to a scene by reading them from an OBJ-file.  <br /></td></tr>
+<tr class="memdesc:a2715b11db38a70753f26d66b32581e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file.  <br /></td></tr>
 <tr class="separator:a2715b11db38a70753f26d66b32581e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea7a8f2c2cd5568c2c8e4ac641e24f0c" id="r_aea7a8f2c2cd5568c2c8e4ac641e24f0c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#aea7a8f2c2cd5568c2c8e4ac641e24f0c">compile</a> (uint32_t frameInFlightCount)</td></tr>
 <tr class="memdesc:aea7a8f2c2cd5568c2c8e4ac641e24f0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.  <br /></td></tr>
@@ -333,11 +333,11 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Add several meshes to a scene by reading them from an OBJ-file. </p>
+<p>Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">path</td><td>Path to the OBJ-file</td></tr>
-    <tr><td class="paramname">materialPath</td><td>Path to where the material files are stored (leave to default if the materials are in the same directory as the OBJ-file)</td></tr>
+    <tr><td class="paramname">path</td><td>Path to the file</td></tr>
+    <tr><td class="paramname">materialPath</td><td>Path to where the material files are stored (leave to default if the materials are in the same directory as the OBJ-file, no effect for GLTF/GLB)</td></tr>
   </table>
   </dd>
 </dl>
