@@ -39,11 +39,14 @@ Camera::~Camera()
     if (mDescriptorSetLayout != VK_NULL_HANDLE) {
         vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mDescriptorSetLayout, nullptr);
     }
+    
+    if (mRayTracingDescriptorSetLayout != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(mpDevice->getDevice(), mRayTracingDescriptorSetLayout, nullptr);
+    }
 }
 
 void Camera::createDescriptor(VkShaderStageFlags stageFlags)
 {
-
     VkDescriptorSetLayoutBinding binding = {
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
@@ -62,6 +65,28 @@ void Camera::createDescriptor(VkShaderStageFlags stageFlags)
     std::vector<DescriptorDesc> desc;
     desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
     mpDescriptor = mpDevice->createDescriptor(desc, mDescriptorSetLayout);
+}
+
+void Camera::createRayTracingDescriptor(VkShaderStageFlags stageFlags)
+{
+    VkDescriptorSetLayoutBinding binding = {
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .descriptorCount = 1,
+        .stageFlags = stageFlags,
+    };
+
+    VkDescriptorSetLayoutCreateInfo ci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = 1,
+        .pBindings = &binding,
+    };
+
+    Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mRayTracingDescriptorSetLayout));
+
+    std::vector<DescriptorDesc> desc;
+    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
+    mpRayTracingDescriptor = mpDevice->createDescriptor(desc, mRayTracingDescriptorSetLayout);
 }
 
 void Camera::updateAspectRatio()

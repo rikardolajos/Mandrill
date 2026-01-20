@@ -45,6 +45,14 @@ namespace Mandrill
         MANDRILL_API void createDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
+        /// Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their
+        /// invertations.
+        /// </summary>
+        /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
+        /// <returns></returns>
+        MANDRILL_API void createRayTracingDescriptor(VkShaderStageFlags stageFlags);
+
+        /// <summary>
         /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
         /// </summary>
         /// <returns></returns>
@@ -196,6 +204,16 @@ namespace Mandrill
             return mpDescriptor;
         }
 
+        /// <summary>
+        /// Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their
+        /// invertations.
+        /// </summary>
+        /// <returns>Descriptor</returns>
+        MANDRILL_API ptr<Descriptor> getRayTracingDescriptor() const
+        {
+            return mpRayTracingDescriptor;
+        }
+
     private:
         ptr<Device> mpDevice;
         GLFWwindow* mpWindow;
@@ -213,6 +231,8 @@ namespace Mandrill
 
         ptr<Buffer> mpUniforms;
         ptr<Descriptor> mpDescriptor;
+        ptr<Descriptor> mpRayTracingDescriptor;
         VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
+        VkDescriptorSetLayout mRayTracingDescriptorSetLayout = VK_NULL_HANDLE;
     };
 } // namespace Mandrill

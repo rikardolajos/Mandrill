@@ -435,7 +435,8 @@ void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
     uint32_t cameraDescriptorOffset =
         static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
-    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0, cameraDescriptorOffset);
+    pCamera->getRayTracingDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0,
+                                             cameraDescriptorOffset);
 
     mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 1);
 
