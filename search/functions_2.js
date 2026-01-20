@@ -18,11 +18,12 @@ var searchData=
   ['createimageview_15',['createImageView',['../classMandrill_1_1Image.html#a9c1741192ce8eee5618bfe594d65106f',1,'Mandrill::Image']]],
   ['createpass_16',['createpass',['../classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5',1,'Mandrill::Device::createPass(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)'],['../classMandrill_1_1Device.html#a71db23d2d4e114d95cee216a69b08195',1,'Mandrill::Device::createPass(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount=1, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)'],['../classMandrill_1_1Device.html#a9b19d40bce2bccfda7bc6ee549ae5f60',1,'Mandrill::Device::createPass(VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)']]],
   ['createpipeline_17',['createPipeline',['../classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62',1,'Mandrill::Device']]],
-  ['createraytracingdescriptors_18',['createRayTracingDescriptors',['../classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c',1,'Mandrill::Scene']]],
-  ['createraytracingpipeline_19',['createRayTracingPipeline',['../classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd',1,'Mandrill::Device']]],
-  ['createscene_20',['createScene',['../classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08',1,'Mandrill::Device']]],
-  ['createshader_21',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
-  ['createswapchain_22',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
-  ['createtexturefrombuffer_23',['createTextureFromBuffer',['../classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865',1,'Mandrill::Device']]],
-  ['createtexturefromfile_24',['createTextureFromFile',['../classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333',1,'Mandrill::Device']]]
+  ['createraytracingdescriptor_18',['createRayTracingDescriptor',['../classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806',1,'Mandrill::Camera']]],
+  ['createraytracingdescriptors_19',['createRayTracingDescriptors',['../classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c',1,'Mandrill::Scene']]],
+  ['createraytracingpipeline_20',['createRayTracingPipeline',['../classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd',1,'Mandrill::Device']]],
+  ['createscene_21',['createScene',['../classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08',1,'Mandrill::Device']]],
+  ['createshader_22',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
+  ['createswapchain_23',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
+  ['createtexturefrombuffer_24',['createTextureFromBuffer',['../classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865',1,'Mandrill::Device']]],
+  ['createtexturefromfile_25',['createTextureFromFile',['../classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333',1,'Mandrill::Device']]]
 ];

@@ -116,6 +116,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:aec558d6ced1e0fef3e89576e405ac21b" id="r_aec558d6ced1e0fef3e89576e405ac21b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#aec558d6ced1e0fef3e89576e405ac21b">createDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
 <tr class="memdesc:aec558d6ced1e0fef3e89576e405ac21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:aec558d6ced1e0fef3e89576e405ac21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7ec19766e89b4edd16eece0ddd1e806" id="r_ad7ec19766e89b4edd16eece0ddd1e806"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806">createRayTracingDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
+<tr class="memdesc:ad7ec19766e89b4edd16eece0ddd1e806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
+<tr class="separator:ad7ec19766e89b4edd16eece0ddd1e806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a57f2889b7264fb2d82f6e8c4ab2fe0" id="r_a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a3a57f2889b7264fb2d82f6e8c4ab2fe0">updateAspectRatio</a> ()</td></tr>
 <tr class="memdesc:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.  <br /></td></tr>
 <tr class="separator:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +167,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:adfed60c4c1e4f315df70c75aa013b0ca" id="r_adfed60c4c1e4f315df70c75aa013b0ca"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca">getDescriptor</a> () const</td></tr>
 <tr class="memdesc:adfed60c4c1e4f315df70c75aa013b0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:adfed60c4c1e4f315df70c75aa013b0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58af72ed9d244f37ca0eb368b1e9d87c" id="r_a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c">getRayTracingDescriptor</a> () const</td></tr>
+<tr class="memdesc:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
+<tr class="separator:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> class for managing camera properties and transformations in a 3D scene. </p>
@@ -265,6 +271,33 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 </div><div class="memdoc">
 
 <p>Create the descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stageFlags</td><td>Which shader stages the camera matrices will be used in</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="ad7ec19766e89b4edd16eece0ddd1e806" name="ad7ec19766e89b4edd16eece0ddd1e806"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7ec19766e89b4edd16eece0ddd1e806">&#9670;&#160;</a></span>createRayTracingDescriptor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::createRayTracingDescriptor </td>
+          <td>(</td>
+          <td class="paramtype">VkShaderStageFlags&#160;</td>
+          <td class="paramname"><em>stageFlags</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stageFlags</td><td>Which shader stages the camera matrices will be used in</td></tr>
@@ -384,6 +417,34 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 <p>Get the projection matrix of the camera. </p>
 <dl class="section return"><dt>Returns</dt><dd>Projection matrix</dd></dl>
+
+</div>
+</div>
+<a id="a58af72ed9d244f37ca0eb368b1e9d87c" name="a58af72ed9d244f37ca0eb368b1e9d87c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58af72ed9d244f37ca0eb368b1e9d87c">&#9670;&#160;</a></span>getRayTracingDescriptor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt; Mandrill::Camera::getRayTracingDescriptor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Descriptor.html" title="Descriptor class for managing Vulkan descriptor sets.">Descriptor</a></dd></dl>
 
 </div>
 </div>
