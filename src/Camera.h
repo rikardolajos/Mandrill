@@ -164,6 +164,18 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Set near and far planes.
+        /// </summary>
+        /// <param name="nearPlane">Distance to near plane</param>
+        /// <param name="farPlane">Distance to far plane</param>
+        /// <returns></returns>
+        MANDRILL_API void setNearFar(float nearPlane, float farPlane)
+        {
+            mNear = nearPlane;
+            mFar = farPlane;
+        }
+
+        /// <summary>
         /// Set the movement speed of the camera.
         /// </summary>
         /// <param name="speed">New speed</param>
