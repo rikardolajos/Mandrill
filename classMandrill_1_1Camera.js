@@ -15,6 +15,7 @@ var classMandrill_1_1Camera =
     [ "setDirection", "classMandrill_1_1Camera.html#af913d566462815cc46a0f125dacea94b", null ],
     [ "setFov", "classMandrill_1_1Camera.html#ad93877531ecc10956e87c59e847efe04", null ],
     [ "setMoveSpeed", "classMandrill_1_1Camera.html#aa7bea41e3eadbbb36b20bb7c0c6cd9fd", null ],
+    [ "setNearFar", "classMandrill_1_1Camera.html#acb25e5c0b371385e9f68e7341d0ee813", null ],
     [ "setPosition", "classMandrill_1_1Camera.html#a257fdf00c92b9feb0d73eec9d9719828", null ],
     [ "setTarget", "classMandrill_1_1Camera.html#afa487d43ab4d69f4af71af379b429fe8", null ],
     [ "setUp", "classMandrill_1_1Camera.html#a1ee1515c14b548bc1443dfaf258692a8", null ],
