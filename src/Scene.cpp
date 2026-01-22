@@ -846,7 +846,8 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
 
         mat.params.shininess = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
         mat.params.indexOfRefraction = static_cast<float>(getExtensionValue(material, "KHR_materials_ior", "ior"));
-        mat.params.opacity = 1.0f - getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor");
+        mat.params.opacity =
+            1.0f - static_cast<float>(getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor"));
 
         auto setTexture = [this, path, materialPath,
                            model](std::unordered_map<std::string, ptr<Texture>>& loadedTextures, int textureIndex,
