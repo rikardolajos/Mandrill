@@ -112,6 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a07ccd877c894c852d2d0f805c9c278e2" id="r_a07ccd877c894c852d2d0f805c9c278e2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#a07ccd877c894c852d2d0f805c9c278e2">Texture</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps=false)</td></tr>
 <tr class="memdesc:a07ccd877c894c852d2d0f805c9c278e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a buffer.  <br /></td></tr>
 <tr class="separator:a07ccd877c894c852d2d0f805c9c278e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab94514dd8aee28787353cc9c7485f555" id="r_ab94514dd8aee28787353cc9c7485f555"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Texture.html#ab94514dd8aee28787353cc9c7485f555">Texture</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pImage, bool mipmaps=false)</td></tr>
+<tr class="memdesc:ab94514dd8aee28787353cc9c7485f555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a texture from an existing image.  <br /></td></tr>
+<tr class="separator:ab94514dd8aee28787353cc9c7485f555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09c4bcb7462f64c1d20fa69dba3cee8a" id="r_a09c4bcb7462f64c1d20fa69dba3cee8a"><td class="memItemLeft" align="right" valign="top"><a id="a09c4bcb7462f64c1d20fa69dba3cee8a" name="a09c4bcb7462f64c1d20fa69dba3cee8a"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> ()</td></tr>
 <tr class="memdesc:a09c4bcb7462f64c1d20fa69dba3cee8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for texture. <br /></td></tr>
@@ -145,7 +148,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Texture.html" title="Texture class for managing textures in Vulkan.">Texture</a> class for managing textures in Vulkan. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a68e0783479ed3d016d981361854a58b4" name="a68e0783479ed3d016d981361854a58b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68e0783479ed3d016d981361854a58b4">&#9670;&#160;</a></span>Texture() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a68e0783479ed3d016d981361854a58b4">&#9670;&#160;</a></span>Texture() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +206,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
 </div>
 </div>
 <a id="a07ccd877c894c852d2d0f805c9c278e2" name="a07ccd877c894c852d2d0f805c9c278e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07ccd877c894c852d2d0f805c9c278e2">&#9670;&#160;</a></span>Texture() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a07ccd877c894c852d2d0f805c9c278e2">&#9670;&#160;</a></span>Texture() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,6 +288,51 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Texture</b> 
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ab94514dd8aee28787353cc9c7485f555" name="ab94514dd8aee28787353cc9c7485f555"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab94514dd8aee28787353cc9c7485f555">&#9670;&#160;</a></span>Texture() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Texture::Texture </td>
+          <td>(</td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
+          <td class="paramname"><em>pDevice</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td>
+          <td class="paramname"><em>pImage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a texture from an existing image. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
+    <tr><td class="paramname">pImage</td><td><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> to use</td></tr>
+    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>

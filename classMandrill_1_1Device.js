@@ -18,6 +18,7 @@ var classMandrill_1_1Device =
     [ "createSwapchain", "classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904", null ],
     [ "createTextureFromBuffer", "classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865", null ],
     [ "createTextureFromFile", "classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333", null ],
+    [ "createTextureFromImage", "classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2", null ],
     [ "getCommandPool", "classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2", null ],
     [ "getDevice", "classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86", null ],
     [ "getInstance", "classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b", null ],

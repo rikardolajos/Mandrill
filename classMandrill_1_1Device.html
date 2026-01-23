@@ -202,6 +202,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a8b8998f1102e62cce22b2c69ad9c7865" id="r_a8b8998f1102e62cce22b2c69ad9c7865"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">createTextureFromBuffer</a> (TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps=false)</td></tr>
 <tr class="memdesc:a8b8998f1102e62cce22b2c69ad9c7865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a buffer.  <br /></td></tr>
 <tr class="separator:a8b8998f1102e62cce22b2c69ad9c7865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad54ed2eedf3b6f89462cf1a7c23e3fa2" id="r_ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">createTextureFromImage</a> (ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pImage, bool mipmaps=false)</td></tr>
+<tr class="memdesc:ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a texture from an existing image.  <br /></td></tr>
+<tr class="separator:ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> class abstracting the physical and logical Vulkan device, as well as handling extensions and features. </p>
@@ -1032,6 +1035,44 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A new texture</dd></dl>
+
+</div>
+</div>
+<a id="ad54ed2eedf3b6f89462cf1a7c23e3fa2" name="ad54ed2eedf3b6f89462cf1a7c23e3fa2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad54ed2eedf3b6f89462cf1a7c23e3fa2">&#9670;&#160;</a></span>createTextureFromImage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; Device::createTextureFromImage </td>
+          <td>(</td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td>
+          <td class="paramname"><em>pImage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>mipmaps</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a texture from an existing image. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pImage</td><td><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> to use</td></tr>
+    <tr><td class="paramname">mipmaps</td><td>Whether to use mipmaps or not</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>

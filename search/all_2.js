@@ -25,5 +25,6 @@ var searchData=
   ['createshader_22',['createShader',['../classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27',1,'Mandrill::Device']]],
   ['createswapchain_23',['createSwapchain',['../classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904',1,'Mandrill::Device']]],
   ['createtexturefrombuffer_24',['createTextureFromBuffer',['../classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865',1,'Mandrill::Device']]],
-  ['createtexturefromfile_25',['createTextureFromFile',['../classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333',1,'Mandrill::Device']]]
+  ['createtexturefromfile_25',['createTextureFromFile',['../classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333',1,'Mandrill::Device']]],
+  ['createtexturefromimage_26',['createTextureFromImage',['../classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2',1,'Mandrill::Device']]]
 ];

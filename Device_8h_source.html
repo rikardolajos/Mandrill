@@ -278,39 +278,41 @@ $(document).ready(function(){initNavTree('Device_8h_source.html',''); initResiza
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>                                                          uint32_t width, uint32_t height, uint32_t depth,</div>
 <div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                                                          uint32_t bytesPerPixel, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span> </div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        <span class="keywordtype">void</span> createDebugMessenger();</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        <span class="keywordtype">void</span> createInstance();</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>        <span class="keywordtype">void</span> createDevice(<span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions, VkPhysicalDeviceFeatures2* pFeatures,</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                          uint32_t physicalDeviceIndex);</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>        <span class="keywordtype">void</span> createCommandPool();</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>        <span class="keywordtype">void</span> createSurface();</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>        <span class="keywordtype">void</span> createExtensionProcAddrs();</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span> </div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        GLFWwindow* mpWindow;</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        VkDebugUtilsMessengerEXT mDebugMessenger;</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span> </div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        VkInstance mInstance;</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>        VkPhysicalDevice mPhysicalDevice;</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        VkDevice mDevice;</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        VkSurfaceKHR mSurface;</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        DeviceProperties mProperties;</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span> </div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        uint32_t mQueueFamilyIndex;</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        VkCommandPool mCommandPool;</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        VkQueue mQueue;</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span> </div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>        <span class="keywordtype">bool</span> mRayTracingSupport;</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        <span class="keywordtype">bool</span> mVsync;</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    };</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">createTextureFromImage</a>(ptr&lt;Image&gt; pImage, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span> </div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        <span class="keywordtype">void</span> createDebugMessenger();</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        <span class="keywordtype">void</span> createInstance();</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        <span class="keywordtype">void</span> createDevice(<span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions, VkPhysicalDeviceFeatures2* pFeatures,</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>                          uint32_t physicalDeviceIndex);</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        <span class="keywordtype">void</span> createCommandPool();</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>        <span class="keywordtype">void</span> createSurface();</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        <span class="keywordtype">void</span> createExtensionProcAddrs();</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span> </div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        GLFWwindow* mpWindow;</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span> </div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        VkDebugUtilsMessengerEXT mDebugMessenger;</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span> </div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        VkInstance mInstance;</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        VkPhysicalDevice mPhysicalDevice;</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        VkDevice mDevice;</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>        VkSurfaceKHR mSurface;</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        DeviceProperties mProperties;</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        uint32_t mQueueFamilyIndex;</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>        VkCommandPool mCommandPool;</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>        VkQueue mQueue;</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span> </div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        <span class="keywordtype">bool</span> mRayTracingSupport;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>        <span class="keywordtype">bool</span> mVsync;</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    };</div>
 </div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html"><div class="ttname"><a href="classMandrill_1_1Device.html">Mandrill::Device</a></div><div class="ttdoc">Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...</div><div class="ttdef"><b>Definition</b> Device.h:38</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_a0ccdd441444ce4c29dbbcb7d15dba646"><div class="ttname"><a href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">Mandrill::Device::setVsync</a></div><div class="ttdeci">MANDRILL_API void setVsync(bool vsync)</div><div class="ttdoc">Set a vertical sync mode.</div><div class="ttdef"><b>Definition</b> Device.h:164</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_a1df1772aee358eb7a41359c0e6ee2904"><div class="ttname"><a href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">Mandrill::Device::createSwapchain</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Swapchain &gt; createSwapchain(uint32_t framesInFlight=2)</div><div class="ttdoc">Create a new swapchain.</div><div class="ttdef"><b>Definition</b> Device.cpp:581</div></div>
@@ -336,6 +338,7 @@ $(document).ready(function(){initNavTree('Device_8h_source.html',''); initResiza
 <div class="ttc" id="aclassMandrill_1_1Device_html_aa29da1889ceb8a261d9e265f3bf1cdd2"><div class="ttname"><a href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">Mandrill::Device::getCommandPool</a></div><div class="ttdeci">MANDRILL_API VkCommandPool getCommandPool() const</div><div class="ttdoc">Get the command pool.</div><div class="ttdef"><b>Definition</b> Device.h:118</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_aacb32843af581be3fa55cfe3fa6d06f5"><div class="ttname"><a href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">Mandrill::Device::createPass</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Pass &gt; createPass(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)</div><div class="ttdoc">Create a pass with explicit color and depth attachments.</div><div class="ttdef"><b>Definition</b> Device.cpp:544</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_ad2f825009e45e3432532aa9671944ff7"><div class="ttname"><a href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">Mandrill::Device::getSurface</a></div><div class="ttdeci">MANDRILL_API VkSurfaceKHR getSurface() const</div><div class="ttdoc">Get the presentation surface of the application.</div><div class="ttdef"><b>Definition</b> Device.h:109</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_ad54ed2eedf3b6f89462cf1a7c23e3fa2"><div class="ttname"><a href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">Mandrill::Device::createTextureFromImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromImage(ptr&lt; Image &gt; pImage, bool mipmaps=false)</div><div class="ttdoc">Create a texture from an existing image.</div><div class="ttdef"><b>Definition</b> Device.cpp:598</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_add6654c463a2a2f114093b2661f5d191"><div class="ttname"><a href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">Mandrill::Device::createDescriptor</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Descriptor &gt; createDescriptor(const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</div><div class="ttdoc">Create a new descriptor.</div><div class="ttdef"><b>Definition</b> Device.cpp:523</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_ae57d77ea4fd291683f97f090c4005900"><div class="ttname"><a href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">Mandrill::Device::createBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Buffer &gt; createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Create a new buffer.</div><div class="ttdef"><b>Definition</b> Device.cpp:513</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_af98bbf2baa2e47f38854130688f83470"><div class="ttname"><a href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">Mandrill::Device::getProperties</a></div><div class="ttdeci">MANDRILL_API DeviceProperties getProperties() const</div><div class="ttdoc">Get device and physical device properties.</div><div class="ttdef"><b>Definition</b> Device.h:91</div></div>
