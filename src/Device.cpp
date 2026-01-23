@@ -594,3 +594,8 @@ ptr<Texture> Device::createTextureFromBuffer(TextureType type, VkFormat format, 
 {
     return make_ptr<Texture>(shared_from_this(), type, format, pData, width, height, depth, bytesPerPixel, mipmaps);
 }
+
+ptr<Texture> Device::createTextureFromImage(ptr<Image> pImage, bool mipmaps)
+{
+    return make_ptr<Texture>(shared_from_this(), pImage, mipmaps);
+}

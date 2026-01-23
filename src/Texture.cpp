@@ -106,6 +106,25 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const v
     createSampler();
 }
 
+Texture::Texture(ptr<Device> pDevice, ptr<Image> pImage, bool mipmaps)
+    : mpDevice(pDevice), mpImage(pImage), mImageInfo{0}
+{
+    mpImage->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+
+    mImageInfo = {
+        .sampler = nullptr,
+        .imageView = mpImage->getImageView(),
+        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+    };
+
+    if (mipmaps) {
+        VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+        generateMipmaps(cmd);
+        Helpers::cmdEnd(mpDevice, cmd);
+    }
+    createSampler();
+}
+
 Texture::~Texture()
 {
     vkDeviceWaitIdle(mpDevice->getDevice());

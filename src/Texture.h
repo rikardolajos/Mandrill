@@ -49,6 +49,15 @@ namespace Mandrill
                              uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps = false);
 
         /// <summary>
+        /// Create a texture from an existing image.
+        /// </summary>
+        /// <param name="pDevice">Device to use</param>
+        /// <param name="pImage">Image to use</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
+        /// <returns></returns>
+        MANDRILL_API Texture(ptr<Device> pDevice, ptr<Image> pImage, bool mipmaps = false);
+
+        /// <summary>
         /// Destructor for texture.
         /// </summary>
         MANDRILL_API ~Texture();

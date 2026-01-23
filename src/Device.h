@@ -341,6 +341,14 @@ namespace Mandrill
                                                           uint32_t width, uint32_t height, uint32_t depth,
                                                           uint32_t bytesPerPixel, bool mipmaps = false);
 
+        /// <summary>
+        /// Create a texture from an existing image.
+        /// </summary>
+        /// <param name="pImage">Image to use</param>
+        /// <param name="mipmaps">Whether to use mipmaps or not</param>
+        /// <returns></returns>
+        MANDRILL_API ptr<Texture> createTextureFromImage(ptr<Image> pImage, bool mipmaps = false);
+
     private:
 #if defined(_DEBUG)
         void createDebugMessenger();
