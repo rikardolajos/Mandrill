@@ -141,13 +141,13 @@ public:
 
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
-        std::shared_ptr<Node> pNode = mpScene->addNode();
-        pNode->setPipeline(mPipelines[GBUFFER_PASS]); // Render scene with first pass pipeline
+        uint32_t nodeIndex = mpScene->addNode();
+        mpScene->getNodes()[nodeIndex].setPipeline(mPipelines[GBUFFER_PASS]); // Render scene with first pass pipeline
         for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
+            mpScene->getNodes()[nodeIndex].addMesh(meshIndex);
         }
         // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+        mpScene->getNodes()[nodeIndex].setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
         mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts(),

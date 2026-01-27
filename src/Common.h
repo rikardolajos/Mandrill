@@ -54,6 +54,7 @@
 #include <random>
 #include <set>
 #include <source_location>
+#include <stack>
 #include <string>
 #include <thread>
 #include <unordered_map>

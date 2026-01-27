@@ -129,13 +129,111 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t fram
     }
 }
 
-ptr<Node> Scene::addNode()
+uint32_t Scene::addNode()
 {
     Node node = {};
 
     mNodes.push_back(node);
 
-    return ptr<Node>(&*(mNodes.end() - 1), [](Node*) {});
+    return count(mNodes) - 1;
+}
+
+static glm::mat4 extractTransform(tinygltf::Node node)
+{
+    glm::mat4 transform = glm::identity<glm::mat4>();
+    glm::mat4 T = glm::identity<glm::mat4>();
+    glm::mat4 R = glm::identity<glm::mat4>();
+    glm::mat4 S = glm::identity<glm::mat4>();
+    if (node.matrix.size() == 16) {
+        transform = glm::make_mat4(node.matrix.data());
+    } else {
+        if (node.translation.size() == 3) {
+            T = glm::translate(glm::mat4(1.0f), glm::vec3(node.translation[0], node.translation[1], node.translation[2]));
+        }
+        if (node.rotation.size() == 4) {
+            glm::quat rotationQuat = glm::quat(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
+            R = glm::mat4_cast(rotationQuat);
+        }
+        if (node.scale.size() == 3) {
+            S = glm::scale(glm::mat4(1.0f), glm::vec3(node.scale[0], node.scale[1], node.scale[2]));
+        }
+        transform = T * R * S;
+    }
+    return transform;
+}
+
+std::vector<uint32_t> Scene::addNodesFromFile(const std::filesystem::path& path,
+                                              const std::filesystem::path& materialPath)
+{
+    std::vector<uint32_t> newNodeIndices;
+    auto newMeshIndices = addMeshFromFile(path, materialPath);
+
+    if (path.extension() == ".obj") {
+        // Create a node for each mesh
+        for (auto meshIndex : newMeshIndices) {
+            auto nodeIndex = addNode();
+            mNodes[nodeIndex].addMesh(meshIndex);
+            newNodeIndices.push_back(nodeIndex);
+        }
+    } else if (path.extension() == ".gltf" || path.extension() == ".glb") {
+        // glTF contains nodes, so we need to extract the transforms as well
+        tinygltf::Model model;
+        tinygltf::TinyGLTF loader;
+        std::string err;
+        std::string warn;
+
+        bool ret = false;
+        if (path.extension() == ".gltf") {
+            ret = loader.LoadASCIIFromFile(&model, &err, &warn, path.string());
+        } else if (path.extension() == ".glb") {
+            ret = loader.LoadBinaryFromFile(&model, &err, &warn, path.string());
+        }
+
+        // Load scenes if available
+
+        struct ParseNode {
+            int index;
+            glm::mat4 parentTransform = glm::identity<glm::mat4>();
+        } ;
+
+        std::stack<ParseNode> parseNodeStack;
+        if (!model.scenes.empty()) {
+            // Push all nodes from scenes
+            for (const auto& scene : model.scenes) {
+                for (auto nodeIndex : scene.nodes) {
+                    parseNodeStack.push({nodeIndex, glm::identity<glm::mat4>()});
+                }
+            }
+        } else {
+            // Otherwise load all nodes
+            for (size_t i = 0; i < model.nodes.size(); i++) {
+                parseNodeStack.push({static_cast<int>(i), glm::identity<glm::mat4>()});
+            }
+        }
+
+        while (!parseNodeStack.empty()) {
+            ParseNode parseNode = parseNodeStack.top();
+            parseNodeStack.pop();
+
+            const tinygltf::Node& node = model.nodes[parseNode.index];
+            glm::mat4 transform = parseNode.parentTransform * extractTransform(node);
+
+            // Process node
+            if (node.mesh >= 0) {
+                auto mandrillNodeIndex = addNode();
+                mNodes[mandrillNodeIndex].addMesh(static_cast<uint32_t>(node.mesh));
+                mNodes[mandrillNodeIndex].setTransform(transform);
+                newNodeIndices.push_back(mandrillNodeIndex);
+            }
+
+            // Push child nodes to stack
+            for (auto childIndex : node.children) {
+                parseNodeStack.push({childIndex, transform});
+            }
+        }
+    }
+
+    return newNodeIndices;
 }
 
 uint32_t Scene::addMaterial(Material material)
@@ -791,29 +889,7 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
         }
     }
 
-    // Remove duplicates
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        std::unordered_map<Vertex, uint32_t> uniqueVertices;
-        std::vector<Vertex> newVertices;
-        std::vector<uint32_t> newIndices;
-        uint32_t index = 0;
-        for (uint32_t j = 0; j < count(mesh.indices); j++) {
-            Vertex v = mesh.vertices[mesh.indices[j]];
-
-            if (uniqueVertices.count(v) == 0) {
-                uniqueVertices[v] = index;
-                newVertices.push_back(v);
-                index += 1;
-            }
-
-            newIndices.push_back(uniqueVertices[v]);
-        }
-
-        mesh.vertices = newVertices;
-        mesh.indices = newIndices;
-    }
-
+    // Helper to get extension values
     auto getExtensionValue = [](const tinygltf::Material& material, const std::string& extensionName,
                                 const std::string& key) -> double {
         if (material.extensions.find(extensionName) != material.extensions.end()) {
@@ -862,6 +938,11 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
                     const uint8_t* pFileData = buffer.data.data() + bufferView.byteOffset;
 
                     textureName = model.images[model.textures[textureIndex].source].name;
+                    if (textureName.empty()) {
+                        // Generate a unique name
+                        static uint32_t unnamedTextureCount = 0;
+                        textureName = "unnamed_texture_" + std::to_string(unnamedTextureCount++);
+                    }
                     textureKey = textureName;
                     addTextureFromMemory(pFileData, bufferView.byteLength, textureName);
 
@@ -934,6 +1015,7 @@ void Scene::addTextureFromMemory(const uint8_t* pFileData, size_t size, const st
     int height;
     int channels;
 
+    stbi_set_flip_vertically_on_load(1);
     stbi_uc* pData = stbi_load_from_memory(pFileData, size, &width, &height, &channels, STBI_rgb_alpha);
 
     const uint32_t bytesPerPixel = 4;

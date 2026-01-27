@@ -84,19 +84,19 @@ public:
         // Create a scene and load scene
         mpScene = mpDevice->createScene();
         auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
-        std::shared_ptr<Node> pNode = mpScene->addNode();
+        uint32_t sponzaIndex = mpScene->addNode();
         for (auto meshIndex : meshIndices) {
-            pNode->addMesh(meshIndex);
+            mpScene->getNodes()[sponzaIndex].addMesh(meshIndex);
         }
 
         // Scale down the model
-        pNode->setTransform(glm::scale(glm::vec3(0.01f)));
+        mpScene->getNodes()[sponzaIndex].setTransform(glm::scale(glm::vec3(0.01f)));
 
         // Add second node
         auto meshIndices2 = mpScene->addMeshFromFile(GetResourcePath("scenes/pbr_box/pbr_box.obj"));
-        mpCube = mpScene->addNode();
+        mCubeIndex = mpScene->addNode();
         for (auto meshIndex : meshIndices2) {
-            mpCube->addMesh(meshIndex);
+            mpScene->getNodes()[mCubeIndex].addMesh(meshIndex);
         }
 
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
@@ -157,7 +157,7 @@ public:
         transform = glm::translate(transform, glm::vec3(0.0f, 5.0f, 0.0f));
         transform = glm::rotate(transform, mAngle, glm::vec3(1.0f, 0.0f, 0.0f));
         transform = glm::rotate(transform, 3.0f * mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-        mpCube->setTransform(transform);
+        mpScene->getNodes()[mCubeIndex].setTransform(transform);
 
         // Update acceleration structure
         mpAccelerationStructure->update(VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
@@ -272,7 +272,7 @@ private:
 
     int mRenderMode = 0;
 
-    std::shared_ptr<Node> mpCube;
+    uint32_t mCubeIndex;
     float mRotationSpeed = 0.2f;
     float mAngle = 0.0f;
 };

@@ -237,8 +237,18 @@ namespace Mandrill
         /// <summary>
         /// Add a node to the scene.
         /// </summary>
-        /// <returns>A ptr to the created node</returns>
-        MANDRILL_API ptr<Node> addNode();
+        /// <returns>Index to added node</returns>
+        MANDRILL_API uint32_t addNode();
+
+        /// <summary>
+        /// Add several nodes to the scene by reading them from an OBJ- or GLTF/GLB-file.
+        /// </summary>
+        /// <param name="path">Path to the file</param>
+        /// <param name="materialPath">Path to where the material files are stored (leave to default if the materials
+        /// are in the same directory as the OBJ-file, no effect for GLTF/GLB)</param>
+        /// <returns>List of indices to nodes that were added</returns>
+        MANDRILL_API std::vector<uint32_t> addNodesFromFile(const std::filesystem::path& path,
+                                                             const std::filesystem::path& materialPath = "");
 
         /// <summary>
         /// Add a material to the scene.

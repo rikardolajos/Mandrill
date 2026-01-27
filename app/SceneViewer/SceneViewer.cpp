@@ -22,17 +22,13 @@ public:
         // Create a new scene
         mpScene = mpDevice->createScene();
 
-        // Load meshes from the scene path
-        auto meshIndices = mpScene->addMeshFromFile(mScenePath);
+        // Load scene nodes from file
+        auto nodeIndices = mpScene->addNodesFromFile(mScenePath);
 
-        // Add a node to the scene
-        mpNode = mpScene->addNode();
-        mpNode->setPipeline(mPipelines[PIPELINE_FILL]);
-        mpNode->setTransform(glm::mat4(mSceneScale));
-
-        // Add all the meshes to the node
-        for (auto meshIndex : meshIndices) {
-            mpNode->addMesh(meshIndex);
+        // Set pipelines for all nodes
+        auto& nodes = mpScene->getNodes();
+        for (auto nodeIndex : nodeIndices) {
+            nodes[nodeIndex].setPipeline(mPipelines[PIPELINE_FILL]);
         }
 
         // Calculate and allocate buffers
@@ -231,10 +227,6 @@ public:
 
             ImGui::Checkbox("Discard pixel if diffuse alpha channel is 0", &mDiscardOnZeroAlpha);
 
-            if (ImGui::SliderFloat("Scene scale", &mSceneScale, 0.01f, 10.0f)) {
-                mpNode->setTransform(glm::scale(glm::vec3(mSceneScale)));
-            }
-
             if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
                 mpCamera->setMoveSpeed(mCameraMoveSpeed);
             }
@@ -269,8 +261,6 @@ private:
 
     std::filesystem::path mScenePath;
     std::shared_ptr<Scene> mpScene;
-    std::shared_ptr<Node> mpNode;
-    float mSceneScale = 1.0f;
 
     int mRenderMode = 0;
     bool mDiscardOnZeroAlpha = false;
