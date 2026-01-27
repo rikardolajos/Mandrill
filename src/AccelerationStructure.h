@@ -50,7 +50,6 @@ namespace Mandrill
         /// <summary>
         /// Rebuild the top level of the acceleration structure to account for updates in instance transforms.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void update(VkBuildAccelerationStructureFlagsKHR flags);
 
         /// <summary>

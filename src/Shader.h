@@ -68,8 +68,6 @@ namespace Mandrill
         /// </summary>
         MANDRILL_API void reload();
 
-        MANDRILL_API void bind(VkCommandBuffer cmd, ptr<Descriptor> pDescriptor, uint32_t set);
-
         /// <summary>
         /// Get shader module handles.
         /// </summary>

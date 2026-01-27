@@ -92,13 +92,11 @@ namespace Mandrill
         /// <summary>
         /// Create a new scene node.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API Node();
 
         /// <summary>
         /// Destructor for scene node.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API ~Node();
 
         /// <summary>
@@ -107,7 +105,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for drawing</param>
         /// <param name="pScene">Scene which the node belongs to</param>
-        /// <returns></returns>
         MANDRILL_API void drawMeshes(VkCommandBuffer cmd, const ptr<const Scene> pScene) const;
 
         /// <summary>
@@ -117,7 +114,6 @@ namespace Mandrill
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <param name="pScene">Scene which the node belongs to</param>
-        /// <returns></returns>
         MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
                                  const ptr<const Scene> pScene) const;
 
@@ -125,7 +121,6 @@ namespace Mandrill
         /// Add a mesh to the node.
         /// </summary>
         /// <param name="meshIndex">Mesh index that was received during mesh creation</param>
-        /// <returns></returns>
         MANDRILL_API void addMesh(uint32_t meshIndex)
         {
             mMeshIndices.push_back(meshIndex);
@@ -135,7 +130,6 @@ namespace Mandrill
         /// Set pipeline to use when rendering node
         /// </summary>
         /// <param name="pPipeline">Pipeline to use</param>
-        /// <returns></returns>
         MANDRILL_API void setPipeline(ptr<Pipeline> pPipeline)
         {
             mpPipeline = pPipeline;
@@ -154,7 +148,6 @@ namespace Mandrill
         /// Set the TRS transform of the node.
         /// </summary>
         /// <param name="transform">Transform to use</param>
-        /// <returns></returns>
         MANDRILL_API void setTransform(glm::mat4 transform)
         {
             mTransform = transform;
@@ -164,7 +157,6 @@ namespace Mandrill
         /// Set weather the node should be rendered or not.
         /// </summary>
         /// <param name="visible">True to render the node, otherwise false</param>
-        /// <returns></returns>
         MANDRILL_API void setVisible(bool visible)
         {
             mVisible = visible;
@@ -173,7 +165,7 @@ namespace Mandrill
         /// <summary>
         /// Get the visibility of the node.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if visible, otherwise false</returns>
         MANDRILL_API bool getVisible() const
         {
             return mVisible;
@@ -216,13 +208,11 @@ namespace Mandrill
         /// Create a new scene.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <returns></returns>
         MANDRILL_API Scene(ptr<Device> pDevice);
 
         /// <summary>
         /// Destructor for scene.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API ~Scene();
 
         /// <summary>
@@ -231,7 +221,6 @@ namespace Mandrill
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        /// <returns></returns>
         MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex) const;
 
         /// <summary>
@@ -282,7 +271,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
-        /// <returns></returns>
         MANDRILL_API void compile(uint32_t frameInFlightCount);
 
         /// <summary>
@@ -307,7 +295,6 @@ namespace Mandrill
         /// Shader::getDescriptorSetLayouts())</param>
         /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
-        /// <returns></returns>
         MANDRILL_API void createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                                             uint32_t frameInFlightCount);
 
@@ -332,7 +319,6 @@ namespace Mandrill
         /// Shader::getDescriptorSetLayouts())</param> <param name="pAccelerationStructure">Acceleration structure to
         /// bind</param> <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
-        /// <returns></returns>
         MANDRILL_API void createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                                                       const ptr<AccelerationStructure> pAccelerationStructure,
                                                       uint32_t frameInFlightCount);
@@ -347,7 +333,6 @@ namespace Mandrill
         /// new sync.
         ///
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void syncToDevice();
 
         /// <summary>
@@ -357,7 +342,6 @@ namespace Mandrill
         /// <param name="pCamera">Camera to use</param>
         /// <param name="layout">Pipeline layout</param>
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        /// <returns></returns>
         MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
                                                     uint32_t frameInFlightIndex);
 
@@ -468,7 +452,7 @@ namespace Mandrill
         /// Get the matieral index of a mesh.
         /// </summary>
         /// <param name="meshIndex">Index of the mesh to look up</param>
-        /// <returns></returns>
+        /// <returns>Material index</returns>
         MANDRILL_API uint32_t getMeshMaterialIndex(uint32_t meshIndex) const
         {
             return mMeshes[meshIndex].materialIndex;
@@ -478,7 +462,6 @@ namespace Mandrill
         /// Set an environment map for the scene.
         /// </summary>
         /// <param name="pTexture">Texture to use as environment map</param>
-        /// <returns></returns>
         MANDRILL_API void setEnvironmentMap(ptr<Texture> pTexture)
         {
             mpEnvironmentMap = pTexture;

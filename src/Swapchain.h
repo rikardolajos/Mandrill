@@ -34,6 +34,10 @@ namespace Mandrill
         /// </summary>
         MANDRILL_API void recreate();
 
+        /// <summary>
+        /// Wait for the fence of the current frame in flight to signal. Call this before using resources that are
+        /// shared between host and device. acquireNextImage() will automatically call this.
+        /// </summary>
         MANDRILL_API void waitForFence();
 
         /// <summary>

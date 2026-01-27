@@ -99,7 +99,6 @@ namespace Mandrill
         /// Bind pipeline for rendering.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
-        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd);
 
         /// <summary>
@@ -107,7 +106,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="image">Image to transition</param>
-        /// <returns></returns>
         MANDRILL_API void write(VkCommandBuffer cmd, VkImage image);
 
         /// <summary>
@@ -115,13 +113,11 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="image">Image to transition</param>
-        /// <returns></returns>
         MANDRILL_API void read(VkCommandBuffer cmd, VkImage image);
 
         /// <summary>
         /// Recreate a pipeline. Call this if shader source code has changed and should be reloaded.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void recreate();
 
         /// <summary>

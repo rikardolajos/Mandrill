@@ -36,7 +36,6 @@ namespace Mandrill
         /// <param name="colorAttachmentCount">Number of color attachments</param>
         /// <param name="depthAttachment">If depth attachment should be created</param>
         /// <param name="sampleCount">Multisampling count</param>
-        /// <returns></returns>
         MANDRILL_API Pass(ptr<Device> pDevice, VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount = 1,
                           bool depthAttachment = true, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
@@ -49,14 +48,12 @@ namespace Mandrill
         /// <param name="formats">List of formats</param>
         /// <param name="depthAttachment">If depth attachment should be created</param>
         /// <param name="sampleCount">Multisampling count</param>
-        /// <returns></returns>
         MANDRILL_API Pass(ptr<Device> pDevice, VkExtent2D extent, std::vector<VkFormat> formats,
                           bool depthAttachment = true, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
         /// <summary>
         /// Destructor for pass.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API ~Pass();
 
         /// <summary>
@@ -64,7 +61,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer</param>
         /// <param name="pImage">Image to transition</param>
-        /// <returns></returns>
         MANDRILL_API void transitionForRendering(VkCommandBuffer cmd, ptr<Image> pImage) const;
 
         /// <summary>
@@ -73,14 +69,12 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer</param>
         /// <param name="pImage">Image to transition</param>
-        /// <returns></returns>
         MANDRILL_API void transitionForBlitting(VkCommandBuffer cmd, ptr<Image> pImage) const;
 
         /// <summary>
         /// Begin a pass without clearing the color attachments.
         /// </summary>
         /// <param name="cmd">Command buffer</param>
-        /// <returns></returns>
         MANDRILL_API void begin(VkCommandBuffer cmd);
 
         /// <summary>
@@ -89,7 +83,6 @@ namespace Mandrill
         /// <param name="cmd">Command buffer</param>
         /// <param name="clearColor">Clearing color</param>
         /// <param name="loadOp">Load operation for color attachments</param>
-        /// <returns></returns>
         MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor,
                                 VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR);
 
@@ -99,14 +92,12 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer</param>
         /// <param name="pImage">Overriding image</param>
-        /// <returns></returns>
         MANDRILL_API void begin(VkCommandBuffer cmd, ptr<Image> pImage);
 
         /// <summary>
         /// End a pass.
         /// </summary>
         /// <param name="cmd">Command buffer</param>
-        /// <returns></returns>
         MANDRILL_API void end(VkCommandBuffer cmd) const;
 
         /// <summary>
@@ -114,7 +105,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer</param>
         /// <param name="pImage">Image to transition</param>
-        /// <returns></returns>
         MANDRILL_API void end(VkCommandBuffer cmd, ptr<Image> pImage) const;
 
         /// <summary>
@@ -122,14 +112,12 @@ namespace Mandrill
         /// </summary>
         /// <param name="colorAttachments">Vector with new color attachments</param>
         /// <param name="pDepthAttachment">New depth attachment, can be nullptr</param>
-        /// <returns></returns>
         MANDRILL_API void update(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment);
 
         /// <summary>
         /// Update an implicit pass with a new extent. Typically call on swapchain recreation.
         /// </summary>
         /// <param name="extent">New attachment extent</param>
-        /// <returns></returns>
         MANDRILL_API void update(VkExtent2D extent);
 
         /// <summary>

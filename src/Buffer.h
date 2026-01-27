@@ -38,10 +38,7 @@ namespace Mandrill
         /// <param name="pData">Data to copy</param>
         /// <param name="size">Size of data to copy in bytes</param>
         /// <param name="offset">Offset into the buffer where to place the data</param>
-        /// <returns></returns>
         MANDRILL_API void copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);
-
-        MANDRILL_API void createDescriptor();
 
         /// <summary>
         /// Get the buffer handle.

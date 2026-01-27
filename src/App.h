@@ -128,7 +128,7 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Currently active device</param>
         /// <param name="pSwapchain">Swapchain that should be recreated on changes</param>
-        /// <param name="pPipline">Pipeline that should be recreated</param>
+        /// <param name="pPipeline">Pipeline that should be recreated</param>
         void baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, ptr<Pipeline> pPipeline);
 
         /// <summary>
@@ -259,14 +259,25 @@ namespace Mandrill
             return mMouseCapturedByGUI;
         }
 
-        // GLFW window
+        /// <summary>
+        /// GLWF window pointer.
+        /// </summary>
         GLFWwindow* mpWindow;
 
     protected:
-        // Screen resolution
-        uint32_t mWidth, mHeight;
+        /// <summary>
+        /// Window width in pixels.
+        /// </summary>
+        uint32_t mWidth;
 
-        // Time since application started in seconds
+        /// <summary>
+        /// Window height in pixels.
+        /// </summary>
+        uint32_t mHeight;
+
+        /// <summary>
+        /// Time since application started in seconds.
+        /// </summary>
         float mTime = 0.0f;
 
     private:

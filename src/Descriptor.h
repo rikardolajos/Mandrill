@@ -120,7 +120,6 @@ namespace Mandrill
         /// <param name="pipelineLayout">Layout of pipeline</param>
         /// <param name="firstSet">At which index to put the start of the descriptor</param>
         /// <param name="offsets">Vector of dynamic offsets</param>
-        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
                                uint32_t firstSet, std::vector<uint32_t> offsets)
         {
@@ -135,7 +134,6 @@ namespace Mandrill
         /// <param name="pipelineLayout">Layout of pipeline</param>
         /// <param name="firstSet">At which index to put the start of the descriptor</param>
         /// <param name="offset">A dynamic offset</param>
-        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
                                uint32_t firstSet, uint32_t offset)
         {
@@ -150,7 +148,6 @@ namespace Mandrill
         /// <param name="bindPoint">Bind point in pipeline</param>
         /// <param name="pipelineLayout">Layout of pipeline</param>
         /// <param name="firstSet">At which index to put the start of the descriptor</param>
-        /// <returns></returns>
         MANDRILL_API void bind(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, VkPipelineLayout pipelineLayout,
                                uint32_t firstSet)
         {

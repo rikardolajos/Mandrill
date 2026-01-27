@@ -42,7 +42,7 @@ namespace Mandrill
         /// <summary>
         /// Device that abstracts the physical and logical device, and their features and properties.
         /// </summary>
-        /// <param name="window">GLFW window to create render context for</param>
+        /// <param name="pWindow">GLFW window to create render context for</param>
         /// <param name="extensions">Extra device extensions to activate</param>
         /// <param name="pFeatures">Pointer to a pNext-chain of features to link with when creating device, can be
         /// nullptr in which case a set of required default features will be used</param> <param
@@ -160,7 +160,6 @@ namespace Mandrill
         /// Set a vertical sync mode.
         /// </summary>
         /// <param name="vsync">True if vertical sync should be on, otherwise false.</param>
-        /// <returns></returns>
         MANDRILL_API void setVsync(bool vsync)
         {
             mVsync = vsync;

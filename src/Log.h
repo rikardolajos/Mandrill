@@ -10,6 +10,10 @@ namespace Mandrill
     class MANDRILL_API Log
     {
     public:
+
+        /// <summary>
+        /// Represents logging or message severity levels.
+        /// </summary>
         enum class Level {
             Info,
             Debug,
@@ -18,6 +22,11 @@ namespace Mandrill
             Count,
         };
 
+        /// <summary>
+        /// Log a message with a specific severity level.
+        /// </summary>
+        /// <param name="level">Severity level</param>
+        /// <param name="msg">Message to log</param>
         static void log(Level level, const std::string msg);
 
         /// <summary>

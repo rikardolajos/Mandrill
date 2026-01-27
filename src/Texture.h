@@ -54,7 +54,6 @@ namespace Mandrill
         /// <param name="pDevice">Device to use</param>
         /// <param name="pImage">Image to use</param>
         /// <param name="mipmaps">Whether to use mipmaps or not</param>
-        /// <returns></returns>
         MANDRILL_API Texture(ptr<Device> pDevice, ptr<Image> pImage, bool mipmaps = false);
 
         /// <summary>
@@ -112,7 +111,6 @@ namespace Mandrill
         /// Set the magnification filter.
         /// </summary>
         /// <param name="filter">Magnification filter</param>
-        /// <returns></returns>
         MANDRILL_API void setMagFilter(VkFilter filter)
         {
             mMagFilter = filter;
@@ -123,7 +121,6 @@ namespace Mandrill
         /// Set the minification filter.
         /// </summary>
         /// <param name="filter">Minification filter</param>
-        /// <returns></returns>
         MANDRILL_API void setMinFilter(VkFilter filter)
         {
             mMinFilter = filter;
@@ -134,7 +131,6 @@ namespace Mandrill
         /// Set the mipmap mode.
         /// </summary>
         /// <param name="mode">Mipmap mode</param>
-        /// <returns></returns>
         MANDRILL_API void setMipmapMode(VkSamplerMipmapMode mode)
         {
             mMipmapMode = mode;
@@ -147,7 +143,6 @@ namespace Mandrill
         /// <param name="modeU">U address mode</param>
         /// <param name="modeV">V address mode</param>
         /// <param name="modeW">W address mode</param>
-        /// <returns></returns>
         MANDRILL_API void setAddressMode(VkSamplerAddressMode modeU, VkSamplerAddressMode modeV,
                                          VkSamplerAddressMode modeW)
         {

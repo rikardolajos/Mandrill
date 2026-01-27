@@ -41,7 +41,6 @@ namespace Mandrill
         /// Create the descriptor for the camera, containing the view and projection matrices, and their invertations.
         /// </summary>
         /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
-        /// <returns></returns>
         MANDRILL_API void createDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
@@ -49,13 +48,11 @@ namespace Mandrill
         /// invertations.
         /// </summary>
         /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
-        /// <returns></returns>
         MANDRILL_API void createRayTracingDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
         /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
         /// </summary>
-        /// <returns></returns>
         MANDRILL_API void updateAspectRatio();
 
         /// <summary>
@@ -63,7 +60,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="delta">Time since last update</param>
         /// <param name="cursorDelta">Mouse cursor movement</param>
-        /// <returns></returns>
         MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
 
         /// <summary>
@@ -79,7 +75,6 @@ namespace Mandrill
         /// Set the capture state of the mouse.
         /// </summary>
         /// <param name="capture">State to set</param>
-        /// <returns></returns>
         MANDRILL_API void captureMouse(bool capture)
         {
             mMouseCaptured = capture;
@@ -88,7 +83,7 @@ namespace Mandrill
         /// <summary>
         /// Toggle mouse capture state, without specifying the new state.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if mouse is captured, otherwise false</returns>
         MANDRILL_API bool toggleMouseCapture()
         {
             mMouseCaptured = !mMouseCaptured;
@@ -98,7 +93,7 @@ namespace Mandrill
         /// <summary>
         /// Get the position of the camera.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Position of the camera</returns>
         MANDRILL_API glm::vec3 getPosition() const
         {
             return mPosition;
@@ -108,7 +103,6 @@ namespace Mandrill
         /// Set the position of the camera.
         /// </summary>
         /// <param name="pos">New position</param>
-        /// <returns></returns>
         MANDRILL_API void setPosition(glm::vec3 pos)
         {
             mPosition = pos;
@@ -117,7 +111,7 @@ namespace Mandrill
         /// <summary>
         /// Get the direction of the camera.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Direction of the camera</returns>
         MANDRILL_API glm::vec3 getDirection() const
         {
             return mDirection;
@@ -127,7 +121,6 @@ namespace Mandrill
         /// Set the direction of the camera.
         /// </summary>
         /// <param name="dir">New direction</param>
-        /// <returns></returns>
         MANDRILL_API void setDirection(glm::vec3 dir)
         {
             mDirection = dir;
@@ -137,7 +130,6 @@ namespace Mandrill
         /// Set the target the camera should look towards.
         /// </summary>
         /// <param name="target">New target</param>
-        /// <returns></returns>
         MANDRILL_API void setTarget(glm::vec3 target)
         {
             mDirection = glm::normalize(target - mPosition);
@@ -147,7 +139,6 @@ namespace Mandrill
         /// Set the up direction of the camera.
         /// </summary>
         /// <param name="up">New up direciton</param>
-        /// <returns></returns>
         MANDRILL_API void setUp(glm::vec3 up)
         {
             mUp = up;
@@ -157,7 +148,6 @@ namespace Mandrill
         /// Set the field of view of the camera.
         /// </summary>
         /// <param name="fov">New field of view</param>
-        /// <returns></returns>
         MANDRILL_API void setFov(float fov)
         {
             mFov = fov;
@@ -168,7 +158,6 @@ namespace Mandrill
         /// </summary>
         /// <param name="nearPlane">Distance to near plane</param>
         /// <param name="farPlane">Distance to far plane</param>
-        /// <returns></returns>
         MANDRILL_API void setNearFar(float nearPlane, float farPlane)
         {
             mNear = nearPlane;
@@ -179,7 +168,6 @@ namespace Mandrill
         /// Set the movement speed of the camera.
         /// </summary>
         /// <param name="speed">New speed</param>
-        /// <returns></returns>
         MANDRILL_API void setMoveSpeed(float speed)
         {
             mMoveSpeed = speed;
