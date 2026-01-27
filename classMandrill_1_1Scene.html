@@ -117,9 +117,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad291460447237daa22026a462f388814" id="r_ad291460447237daa22026a462f388814"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#ad291460447237daa22026a462f388814">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex) const</td></tr>
 <tr class="memdesc:ad291460447237daa22026a462f388814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
 <tr class="separator:ad291460447237daa22026a462f388814"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa30fa985b88cee63bf8c54dc95719620" id="r_aa30fa985b88cee63bf8c54dc95719620"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Node.html">Node</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#aa30fa985b88cee63bf8c54dc95719620">addNode</a> ()</td></tr>
-<tr class="memdesc:aa30fa985b88cee63bf8c54dc95719620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a node to the scene.  <br /></td></tr>
-<tr class="separator:aa30fa985b88cee63bf8c54dc95719620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82ec0ac8c1bc8cd64d8627d0573d2a44" id="r_a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">addNode</a> ()</td></tr>
+<tr class="memdesc:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a node to the scene.  <br /></td></tr>
+<tr class="separator:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7e6b6192f295bdb9b0c7e3aa77bc54c" id="r_ae7e6b6192f295bdb9b0c7e3aa77bc54c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c">addNodesFromFile</a> (const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</td></tr>
+<tr class="memdesc:ae7e6b6192f295bdb9b0c7e3aa77bc54c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add several nodes to the scene by reading them from an OBJ- or GLTF/GLB-file.  <br /></td></tr>
+<tr class="separator:ae7e6b6192f295bdb9b0c7e3aa77bc54c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc74b98df96c6f835b393c26e31d9fac" id="r_abc74b98df96c6f835b393c26e31d9fac"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac">addMaterial</a> (Material material)</td></tr>
 <tr class="memdesc:abc74b98df96c6f835b393c26e31d9fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a material to the scene.  <br /></td></tr>
 <tr class="separator:abc74b98df96c6f835b393c26e31d9fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -345,14 +348,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa30fa985b88cee63bf8c54dc95719620" name="aa30fa985b88cee63bf8c54dc95719620"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa30fa985b88cee63bf8c54dc95719620">&#9670;&#160;</a></span>addNode()</h2>
+<a id="a82ec0ac8c1bc8cd64d8627d0573d2a44" name="a82ec0ac8c1bc8cd64d8627d0573d2a44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82ec0ac8c1bc8cd64d8627d0573d2a44">&#9670;&#160;</a></span>addNode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Node.html">Node</a> &gt; Scene::addNode </td>
+          <td class="memname">uint32_t Scene::addNode </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -361,7 +364,45 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Add a node to the scene. </p>
-<dl class="section return"><dt>Returns</dt><dd>A ptr to the created node</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Index to added node</dd></dl>
+
+</div>
+</div>
+<a id="ae7e6b6192f295bdb9b0c7e3aa77bc54c" name="ae7e6b6192f295bdb9b0c7e3aa77bc54c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7e6b6192f295bdb9b0c7e3aa77bc54c">&#9670;&#160;</a></span>addNodesFromFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; uint32_t &gt; Scene::addNodesFromFile </td>
+          <td>(</td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>materialPath</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add several nodes to the scene by reading them from an OBJ- or GLTF/GLB-file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>Path to the file</td></tr>
+    <tr><td class="paramname">materialPath</td><td>Path to where the material files are stored (leave to default if the materials are in the same directory as the OBJ-file, no effect for GLTF/GLB)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>List of indices to nodes that were added</dd></dl>
 
 </div>
 </div>
