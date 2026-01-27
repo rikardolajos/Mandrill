@@ -395,32 +395,33 @@ $(document).ready(function(){initNavTree('Scene_8h_source.html',''); initResizab
 <div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span>        std::vector&lt;uint32_t&gt; loadFromGLTF(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
 <div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>                                           <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>        <span class="keywordtype">void</span> addTexture(std::string texturePath);</div>
-<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span> </div>
-<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span> </div>
-<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>        std::vector&lt;Mesh&gt; mMeshes;</div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>        std::vector&lt;Node&gt; mNodes;</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>        std::vector&lt;Material&gt; mMaterials;</div>
-<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>        std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt; mTextures;</div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>        ptr&lt;Texture&gt; mpEnvironmentMap;</div>
-<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>        ptr&lt;Descriptor&gt; mpEnvironmentMapDescriptor;</div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span> </div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>        ptr&lt;Buffer&gt; mpVertexBuffer;</div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>        ptr&lt;Buffer&gt; mpIndexBuffer;</div>
-<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>        ptr&lt;Buffer&gt; mpTransforms;</div>
-<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>        ptr&lt;Buffer&gt; mpMaterialParams;</div>
-<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span> </div>
-<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>        ptr&lt;Texture&gt; mpMissingTexture;</div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span> </div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>        ptr&lt;Descriptor&gt; mpRayTracingDescriptor;</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>        ptr&lt;Buffer&gt; mpMaterialBuffer; <span class="comment">// Almost same as mpMaterialParams but for ray tracing</span></div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>        ptr&lt;Buffer&gt; mpInstanceDataBuffer;</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span> </div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>        uint32_t mVertexCount;</div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>        uint32_t mIndexCount;</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>    };</div>
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>        <span class="keywordtype">void</span> addTextureFromMemory(<span class="keyword">const</span> uint8_t* pData, <span class="keywordtype">size_t</span> size, <span class="keyword">const</span> std::string&amp; textureName);</div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span> </div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span> </div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>        std::vector&lt;Mesh&gt; mMeshes;</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>        std::vector&lt;Node&gt; mNodes;</div>
+<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>        std::vector&lt;Material&gt; mMaterials;</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>        std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt; mTextures;</div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>        ptr&lt;Texture&gt; mpEnvironmentMap;</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>        ptr&lt;Descriptor&gt; mpEnvironmentMapDescriptor;</div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span> </div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>        ptr&lt;Buffer&gt; mpVertexBuffer;</div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>        ptr&lt;Buffer&gt; mpIndexBuffer;</div>
+<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>        ptr&lt;Buffer&gt; mpTransforms;</div>
+<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>        ptr&lt;Buffer&gt; mpMaterialParams;</div>
+<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span> </div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>        ptr&lt;Texture&gt; mpMissingTexture;</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span> </div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>        ptr&lt;Descriptor&gt; mpRayTracingDescriptor;</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>        ptr&lt;Buffer&gt; mpMaterialBuffer; <span class="comment">// Almost same as mpMaterialParams but for ray tracing</span></div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>        ptr&lt;Buffer&gt; mpInstanceDataBuffer;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>        uint32_t mVertexCount;</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>        uint32_t mIndexCount;</div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    };</div>
 </div>
-<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>}; <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>}; <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Node_html"><div class="ttname"><a href="classMandrill_1_1Node.html">Mandrill::Node</a></div><div class="ttdoc">Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...</div><div class="ttdef"><b>Definition</b> Scene.h:90</div></div>
 <div class="ttc" id="aclassMandrill_1_1Node_html_a0fcbe2723d8a40f659e7cbea431431e9"><div class="ttname"><a href="classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9">Mandrill::Node::render</a></div><div class="ttdeci">MANDRILL_API void render(VkCommandBuffer cmd, const ptr&lt; Camera &gt; pCamera, uint32_t frameInFlightIndex, const ptr&lt; const Scene &gt; pScene) const</div><div class="ttdoc">Render a node in the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:48</div></div>
 <div class="ttc" id="aclassMandrill_1_1Node_html_a104d961fda6e0de1c4dbf1ecd2203d04"><div class="ttname"><a href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">Mandrill::Node::addMesh</a></div><div class="ttdeci">MANDRILL_API void addMesh(uint32_t meshIndex)</div><div class="ttdoc">Add a mesh to the node.</div><div class="ttdef"><b>Definition</b> Scene.h:129</div></div>
