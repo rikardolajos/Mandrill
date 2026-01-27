@@ -20,5 +20,6 @@ var classMandrill_1_1Swapchain =
     [ "recreate", "classMandrill_1_1Swapchain.html#a22c8b321d6dc6bf715ce5ae006c90bc4", null ],
     [ "recreated", "classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026", null ],
     [ "requestScreenshot", "classMandrill_1_1Swapchain.html#a11a163aa43bf72b63879ec0f9f131d49", null ],
+    [ "waitForFence", "classMandrill_1_1Swapchain.html#a1d637029f0c2d70f68efaf241a3ea8e3", null ],
     [ "waitForScreenshot", "classMandrill_1_1Swapchain.html#a2b16937784dee3258f29f2a76b53765e", null ]
 ];

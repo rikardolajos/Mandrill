@@ -110,54 +110,58 @@ $(document).ready(function(){initNavTree('Log_8h_source.html',''); initResizable
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html">   10</a></span>    <span class="keyword">class </span>MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Log.html">Log</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    {</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keyword">enum class</span> Level {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>            Info,</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>            Debug,</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            Warning,</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            Error,</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            Count,</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        };</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> log(Level level, <span class="keyword">const</span> std::string msg);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">   29</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">Info</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            log(Level::Info, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        }</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="};">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">   17</a></span>        <span class="keyword">enum class</span> <a class="code hl_enumeration" href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">Level</a> {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            Info,</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>            Debug,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            Warning,</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            Error,</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            Count,</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        };</div>
 </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">   40</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">Debug</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#ifdef _DEBUG</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            log(Level::Debug, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        }</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> log(Level level, <span class="keyword">const</span> std::string msg);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">   38</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">Info</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            log(Level::Info, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        }</div>
 </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="foldopen" id="foldopen00053" data-start="{" data-end="}">
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">   53</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">Warning</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            log(Level::Warning, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">   49</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">Debug</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#ifdef _DEBUG</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            log(Level::Debug, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        }</div>
 </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">   64</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">Error</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            log(Level::Error, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="foldopen" id="foldopen00062" data-start="{" data-end="}">
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">   62</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">Warning</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            log(Level::Warning, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        }</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    };</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">   73</a></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt; <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">Error</a>(std::format_string&lt;Args...&gt; format, Args&amp;&amp;... args)</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            log(Level::Error, std::format(format, std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        }</div>
 </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    };</div>
+</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Log_html"><div class="ttname"><a href="classMandrill_1_1Log.html">Mandrill::Log</a></div><div class="ttdoc">Log class for logging messages in Mandrill.</div><div class="ttdef"><b>Definition</b> Log.h:11</div></div>
-<div class="ttc" id="aclassMandrill_1_1Log_html_a0c457b795da9464865821838b1c7087b"><div class="ttname"><a href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">Mandrill::Log::Debug</a></div><div class="ttdeci">static void Debug(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log a debug message using format strings. This does not print message in release mode.</div><div class="ttdef"><b>Definition</b> Log.h:40</div></div>
-<div class="ttc" id="aclassMandrill_1_1Log_html_ac7c00e6882720e47c83d808b8db127f1"><div class="ttname"><a href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">Mandrill::Log::Info</a></div><div class="ttdeci">static void Info(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log an information message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:29</div></div>
-<div class="ttc" id="aclassMandrill_1_1Log_html_ad59f1b752f0e2802cef50ecd62dfcacc"><div class="ttname"><a href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">Mandrill::Log::Warning</a></div><div class="ttdeci">static void Warning(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log a warning message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:53</div></div>
-<div class="ttc" id="aclassMandrill_1_1Log_html_afa9d58575cbfd2a53baf5a2201a0bea2"><div class="ttname"><a href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">Mandrill::Log::Error</a></div><div class="ttdeci">static void Error(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log an error message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:64</div></div>
+<div class="ttc" id="aclassMandrill_1_1Log_html_a0c457b795da9464865821838b1c7087b"><div class="ttname"><a href="classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b">Mandrill::Log::Debug</a></div><div class="ttdeci">static void Debug(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log a debug message using format strings. This does not print message in release mode.</div><div class="ttdef"><b>Definition</b> Log.h:49</div></div>
+<div class="ttc" id="aclassMandrill_1_1Log_html_ac7c00e6882720e47c83d808b8db127f1"><div class="ttname"><a href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">Mandrill::Log::Info</a></div><div class="ttdeci">static void Info(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log an information message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:38</div></div>
+<div class="ttc" id="aclassMandrill_1_1Log_html_ad59f1b752f0e2802cef50ecd62dfcacc"><div class="ttname"><a href="classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc">Mandrill::Log::Warning</a></div><div class="ttdeci">static void Warning(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log a warning message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:62</div></div>
+<div class="ttc" id="aclassMandrill_1_1Log_html_af4575170f94f9c4c5c94da0a6af74067"><div class="ttname"><a href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">Mandrill::Log::Level</a></div><div class="ttdeci">Level</div><div class="ttdoc">Represents logging or message severity levels.</div><div class="ttdef"><b>Definition</b> Log.h:17</div></div>
+<div class="ttc" id="aclassMandrill_1_1Log_html_afa9d58575cbfd2a53baf5a2201a0bea2"><div class="ttname"><a href="classMandrill_1_1Log.html#afa9d58575cbfd2a53baf5a2201a0bea2">Mandrill::Log::Error</a></div><div class="ttdeci">static void Error(std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</div><div class="ttdoc">Log an error message using format strings.</div><div class="ttdef"><b>Definition</b> Log.h:73</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

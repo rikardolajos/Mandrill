@@ -20,5 +20,9 @@ var classMandrill_1_1App =
     [ "render", "classMandrill_1_1App.html#a2319be39fee607062dd50fea007a882d", null ],
     [ "renderGUI", "classMandrill_1_1App.html#aac9602b7552b90c4d38b74ca2d0d014f", null ],
     [ "run", "classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1", null ],
-    [ "update", "classMandrill_1_1App.html#a95f227c84d8c31879d706c31a16441be", null ]
+    [ "update", "classMandrill_1_1App.html#a95f227c84d8c31879d706c31a16441be", null ],
+    [ "mHeight", "classMandrill_1_1App.html#a7f1d750dd9d33d5562646b1f8730e665", null ],
+    [ "mpWindow", "classMandrill_1_1App.html#a962cc152a678c795c0057fa5400ff627", null ],
+    [ "mTime", "classMandrill_1_1App.html#a1a1b5a537b0f23b163b38c6fcdad98c2", null ],
+    [ "mWidth", "classMandrill_1_1App.html#aef5183ad6746fb22e014651f27c49f93", null ]
 ];

@@ -112,225 +112,220 @@ $(document).ready(function(){initNavTree('Helpers_8h_source.html',''); initResiz
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>Mandrill</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
-<div class="foldopen" id="foldopen00016" data-start="{" data-end="};">
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html">   16</a></span>    <span class="keyword">class </span>MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Helpers.html">Helpers</a></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="};">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html">   17</a></span>    <span class="keyword">class </span>MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Helpers.html">Helpers</a>{public :</div>
 <div class="foldopen" id="foldopen00024" data-start="{" data-end="}">
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">   24</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> VkCommandBuffer <a class="code hl_function" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">cmdBegin</a>(ptr&lt;Device&gt; pDevice)</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            VkCommandBufferAllocateInfo ai = {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>                .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>                .commandPool = pDevice-&gt;getCommandPool(),</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>                .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>                .commandBufferCount = 1,</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            };</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            VkCommandBuffer cmd;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            Check::Vk(vkAllocateCommandBuffers(pDevice-&gt;getDevice(), &amp;ai, &amp;cmd));</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            VkCommandBufferBeginInfo bi = {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>                .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>                .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            };</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            Check::Vk(vkBeginCommandBuffer(cmd, &amp;bi));</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <span class="keywordflow">return</span> cmd;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        }</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">   24</a></span>                                       <span class="keyword">inline</span> <span class="keyword">static</span> VkCommandBuffer <a class="code hl_function" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">cmdBegin</a>(ptr&lt;Device&gt; pDevice){</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>                                           VkCommandBufferAllocateInfo ai = {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>                                               .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>                                               .commandPool = pDevice-&gt;getCommandPool(),</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>                                               .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>                                               .commandBufferCount = 1,</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>                                           };</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    VkCommandBuffer cmd;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    Check::Vk(vkAllocateCommandBuffers(pDevice-&gt;getDevice(), &amp;ai, &amp;cmd));</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    VkCommandBufferBeginInfo bi = {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    };</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    Check::Vk(vkBeginCommandBuffer(cmd, &amp;bi));</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">return</span> cmd;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>} <span class="comment">// namespace Mandrill</span></div>
 </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">   51</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">cmdEnd</a>(ptr&lt;Device&gt; pDevice, VkCommandBuffer cmd,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                                  <span class="keyword">const</span> std::vector&lt;VkSemaphore&gt;&amp; waitSemaphores = {},</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                                  <span class="keyword">const</span> std::vector&lt;VkPipelineStageFlags&gt;&amp; waitStages = {},</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                                  <span class="keyword">const</span> std::vector&lt;VkSemaphore&gt;&amp; signalSemaphores = {})</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            Check::Vk(vkEndCommandBuffer(cmd));</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            VkSubmitInfo si = {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>                .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                .waitSemaphoreCount = count(waitSemaphores),</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                .pWaitSemaphores = waitSemaphores.data(),</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                .pWaitDstStageMask = waitStages.data(),</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                .commandBufferCount = 1,</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                .pCommandBuffers = &amp;cmd,</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                .signalSemaphoreCount = count(signalSemaphores),</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                .pSignalSemaphores = signalSemaphores.data(),</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            };</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            Check::Vk(vkQueueSubmit(pDevice-&gt;getQueue(), 1, &amp;si, <span class="keyword">nullptr</span>));</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            Check::Vk(vkQueueWaitIdle(pDevice-&gt;getQueue()));</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            vkFreeCommandBuffers(pDevice-&gt;getDevice(), pDevice-&gt;getCommandPool(), 1, &amp;cmd);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">   54</a></span><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">cmdEnd</a>(ptr&lt;Device&gt; pDevice, VkCommandBuffer cmd, <span class="keyword">const</span> std::vector&lt;VkSemaphore&gt;&amp; waitSemaphores = {},</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                          <span class="keyword">const</span> std::vector&lt;VkPipelineStageFlags&gt;&amp; waitStages = {},</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                          <span class="keyword">const</span> std::vector&lt;VkSemaphore&gt;&amp; signalSemaphores = {})</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>{</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    Check::Vk(vkEndCommandBuffer(cmd));</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    VkSubmitInfo si = {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        .waitSemaphoreCount = count(waitSemaphores),</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        .pWaitSemaphores = waitSemaphores.data(),</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        .pWaitDstStageMask = waitStages.data(),</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        .commandBufferCount = 1,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        .pCommandBuffers = &amp;cmd,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        .signalSemaphoreCount = count(signalSemaphores),</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        .pSignalSemaphores = signalSemaphores.data(),</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    };</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    Check::Vk(vkQueueSubmit(pDevice-&gt;getQueue(), 1, &amp;si, <span class="keyword">nullptr</span>));</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    Check::Vk(vkQueueWaitIdle(pDevice-&gt;getQueue()));</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    vkFreeCommandBuffers(pDevice-&gt;getDevice(), pDevice-&gt;getCommandPool(), 1, &amp;cmd);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}</div>
 </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="foldopen" id="foldopen00082" data-start="{" data-end="}">
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">   82</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> uint32_t <a class="code hl_function" href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">findMemoryType</a>(ptr&lt;Device&gt; pDevice, uint32_t typeFilter,</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                                              VkMemoryPropertyFlags properties)</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <span class="keywordflow">for</span> (uint32_t i = 0; i &lt; pDevice-&gt;getProperties().memory.memoryTypeCount; i++) {</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="keywordflow">if</span> ((typeFilter &amp; (1 &lt;&lt; i)) &amp;&amp;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    (pDevice-&gt;getProperties().memory.memoryTypes[i].propertyFlags &amp; properties) == properties) {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    <span class="keywordflow">return</span> i;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            }</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            Log::Error(<span class="stringliteral">&quot;Failed to find suitable memory type&quot;</span>);</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="keywordflow">return</span> UINT32_MAX;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="foldopen" id="foldopen00084" data-start="{" data-end="}">
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">   84</a></span><span class="keyword">inline</span> <span class="keyword">static</span> uint32_t <a class="code hl_function" href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">findMemoryType</a>(ptr&lt;Device&gt; pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>{</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">for</span> (uint32_t i = 0; i &lt; pDevice-&gt;getProperties().memory.memoryTypeCount; i++) {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keywordflow">if</span> ((typeFilter &amp; (1 &lt;&lt; i)) &amp;&amp;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            (pDevice-&gt;getProperties().memory.memoryTypes[i].propertyFlags &amp; properties) == properties) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="keywordflow">return</span> i;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        }</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    Log::Error(<span class="stringliteral">&quot;Failed to find suitable memory type&quot;</span>);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordflow">return</span> UINT32_MAX;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="foldopen" id="foldopen00104" data-start="{" data-end="}">
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">  104</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> VkFormat <a class="code hl_function" href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">findSupportedFormat</a>(ptr&lt;Device&gt; pDevice, std::vector&lt;VkFormat&gt; candidates,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                                                   VkImageTiling tiling, VkFormatFeatureFlags features)</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; c : candidates) {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                VkFormatProperties properties;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                vkGetPhysicalDeviceFormatProperties(pDevice-&gt;getPhysicalDevice(), c, &amp;properties);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                <span class="keywordflow">if</span> (tiling == VK_IMAGE_TILING_LINEAR &amp;&amp; (properties.linearTilingFeatures &amp; features) == features) {</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                    <span class="keywordflow">return</span> c;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (tiling == VK_IMAGE_TILING_OPTIMAL &amp;&amp;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                           (properties.optimalTilingFeatures &amp; features) == features) {</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                    <span class="keywordflow">return</span> c;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                }</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            }</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>            <span class="keywordflow">return</span> VK_FORMAT_UNDEFINED;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        }</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">  105</a></span><span class="keyword">inline</span> <span class="keyword">static</span> VkFormat <a class="code hl_function" href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">findSupportedFormat</a>(ptr&lt;Device&gt; pDevice, std::vector&lt;VkFormat&gt; candidates, VkImageTiling tiling,</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                                           VkFormatFeatureFlags features)</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>{</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; c : candidates) {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        VkFormatProperties properties;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        vkGetPhysicalDeviceFormatProperties(pDevice-&gt;getPhysicalDevice(), c, &amp;properties);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keywordflow">if</span> (tiling == VK_IMAGE_TILING_LINEAR &amp;&amp; (properties.linearTilingFeatures &amp; features) == features) {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keywordflow">return</span> c;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (tiling == VK_IMAGE_TILING_OPTIMAL &amp;&amp; (properties.optimalTilingFeatures &amp; features) == features) {</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <span class="keywordflow">return</span> c;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        }</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    }</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordflow">return</span> VK_FORMAT_UNDEFINED;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}</div>
 </div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
 <div class="foldopen" id="foldopen00126" data-start="{" data-end="}">
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">  126</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> VkFormat <a class="code hl_function" href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">findDepthFormat</a>(ptr&lt;Device&gt; pDevice)</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        {</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            std::vector&lt;VkFormat&gt; candidates;</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            candidates.push_back(VK_FORMAT_D32_SFLOAT);</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            candidates.push_back(VK_FORMAT_D32_SFLOAT_S8_UINT);</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            candidates.push_back(VK_FORMAT_D24_UNORM_S8_UINT);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">  126</a></span><span class="keyword">inline</span> <span class="keyword">static</span> VkFormat <a class="code hl_function" href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">findDepthFormat</a>(ptr&lt;Device&gt; pDevice)</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>{</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    std::vector&lt;VkFormat&gt; candidates;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    candidates.push_back(VK_FORMAT_D32_SFLOAT);</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    candidates.push_back(VK_FORMAT_D32_SFLOAT_S8_UINT);</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    candidates.push_back(VK_FORMAT_D24_UNORM_S8_UINT);</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            <span class="keywordflow">return</span> findSupportedFormat(pDevice, candidates, VK_IMAGE_TILING_OPTIMAL,</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                                       VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordflow">return</span> findSupportedFormat(pDevice, candidates, VK_IMAGE_TILING_OPTIMAL,</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                               VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>}</div>
 </div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
 <div class="foldopen" id="foldopen00149" data-start="{" data-end="}">
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">  149</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">imageBarrier</a>(VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage,</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                                        VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage,</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                                        VkAccessFlags2 dstAccess, VkImageLayout oldLayout, VkImageLayout newLayout,</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                                        VkImageSubresourceRange* pSubresourceRange = <span class="keyword">nullptr</span>)</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        {</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            VkImageSubresourceRange defaultSubresourceRange = {</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                .baseMipLevel = 0,</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                .levelCount = 1,</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                .baseArrayLayer = 0,</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                .layerCount = 1,</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            };</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">  149</a></span><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">imageBarrier</a>(VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage,</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                                VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess,</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                                VkImageLayout oldLayout, VkImageLayout newLayout,</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                                VkImageSubresourceRange* pSubresourceRange = <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>{</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    VkImageSubresourceRange defaultSubresourceRange = {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        .baseMipLevel = 0,</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        .levelCount = 1,</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        .baseArrayLayer = 0,</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        .layerCount = 1,</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    };</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span> </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>            VkImageMemoryBarrier2 barrier = {</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                .srcStageMask = srcStage,</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                .srcAccessMask = srcAccess,</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                .dstStageMask = dstStage,</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                .dstAccessMask = dstAccess,</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                .oldLayout = oldLayout,</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                .newLayout = newLayout,</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>                .image = image,</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                .subresourceRange = pSubresourceRange ? *pSubresourceRange : defaultSubresourceRange,</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            };</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    VkImageMemoryBarrier2 barrier = {</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        .srcStageMask = srcStage,</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        .srcAccessMask = srcAccess,</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        .dstStageMask = dstStage,</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        .dstAccessMask = dstAccess,</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        .oldLayout = oldLayout,</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        .newLayout = newLayout,</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        .image = image,</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        .subresourceRange = pSubresourceRange ? *pSubresourceRange : defaultSubresourceRange,</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    };</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            VkDependencyInfo dependencyInfo = {</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                .imageMemoryBarrierCount = 1,</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                .pImageMemoryBarriers = &amp;barrier,</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            };</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    VkDependencyInfo dependencyInfo = {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        .imageMemoryBarrierCount = 1,</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        .pImageMemoryBarriers = &amp;barrier,</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    };</div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            vkCmdPipelineBarrier2(cmd, &amp;dependencyInfo);</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        }</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    vkCmdPipelineBarrier2(cmd, &amp;dependencyInfo);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>}</div>
 </div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
 <div class="foldopen" id="foldopen00194" data-start="{" data-end="}">
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">  194</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">copyBufferToImage</a>(VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width,</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                                             uint32_t height, uint32_t depth)</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            VkBufferImageCopy region = {</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                .bufferOffset = 0,</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                .bufferRowLength = 0,</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                .bufferImageHeight = 0,</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                .imageSubresource =</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                    {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                        .mipLevel = 0,</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                        .baseArrayLayer = 0,</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                        .layerCount = 1,</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                    },</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                .imageOffset = {0, 0},</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                .imageExtent = {width, height, depth},</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            };</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">  194</a></span><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">copyBufferToImage</a>(VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width,</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                                     uint32_t height, uint32_t depth)</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>{</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    VkBufferImageCopy region = {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        .bufferOffset = 0,</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        .bufferRowLength = 0,</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        .bufferImageHeight = 0,</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        .imageSubresource =</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            {</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                .mipLevel = 0,</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                .baseArrayLayer = 0,</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                .layerCount = 1,</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            },</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        .imageOffset = {0, 0},</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        .imageExtent = {width, height, depth},</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    };</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            vkCmdCopyBufferToImage(cmd, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &amp;region);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        }</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    vkCmdCopyBufferToImage(cmd, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &amp;region);</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>}</div>
 </div>
 <div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
 <div class="foldopen" id="foldopen00224" data-start="{" data-end="}">
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">  224</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">copyImageToBuffer</a>(VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width,</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                                             uint32_t height, uint32_t depth)</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        {</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            VkBufferImageCopy region = {</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                .bufferOffset = 0,</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                .bufferRowLength = 0,</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                .bufferImageHeight = 0,</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                .imageSubresource =</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                    {</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                        .mipLevel = 0,</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                        .baseArrayLayer = 0,</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                        .layerCount = 1,</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                    },</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                .imageOffset = {0, 0},</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                .imageExtent = {width, height, depth},</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            };</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">  224</a></span><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">copyImageToBuffer</a>(VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width,</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                                     uint32_t height, uint32_t depth)</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>{</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    VkBufferImageCopy region = {</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        .bufferOffset = 0,</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        .bufferRowLength = 0,</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        .bufferImageHeight = 0,</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        .imageSubresource =</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            {</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                .mipLevel = 0,</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                .baseArrayLayer = 0,</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                .layerCount = 1,</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            },</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        .imageOffset = {0, 0},</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        .imageExtent = {width, height, depth},</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    };</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            vkCmdCopyImageToBuffer(cmd, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &amp;region);</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        }</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    vkCmdCopyImageToBuffer(cmd, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &amp;region);</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>}</div>
 </div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
 <div class="foldopen" id="foldopen00251" data-start="{" data-end="}">
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">  251</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> VkDeviceSize <a class="code hl_function" href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">alignTo</a>(VkDeviceSize value, VkDeviceSize alignment)</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        {</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>            <span class="keywordflow">return</span> (value + alignment - 1) &amp; ~(alignment - 1);</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        }</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">  251</a></span><span class="keyword">inline</span> <span class="keyword">static</span> VkDeviceSize <a class="code hl_function" href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">alignTo</a>(VkDeviceSize value, VkDeviceSize alignment)</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>{</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keywordflow">return</span> (value + alignment - 1) &amp; ~(alignment - 1);</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>}</div>
 </div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
 <div class="foldopen" id="foldopen00261" data-start="{" data-end="}">
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">  261</a></span>        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">random</a>(<span class="keywordtype">bool</span> reset = <span class="keyword">false</span>)</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        {</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            <span class="keyword">static</span> std::random_device dev;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            <span class="keyword">static</span> std::mt19937 rng(dev());</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            <span class="keyword">static</span> std::uniform_real_distribution&lt;float&gt; dis(0.0f, 1.0f);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            <span class="keywordflow">if</span> (reset) {</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                rng.seed();</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            }</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            <span class="keywordflow">return</span> dis(rng);</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        }</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno"><a class="line" href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">  261</a></span><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code hl_function" href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">random</a>(<span class="keywordtype">bool</span> reset = <span class="keyword">false</span>)</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>{</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    <span class="keyword">static</span> std::random_device dev;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    <span class="keyword">static</span> std::mt19937 rng(dev());</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keyword">static</span> std::uniform_real_distribution&lt;float&gt; dis(0.0f, 1.0f);</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    <span class="keywordflow">if</span> (reset) {</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        rng.seed();</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    }</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <span class="keywordflow">return</span> dis(rng);</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>}</div>
 </div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    };</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>}</div>
 </div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html"><div class="ttname"><a href="classMandrill_1_1Helpers.html">Mandrill::Helpers</a></div><div class="ttdoc">Class with Vulkan helper functions. This class provides static functions that can be called directly ...</div><div class="ttdef"><b>Definition</b> Helpers.h:17</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_a4ed3a63ecd096043afe935a9bd29d10a"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">Mandrill::Helpers::alignTo</a></div><div class="ttdeci">static VkDeviceSize alignTo(VkDeviceSize value, VkDeviceSize alignment)</div><div class="ttdoc">Aligne a value to a given alignment.</div><div class="ttdef"><b>Definition</b> Helpers.h:251</div></div>
-<div class="ttc" id="aclassMandrill_1_1Helpers_html_a5f0c497e95668a2f5092bed493bdebe2"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">Mandrill::Helpers::findSupportedFormat</a></div><div class="ttdeci">static VkFormat findSupportedFormat(ptr&lt; Device &gt; pDevice, std::vector&lt; VkFormat &gt; candidates, VkImageTiling tiling, VkFormatFeatureFlags features)</div><div class="ttdoc">Find supported format for an attachment.</div><div class="ttdef"><b>Definition</b> Helpers.h:104</div></div>
+<div class="ttc" id="aclassMandrill_1_1Helpers_html_a5f0c497e95668a2f5092bed493bdebe2"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">Mandrill::Helpers::findSupportedFormat</a></div><div class="ttdeci">static VkFormat findSupportedFormat(ptr&lt; Device &gt; pDevice, std::vector&lt; VkFormat &gt; candidates, VkImageTiling tiling, VkFormatFeatureFlags features)</div><div class="ttdoc">Find supported format for an attachment.</div><div class="ttdef"><b>Definition</b> Helpers.h:105</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_a6b3fdcad9a2ab7238f70cb1b2dd54990"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">Mandrill::Helpers::copyBufferToImage</a></div><div class="ttdeci">static void copyBufferToImage(VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)</div><div class="ttdoc">Copy a buffer to an image.</div><div class="ttdef"><b>Definition</b> Helpers.h:194</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_a71cde99aad0277021f5db0219a1b15e5"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">Mandrill::Helpers::imageBarrier</a></div><div class="ttdeci">static void imageBarrier(VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageSubresourceRange *pSubresourceRange=nullptr)</div><div class="ttdoc">Create an image barrier with layout transition.</div><div class="ttdef"><b>Definition</b> Helpers.h:149</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_a95c33185e6760218426d5417ac49ddec"><div class="ttname"><a href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">Mandrill::Helpers::findDepthFormat</a></div><div class="ttdeci">static VkFormat findDepthFormat(ptr&lt; Device &gt; pDevice)</div><div class="ttdoc">Find a supported depth format for a depth attachment.</div><div class="ttdef"><b>Definition</b> Helpers.h:126</div></div>
-<div class="ttc" id="aclassMandrill_1_1Helpers_html_aa7a175b55dd85da681a139f00adf59d8"><div class="ttname"><a href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">Mandrill::Helpers::cmdEnd</a></div><div class="ttdeci">static void cmdEnd(ptr&lt; Device &gt; pDevice, VkCommandBuffer cmd, const std::vector&lt; VkSemaphore &gt; &amp;waitSemaphores={}, const std::vector&lt; VkPipelineStageFlags &gt; &amp;waitStages={}, const std::vector&lt; VkSemaphore &gt; &amp;signalSemaphores={})</div><div class="ttdoc">End a one-time use command buffer that was initialized with a call to cmdBegin().</div><div class="ttdef"><b>Definition</b> Helpers.h:51</div></div>
+<div class="ttc" id="aclassMandrill_1_1Helpers_html_aa7a175b55dd85da681a139f00adf59d8"><div class="ttname"><a href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">Mandrill::Helpers::cmdEnd</a></div><div class="ttdeci">static void cmdEnd(ptr&lt; Device &gt; pDevice, VkCommandBuffer cmd, const std::vector&lt; VkSemaphore &gt; &amp;waitSemaphores={}, const std::vector&lt; VkPipelineStageFlags &gt; &amp;waitStages={}, const std::vector&lt; VkSemaphore &gt; &amp;signalSemaphores={})</div><div class="ttdoc">End a one-time use command buffer that was initialized with a call to cmdBegin().</div><div class="ttdef"><b>Definition</b> Helpers.h:54</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_aacfe4aa59305d7eb80ede71845bda86d"><div class="ttname"><a href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">Mandrill::Helpers::copyImageToBuffer</a></div><div class="ttdeci">static void copyImageToBuffer(VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width, uint32_t height, uint32_t depth)</div><div class="ttdoc">Copy an image to a buffer.</div><div class="ttdef"><b>Definition</b> Helpers.h:224</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_af21e7fe04d9f0905a7088ce578d062ce"><div class="ttname"><a href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">Mandrill::Helpers::cmdBegin</a></div><div class="ttdeci">static VkCommandBuffer cmdBegin(ptr&lt; Device &gt; pDevice)</div><div class="ttdoc">Create a new one-time use command buffer. This call should be paired with a corresponding call to cmd...</div><div class="ttdef"><b>Definition</b> Helpers.h:24</div></div>
 <div class="ttc" id="aclassMandrill_1_1Helpers_html_af467988744f61409c48de786c8b8f932"><div class="ttname"><a href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">Mandrill::Helpers::random</a></div><div class="ttdeci">static float random(bool reset=false)</div><div class="ttdoc">Return a random value from the interval [0.0, 1.0)</div><div class="ttdef"><b>Definition</b> Helpers.h:261</div></div>
-<div class="ttc" id="aclassMandrill_1_1Helpers_html_afab53f0831eec2c10cdc3ee23c075b0f"><div class="ttname"><a href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">Mandrill::Helpers::findMemoryType</a></div><div class="ttdeci">static uint32_t findMemoryType(ptr&lt; Device &gt; pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Find a suitable memory type given the memory properties.</div><div class="ttdef"><b>Definition</b> Helpers.h:82</div></div>
+<div class="ttc" id="aclassMandrill_1_1Helpers_html_afab53f0831eec2c10cdc3ee23c075b0f"><div class="ttname"><a href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">Mandrill::Helpers::findMemoryType</a></div><div class="ttdeci">static uint32_t findMemoryType(ptr&lt; Device &gt; pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Find a suitable memory type given the memory properties.</div><div class="ttdef"><b>Definition</b> Helpers.h:84</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

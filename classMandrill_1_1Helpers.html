@@ -278,6 +278,9 @@ Static Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
     <tr><td class="paramname">cmd</td><td>Command buffer to end</td></tr>
+    <tr><td class="paramname">waitSemaphores</td><td>Semaphores to wait on before executing the command buffer (optional)</td></tr>
+    <tr><td class="paramname">waitStages</td><td><a class="el" href="classMandrill_1_1Pipeline.html" title="Pipeline class for managing Vulkan graphics pipelines.">Pipeline</a> stages to wait on for the wait semaphores (optional)</td></tr>
+    <tr><td class="paramname">signalSemaphores</td><td>Semaphores to signal once the command buffer has finished executing (optional)</td></tr>
   </table>
   </dd>
 </dl>

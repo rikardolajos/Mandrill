@@ -1,8 +1,20 @@
 var searchData=
 [
   ['debug_0',['Debug',['../classMandrill_1_1Log.html#a0c457b795da9464865821838b1c7087b',1,'Mandrill::Log']]],
-  ['descriptor_1',['descriptor',['../classMandrill_1_1Descriptor.html',1,'Mandrill::Descriptor'],['../classMandrill_1_1Descriptor.html#aa91d164a34d1ec8f299f180ef0ac1d3d',1,'Mandrill::Descriptor::Descriptor()']]],
-  ['destroygui_2',['destroyGUI',['../classMandrill_1_1App.html#ae1f85a1abcf91f6ea4a070b7b4aaf5c3',1,'Mandrill::App']]],
-  ['device_3',['device',['../classMandrill_1_1Device.html',1,'Mandrill::Device'],['../classMandrill_1_1Device.html#a9756a745cc4454d687f506d332553289',1,'Mandrill::Device::Device()']]],
-  ['drawmeshes_4',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]]
+  ['depthbiasclamp_1',['depthBiasClamp',['../structMandrill_1_1PipelineDesc.html#a09ba090f878380cd7e5be3f28ae91ce6',1,'Mandrill::PipelineDesc']]],
+  ['depthbiasconstantfactor_2',['depthBiasConstantFactor',['../structMandrill_1_1PipelineDesc.html#ae76631b7ec133d17b30a74fa9e48f91a',1,'Mandrill::PipelineDesc']]],
+  ['depthbiasenable_3',['depthBiasEnable',['../structMandrill_1_1PipelineDesc.html#a083ec7c31ad0f843de17676d8747e8f3',1,'Mandrill::PipelineDesc']]],
+  ['depthbiasslopefactor_4',['depthBiasSlopeFactor',['../structMandrill_1_1PipelineDesc.html#ac5426dfe2fda508a5354597af62a64b7',1,'Mandrill::PipelineDesc']]],
+  ['depthboundstestenable_5',['depthBoundsTestEnable',['../structMandrill_1_1PipelineDesc.html#ac97541301f8b57dbb1717134c459c5c1',1,'Mandrill::PipelineDesc']]],
+  ['depthclampenable_6',['depthClampEnable',['../structMandrill_1_1PipelineDesc.html#a40c290923d23b5f302d7ec8d4352a96f',1,'Mandrill::PipelineDesc']]],
+  ['depthcompareop_7',['depthCompareOp',['../structMandrill_1_1PipelineDesc.html#ad799dcc5eb46e28a9cbd4cce101762ea',1,'Mandrill::PipelineDesc']]],
+  ['depthtestenable_8',['depthTestEnable',['../structMandrill_1_1PipelineDesc.html#a0ddbae73e45da9a426875d77a663f21d',1,'Mandrill::PipelineDesc']]],
+  ['depthwriteenable_9',['depthWriteEnable',['../structMandrill_1_1PipelineDesc.html#a1e34e04ff873e88113b3763f3b80299c',1,'Mandrill::PipelineDesc']]],
+  ['descriptor_10',['descriptor',['../classMandrill_1_1Descriptor.html',1,'Mandrill::Descriptor'],['../classMandrill_1_1Descriptor.html#aa91d164a34d1ec8f299f180ef0ac1d3d',1,'Mandrill::Descriptor::Descriptor()']]],
+  ['destroygui_11',['destroyGUI',['../classMandrill_1_1App.html#ae1f85a1abcf91f6ea4a070b7b4aaf5c3',1,'Mandrill::App']]],
+  ['destroypipeline_12',['destroyPipeline',['../classMandrill_1_1Pipeline.html#a01fc1d24a99e5149cb06765d4b503254',1,'Mandrill::Pipeline']]],
+  ['device_13',['device',['../classMandrill_1_1Device.html',1,'Mandrill::Device'],['../classMandrill_1_1Device.html#a9756a745cc4454d687f506d332553289',1,'Mandrill::Device::Device()']]],
+  ['drawmeshes_14',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]],
+  ['dstalphablendfactor_15',['dstAlphaBlendFactor',['../structMandrill_1_1PipelineDesc.html#a6f5c9b05b5a765217a84edd2d3458fa8',1,'Mandrill::PipelineDesc']]],
+  ['dstcolorblendfactor_16',['dstColorBlendFactor',['../structMandrill_1_1PipelineDesc.html#ac994f48d861e93a3efa2c6fa37500dbc',1,'Mandrill::PipelineDesc']]]
 ];

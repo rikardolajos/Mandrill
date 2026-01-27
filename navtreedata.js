@@ -52,7 +52,9 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", "functions_func" ]
+        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Enumerations", "functions_enum.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -64,7 +66,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AccelerationStructure_8h_source.html",
-"classMandrill_1_1Swapchain.html#a5e3555405ec194f1523a310e45d9d8db"
+"classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -111,8 +111,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a57a9900040a65a9aae46d99c8a6d8612" id="r_a57a9900040a65a9aae46d99c8a6d8612"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a57a9900040a65a9aae46d99c8a6d8612">Scene</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
 <tr class="memdesc:a57a9900040a65a9aae46d99c8a6d8612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new scene.  <br /></td></tr>
 <tr class="separator:a57a9900040a65a9aae46d99c8a6d8612"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b8cec2e32546713915f8c6303c951f1" id="r_a3b8cec2e32546713915f8c6303c951f1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1">~Scene</a> ()</td></tr>
-<tr class="memdesc:a3b8cec2e32546713915f8c6303c951f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene.  <br /></td></tr>
+<tr class="memitem:a3b8cec2e32546713915f8c6303c951f1" id="r_a3b8cec2e32546713915f8c6303c951f1"><td class="memItemLeft" align="right" valign="top"><a id="a3b8cec2e32546713915f8c6303c951f1" name="a3b8cec2e32546713915f8c6303c951f1"></a>
+MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()</td></tr>
+<tr class="memdesc:a3b8cec2e32546713915f8c6303c951f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene. <br /></td></tr>
 <tr class="separator:a3b8cec2e32546713915f8c6303c951f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad291460447237daa22026a462f388814" id="r_ad291460447237daa22026a462f388814"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#ad291460447237daa22026a462f388814">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex) const</td></tr>
 <tr class="memdesc:ad291460447237daa22026a462f388814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
@@ -213,27 +214,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="a3b8cec2e32546713915f8c6303c951f1" name="a3b8cec2e32546713915f8c6303c951f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b8cec2e32546713915f8c6303c951f1">&#9670;&#160;</a></span>~Scene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Scene::~Scene </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Destructor for scene. </p>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -454,7 +434,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -481,7 +460,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -542,7 +520,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -608,7 +585,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -797,7 +773,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Material index</dd></dl>
 
 </div>
 </div>
@@ -1024,7 +1000,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -1059,7 +1034,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -1080,8 +1054,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Synchronize buffers to device. </p>
 <p>Upload all buffers from host to device. This function should be called after updates have been made to the scene.</p>
-<p><a class="el" href="classMandrill_1_1Node.html" title="Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...">Node</a> transforms and material parameters are kept host coherent and can be changed without requiring a new sync.</p>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<p><a class="el" href="classMandrill_1_1Node.html" title="Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...">Node</a> transforms and material parameters are kept host coherent and can be changed without requiring a new sync. </p>
 
 </div>
 </div>

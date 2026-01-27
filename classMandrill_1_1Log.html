@@ -107,7 +107,7 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Log.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af4575170f94f9c4c5c94da0a6af74067" id="r_af4575170f94f9c4c5c94da0a6af74067"><td class="memItemLeft" align="right" valign="top"><a id="af4575170f94f9c4c5c94da0a6af74067" name="af4575170f94f9c4c5c94da0a6af74067"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>Level</b> { <br />
+<tr class="memitem:af4575170f94f9c4c5c94da0a6af74067" id="r_af4575170f94f9c4c5c94da0a6af74067"><td class="memItemLeft" align="right" valign="top"><a id="af4575170f94f9c4c5c94da0a6af74067" name="af4575170f94f9c4c5c94da0a6af74067"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">Level</a> { <br />
 &#160;&#160;<b>Info</b>
 , <b>Debug</b>
 , <b>Warning</b>
@@ -116,12 +116,13 @@ Public Types</h2></td></tr>
 &#160;&#160;<b>Count</b>
 <br />
  }</td></tr>
+<tr class="memdesc:af4575170f94f9c4c5c94da0a6af74067"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents logging or message severity levels. <br /></td></tr>
 <tr class="separator:af4575170f94f9c4c5c94da0a6af74067"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ab13ff4fc02ff53159e3573b30475612b" id="r_ab13ff4fc02ff53159e3573b30475612b"><td class="memItemLeft" align="right" valign="top"><a id="ab13ff4fc02ff53159e3573b30475612b" name="ab13ff4fc02ff53159e3573b30475612b"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>log</b> (Level level, const std::string msg)</td></tr>
+<tr class="memitem:ab13ff4fc02ff53159e3573b30475612b" id="r_ab13ff4fc02ff53159e3573b30475612b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Log.html#ab13ff4fc02ff53159e3573b30475612b">log</a> (<a class="el" href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">Level</a> level, const std::string msg)</td></tr>
+<tr class="memdesc:ab13ff4fc02ff53159e3573b30475612b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classMandrill_1_1Log.html" title="Log class for logging messages in Mandrill.">Log</a> a message with a specific severity level.  <br /></td></tr>
 <tr class="separator:ab13ff4fc02ff53159e3573b30475612b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7c00e6882720e47c83d808b8db127f1" id="r_ac7c00e6882720e47c83d808b8db127f1"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ac7c00e6882720e47c83d808b8db127f1"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1">Info</a> (std::format_string&lt; Args... &gt; format, Args &amp;&amp;... args)</td></tr>
@@ -296,6 +297,51 @@ template&lt;typename... Args&gt; </div>
   <table class="params">
     <tr><td class="paramname">format</td><td>Format string</td></tr>
     <tr><td class="paramname">...args</td><td>Format string arguments</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab13ff4fc02ff53159e3573b30475612b" name="ab13ff4fc02ff53159e3573b30475612b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab13ff4fc02ff53159e3573b30475612b">&#9670;&#160;</a></span>log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Log::log </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classMandrill_1_1Log.html#af4575170f94f9c4c5c94da0a6af74067">Level</a>&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string&#160;</td>
+          <td class="paramname"><em>msg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classMandrill_1_1Log.html" title="Log class for logging messages in Mandrill.">Log</a> a message with a specific severity level. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">level</td><td>Severity level</td></tr>
+    <tr><td class="paramname">msg</td><td>Message to log</td></tr>
   </table>
   </dd>
 </dl>

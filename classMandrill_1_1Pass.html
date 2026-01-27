@@ -115,8 +115,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a38453d92c152d052bf4d1df664b2b672" id="r_a38453d92c152d052bf4d1df664b2b672"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Pass.html#a38453d92c152d052bf4d1df664b2b672">Pass</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)</td></tr>
 <tr class="memdesc:a38453d92c152d052bf4d1df664b2b672"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a pass with implicit attachments, given a certain extent and format. The list of formats will create mathcing color attachments.  <br /></td></tr>
 <tr class="separator:a38453d92c152d052bf4d1df664b2b672"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe2fe9b29d21424fe4b410fc8e98606c" id="r_abe2fe9b29d21424fe4b410fc8e98606c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Pass.html#abe2fe9b29d21424fe4b410fc8e98606c">~Pass</a> ()</td></tr>
-<tr class="memdesc:abe2fe9b29d21424fe4b410fc8e98606c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for pass.  <br /></td></tr>
+<tr class="memitem:abe2fe9b29d21424fe4b410fc8e98606c" id="r_abe2fe9b29d21424fe4b410fc8e98606c"><td class="memItemLeft" align="right" valign="top"><a id="abe2fe9b29d21424fe4b410fc8e98606c" name="abe2fe9b29d21424fe4b410fc8e98606c"></a>
+MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Pass</b> ()</td></tr>
+<tr class="memdesc:abe2fe9b29d21424fe4b410fc8e98606c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for pass. <br /></td></tr>
 <tr class="separator:abe2fe9b29d21424fe4b410fc8e98606c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25650a3c52c664da52e9169e64ef37c5" id="r_a25650a3c52c664da52e9169e64ef37c5"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Pass.html#a25650a3c52c664da52e9169e64ef37c5">transitionForRendering</a> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pImage) const</td></tr>
 <tr class="memdesc:a25650a3c52c664da52e9169e64ef37c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transition an image for rendering. Call before <a class="el" href="classMandrill_1_1Pass.html#a8be4ac8ecf86d0998d8b7e8eda150381" title="Begin a pass without clearing the color attachments.">begin()</a> in an explicit pass.  <br /></td></tr>
@@ -270,7 +271,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -329,27 +329,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="abe2fe9b29d21424fe4b410fc8e98606c" name="abe2fe9b29d21424fe4b410fc8e98606c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe2fe9b29d21424fe4b410fc8e98606c">&#9670;&#160;</a></span>~Pass()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Pass::~Pass </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Destructor for pass. </p>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -377,7 +356,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -422,7 +400,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -460,7 +437,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -487,7 +463,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -525,7 +500,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -703,7 +677,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -741,7 +714,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -779,7 +751,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -806,7 +777,6 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>

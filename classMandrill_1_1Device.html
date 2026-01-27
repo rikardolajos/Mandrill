@@ -181,7 +181,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a9b19d40bce2bccfda7bc6ee549ae5f60" id="r_a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a9b19d40bce2bccfda7bc6ee549ae5f60">createPass</a> (VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)</td></tr>
 <tr class="memdesc:a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a pass with implicit attachments, given a certain extent and format. The list of formats will create mathcing color attachments.  <br /></td></tr>
 <tr class="separator:a9b19d40bce2bccfda7bc6ee549ae5f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f8e0c3e643ba9f83456fe0004f08a62" id="r_a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pipeline.html">Pipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; pPass, ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const PipelineDesc &amp;desc)</td></tr>
+<tr class="memitem:a8f8e0c3e643ba9f83456fe0004f08a62" id="r_a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pipeline.html">Pipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; pPass, ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const <a class="el" href="structMandrill_1_1PipelineDesc.html">PipelineDesc</a> &amp;desc)</td></tr>
 <tr class="memdesc:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new pipeline.  <br /></td></tr>
 <tr class="separator:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5983cdc34f15dc641865618476750bcd" id="r_a5983cdc34f15dc641865618476750bcd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1RayTracingPipeline.html">RayTracingPipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const RayTracingPipelineDesc &amp;desc)</td></tr>
@@ -250,7 +250,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">window</td><td>GLFW window to create render context for</td></tr>
+    <tr><td class="paramname">pWindow</td><td>GLFW window to create render context for</td></tr>
     <tr><td class="paramname">extensions</td><td>Extra device extensions to activate</td></tr>
     <tr><td class="paramname">pFeatures</td><td>Pointer to a pNext-chain of features to link with when creating device, can be nullptr in which case a set of required default features will be used</td></tr>
     <tr><td class="paramname">physicalDeviceIndex</td><td>Physical device to use. Set this explicitly if device 0 is not the intended one.</td></tr>
@@ -770,7 +770,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const PipelineDesc &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structMandrill_1_1PipelineDesc.html">PipelineDesc</a> &amp;&#160;</td>
           <td class="paramname"><em>desc</em>&#160;</td>
         </tr>
         <tr>
@@ -1407,7 +1407,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
