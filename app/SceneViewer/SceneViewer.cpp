@@ -186,7 +186,9 @@ public:
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
-                mScenePath = OpenFile(mpWindow, "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0");
+                mScenePath = OpenFile(
+                    mpWindow,
+                    "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0glTF (*.gltf)\0*.GLTF\0Binary glTF (*.glb)\0*.GLB\0");
                 if (!mScenePath.empty()) {
                     loadScene();
                 }

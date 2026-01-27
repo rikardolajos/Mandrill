@@ -482,6 +482,7 @@ namespace Mandrill
         std::vector<uint32_t> loadFromGLTF(const std::filesystem::path& path,
                                            const std::filesystem::path& materialPath = "");
         void addTexture(std::string texturePath);
+        void addTextureFromMemory(const uint8_t* pData, size_t size, const std::string& textureName);
 
         ptr<Device> mpDevice;
 

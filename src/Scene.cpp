@@ -643,7 +643,7 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
 }
 
 template <typename T>
-void readCastInsertIndices(tinygltf::Model model, tinygltf::Accessor accessor, std::vector<uint32_t>& indices)
+static void readCastInsertIndices(tinygltf::Model model, tinygltf::Accessor accessor, std::vector<uint32_t>& indices)
 {
     const auto& bufferView = model.bufferViews[accessor.bufferView];
     const auto& buffer = model.buffers[bufferView.buffer];
@@ -854,6 +854,19 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
                                   ptr<Texture> pMissingTexture, std::string& textureKey) {
             if (textureIndex >= 0) {
                 std::string textureName = model.images[model.textures[textureIndex].source].uri;
+                if (textureName.empty()) {
+                    // Image is stored in buffer view
+                    const auto& bufferView =
+                        model.bufferViews[model.images[model.textures[textureIndex].source].bufferView];
+                    const auto& buffer = model.buffers[bufferView.buffer];
+                    const uint8_t* pFileData = buffer.data.data() + bufferView.byteOffset;
+
+                    textureName = model.images[model.textures[textureIndex].source].name;
+                    textureKey = textureName;
+                    addTextureFromMemory(pFileData, bufferView.byteLength, textureName);
+
+                    return true;
+                }
                 auto fullPath =
                     std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
                 textureKey = fullPath.string();
@@ -908,5 +921,29 @@ void Scene::addTexture(std::string texturePath)
         mTextures.insert(std::make_pair(texturePath, pTexture));
     } else {
         mTextures.insert(std::make_pair(texturePath, mpMissingTexture));
+    }
+}
+
+void Scene::addTextureFromMemory(const uint8_t* pFileData, size_t size, const std::string& textureName)
+{
+    if (mTextures.contains(textureName)) {
+        return;
+    }
+
+    int width;
+    int height;
+    int channels;
+
+    stbi_uc* pData = stbi_load_from_memory(pFileData, size, &width, &height, &channels, STBI_rgb_alpha);
+
+    const uint32_t bytesPerPixel = 4;
+    const bool generateMipmaps = true;
+    auto pTexture = mpDevice->createTextureFromBuffer(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, pData, width,
+                                                      height, 1, bytesPerPixel, generateMipmaps);
+
+    if (pTexture != nullptr) {
+        mTextures.insert(std::make_pair(textureName, pTexture));
+    } else {
+        mTextures.insert(std::make_pair(textureName, mpMissingTexture));
     }
 }
