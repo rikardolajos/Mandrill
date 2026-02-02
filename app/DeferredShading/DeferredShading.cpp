@@ -158,7 +158,7 @@ public:
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -178,7 +178,7 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(delta, getCursorDelta());
+            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
         }
     }
 
@@ -186,7 +186,7 @@ public:
     {
         // Check if camera matrix and attachments need to be updated
         if (mpSwapchain->recreated()) {
-            mpCamera->updateAspectRatio();
+            mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
             createAttachments();
             createAttachmentDescriptor();
             mpGBufferPass->update(mColorAttachments, mpDepthAttachment);
