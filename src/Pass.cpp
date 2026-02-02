@@ -47,10 +47,11 @@ void Pass::transitionForBlitting(VkCommandBuffer cmd, ptr<Image> pImage) const
 
 void Pass::begin(VkCommandBuffer cmd)
 {
-    begin(cmd, glm::vec4(0.0f), VK_ATTACHMENT_LOAD_OP_LOAD);
+    begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), {.depth = 1.0f, .stencil = 0}, VK_ATTACHMENT_LOAD_OP_LOAD);
 }
 
-void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp loadOp)
+void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkClearDepthStencilValue clearDepthStencil,
+                 VkAttachmentLoadOp loadOp)
 {
     if (mImplicitAttachments) {
         transitionForRendering(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
@@ -85,7 +86,7 @@ void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkAttachmentLoadOp l
             .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
             .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-            .clearValue = {.depthStencil = {.depth = 1.0f, .stencil = 0}},
+            .clearValue = {.depthStencil = clearDepthStencil},
         };
     }
 
@@ -217,7 +218,9 @@ void Pass::createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Imag
 
     if (pDepthAttachment) {
         mpDepthAttachment = pDepthAttachment;
-        mpDepthAttachment->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+        if (!mpDepthAttachment->getImageView()) {
+            mpDepthAttachment->createImageView(VK_IMAGE_ASPECT_DEPTH_BIT);
+        }
     }
 
     mPipelineRenderingCreateInfo = {

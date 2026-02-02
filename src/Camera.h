@@ -9,6 +9,12 @@
 
 namespace Mandrill
 {
+    enum CameraProjection {
+        CAMERA_PROJECTION_PERSPECTIVE,
+        CAMERA_PROJECTION_ORTHOGRAPHIC,
+        CAMERA_PROJECTION_COUNT,
+    };
+
     struct CameraMatrices {
         glm::mat4 view;
         glm::mat4 view_inv;
@@ -28,9 +34,9 @@ namespace Mandrill
         /// Create a new camera.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="pWindow">Window to use</param>
-        /// <param name="pSwapchain">Swapchain to use</param>
-        MANDRILL_API Camera(ptr<Device> pDevice, GLFWwindow* pWindow, ptr<Swapchain> pSwapchain);
+        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
+        /// needed</param>
+        MANDRILL_API Camera(ptr<Device> pDevice, uint32_t framesInFlightCount);
 
         /// <summary>
         /// Destructor of camera.
@@ -51,16 +57,25 @@ namespace Mandrill
         MANDRILL_API void createRayTracingDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
-        /// Update the aspect ratio that is used for the camera matrix. Call this if the window size changes.
+        /// Update function to update uniforms, without any user input movement.
         /// </summary>
-        MANDRILL_API void updateAspectRatio();
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        MANDRILL_API void update(uint32_t frameInFlightIndex);
 
         /// <summary>
         /// Update function to handle camera movements. Call this each app update.
         /// </summary>
+        /// <param name="pWindow">GLFW window to poll for input</param>
         /// <param name="delta">Time since last update</param>
         /// <param name="cursorDelta">Mouse cursor movement</param>
-        MANDRILL_API void update(float delta, glm::vec2 cursorDelta);
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        MANDRILL_API void update(GLFWwindow* pWindow, float delta, glm::vec2 cursorDelta, uint32_t frameInFlightIndex);
+
+        /// <summary>
+        /// Set the projection of the camera.
+        /// </summary>
+        /// <param name="projectionType">Perspective or othographic projection</param>
+        MANDRILL_API void setProjection(const CameraProjection projectionType);
 
         /// <summary>
         /// Check if camera has captured the mouse movements.
@@ -145,12 +160,33 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Set the aspect ratio of the camera. Width / height.
+        /// </summary>
+        /// <param name="aspect">Aspect ratio</param>
+        MANDRILL_API void setAspectRatio(float aspectRatio)
+        {
+            mAspectRatio = aspectRatio;
+            updateProjectionMatrix();
+        }
+
+        /// <summary>
+        /// Set the orthographic size of the camera.
+        /// </summary>
+        /// <param name="orthoSize">Orthographics size</param>
+        MANDRILL_API void setOrthoSize(float orthoSize)
+        {
+            mOrthoSize = orthoSize;
+            updateProjectionMatrix();
+        }
+
+        /// <summary>
         /// Set the field of view of the camera.
         /// </summary>
         /// <param name="fov">New field of view</param>
         MANDRILL_API void setFov(float fov)
         {
             mFov = fov;
+            updateProjectionMatrix();
         }
 
         /// <summary>
@@ -162,6 +198,7 @@ namespace Mandrill
         {
             mNear = nearPlane;
             mFar = farPlane;
+            updateProjectionMatrix();
         }
 
         /// <summary>
@@ -176,22 +213,22 @@ namespace Mandrill
         /// <summary>
         /// Get the view matrix of the camera.
         /// </summary>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <returns>View matrix</returns>
-        MANDRILL_API glm::mat4 getViewMatrix() const
+        MANDRILL_API glm::mat4 getViewMatrix(uint32_t frameInFlightIndex) const
         {
-            CameraMatrices* matrices =
-                static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + mpSwapchain->getInFlightIndex();
+            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
             return matrices->view;
         }
 
         /// <summary>
         /// Get the projection matrix of the camera.
         /// </summary>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <returns>Projection matrix</returns>
-        MANDRILL_API glm::mat4 getProjectionMatrix() const
+        MANDRILL_API glm::mat4 getProjectionMatrix(uint32_t frameInFlightIndex) const
         {
-            CameraMatrices* matrices =
-                static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + mpSwapchain->getInFlightIndex();
+            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
             return matrices->proj;
         }
 
@@ -214,16 +251,28 @@ namespace Mandrill
             return mpRayTracingDescriptor;
         }
 
+        /// <summary>
+        /// Get the buffer containing the camera matrices. This can be used for custom descriptor creation.
+        /// </summary>
+        /// <returns>Uniform buffer</returns>
+        MANDRILL_API ptr<Buffer> getUniformBuffer() const
+        {
+            return mpUniforms;
+        }
+
     private:
+        void updateProjectionMatrix();
+
         ptr<Device> mpDevice;
-        GLFWwindow* mpWindow;
-        ptr<Swapchain> mpSwapchain;
 
         bool mMouseCaptured = false;
 
-        float mAspect;
+        float mAspectRatio;
         float mNear, mFar;
         float mFov;
+        float mOrthoSize;
+        CameraProjection mProjectionType = CAMERA_PROJECTION_PERSPECTIVE;
+        glm::mat4 mProjection;
         glm::vec3 mPosition;
         glm::vec3 mDirection;
         glm::vec3 mUp;

@@ -194,6 +194,15 @@ namespace Mandrill
             return mScreenshotStageImage->getPitch();
         }
 
+        /// <summary>
+        /// Get the aspect ratio of the swapchain.
+        /// </summary>
+        /// <returns>Aspect ratio</returns>
+        MANDRILL_API float getAspectRatio() const
+        {
+            return static_cast<float>(mExtent.width) / static_cast<float>(mExtent.height);
+        }
+
     private:
         void querySupport();
         void createSwapchain();

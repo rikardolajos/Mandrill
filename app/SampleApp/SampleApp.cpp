@@ -79,11 +79,12 @@ public:
         mpPipeline = mpDevice->createPipeline(mpPass, pShader, PipelineDesc());
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpWindow, mpSwapchain);
+        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
         mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
+        mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
 
         // Create a texture and bind a sampler to it
         mpTexture = mpDevice->createTextureFromFile(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM,
@@ -119,7 +120,7 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(delta, getCursorDelta());
+            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
         }
 
         mAngle += mRotationSpeed * delta;
@@ -134,7 +135,7 @@ public:
     {
         // Check if camera matrix and attachments need to be updated
         if (mpSwapchain->recreated()) {
-            mpCamera->updateAspectRatio();
+            mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
             mpPass->update(mpSwapchain->getExtent());
         }
 

@@ -192,10 +192,10 @@ namespace Mandrill
         /// <summary>
         /// Create a new camera.
         /// </summary>
-        /// <param name="pWindow">Window to use</param>
-        /// <param name="pSwapchain">Swapchain to use</param>
+        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
+        /// needed</param>
         /// <returns>A new camera</returns>
-        MANDRILL_API ptr<Camera> createCamera(GLFWwindow* pWindow, ptr<Swapchain> pSwapchain);
+        MANDRILL_API ptr<Camera> createCamera(uint32_t framesInFlightCount);
 
         /// <summary>
         /// Create a new descriptor.

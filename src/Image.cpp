@@ -119,6 +119,11 @@ Image::~Image()
 
 void Image::createImageView(VkImageAspectFlags aspectFlags)
 {
+    if (mImageView) {
+        vkDeviceWaitIdle(mpDevice->getDevice());
+        vkDestroyImageView(mpDevice->getDevice(), mImageView, nullptr);
+    }
+
     VkImageViewCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = mImage,

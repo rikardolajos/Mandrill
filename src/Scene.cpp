@@ -148,14 +148,20 @@ static glm::mat4 extractTransform(tinygltf::Node node)
         transform = glm::make_mat4(node.matrix.data());
     } else {
         if (node.translation.size() == 3) {
-            T = glm::translate(glm::mat4(1.0f), glm::vec3(node.translation[0], node.translation[1], node.translation[2]));
+            T = glm::translate(glm::mat4(1.0f), glm::vec3(static_cast<float>(node.translation[0]),
+                                                          static_cast<float>(node.translation[1]),
+                                                          static_cast<float>(node.translation[2])));
         }
         if (node.rotation.size() == 4) {
-            glm::quat rotationQuat = glm::quat(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
+            glm::quat rotationQuat =
+                glm::quat(static_cast<float>(node.rotation[3]), static_cast<float>(node.rotation[0]),
+                          static_cast<float>(node.rotation[1]), static_cast<float>(node.rotation[2]));
             R = glm::mat4_cast(rotationQuat);
         }
         if (node.scale.size() == 3) {
-            S = glm::scale(glm::mat4(1.0f), glm::vec3(node.scale[0], node.scale[1], node.scale[2]));
+            S = glm::scale(glm::mat4(1.0f),
+                           glm::vec3(static_cast<float>(node.scale[0]), static_cast<float>(node.scale[1]),
+                                     static_cast<float>(node.scale[2])));
         }
         transform = T * R * S;
     }
@@ -194,7 +200,7 @@ std::vector<uint32_t> Scene::addNodesFromFile(const std::filesystem::path& path,
         struct ParseNode {
             int index;
             glm::mat4 parentTransform = glm::identity<glm::mat4>();
-        } ;
+        };
 
         std::stack<ParseNode> parseNodeStack;
         if (!model.scenes.empty()) {
@@ -323,7 +329,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
     return newMeshIndices;
 }
 
-void Scene::compile(uint32_t frameInFlightCount)
+void Scene::compile(uint32_t framesInFlightCount)
 {
     if (mpMissingTexture->getSampler() == VK_NULL_HANDLE) {
         Log::Error("Scene: Sampler must be set before calling compile()");
@@ -357,7 +363,7 @@ void Scene::compile(uint32_t frameInFlightCount)
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
 
     // Transforms can change between frames, material parameters can not
-    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4), alignment) * mNodes.size() * frameInFlightCount;
+    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4), alignment) * mNodes.size() * framesInFlightCount;
     mpTransforms = mpDevice->createBuffer(transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -368,8 +374,8 @@ void Scene::compile(uint32_t frameInFlightCount)
     // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
     glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
     for (uint32_t i = 0; i < count(mNodes); i++) {
-        mNodes[i].mpTransformDevice = transforms + i * frameInFlightCount;
-        for (uint32_t c = 0; c < frameInFlightCount; c++) {
+        mNodes[i].mpTransformDevice = transforms + i * framesInFlightCount;
+        for (uint32_t c = 0; c < framesInFlightCount; c++) {
             *(mNodes[i].mpTransformDevice + c) = glm::mat4(1.0f);
         }
     }
@@ -1016,7 +1022,8 @@ void Scene::addTextureFromMemory(const uint8_t* pFileData, size_t size, const st
     int channels;
 
     stbi_set_flip_vertically_on_load(1);
-    stbi_uc* pData = stbi_load_from_memory(pFileData, size, &width, &height, &channels, STBI_rgb_alpha);
+    stbi_uc* pData =
+        stbi_load_from_memory(pFileData, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha);
 
     const uint32_t bytesPerPixel = 4;
     const bool generateMipmaps = true;

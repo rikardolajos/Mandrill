@@ -269,7 +269,7 @@ namespace Mandrill
         /// <summary>
         /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.
         /// </summary>
-        /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
+        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
         MANDRILL_API void compile(uint32_t frameInFlightCount);
 
@@ -344,6 +344,15 @@ namespace Mandrill
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
                                                     uint32_t frameInFlightIndex);
+
+        /// <summary>
+        /// Get a reference to a node in the scene.
+        /// </summary>
+        /// <param name="nodeIndex">Index to node</param>
+        MANDRILL_API Node& getNode(uint32_t nodeIndex)
+        {
+            return mNodes[nodeIndex];
+        }
 
         /// <summary>
         /// Get the list of all nodes in the scene.

@@ -109,8 +109,6 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const v
 Texture::Texture(ptr<Device> pDevice, ptr<Image> pImage, bool mipmaps)
     : mpDevice(pDevice), mpImage(pImage), mImageInfo{0}
 {
-    mpImage->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
-
     mImageInfo = {
         .sampler = nullptr,
         .imageView = mpImage->getImageView(),

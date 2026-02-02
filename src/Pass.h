@@ -81,9 +81,11 @@ namespace Mandrill
         /// Begin a pass with clearing of the color attachments.
         /// </summary>
         /// <param name="cmd">Command buffer</param>
-        /// <param name="clearColor">Clearing color</param>
+        /// <param name="clearColor">Clearing value for color</param>
+        /// <param name="clearDepthStencil">Clearing value for depth and stencil</param>
         /// <param name="loadOp">Load operation for color attachments</param>
         MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor,
+                                VkClearDepthStencilValue clearDepthStencil = {.depth = 1.0f, .stencil = 0},
                                 VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR);
 
         /// <summary>

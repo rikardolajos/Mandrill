@@ -515,9 +515,9 @@ ptr<Buffer> Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
     return make_ptr<Buffer>(shared_from_this(), size, usage, properties);
 }
 
-ptr<Camera> Device::createCamera(GLFWwindow* pWindow, ptr<Swapchain> pSwapchain)
+ptr<Camera> Device::createCamera(uint32_t framesInFlightCount)
 {
-    return make_ptr<Camera>(shared_from_this(), pWindow, pSwapchain);
+    return make_ptr<Camera>(shared_from_this(), framesInFlightCount);
 }
 
 ptr<Descriptor> Device::createDescriptor(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout)
