@@ -3,6 +3,7 @@ var classMandrill_1_1Swapchain =
     [ "Swapchain", "classMandrill_1_1Swapchain.html#aa1a5113e02772249aaa7564e00cbf241", null ],
     [ "~Swapchain", "classMandrill_1_1Swapchain.html#a5848dea9c4317e57363760ed0c052ea7", null ],
     [ "acquireNextImage", "classMandrill_1_1Swapchain.html#ac63dec3f223c173de1c7dcec74444e16", null ],
+    [ "getAspectRatio", "classMandrill_1_1Swapchain.html#a44b3f60c451b24c531e6f1c23a24307e", null ],
     [ "getExtent", "classMandrill_1_1Swapchain.html#a177df27af201d564963c0ec6c83c0744", null ],
     [ "getFramesInFlightCount", "classMandrill_1_1Swapchain.html#af6f098e0460ae9d4bb15f06c2ad6c0da", null ],
     [ "getImage", "classMandrill_1_1Swapchain.html#a9f10d74018eb60506993550ab3081abb", null ],

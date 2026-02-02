@@ -4,7 +4,7 @@ var classMandrill_1_1Device =
     [ "~Device", "classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a", null ],
     [ "createAccelerationStructure", "classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744", null ],
     [ "createBuffer", "classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900", null ],
-    [ "createCamera", "classMandrill_1_1Device.html#a43d3819bb05dd5dbed94ded01183eff3", null ],
+    [ "createCamera", "classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830", null ],
     [ "createDescriptor", "classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191", null ],
     [ "createImage", "classMandrill_1_1Device.html#a2b370bbfad75811b51588da347bb8342", null ],
     [ "createImage", "classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff", null ],

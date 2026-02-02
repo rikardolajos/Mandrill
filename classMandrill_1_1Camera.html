@@ -106,9 +106,9 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Camera.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a66a53f4f70f969f6b9d9cb5ff7c19614" id="r_a66a53f4f70f969f6b9d9cb5ff7c19614"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a66a53f4f70f969f6b9d9cb5ff7c19614">Camera</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, GLFWwindow *pWindow, ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt; pSwapchain)</td></tr>
-<tr class="memdesc:a66a53f4f70f969f6b9d9cb5ff7c19614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
-<tr class="separator:a66a53f4f70f969f6b9d9cb5ff7c19614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2609a7969c5cc914ab1ddfb2ad85f82" id="r_ad2609a7969c5cc914ab1ddfb2ad85f82"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad2609a7969c5cc914ab1ddfb2ad85f82">Camera</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, uint32_t framesInFlightCount)</td></tr>
+<tr class="memdesc:ad2609a7969c5cc914ab1ddfb2ad85f82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
+<tr class="separator:ad2609a7969c5cc914ab1ddfb2ad85f82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1897942d0ccf91052386388a497349f" id="r_ad1897942d0ccf91052386388a497349f"><td class="memItemLeft" align="right" valign="top"><a id="ad1897942d0ccf91052386388a497349f" name="ad1897942d0ccf91052386388a497349f"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> ()</td></tr>
 <tr class="memdesc:ad1897942d0ccf91052386388a497349f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor of camera. <br /></td></tr>
@@ -119,13 +119,15 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:ad7ec19766e89b4edd16eece0ddd1e806" id="r_ad7ec19766e89b4edd16eece0ddd1e806"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806">createRayTracingDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
 <tr class="memdesc:ad7ec19766e89b4edd16eece0ddd1e806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:ad7ec19766e89b4edd16eece0ddd1e806"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a57f2889b7264fb2d82f6e8c4ab2fe0" id="r_a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memItemLeft" align="right" valign="top"><a id="a3a57f2889b7264fb2d82f6e8c4ab2fe0" name="a3a57f2889b7264fb2d82f6e8c4ab2fe0"></a>
-MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAspectRatio</b> ()</td></tr>
-<tr class="memdesc:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the aspect ratio that is used for the camera matrix. Call this if the window size changes. <br /></td></tr>
-<tr class="separator:a3a57f2889b7264fb2d82f6e8c4ab2fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeba6cf0c960982dc25af355369c21e11" id="r_aeba6cf0c960982dc25af355369c21e11"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#aeba6cf0c960982dc25af355369c21e11">update</a> (float delta, glm::vec2 cursorDelta)</td></tr>
-<tr class="memdesc:aeba6cf0c960982dc25af355369c21e11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update function to handle camera movements. Call this each app update.  <br /></td></tr>
-<tr class="separator:aeba6cf0c960982dc25af355369c21e11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a596204934bcfb5208ebe59759260482e" id="r_a596204934bcfb5208ebe59759260482e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a596204934bcfb5208ebe59759260482e">update</a> (uint32_t frameInFlightIndex)</td></tr>
+<tr class="memdesc:a596204934bcfb5208ebe59759260482e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update function to update uniforms, without any user input movement.  <br /></td></tr>
+<tr class="separator:a596204934bcfb5208ebe59759260482e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0e030d6a660472ed541cb3625d0842" id="r_a0b0e030d6a660472ed541cb3625d0842"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a0b0e030d6a660472ed541cb3625d0842">update</a> (GLFWwindow *pWindow, float delta, glm::vec2 cursorDelta, uint32_t frameInFlightIndex)</td></tr>
+<tr class="memdesc:a0b0e030d6a660472ed541cb3625d0842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update function to handle camera movements. Call this each app update.  <br /></td></tr>
+<tr class="separator:a0b0e030d6a660472ed541cb3625d0842"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a316e99785a589d7e022f68bbbe9bb078" id="r_a316e99785a589d7e022f68bbbe9bb078"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a316e99785a589d7e022f68bbbe9bb078">setProjection</a> (const CameraProjection projectionType)</td></tr>
+<tr class="memdesc:a316e99785a589d7e022f68bbbe9bb078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the projection of the camera.  <br /></td></tr>
+<tr class="separator:a316e99785a589d7e022f68bbbe9bb078"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a686a40e98216fa2e93f6b810d4b35991" id="r_a686a40e98216fa2e93f6b810d4b35991"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a686a40e98216fa2e93f6b810d4b35991">isMouseCaptured</a> () const</td></tr>
 <tr class="memdesc:a686a40e98216fa2e93f6b810d4b35991"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if camera has captured the mouse movements.  <br /></td></tr>
 <tr class="separator:a686a40e98216fa2e93f6b810d4b35991"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,6 +155,12 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 <tr class="memitem:a1ee1515c14b548bc1443dfaf258692a8" id="r_a1ee1515c14b548bc1443dfaf258692a8"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a1ee1515c14b548bc1443dfaf258692a8">setUp</a> (glm::vec3 up)</td></tr>
 <tr class="memdesc:a1ee1515c14b548bc1443dfaf258692a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the up direction of the camera.  <br /></td></tr>
 <tr class="separator:a1ee1515c14b548bc1443dfaf258692a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a19b9b88655fcacd8a4a37fef491fda" id="r_a1a19b9b88655fcacd8a4a37fef491fda"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a1a19b9b88655fcacd8a4a37fef491fda">setAspectRatio</a> (float aspectRatio)</td></tr>
+<tr class="memdesc:a1a19b9b88655fcacd8a4a37fef491fda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the aspect ratio of the camera. Width / height.  <br /></td></tr>
+<tr class="separator:a1a19b9b88655fcacd8a4a37fef491fda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb60e96413114ad1614f4852fa203a2" id="r_a3eb60e96413114ad1614f4852fa203a2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a3eb60e96413114ad1614f4852fa203a2">setOrthoSize</a> (float orthoSize)</td></tr>
+<tr class="memdesc:a3eb60e96413114ad1614f4852fa203a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the orthographic size of the camera.  <br /></td></tr>
+<tr class="separator:a3eb60e96413114ad1614f4852fa203a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad93877531ecc10956e87c59e847efe04" id="r_ad93877531ecc10956e87c59e847efe04"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad93877531ecc10956e87c59e847efe04">setFov</a> (float fov)</td></tr>
 <tr class="memdesc:ad93877531ecc10956e87c59e847efe04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the field of view of the camera.  <br /></td></tr>
 <tr class="separator:ad93877531ecc10956e87c59e847efe04"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,24 +170,27 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 <tr class="memitem:aa7bea41e3eadbbb36b20bb7c0c6cd9fd" id="r_aa7bea41e3eadbbb36b20bb7c0c6cd9fd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#aa7bea41e3eadbbb36b20bb7c0c6cd9fd">setMoveSpeed</a> (float speed)</td></tr>
 <tr class="memdesc:aa7bea41e3eadbbb36b20bb7c0c6cd9fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the movement speed of the camera.  <br /></td></tr>
 <tr class="separator:aa7bea41e3eadbbb36b20bb7c0c6cd9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5cbe1441b3599d2ad3cf51cfc1b7397" id="r_ac5cbe1441b3599d2ad3cf51cfc1b7397"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ac5cbe1441b3599d2ad3cf51cfc1b7397">getViewMatrix</a> () const</td></tr>
-<tr class="memdesc:ac5cbe1441b3599d2ad3cf51cfc1b7397"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the view matrix of the camera.  <br /></td></tr>
-<tr class="separator:ac5cbe1441b3599d2ad3cf51cfc1b7397"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f3f96196c78c1940789ca5af176f863" id="r_a8f3f96196c78c1940789ca5af176f863"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a8f3f96196c78c1940789ca5af176f863">getProjectionMatrix</a> () const</td></tr>
-<tr class="memdesc:a8f3f96196c78c1940789ca5af176f863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the projection matrix of the camera.  <br /></td></tr>
-<tr class="separator:a8f3f96196c78c1940789ca5af176f863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7290640c0d3d4ccca6bcd7791ed21c1a" id="r_a7290640c0d3d4ccca6bcd7791ed21c1a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a7290640c0d3d4ccca6bcd7791ed21c1a">getViewMatrix</a> (uint32_t frameInFlightIndex) const</td></tr>
+<tr class="memdesc:a7290640c0d3d4ccca6bcd7791ed21c1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the view matrix of the camera.  <br /></td></tr>
+<tr class="separator:a7290640c0d3d4ccca6bcd7791ed21c1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a252577fc4d00c0fdd459b2f5d3f2b416" id="r_a252577fc4d00c0fdd459b2f5d3f2b416"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a252577fc4d00c0fdd459b2f5d3f2b416">getProjectionMatrix</a> (uint32_t frameInFlightIndex) const</td></tr>
+<tr class="memdesc:a252577fc4d00c0fdd459b2f5d3f2b416"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the projection matrix of the camera.  <br /></td></tr>
+<tr class="separator:a252577fc4d00c0fdd459b2f5d3f2b416"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfed60c4c1e4f315df70c75aa013b0ca" id="r_adfed60c4c1e4f315df70c75aa013b0ca"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca">getDescriptor</a> () const</td></tr>
 <tr class="memdesc:adfed60c4c1e4f315df70c75aa013b0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:adfed60c4c1e4f315df70c75aa013b0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58af72ed9d244f37ca0eb368b1e9d87c" id="r_a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c">getRayTracingDescriptor</a> () const</td></tr>
 <tr class="memdesc:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e6fae32c77907e8e1b643fdf5fbed06" id="r_a6e6fae32c77907e8e1b643fdf5fbed06"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a6e6fae32c77907e8e1b643fdf5fbed06">getUniformBuffer</a> () const</td></tr>
+<tr class="memdesc:a6e6fae32c77907e8e1b643fdf5fbed06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the buffer containing the camera matrices. This can be used for custom descriptor creation.  <br /></td></tr>
+<tr class="separator:a6e6fae32c77907e8e1b643fdf5fbed06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> class for managing camera properties and transformations in a 3D scene. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a66a53f4f70f969f6b9d9cb5ff7c19614" name="a66a53f4f70f969f6b9d9cb5ff7c19614"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66a53f4f70f969f6b9d9cb5ff7c19614">&#9670;&#160;</a></span>Camera()</h2>
+<a id="ad2609a7969c5cc914ab1ddfb2ad85f82" name="ad2609a7969c5cc914ab1ddfb2ad85f82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2609a7969c5cc914ab1ddfb2ad85f82">&#9670;&#160;</a></span>Camera()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,14 +204,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">GLFWwindow *&#160;</td>
-          <td class="paramname"><em>pWindow</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td>
-          <td class="paramname"><em>pSwapchain</em>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>framesInFlightCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -214,8 +219,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
-    <tr><td class="paramname">pWindow</td><td>Window to use</td></tr>
-    <tr><td class="paramname">pSwapchain</td><td><a class="el" href="classMandrill_1_1Swapchain.html" title="Swapchain class for managing the swapchain and its images.">Swapchain</a> to use</td></tr>
+    <tr><td class="paramname">framesInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
   </table>
   </dd>
 </dl>
@@ -393,8 +397,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 
 </div>
 </div>
-<a id="a8f3f96196c78c1940789ca5af176f863" name="a8f3f96196c78c1940789ca5af176f863"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f3f96196c78c1940789ca5af176f863">&#9670;&#160;</a></span>getProjectionMatrix()</h2>
+<a id="a252577fc4d00c0fdd459b2f5d3f2b416" name="a252577fc4d00c0fdd459b2f5d3f2b416"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a252577fc4d00c0fdd459b2f5d3f2b416">&#9670;&#160;</a></span>getProjectionMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -405,7 +409,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
         <tr>
           <td class="memname">MANDRILL_API glm::mat4 Mandrill::Camera::getProjectionMatrix </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -417,6 +422,12 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 </div><div class="memdoc">
 
 <p>Get the projection matrix of the camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>Projection matrix</dd></dl>
 
 </div>
@@ -449,8 +460,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 
 </div>
 </div>
-<a id="ac5cbe1441b3599d2ad3cf51cfc1b7397" name="ac5cbe1441b3599d2ad3cf51cfc1b7397"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5cbe1441b3599d2ad3cf51cfc1b7397">&#9670;&#160;</a></span>getViewMatrix()</h2>
+<a id="a6e6fae32c77907e8e1b643fdf5fbed06" name="a6e6fae32c77907e8e1b643fdf5fbed06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e6fae32c77907e8e1b643fdf5fbed06">&#9670;&#160;</a></span>getUniformBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -459,7 +470,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MANDRILL_API glm::mat4 Mandrill::Camera::getViewMatrix </td>
+          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt; Mandrill::Camera::getUniformBuffer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -472,7 +483,42 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 </table>
 </div><div class="memdoc">
 
+<p>Get the buffer containing the camera matrices. This can be used for custom descriptor creation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Uniform buffer</dd></dl>
+
+</div>
+</div>
+<a id="a7290640c0d3d4ccca6bcd7791ed21c1a" name="a7290640c0d3d4ccca6bcd7791ed21c1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7290640c0d3d4ccca6bcd7791ed21c1a">&#9670;&#160;</a></span>getViewMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API glm::mat4 Mandrill::Camera::getViewMatrix </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 <p>Get the view matrix of the camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>View matrix</dd></dl>
 
 </div>
@@ -502,6 +548,40 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 
 <p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if camera has captured the mouse movements. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if captured, otherwise false</dd></dl>
+
+</div>
+</div>
+<a id="a1a19b9b88655fcacd8a4a37fef491fda" name="a1a19b9b88655fcacd8a4a37fef491fda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a19b9b88655fcacd8a4a37fef491fda">&#9670;&#160;</a></span>setAspectRatio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API void Mandrill::Camera::setAspectRatio </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>aspectRatio</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the aspect ratio of the camera. Width / height. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">aspect</td><td>Aspect ratio</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -652,6 +732,40 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 
 </div>
 </div>
+<a id="a3eb60e96413114ad1614f4852fa203a2" name="a3eb60e96413114ad1614f4852fa203a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3eb60e96413114ad1614f4852fa203a2">&#9670;&#160;</a></span>setOrthoSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API void Mandrill::Camera::setOrthoSize </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>orthoSize</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the orthographic size of the camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">orthoSize</td><td>Orthographics size</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a257fdf00c92b9feb0d73eec9d9719828" name="a257fdf00c92b9feb0d73eec9d9719828"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a257fdf00c92b9feb0d73eec9d9719828">&#9670;&#160;</a></span>setPosition()</h2>
 
@@ -680,6 +794,32 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pos</td><td>New position</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a316e99785a589d7e022f68bbbe9bb078" name="a316e99785a589d7e022f68bbbe9bb078"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a316e99785a589d7e022f68bbbe9bb078">&#9670;&#160;</a></span>setProjection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::setProjection </td>
+          <td>(</td>
+          <td class="paramtype">const CameraProjection&#160;</td>
+          <td class="paramname"><em>projectionType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the projection of the camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">projectionType</td><td>Perspective or othographic projection</td></tr>
   </table>
   </dd>
 </dl>
@@ -782,8 +922,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 
 </div>
 </div>
-<a id="aeba6cf0c960982dc25af355369c21e11" name="aeba6cf0c960982dc25af355369c21e11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeba6cf0c960982dc25af355369c21e11">&#9670;&#160;</a></span>update()</h2>
+<a id="a0b0e030d6a660472ed541cb3625d0842" name="a0b0e030d6a660472ed541cb3625d0842"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0e030d6a660472ed541cb3625d0842">&#9670;&#160;</a></span>update() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -791,6 +931,12 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
         <tr>
           <td class="memname">void Camera::update </td>
           <td>(</td>
+          <td class="paramtype">GLFWwindow *&#160;</td>
+          <td class="paramname"><em>pWindow</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>delta</em>, </td>
         </tr>
@@ -798,7 +944,13 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">glm::vec2&#160;</td>
-          <td class="paramname"><em>cursorDelta</em>&#160;</td>
+          <td class="paramname"><em>cursorDelta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -811,8 +963,36 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>updateAs
 <p>Update function to handle camera movements. Call this each app update. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">pWindow</td><td>GLFW window to poll for input</td></tr>
     <tr><td class="paramname">delta</td><td>Time since last update</td></tr>
     <tr><td class="paramname">cursorDelta</td><td>Mouse cursor movement</td></tr>
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a596204934bcfb5208ebe59759260482e" name="a596204934bcfb5208ebe59759260482e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a596204934bcfb5208ebe59759260482e">&#9670;&#160;</a></span>update() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::update </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Update function to update uniforms, without any user input movement. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
   </table>
   </dd>
 </dl>

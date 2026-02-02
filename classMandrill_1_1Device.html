@@ -160,9 +160,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:ae57d77ea4fd291683f97f090c4005900" id="r_ae57d77ea4fd291683f97f090c4005900"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">createBuffer</a> (VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</td></tr>
 <tr class="memdesc:ae57d77ea4fd291683f97f090c4005900"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new buffer.  <br /></td></tr>
 <tr class="separator:ae57d77ea4fd291683f97f090c4005900"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43d3819bb05dd5dbed94ded01183eff3" id="r_a43d3819bb05dd5dbed94ded01183eff3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a43d3819bb05dd5dbed94ded01183eff3">createCamera</a> (GLFWwindow *pWindow, ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt; pSwapchain)</td></tr>
-<tr class="memdesc:a43d3819bb05dd5dbed94ded01183eff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
-<tr class="separator:a43d3819bb05dd5dbed94ded01183eff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed0b0b82d0fcb9106f970a8f3eb1b830" id="r_aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">createCamera</a> (uint32_t framesInFlightCount)</td></tr>
+<tr class="memdesc:aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
+<tr class="separator:aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add6654c463a2a2f114093b2661f5d191" id="r_add6654c463a2a2f114093b2661f5d191"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">createDescriptor</a> (const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</td></tr>
 <tr class="memdesc:add6654c463a2a2f114093b2661f5d191"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new descriptor.  <br /></td></tr>
 <tr class="separator:add6654c463a2a2f114093b2661f5d191"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -343,8 +343,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
-<a id="a43d3819bb05dd5dbed94ded01183eff3" name="a43d3819bb05dd5dbed94ded01183eff3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43d3819bb05dd5dbed94ded01183eff3">&#9670;&#160;</a></span>createCamera()</h2>
+<a id="aed0b0b82d0fcb9106f970a8f3eb1b830" name="aed0b0b82d0fcb9106f970a8f3eb1b830"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed0b0b82d0fcb9106f970a8f3eb1b830">&#9670;&#160;</a></span>createCamera()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,19 +352,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
         <tr>
           <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; Device::createCamera </td>
           <td>(</td>
-          <td class="paramtype">GLFWwindow *&#160;</td>
-          <td class="paramname"><em>pWindow</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>framesInFlightCount</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td>
-          <td class="paramname"><em>pSwapchain</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -372,8 +362,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <p>Create a new camera. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pWindow</td><td>Window to use</td></tr>
-    <tr><td class="paramname">pSwapchain</td><td><a class="el" href="classMandrill_1_1Swapchain.html" title="Swapchain class for managing the swapchain and its images.">Swapchain</a> to use</td></tr>
+    <tr><td class="paramname">framesInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
   </table>
   </dd>
 </dl>

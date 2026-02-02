@@ -19,6 +19,7 @@ var classMandrill_1_1Scene =
     [ "getMeshMaterialIndex", "classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0", null ],
     [ "getMeshVertexAddress", "classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e", null ],
     [ "getMeshVertexCount", "classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509", null ],
+    [ "getNode", "classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069", null ],
     [ "getNodes", "classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21", null ],
     [ "getTextureCount", "classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969", null ],
     [ "getTextures", "classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85", null ],

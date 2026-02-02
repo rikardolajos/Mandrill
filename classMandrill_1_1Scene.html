@@ -148,6 +148,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <tr class="memitem:a40fd82a0b65816031e3d43a1a8ddc2d1" id="r_a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a40fd82a0b65816031e3d43a1a8ddc2d1">bindRayTracingDescriptors</a> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, VkPipelineLayout layout, uint32_t frameInFlightIndex)</td></tr>
 <tr class="memdesc:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind ray-tracing descriptors.  <br /></td></tr>
 <tr class="separator:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb306e7db8f71cb20f51bffe7c1a0069" id="r_acb306e7db8f71cb20f51bffe7c1a0069"><td class="memItemLeft" align="right" valign="top">MANDRILL_API <a class="el" href="classMandrill_1_1Node.html">Node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">getNode</a> (uint32_t nodeIndex)</td></tr>
+<tr class="memdesc:acb306e7db8f71cb20f51bffe7c1a0069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to a node in the scene.  <br /></td></tr>
+<tr class="separator:acb306e7db8f71cb20f51bffe7c1a0069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fdf0c2227fb958e7aea078773a52f21" id="r_a5fdf0c2227fb958e7aea078773a52f21"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; <a class="el" href="classMandrill_1_1Node.html">Node</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">getNodes</a> ()</td></tr>
 <tr class="memdesc:a5fdf0c2227fb958e7aea078773a52f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of all nodes in the scene.  <br /></td></tr>
 <tr class="separator:a5fdf0c2227fb958e7aea078773a52f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -456,7 +459,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <p>Calculate sizes of buffers and allocate resources. Call this after all nodes have been added. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">frameInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
+    <tr><td class="paramname">framesInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
   </table>
   </dd>
 </dl>
@@ -844,6 +847,40 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of vertices</dd></dl>
+
+</div>
+</div>
+<a id="acb306e7db8f71cb20f51bffe7c1a0069" name="acb306e7db8f71cb20f51bffe7c1a0069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb306e7db8f71cb20f51bffe7c1a0069">&#9670;&#160;</a></span>getNode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API <a class="el" href="classMandrill_1_1Node.html">Node</a> &amp; Mandrill::Scene::getNode </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>nodeIndex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a reference to a node in the scene. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeIndex</td><td>Index to node</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

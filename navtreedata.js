@@ -66,7 +66,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AccelerationStructure_8h_source.html",
-"classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865"
+"classMandrill_1_1Shader.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
