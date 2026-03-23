@@ -397,6 +397,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
         .features =
             {
+                .independentBlend = VK_TRUE,
                 .fillModeNonSolid = VK_TRUE,
                 .wideLines = VK_TRUE,
                 .samplerAnisotropy = VK_TRUE,

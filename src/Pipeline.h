@@ -49,6 +49,18 @@ namespace Mandrill
         },
     }};
 
+    static std::vector<VkPipelineColorBlendAttachmentState> defaultColorBlendAttachmentStates = {{{
+        .blendEnable = VK_FALSE,
+        .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
+        .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        .colorBlendOp = VK_BLEND_OP_ADD,
+        .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
+        .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+        .alphaBlendOp = VK_BLEND_OP_ADD,
+        .colorWriteMask =
+            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+    }}};
+
     /// <summary>
     /// Configuration structure for creating a pipeline. This stucture will default to common settings if not specified.
     /// </summary>
@@ -149,45 +161,23 @@ namespace Mandrill
         // Color blend attachment state //
 
         /// <summary>
-        /// Blend enable. Defaults to disabled.
+        /// If no color blend attachment states are provided, a default state will be used for all color attachments in
+        /// the pass. If one state is provided, it will be used for all attachments. Otherwise, the number of states
+        /// must match the number of color attachments in the pass. Defaults to one state with blending disabled.
+        /// <table>
+        /// <caption> Default values </caption>
+        /// <tr><th> Parameter <th> Default <th>
+        /// <tr><td> Blend enable <td> Disabled
+        /// <tr><td> Source color blend factor <td> SRC_ALPHA
+        /// <tr><td> Destination color blend factor <td> ONE_MINUS_SRC_ALPHA
+        /// <tr><td> Color blend operation <td> ADD
+        /// <tr><td> Source alpha blend factor <td> ONE
+        /// <tr><td> Destination alpha blend factor <td> ZERO
+        /// <tr><td> Alpha blend operation <td> ADD
+        /// <tr><td> Color write mask <td> RGBA
+        /// </table>
         /// </summary>
-        VkBool32 blendEnable = VK_FALSE;
-
-        /// <summary>
-        /// Source color blend factor. Defaults to SRC_ALPHA.
-        /// </summary>
-        VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-
-        /// <summary>
-        /// Destination color blend factor. Defaults to ONE_MINUS_SRC_ALPHA.
-        /// </summary>
-        VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-
-        /// <summary>
-        /// Color blend operation. Defaults to ADD.
-        /// </summary>
-        VkBlendOp colorBlendOp = VK_BLEND_OP_ADD;
-
-        /// <summary>
-        /// Source alpha blend factor. Defaults to ONE.
-        /// </summary>
-        VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-
-        /// <summary>
-        /// Destination alpha blend factor. Defaults to ZERO.
-        /// </summary>
-        VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-
-        /// <summary>
-        /// Alpha blend operation. Defaults to ADD.
-        /// </summary>
-        VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD;
-
-        /// <summary>
-        /// Color write mask. Defaults to write all components (RGBA).
-        /// </summary>
-        VkColorComponentFlags colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
 
 
         // Depth-stencil state //
@@ -249,8 +239,11 @@ namespace Mandrill
         MANDRILL_API
         PipelineDesc(
             std::vector<VkVertexInputBindingDescription> bindingDescriptions = defaultBindingDescriptions,
-            std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions)
-            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions)
+            std::vector<VkVertexInputAttributeDescription> attributeDescriptions = defaultAttributeDescriptions,
+            std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates =
+                defaultColorBlendAttachmentStates)
+            : bindingDescriptions(bindingDescriptions), attributeDescriptions(attributeDescriptions),
+              colorBlendAttachmentStates(colorBlendAttachmentStates)
         {
         }
     };
