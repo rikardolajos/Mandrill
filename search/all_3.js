@@ -14,7 +14,5 @@ var searchData=
   ['destroygui_11',['destroyGUI',['../classMandrill_1_1App.html#ae1f85a1abcf91f6ea4a070b7b4aaf5c3',1,'Mandrill::App']]],
   ['destroypipeline_12',['destroyPipeline',['../classMandrill_1_1Pipeline.html#a01fc1d24a99e5149cb06765d4b503254',1,'Mandrill::Pipeline']]],
   ['device_13',['device',['../classMandrill_1_1Device.html',1,'Mandrill::Device'],['../classMandrill_1_1Device.html#a9756a745cc4454d687f506d332553289',1,'Mandrill::Device::Device()']]],
-  ['drawmeshes_14',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]],
-  ['dstalphablendfactor_15',['dstAlphaBlendFactor',['../structMandrill_1_1PipelineDesc.html#a6f5c9b05b5a765217a84edd2d3458fa8',1,'Mandrill::PipelineDesc']]],
-  ['dstcolorblendfactor_16',['dstColorBlendFactor',['../structMandrill_1_1PipelineDesc.html#ac994f48d861e93a3efa2c6fa37500dbc',1,'Mandrill::PipelineDesc']]]
+  ['drawmeshes_14',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]]
 ];

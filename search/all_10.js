@@ -30,11 +30,9 @@ var searchData=
   ['setvisible_27',['setVisible',['../classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4',1,'Mandrill::Node']]],
   ['setvsync_28',['setVsync',['../classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646',1,'Mandrill::Device']]],
   ['shader_29',['shader',['../classMandrill_1_1Shader.html',1,'Mandrill::Shader'],['../classMandrill_1_1Shader.html#a5bcd170ee0634a2c2a82aade77c67510',1,'Mandrill::Shader::Shader()']]],
-  ['srcalphablendfactor_30',['srcAlphaBlendFactor',['../structMandrill_1_1PipelineDesc.html#a509be91d71a10c2b29f4816eaa12c620',1,'Mandrill::PipelineDesc']]],
-  ['srccolorblendfactor_31',['srcColorBlendFactor',['../structMandrill_1_1PipelineDesc.html#a25a50bce5042f130022af45e470a87b8',1,'Mandrill::PipelineDesc']]],
-  ['stenciltestenable_32',['stencilTestEnable',['../structMandrill_1_1PipelineDesc.html#ac553cb258b1f99927b9e049596940df3',1,'Mandrill::PipelineDesc']]],
-  ['submodule_33',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
-  ['supportsraytracing_34',['supportsRayTracing',['../classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd',1,'Mandrill::Device']]],
-  ['swapchain_35',['swapchain',['../classMandrill_1_1Swapchain.html#aa1a5113e02772249aaa7564e00cbf241',1,'Mandrill::Swapchain::Swapchain()'],['../classMandrill_1_1Swapchain.html',1,'Mandrill::Swapchain']]],
-  ['synctodevice_36',['syncToDevice',['../classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d',1,'Mandrill::Scene']]]
+  ['stenciltestenable_30',['stencilTestEnable',['../structMandrill_1_1PipelineDesc.html#ac553cb258b1f99927b9e049596940df3',1,'Mandrill::PipelineDesc']]],
+  ['submodule_31',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
+  ['supportsraytracing_32',['supportsRayTracing',['../classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd',1,'Mandrill::Device']]],
+  ['swapchain_33',['swapchain',['../classMandrill_1_1Swapchain.html#aa1a5113e02772249aaa7564e00cbf241',1,'Mandrill::Swapchain::Swapchain()'],['../classMandrill_1_1Swapchain.html',1,'Mandrill::Swapchain']]],
+  ['synctodevice_34',['syncToDevice',['../classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d',1,'Mandrill::Scene']]]
 ];
