@@ -78,15 +78,30 @@ namespace Mandrill
         MANDRILL_API void begin(VkCommandBuffer cmd);
 
         /// <summary>
-        /// Begin a pass with clearing of the color attachments.
+        /// Begin a pass with same clearing of the color attachments.
         /// </summary>
         /// <param name="cmd">Command buffer</param>
         /// <param name="clearColor">Clearing value for color</param>
         /// <param name="clearDepthStencil">Clearing value for depth and stencil</param>
-        /// <param name="loadOp">Load operation for color attachments</param>
+        /// <param name="loadOpColor">Load operation for color attachments</param>
+        /// <param name="loadOpDepth">Load operation for depth attachments</param>
         MANDRILL_API void begin(VkCommandBuffer cmd, glm::vec4 clearColor,
                                 VkClearDepthStencilValue clearDepthStencil = {.depth = 1.0f, .stencil = 0},
-                                VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR);
+                                VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                VkAttachmentLoadOp loadOpDepth = VK_ATTACHMENT_LOAD_OP_CLEAR);
+
+        /// <summary>
+        /// Begin a pass with explicit clearing of the color attachments.
+        /// </summary>
+        /// <param name="cmd">Command buffer</param>
+        /// <param name="clearColor">Clearing value for color</param>
+        /// <param name="clearDepthStencil">Clearing value for depth and stencil</param>
+        /// <param name="loadOpColor">Load operation for color attachments</param>
+        /// <param name="loadOpDepth">Load operation for depth attachments</param>
+        MANDRILL_API void begin(VkCommandBuffer cmd, std::vector<glm::vec4> clearColors,
+                                VkClearDepthStencilValue clearDepthStencil = {.depth = 1.0f, .stencil = 0},
+                                VkAttachmentLoadOp loadOpColor = VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                VkAttachmentLoadOp loadOpDepth = VK_ATTACHMENT_LOAD_OP_CLEAR);
 
         /// <summary>
         /// Begin a pass but override the color attachments with an image. The image is expected to be usable as a color
