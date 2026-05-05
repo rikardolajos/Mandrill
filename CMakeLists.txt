@@ -59,7 +59,7 @@ function(add_shaders TARGET)
 endfunction()
 
 find_package(Vulkan REQUIRED COMPONENTS glslc shaderc_combined)
-include_directories(${Vulkan_INCLUDE_DIRS})
+add_library(spirv-reflect STATIC "${Vulkan_INCLUDE_DIRS}/SPIRV-Reflect/spirv_reflect.c")
 
 find_package(OpenVDB QUIET)
 if (OpenVDB_FOUND)
