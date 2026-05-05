@@ -7,7 +7,7 @@
 
 namespace Mandrill
 {
-    enum class MANDRILL_API TextureType : uint32_t {
+    enum class TextureType : uint32_t {
         Texture1D,
         Texture2D,
         Texture3D,
