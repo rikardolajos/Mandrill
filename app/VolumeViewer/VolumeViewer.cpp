@@ -40,7 +40,6 @@ public:
         std::vector<VkVertexInputAttributeDescription> emptyAttributeDescription;
         PipelineDesc pipelineDesc = PipelineDesc(emptyBindingDescription, emptyAttributeDescription);
         pipelineDesc.depthTestEnable = VK_FALSE;
-        pipelineDesc.blendEnable = VK_FALSE;
 
         // Create a pipeline for environment map
         std::vector<ShaderDesc> shaderDesc;
@@ -72,7 +71,7 @@ public:
         auto pRayMarchShader = mpDevice->createShader(shaderDesc);
 
         pipelineDesc.depthTestEnable = VK_TRUE;
-        pipelineDesc.blendEnable = VK_TRUE;
+        pipelineDesc.colorBlendAttachmentStates[0].blendEnable = VK_TRUE;
         mpRayMarchingPipeline = mpDevice->createPipeline(mpPass, pRayMarchShader, pipelineDesc);
 
         mPipelines = {mpEnvironmentMapPipeline, mpRayMarchingPipeline};
@@ -189,7 +188,7 @@ public:
                 }
             }
             ImGui::SameLine();
-            ImGui::Text(mVolumePath.string().c_str());
+            ImGui::TextUnformatted(mVolumePath.string().c_str());
             bool recreatePipeline = false;
             recreatePipeline |= ImGui::DragFloat("Density", &mSpecializationConstants.density, 0.01f, 0.0f, 100.0f);
 
@@ -226,7 +225,7 @@ public:
                 }
             }
             ImGui::SameLine();
-            ImGui::Text(mEnvironmentMapPath.string().c_str());
+            ImGui::TextUnformatted(mEnvironmentMapPath.string().c_str());
         }
 
         ImGui::End();
