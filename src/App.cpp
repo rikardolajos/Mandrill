@@ -119,9 +119,14 @@ void App::createGUI(ptr<Device> pDevice, ptr<Pass> pPass)
 
     ImGui_ImplVulkan_Init(&info);
 
+    // Get DPI scale
+    float xscale, yscale;
+    glfwGetWindowContentScale(mpWindow, &xscale, &yscale);
+    float scale = std::max(xscale, yscale);
+
     // Create fonts texture
     ImGuiIO& io = ImGui::GetIO();
-    mFont = io.Fonts->AddFontFromFileTTF(GetResourcePath("fonts/Roboto.ttf").string().c_str(), 16);
+    mFont = io.Fonts->AddFontFromFileTTF(GetResourcePath("fonts/Roboto.ttf").string().c_str(), scale * 16);
 
     ImGui_ImplVulkan_CreateFontsTexture();
 
@@ -242,6 +247,9 @@ void App::createGUI(ptr<Device> pDevice, ptr<Pass> pPass)
         ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.2000000029802322f);
     style.Colors[ImGuiCol_ModalWindowDimBg] =
         ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
+
+    // Scale everything according to DPI
+    style.ScaleAllSizes(scale);
 
     mCreatedGUI = true;
 }

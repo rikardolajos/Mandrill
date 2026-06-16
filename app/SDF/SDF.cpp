@@ -31,7 +31,6 @@ public:
         std::vector<VkVertexInputAttributeDescription> emptyAttributeDescription;
         PipelineDesc pipelineDesc = PipelineDesc(emptyBindingDescription, emptyAttributeDescription);
         pipelineDesc.depthTestEnable = VK_FALSE;
-        pipelineDesc.blendEnable = VK_FALSE;
 
         // Create a pipeline
         std::vector<ShaderDesc> shaderDesc;

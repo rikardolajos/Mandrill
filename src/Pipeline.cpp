@@ -5,8 +5,7 @@
 
 using namespace Mandrill;
 
-Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Shader> pShader,
-                   const PipelineDesc& desc)
+Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc)
     : mpDevice(pDevice), mpPass(pPass), mpShader(pShader), mPipeline(nullptr), mDesc(desc)
 {
     if (pPass) {
@@ -107,17 +106,6 @@ void Pipeline::createPipeline()
         .alphaToOneEnable = mDesc.alphaToOneEnableEnable,
     };
 
-    VkPipelineColorBlendAttachmentState colorBlendAttachment = {
-        .blendEnable = mDesc.blendEnable,
-        .srcColorBlendFactor = mDesc.srcColorBlendFactor,
-        .dstColorBlendFactor = mDesc.dstColorBlendFactor,
-        .colorBlendOp = mDesc.colorBlendOp,
-        .srcAlphaBlendFactor = mDesc.srcAlphaBlendFactor,
-        .dstAlphaBlendFactor = mDesc.dstAlphaBlendFactor,
-        .alphaBlendOp = mDesc.alphaBlendOp,
-        .colorWriteMask = mDesc.colorWriteMask,
-    };
-
     VkPipelineDepthStencilStateCreateInfo depthStencil = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
         .depthTestEnable = mDesc.depthTestEnable,
@@ -129,9 +117,21 @@ void Pipeline::createPipeline()
         .maxDepthBounds = mDesc.maxDepthBounds,
     };
 
+    // If only one color blend attachment state is provided, use it for all attachments. Otherwise, the number of
+    // states must match the number of color attachments in the pass.
     std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachmentStates;
-    for (uint32_t i = 0; i < count(mpPass->getColorAttachments()); i++) {
-        colorBlendAttachmentStates.push_back(colorBlendAttachment);
+    if (count(mDesc.colorBlendAttachmentStates) == 1) {
+        for (uint32_t i = 0; i < count(mpPass->getColorAttachments()); i++) {
+            colorBlendAttachmentStates.push_back(mDesc.colorBlendAttachmentStates[0]);
+        }
+    } else {
+        if (count(mDesc.colorBlendAttachmentStates) != count(mpPass->getColorAttachments())) {
+            Log::Error("Number of color blend attachment states must match number of color attachments in pass");
+            return;
+        }
+        for (uint32_t i = 0; i < count(mDesc.colorBlendAttachmentStates); i++) {
+            colorBlendAttachmentStates.push_back(mDesc.colorBlendAttachmentStates[i]);
+        }
     }
 
     VkPipelineColorBlendStateCreateInfo colorBlending = {

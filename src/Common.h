@@ -16,7 +16,7 @@
 #endif
 
 #include <shaderc/shaderc.hpp>
-#include <spirv-reflect/spirv_reflect.h>
+#include <SPIRV-Reflect/spirv_reflect.h>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

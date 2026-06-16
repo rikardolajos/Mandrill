@@ -51,28 +51,40 @@ void Pass::begin(VkCommandBuffer cmd)
 }
 
 void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkClearDepthStencilValue clearDepthStencil,
-                 VkAttachmentLoadOp loadOp)
+                 VkAttachmentLoadOp loadOpColor, VkAttachmentLoadOp loadOpDepth)
+{
+    std::vector<glm::vec4> clearColors(count(mColorAttachments), clearColor);
+    begin(cmd, clearColors, clearDepthStencil, loadOpColor, loadOpDepth);
+}
+
+void Pass::begin(VkCommandBuffer cmd, std::vector<glm::vec4> clearColors, VkClearDepthStencilValue clearDepthStencil,
+                 VkAttachmentLoadOp loadOpColor, VkAttachmentLoadOp loadOpDepth)
 {
     if (mImplicitAttachments) {
         transitionForRendering(cmd, mpResolveAttachment ? mpResolveAttachment : mColorAttachments[0]);
     }
 
+    if (clearColors.size() != count(mColorAttachments)) {
+        Log::Error("Number of clear colors must match number of color attachments");
+        return;
+    }
+
     // Set up attachments and begin
     std::vector<VkRenderingAttachmentInfo> colorAttachmentInfos;
-    for (auto colorAttachment : mColorAttachments) {
+    for (uint32_t i = 0; i < count(mColorAttachments); i++) {
         VkRenderingAttachmentInfo colorAttachmentInfo = {
             .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-            .imageView = colorAttachment->getImageView(),
+            .imageView = mColorAttachments[i]->getImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
             .resolveMode = mpResolveAttachment ? VK_RESOLVE_MODE_AVERAGE_BIT : VK_RESOLVE_MODE_NONE,
             .resolveImageView = mpResolveAttachment ? mpResolveAttachment->getImageView() : nullptr,
             .resolveImageLayout =
                 mpResolveAttachment ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_UNDEFINED,
-            .loadOp = loadOp,
+            .loadOp = loadOpColor,
             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
             .clearValue =
                 {
-                    .color = {clearColor[0], clearColor[1], clearColor[2], clearColor[3]},
+                    .color = {clearColors[i][0], clearColors[i][1], clearColors[i][2], clearColors[i][3]},
                 },
         };
         colorAttachmentInfos.push_back(colorAttachmentInfo);
@@ -84,7 +96,7 @@ void Pass::begin(VkCommandBuffer cmd, glm::vec4 clearColor, VkClearDepthStencilV
             .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
             .imageView = mpDepthAttachment->getImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
-            .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+            .loadOp = loadOpDepth,
             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
             .clearValue = {.depthStencil = clearDepthStencil},
         };
@@ -204,8 +216,16 @@ void Pass::update(VkExtent2D extent)
 
 void Pass::createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Image> pDepthAttachment)
 {
-    mExtent.width = colorAttachments[0]->getWidth();
-    mExtent.height = colorAttachments[0]->getHeight();
+    if (!colorAttachments.empty()) {
+        mExtent.width = colorAttachments[0]->getWidth();
+        mExtent.height = colorAttachments[0]->getHeight();
+    } else if (pDepthAttachment) {
+        mExtent.width = pDepthAttachment->getWidth();
+        mExtent.height = pDepthAttachment->getHeight();
+    } else {
+        Log::Error("At least one attachment must be provided");
+        return;
+    }
 
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
 
