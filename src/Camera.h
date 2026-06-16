@@ -5,6 +5,7 @@
 #include "Buffer.h"
 #include "Descriptor.h"
 #include "Device.h"
+#include "Frustum.h"
 #include "Swapchain.h"
 
 namespace Mandrill
@@ -76,6 +77,13 @@ namespace Mandrill
         /// </summary>
         /// <param name="projectionType">Perspective or othographic projection</param>
         MANDRILL_API void setProjection(const CameraProjection projectionType);
+
+        /// <summary>
+        /// Get the frustum of the camera.
+        /// </summary>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <returns>Camera frustum</returns>
+        MANDRILL_API Frustum getFrustum(uint32_t frameInFlightIndex) const;
 
         /// <summary>
         /// Check if camera has captured the mouse movements.

@@ -195,6 +195,43 @@ void Camera::setProjection(const CameraProjection projectionType)
     mProjectionType = projectionType;
 }
 
+static glm::vec4 getRow(const glm::mat4& m, int row)
+{
+    return glm::vec4(m[0][row], m[1][row], m[2][row], m[3][row]);
+}
+
+static glm::vec4 normalizePlane(const glm::vec4& p)
+{
+    float len = glm::length(glm::vec3(p));
+    return p / len;
+}
+
+Frustum Camera::getFrustum(uint32_t frameInFlightIndex) const
+{
+    Frustum frustum = {};
+
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+    glm::mat4 vp = matrices->proj * matrices->view;
+
+    glm::vec4 r0 = getRow(vp, 0);
+    glm::vec4 r1 = getRow(vp, 1);
+    glm::vec4 r2 = getRow(vp, 2);
+    glm::vec4 r3 = getRow(vp, 3);
+
+    frustum.planes[0] = r3 + r0; // Left
+    frustum.planes[1] = r3 - r0; // Right
+    frustum.planes[2] = r3 + r1; // Bottom
+    frustum.planes[3] = r3 - r1; // Top
+    frustum.planes[4] = r2;      // Near
+    frustum.planes[5] = r3 - r2; // Far
+
+    for (uint32_t i = 0; i < 6; i++) {
+        frustum.planes[i] = normalizePlane(frustum.planes[i]);
+    }
+
+    return frustum;
+}
+
 void Camera::updateProjectionMatrix()
 {
     switch (mProjectionType) {

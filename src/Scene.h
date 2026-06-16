@@ -2,6 +2,7 @@
 
 #include "Common.h"
 
+#include "AABB.h"
 #include "AccelerationStructure.h"
 #include "Camera.h"
 #include "Descriptor.h"
@@ -39,6 +40,8 @@ namespace Mandrill
         // Device offset are set when uploading to device
         VkDeviceSize deviceVerticesOffset{};
         VkDeviceSize deviceIndicesOffset{};
+
+        AABB boundingBox{};
     };
 
     struct alignas(16) MaterialParams {
@@ -116,6 +119,13 @@ namespace Mandrill
         /// <param name="pScene">Scene which the node belongs to</param>
         MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
                                  const ptr<const Scene> pScene) const;
+
+        /// <summary>
+        /// Get bounding box of the node
+        /// </summary>
+        /// <param name="pScene">Scene which the node belongs to</param>
+        /// <returns>Axis-aligned bounding box</returns>
+        MANDRILL_API AABB getBoundingBox(const ptr<const Scene> pScene) const;
 
         /// <summary>
         /// Add a mesh to the node.
@@ -221,7 +231,9 @@ namespace Mandrill
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex) const;
+        /// <param name="frustumCulling">Cull nodes that are outside of the camera's frustum</param>
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
+                                 bool frustumCulling = true) const;
 
         /// <summary>
         /// Add a node to the scene.
@@ -237,7 +249,7 @@ namespace Mandrill
         /// are in the same directory as the OBJ-file, no effect for GLTF/GLB)</param>
         /// <returns>List of indices to nodes that were added</returns>
         MANDRILL_API std::vector<uint32_t> addNodesFromFile(const std::filesystem::path& path,
-                                                             const std::filesystem::path& materialPath = "");
+                                                            const std::filesystem::path& materialPath = "");
 
         /// <summary>
         /// Add a material to the scene.

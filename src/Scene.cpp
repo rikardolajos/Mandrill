@@ -89,6 +89,16 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
     }
 }
 
+AABB Node::getBoundingBox(const ptr<const Scene> pScene) const
+{
+    AABB boundingBox = {};
+    for (auto meshIndex : mMeshIndices) {
+        const Mesh& mesh = pScene->mMeshes[meshIndex];
+        boundingBox.expand(mesh.boundingBox);
+    }
+    return boundingBox;
+}
+
 Scene::Scene(ptr<Device> pDevice) : mpDevice(pDevice), mVertexCount(0), mIndexCount(0)
 {
     const uint8_t data[] = {0xff, 0x00, 0xff, 0xff, 0x88, 0x00, 0xff, 0xff,
@@ -107,7 +117,7 @@ Scene::~Scene()
 {
 }
 
-void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex) const
+void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex, bool frustumCulling) const
 {
     if (mNodes.empty()) {
         return;
@@ -124,7 +134,17 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t fram
         mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 3);
     }
 
+    Frustum cameraFrustum = pCamera->getFrustum(frameInFlightIndex);
     for (auto& node : mNodes) {
+        // Cull nodes that are outside of the camera's frustum
+        if (frustumCulling) {
+            AABB nodeBoundingBox = node.getBoundingBox(shared_from_this());
+            nodeBoundingBox.transform(node.getTransform()); // Transform bounding box to world space
+            if (!cameraFrustum.intersects(nodeBoundingBox)) {
+                continue;
+            }
+        }
+
         node.render(cmd, pCamera, frameInFlightIndex, shared_from_this());
     }
 }
@@ -268,10 +288,15 @@ uint32_t Scene::addMaterial(Material material)
 
 uint32_t Scene::addMesh(const std::vector<Vertex> vertices, const std::vector<uint32_t> indices, uint32_t materialIndex)
 {
+    std::vector<glm::vec3> positions;
+    for (const auto& vertex : vertices) {
+        positions.push_back(vertex.position);
+    }
     Mesh mesh = {
         .vertices = vertices,
         .indices = indices,
         .materialIndex = materialIndex,
+        .boundingBox = AABB::calculate(positions),
     };
 
     mMeshes.push_back(mesh);
@@ -616,6 +641,7 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
                 shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
+                shapeMesh[meshIndex].boundingBox.expand(vert.position);
                 indices[meshIndex] += 1;
             }
 
@@ -804,6 +830,11 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
                     vertex.position.z = positions[i * 3 + 2];
                     newMesh.vertices.push_back(vertex);
                 }
+                std::vector<glm::vec3> vertexPositions;
+                for (const auto& vertex : newMesh.vertices) {
+                    vertexPositions.push_back(vertex.position);
+                }
+                newMesh.boundingBox = AABB::calculate(vertexPositions);
             }
             if (primitive.attributes.count("NORMAL") > 0) {
                 const auto& accessor = model.accessors[primitive.attributes.at("NORMAL")];

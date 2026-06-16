@@ -1,4 +1,5 @@
 add_library(Mandrill SHARED
+	"AABB.h"
 	"AccelerationStructure.cpp"
 	"AccelerationStructure.h"
 	"App.cpp"
@@ -16,6 +17,7 @@ add_library(Mandrill SHARED
 	"Error.h"
 	"Extension.cpp"
 	"Extension.h"
+	"Frustum.h"
 	"Helpers.h"
 	"Image.cpp"
 	"Image.h"

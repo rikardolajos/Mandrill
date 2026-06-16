@@ -23,13 +23,13 @@ public:
         mpScene = mpDevice->createScene();
 
         // Load scene nodes from file
-        auto nodeIndices = mpScene->addNodesFromFile(mScenePath);
+         auto nodeIndices = mpScene->addNodesFromFile(mScenePath);
 
         // Set pipelines for all nodes
-        auto& nodes = mpScene->getNodes();
-        for (auto nodeIndex : nodeIndices) {
-            nodes[nodeIndex].setPipeline(mPipelines[PIPELINE_FILL]);
-        }
+         auto& nodes = mpScene->getNodes();
+         for (auto nodeIndex : nodeIndices) {
+             nodes[nodeIndex].setPipeline(mPipelines[PIPELINE_FILL]);
+         }
 
         // Calculate and allocate buffers
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
@@ -139,7 +139,7 @@ public:
                            sizeof pushConstants, &pushConstants);
 
         // Render scene
-        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
+        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex(), mFrustumCulling);
 
         // Render lines
         if (mDrawPolygonLines) {
@@ -182,9 +182,8 @@ public:
 
         if (ImGui::Begin("Scene Viewer")) {
             if (ImGui::Button("Load")) {
-                mScenePath = OpenFile(
-                    mpWindow,
-                    "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0glTF (*.gltf)\0*.GLTF\0Binary glTF (*.glb)\0*.GLB\0");
+                mScenePath = OpenFile(mpWindow, "All\0*.*\0Wavefront Object (*.obj)\0*.OBJ\0glTF "
+                                                "(*.gltf)\0*.GLTF\0Binary glTF (*.glb)\0*.GLB\0");
                 if (!mScenePath.empty()) {
                     loadScene();
                 }
@@ -230,6 +229,8 @@ public:
             if (ImGui::SliderFloat("Camera move speed", &mCameraMoveSpeed, 0.1f, 100.0f)) {
                 mpCamera->setMoveSpeed(mCameraMoveSpeed);
             }
+
+            ImGui::Checkbox("Frustum culling", &mFrustumCulling);
         }
 
         ImGui::End();
@@ -273,6 +274,7 @@ private:
     int mMagFilter = 0;
     int mMinFilter = 0;
     int mMipMode = 0;
+    bool mFrustumCulling = true;
 };
 
 int main()
