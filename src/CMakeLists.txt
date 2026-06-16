@@ -67,12 +67,12 @@ target_link_libraries(Mandrill
 	PUBLIC
 		Vulkan::Vulkan
 		Vulkan::shaderc_combined
-		spirv-reflect
 		glfw
 )
 
 add_subdirectory(External)
 
 include_directories(External/imgui)
+include_directories(External/spirv-reflect)
 include_directories(External/stb)
 include_directories(External/tinyobjloader)
