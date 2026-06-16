@@ -115,9 +115,9 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()</td></tr>
 <tr class="memdesc:a3b8cec2e32546713915f8c6303c951f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene. <br /></td></tr>
 <tr class="separator:a3b8cec2e32546713915f8c6303c951f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad291460447237daa22026a462f388814" id="r_ad291460447237daa22026a462f388814"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#ad291460447237daa22026a462f388814">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex) const</td></tr>
-<tr class="memdesc:ad291460447237daa22026a462f388814"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
-<tr class="separator:ad291460447237daa22026a462f388814"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b6d6b7b1ae401f9c52df55a6140e1e8" id="r_a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex, bool frustumCulling=true) const</td></tr>
+<tr class="memdesc:a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
+<tr class="separator:a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82ec0ac8c1bc8cd64d8627d0573d2a44" id="r_a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">addNode</a> ()</td></tr>
 <tr class="memdesc:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a node to the scene.  <br /></td></tr>
 <tr class="separator:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -996,8 +996,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 
 </div>
 </div>
-<a id="ad291460447237daa22026a462f388814" name="ad291460447237daa22026a462f388814"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad291460447237daa22026a462f388814">&#9670;&#160;</a></span>render()</h2>
+<a id="a7b6d6b7b1ae401f9c52df55a6140e1e8" name="a7b6d6b7b1ae401f9c52df55a6140e1e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b6d6b7b1ae401f9c52df55a6140e1e8">&#9670;&#160;</a></span>render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1018,7 +1018,13 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightIndex</em>&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>frustumCulling</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1034,6 +1040,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
     <tr><td class="paramname">cmd</td><td>Command buffer to use for rendering</td></tr>
     <tr><td class="paramname">pCamera</td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> that defines which camera matrices to use</td></tr>
     <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+    <tr><td class="paramname">frustumCulling</td><td>Cull nodes that are outside of the camera's frustum</td></tr>
   </table>
   </dd>
 </dl>

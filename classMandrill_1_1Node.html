@@ -120,6 +120,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Node</b> ()<
 <tr class="memitem:a0fcbe2723d8a40f659e7cbea431431e9" id="r_a0fcbe2723d8a40f659e7cbea431431e9"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex, const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
 <tr class="memdesc:a0fcbe2723d8a40f659e7cbea431431e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a node in the scene.  <br /></td></tr>
 <tr class="separator:a0fcbe2723d8a40f659e7cbea431431e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a702aebccb6d3f8c1adbadcf27b251d2d" id="r_a702aebccb6d3f8c1adbadcf27b251d2d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API AABB&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a702aebccb6d3f8c1adbadcf27b251d2d">getBoundingBox</a> (const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt; pScene) const</td></tr>
+<tr class="memdesc:a702aebccb6d3f8c1adbadcf27b251d2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get bounding box of the node.  <br /></td></tr>
+<tr class="separator:a702aebccb6d3f8c1adbadcf27b251d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a104d961fda6e0de1c4dbf1ecd2203d04" id="r_a104d961fda6e0de1c4dbf1ecd2203d04"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">addMesh</a> (uint32_t meshIndex)</td></tr>
 <tr class="memdesc:a104d961fda6e0de1c4dbf1ecd2203d04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a mesh to the node.  <br /></td></tr>
 <tr class="separator:a104d961fda6e0de1c4dbf1ecd2203d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,6 +216,33 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Node</b> ()<
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a702aebccb6d3f8c1adbadcf27b251d2d" name="a702aebccb6d3f8c1adbadcf27b251d2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a702aebccb6d3f8c1adbadcf27b251d2d">&#9670;&#160;</a></span>getBoundingBox()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AABB Node::getBoundingBox </td>
+          <td>(</td>
+          <td class="paramtype">const ptr&lt; const <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>pScene</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get bounding box of the node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pScene</td><td><a class="el" href="classMandrill_1_1Scene.html" title="Scene class that manages a collection of nodes, materials, meshes, and rendering operations.">Scene</a> which the node belongs to</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Axis-aligned bounding box</dd></dl>
 
 </div>
 </div>

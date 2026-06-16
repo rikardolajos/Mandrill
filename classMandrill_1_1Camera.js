@@ -7,6 +7,7 @@ var classMandrill_1_1Camera =
     [ "createRayTracingDescriptor", "classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806", null ],
     [ "getDescriptor", "classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca", null ],
     [ "getDirection", "classMandrill_1_1Camera.html#a8499b00e5db4e7ec887a7f25532e7cea", null ],
+    [ "getFrustum", "classMandrill_1_1Camera.html#afe5e307168c92aae446290547863dfbe", null ],
     [ "getPosition", "classMandrill_1_1Camera.html#a1a60552025657d495efa00aa6b556a4a", null ],
     [ "getProjectionMatrix", "classMandrill_1_1Camera.html#a252577fc4d00c0fdd459b2f5d3f2b416", null ],
     [ "getRayTracingDescriptor", "classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c", null ],

@@ -128,6 +128,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:a316e99785a589d7e022f68bbbe9bb078" id="r_a316e99785a589d7e022f68bbbe9bb078"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a316e99785a589d7e022f68bbbe9bb078">setProjection</a> (const CameraProjection projectionType)</td></tr>
 <tr class="memdesc:a316e99785a589d7e022f68bbbe9bb078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the projection of the camera.  <br /></td></tr>
 <tr class="separator:a316e99785a589d7e022f68bbbe9bb078"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe5e307168c92aae446290547863dfbe" id="r_afe5e307168c92aae446290547863dfbe"><td class="memItemLeft" align="right" valign="top">MANDRILL_API Frustum&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#afe5e307168c92aae446290547863dfbe">getFrustum</a> (uint32_t frameInFlightIndex) const</td></tr>
+<tr class="memdesc:afe5e307168c92aae446290547863dfbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the frustum of the camera.  <br /></td></tr>
+<tr class="separator:afe5e307168c92aae446290547863dfbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a686a40e98216fa2e93f6b810d4b35991" id="r_a686a40e98216fa2e93f6b810d4b35991"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a686a40e98216fa2e93f6b810d4b35991">isMouseCaptured</a> () const</td></tr>
 <tr class="memdesc:a686a40e98216fa2e93f6b810d4b35991"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if camera has captured the mouse movements.  <br /></td></tr>
 <tr class="separator:a686a40e98216fa2e93f6b810d4b35991"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -366,6 +369,33 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 <p>Get the direction of the camera. </p>
 <dl class="section return"><dt>Returns</dt><dd>Direction of the camera</dd></dl>
+
+</div>
+</div>
+<a id="afe5e307168c92aae446290547863dfbe" name="afe5e307168c92aae446290547863dfbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe5e307168c92aae446290547863dfbe">&#9670;&#160;</a></span>getFrustum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Frustum Camera::getFrustum </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the frustum of the camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> frustum</dd></dl>
 
 </div>
 </div>

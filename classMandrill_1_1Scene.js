@@ -24,7 +24,7 @@ var classMandrill_1_1Scene =
     [ "getTextureCount", "classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969", null ],
     [ "getTextures", "classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85", null ],
     [ "getVertexCount", "classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31", null ],
-    [ "render", "classMandrill_1_1Scene.html#ad291460447237daa22026a462f388814", null ],
+    [ "render", "classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8", null ],
     [ "setEnvironmentMap", "classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7", null ],
     [ "syncToDevice", "classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d", null ]
 ];

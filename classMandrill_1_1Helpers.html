@@ -106,42 +106,42 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Helpers.html',''); in
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af21e7fe04d9f0905a7088ce578d062ce" id="r_af21e7fe04d9f0905a7088ce578d062ce"><td class="memItemLeft" align="right" valign="top">static VkCommandBuffer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce">cmdBegin</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
-<tr class="memdesc:af21e7fe04d9f0905a7088ce578d062ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new one-time use command buffer. This call should be paired with a corresponding call to <a class="el" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8" title="End a one-time use command buffer that was initialized with a call to cmdBegin().">cmdEnd()</a>.  <br /></td></tr>
-<tr class="separator:af21e7fe04d9f0905a7088ce578d062ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7a175b55dd85da681a139f00adf59d8" id="r_aa7a175b55dd85da681a139f00adf59d8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8">cmdEnd</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, VkCommandBuffer cmd, const std::vector&lt; VkSemaphore &gt; &amp;waitSemaphores={}, const std::vector&lt; VkPipelineStageFlags &gt; &amp;waitStages={}, const std::vector&lt; VkSemaphore &gt; &amp;signalSemaphores={})</td></tr>
-<tr class="memdesc:aa7a175b55dd85da681a139f00adf59d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">End a one-time use command buffer that was initialized with a call to <a class="el" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce" title="Create a new one-time use command buffer. This call should be paired with a corresponding call to cmd...">cmdBegin()</a>.  <br /></td></tr>
-<tr class="separator:aa7a175b55dd85da681a139f00adf59d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afab53f0831eec2c10cdc3ee23c075b0f" id="r_afab53f0831eec2c10cdc3ee23c075b0f"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#afab53f0831eec2c10cdc3ee23c075b0f">findMemoryType</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)</td></tr>
-<tr class="memdesc:afab53f0831eec2c10cdc3ee23c075b0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a suitable memory type given the memory properties.  <br /></td></tr>
-<tr class="separator:afab53f0831eec2c10cdc3ee23c075b0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f0c497e95668a2f5092bed493bdebe2" id="r_a5f0c497e95668a2f5092bed493bdebe2"><td class="memItemLeft" align="right" valign="top">static VkFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a5f0c497e95668a2f5092bed493bdebe2">findSupportedFormat</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, std::vector&lt; VkFormat &gt; candidates, VkImageTiling tiling, VkFormatFeatureFlags features)</td></tr>
-<tr class="memdesc:a5f0c497e95668a2f5092bed493bdebe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find supported format for an attachment.  <br /></td></tr>
-<tr class="separator:a5f0c497e95668a2f5092bed493bdebe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95c33185e6760218426d5417ac49ddec" id="r_a95c33185e6760218426d5417ac49ddec"><td class="memItemLeft" align="right" valign="top">static VkFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a95c33185e6760218426d5417ac49ddec">findDepthFormat</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
-<tr class="memdesc:a95c33185e6760218426d5417ac49ddec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a supported depth format for a depth attachment.  <br /></td></tr>
-<tr class="separator:a95c33185e6760218426d5417ac49ddec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71cde99aad0277021f5db0219a1b15e5" id="r_a71cde99aad0277021f5db0219a1b15e5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a71cde99aad0277021f5db0219a1b15e5">imageBarrier</a> (VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageSubresourceRange *pSubresourceRange=nullptr)</td></tr>
-<tr class="memdesc:a71cde99aad0277021f5db0219a1b15e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an image barrier with layout transition.  <br /></td></tr>
-<tr class="separator:a71cde99aad0277021f5db0219a1b15e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b3fdcad9a2ab7238f70cb1b2dd54990" id="r_a6b3fdcad9a2ab7238f70cb1b2dd54990"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a6b3fdcad9a2ab7238f70cb1b2dd54990">copyBufferToImage</a> (VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)</td></tr>
-<tr class="memdesc:a6b3fdcad9a2ab7238f70cb1b2dd54990"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a buffer to an image.  <br /></td></tr>
-<tr class="separator:a6b3fdcad9a2ab7238f70cb1b2dd54990"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacfe4aa59305d7eb80ede71845bda86d" id="r_aacfe4aa59305d7eb80ede71845bda86d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#aacfe4aa59305d7eb80ede71845bda86d">copyImageToBuffer</a> (VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width, uint32_t height, uint32_t depth)</td></tr>
-<tr class="memdesc:aacfe4aa59305d7eb80ede71845bda86d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy an image to a buffer.  <br /></td></tr>
-<tr class="separator:aacfe4aa59305d7eb80ede71845bda86d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ed3a63ecd096043afe935a9bd29d10a" id="r_a4ed3a63ecd096043afe935a9bd29d10a"><td class="memItemLeft" align="right" valign="top">static VkDeviceSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a4ed3a63ecd096043afe935a9bd29d10a">alignTo</a> (VkDeviceSize value, VkDeviceSize alignment)</td></tr>
-<tr class="memdesc:a4ed3a63ecd096043afe935a9bd29d10a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aligne a value to a given alignment.  <br /></td></tr>
-<tr class="separator:a4ed3a63ecd096043afe935a9bd29d10a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af467988744f61409c48de786c8b8f932" id="r_af467988744f61409c48de786c8b8f932"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#af467988744f61409c48de786c8b8f932">random</a> (bool reset=false)</td></tr>
-<tr class="memdesc:af467988744f61409c48de786c8b8f932"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a random value from the interval [0.0, 1.0)  <br /></td></tr>
-<tr class="separator:af467988744f61409c48de786c8b8f932"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47e65a734f1dd761ac7705efde9510f7" id="r_a47e65a734f1dd761ac7705efde9510f7"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API VkCommandBuffer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a47e65a734f1dd761ac7705efde9510f7">cmdBegin</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
+<tr class="memdesc:a47e65a734f1dd761ac7705efde9510f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new one-time use command buffer. This call should be paired with a corresponding call to <a class="el" href="classMandrill_1_1Helpers.html#a60e8c1cbb8a622174051f747588ceab7" title="End a one-time use command buffer that was initialized with a call to cmdBegin().">cmdEnd()</a>.  <br /></td></tr>
+<tr class="separator:a47e65a734f1dd761ac7705efde9510f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60e8c1cbb8a622174051f747588ceab7" id="r_a60e8c1cbb8a622174051f747588ceab7"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a60e8c1cbb8a622174051f747588ceab7">cmdEnd</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, VkCommandBuffer cmd, const std::vector&lt; VkSemaphore &gt; &amp;waitSemaphores={}, const std::vector&lt; VkPipelineStageFlags &gt; &amp;waitStages={}, const std::vector&lt; VkSemaphore &gt; &amp;signalSemaphores={})</td></tr>
+<tr class="memdesc:a60e8c1cbb8a622174051f747588ceab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">End a one-time use command buffer that was initialized with a call to <a class="el" href="classMandrill_1_1Helpers.html#a47e65a734f1dd761ac7705efde9510f7" title="Create a new one-time use command buffer. This call should be paired with a corresponding call to cmd...">cmdBegin()</a>.  <br /></td></tr>
+<tr class="separator:a60e8c1cbb8a622174051f747588ceab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfd964526f5f87ddef488b3efbb91ce1" id="r_abfd964526f5f87ddef488b3efbb91ce1"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#abfd964526f5f87ddef488b3efbb91ce1">findMemoryType</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)</td></tr>
+<tr class="memdesc:abfd964526f5f87ddef488b3efbb91ce1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a suitable memory type given the memory properties.  <br /></td></tr>
+<tr class="separator:abfd964526f5f87ddef488b3efbb91ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e5d47760cd74272334dd7ffe9d94fa7" id="r_a8e5d47760cd74272334dd7ffe9d94fa7"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API VkFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a8e5d47760cd74272334dd7ffe9d94fa7">findSupportedFormat</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, std::vector&lt; VkFormat &gt; candidates, VkImageTiling tiling, VkFormatFeatureFlags features)</td></tr>
+<tr class="memdesc:a8e5d47760cd74272334dd7ffe9d94fa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find supported format for an attachment.  <br /></td></tr>
+<tr class="separator:a8e5d47760cd74272334dd7ffe9d94fa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a422c865016e3a664a5516db8b2b30416" id="r_a422c865016e3a664a5516db8b2b30416"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API VkFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a422c865016e3a664a5516db8b2b30416">findDepthFormat</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
+<tr class="memdesc:a422c865016e3a664a5516db8b2b30416"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a supported depth format for a depth attachment.  <br /></td></tr>
+<tr class="separator:a422c865016e3a664a5516db8b2b30416"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4576dad7e5bfe226758ffb518d26aa91" id="r_a4576dad7e5bfe226758ffb518d26aa91"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a4576dad7e5bfe226758ffb518d26aa91">imageBarrier</a> (VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageSubresourceRange *pSubresourceRange=nullptr)</td></tr>
+<tr class="memdesc:a4576dad7e5bfe226758ffb518d26aa91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an image barrier with layout transition.  <br /></td></tr>
+<tr class="separator:a4576dad7e5bfe226758ffb518d26aa91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeb16769b4ce1fb34b0fa16722ff4ba5" id="r_afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#afeb16769b4ce1fb34b0fa16722ff4ba5">copyBufferToImage</a> (VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)</td></tr>
+<tr class="memdesc:afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a buffer to an image.  <br /></td></tr>
+<tr class="separator:afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d2fd52725d98056300f4ea696fbb554" id="r_a8d2fd52725d98056300f4ea696fbb554"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a8d2fd52725d98056300f4ea696fbb554">copyImageToBuffer</a> (VkCommandBuffer cmd, VkImage image, VkBuffer buffer, uint32_t width, uint32_t height, uint32_t depth)</td></tr>
+<tr class="memdesc:a8d2fd52725d98056300f4ea696fbb554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy an image to a buffer.  <br /></td></tr>
+<tr class="separator:a8d2fd52725d98056300f4ea696fbb554"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3a7240e717fb4c4b6801f286282cba" id="r_a0f3a7240e717fb4c4b6801f286282cba"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API VkDeviceSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a0f3a7240e717fb4c4b6801f286282cba">alignTo</a> (VkDeviceSize value, VkDeviceSize alignment)</td></tr>
+<tr class="memdesc:a0f3a7240e717fb4c4b6801f286282cba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aligne a value to a given alignment.  <br /></td></tr>
+<tr class="separator:a0f3a7240e717fb4c4b6801f286282cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac11fb7e1218164e1e94e89ea9d3e8987" id="r_ac11fb7e1218164e1e94e89ea9d3e8987"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#ac11fb7e1218164e1e94e89ea9d3e8987">random</a> (bool reset=false)</td></tr>
+<tr class="memdesc:ac11fb7e1218164e1e94e89ea9d3e8987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a random value from the interval [0.0, 1.0)  <br /></td></tr>
+<tr class="separator:ac11fb7e1218164e1e94e89ea9d3e8987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class with Vulkan helper functions. This class provides static functions that can be called directly without creating an object. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4ed3a63ecd096043afe935a9bd29d10a" name="a4ed3a63ecd096043afe935a9bd29d10a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ed3a63ecd096043afe935a9bd29d10a">&#9670;&#160;</a></span>alignTo()</h2>
+<a id="a0f3a7240e717fb4c4b6801f286282cba" name="a0f3a7240e717fb4c4b6801f286282cba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f3a7240e717fb4c4b6801f286282cba">&#9670;&#160;</a></span>alignTo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,7 +150,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static VkDeviceSize Mandrill::Helpers::alignTo </td>
+          <td class="memname">static MANDRILL_API VkDeviceSize Mandrill::Helpers::alignTo </td>
           <td>(</td>
           <td class="paramtype">VkDeviceSize&#160;</td>
           <td class="paramname"><em>value</em>, </td>
@@ -186,8 +186,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af21e7fe04d9f0905a7088ce578d062ce" name="af21e7fe04d9f0905a7088ce578d062ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af21e7fe04d9f0905a7088ce578d062ce">&#9670;&#160;</a></span>cmdBegin()</h2>
+<a id="a47e65a734f1dd761ac7705efde9510f7" name="a47e65a734f1dd761ac7705efde9510f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47e65a734f1dd761ac7705efde9510f7">&#9670;&#160;</a></span>cmdBegin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,7 +196,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static VkCommandBuffer Mandrill::Helpers::cmdBegin </td>
+          <td class="memname">static MANDRILL_API VkCommandBuffer Mandrill::Helpers::cmdBegin </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
           <td class="paramname"><em>pDevice</em></td><td>)</td>
@@ -210,7 +210,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create a new one-time use command buffer. This call should be paired with a corresponding call to <a class="el" href="classMandrill_1_1Helpers.html#aa7a175b55dd85da681a139f00adf59d8" title="End a one-time use command buffer that was initialized with a call to cmdBegin().">cmdEnd()</a>. </p>
+<p>Create a new one-time use command buffer. This call should be paired with a corresponding call to <a class="el" href="classMandrill_1_1Helpers.html#a60e8c1cbb8a622174051f747588ceab7" title="End a one-time use command buffer that was initialized with a call to cmdBegin().">cmdEnd()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
@@ -221,8 +221,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa7a175b55dd85da681a139f00adf59d8" name="aa7a175b55dd85da681a139f00adf59d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7a175b55dd85da681a139f00adf59d8">&#9670;&#160;</a></span>cmdEnd()</h2>
+<a id="a60e8c1cbb8a622174051f747588ceab7" name="a60e8c1cbb8a622174051f747588ceab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60e8c1cbb8a622174051f747588ceab7">&#9670;&#160;</a></span>cmdEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -231,7 +231,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void Mandrill::Helpers::cmdEnd </td>
+          <td class="memname">static MANDRILL_API void Mandrill::Helpers::cmdEnd </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
           <td class="paramname"><em>pDevice</em>, </td>
@@ -273,7 +273,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>End a one-time use command buffer that was initialized with a call to <a class="el" href="classMandrill_1_1Helpers.html#af21e7fe04d9f0905a7088ce578d062ce" title="Create a new one-time use command buffer. This call should be paired with a corresponding call to cmd...">cmdBegin()</a>. </p>
+<p>End a one-time use command buffer that was initialized with a call to <a class="el" href="classMandrill_1_1Helpers.html#a47e65a734f1dd761ac7705efde9510f7" title="Create a new one-time use command buffer. This call should be paired with a corresponding call to cmd...">cmdBegin()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
@@ -287,8 +287,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6b3fdcad9a2ab7238f70cb1b2dd54990" name="a6b3fdcad9a2ab7238f70cb1b2dd54990"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b3fdcad9a2ab7238f70cb1b2dd54990">&#9670;&#160;</a></span>copyBufferToImage()</h2>
+<a id="afeb16769b4ce1fb34b0fa16722ff4ba5" name="afeb16769b4ce1fb34b0fa16722ff4ba5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afeb16769b4ce1fb34b0fa16722ff4ba5">&#9670;&#160;</a></span>copyBufferToImage()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,7 +297,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void Mandrill::Helpers::copyBufferToImage </td>
+          <td class="memname">static MANDRILL_API void Mandrill::Helpers::copyBufferToImage </td>
           <td>(</td>
           <td class="paramtype">VkCommandBuffer&#160;</td>
           <td class="paramname"><em>cmd</em>, </td>
@@ -360,8 +360,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aacfe4aa59305d7eb80ede71845bda86d" name="aacfe4aa59305d7eb80ede71845bda86d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aacfe4aa59305d7eb80ede71845bda86d">&#9670;&#160;</a></span>copyImageToBuffer()</h2>
+<a id="a8d2fd52725d98056300f4ea696fbb554" name="a8d2fd52725d98056300f4ea696fbb554"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d2fd52725d98056300f4ea696fbb554">&#9670;&#160;</a></span>copyImageToBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,7 +370,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void Mandrill::Helpers::copyImageToBuffer </td>
+          <td class="memname">static MANDRILL_API void Mandrill::Helpers::copyImageToBuffer </td>
           <td>(</td>
           <td class="paramtype">VkCommandBuffer&#160;</td>
           <td class="paramname"><em>cmd</em>, </td>
@@ -433,8 +433,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a95c33185e6760218426d5417ac49ddec" name="a95c33185e6760218426d5417ac49ddec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95c33185e6760218426d5417ac49ddec">&#9670;&#160;</a></span>findDepthFormat()</h2>
+<a id="a422c865016e3a664a5516db8b2b30416" name="a422c865016e3a664a5516db8b2b30416"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a422c865016e3a664a5516db8b2b30416">&#9670;&#160;</a></span>findDepthFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -443,7 +443,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static VkFormat Mandrill::Helpers::findDepthFormat </td>
+          <td class="memname">static MANDRILL_API VkFormat Mandrill::Helpers::findDepthFormat </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
           <td class="paramname"><em>pDevice</em></td><td>)</td>
@@ -468,8 +468,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afab53f0831eec2c10cdc3ee23c075b0f" name="afab53f0831eec2c10cdc3ee23c075b0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afab53f0831eec2c10cdc3ee23c075b0f">&#9670;&#160;</a></span>findMemoryType()</h2>
+<a id="abfd964526f5f87ddef488b3efbb91ce1" name="abfd964526f5f87ddef488b3efbb91ce1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfd964526f5f87ddef488b3efbb91ce1">&#9670;&#160;</a></span>findMemoryType()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,7 +478,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static uint32_t Mandrill::Helpers::findMemoryType </td>
+          <td class="memname">static MANDRILL_API uint32_t Mandrill::Helpers::findMemoryType </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
           <td class="paramname"><em>pDevice</em>, </td>
@@ -521,8 +521,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a5f0c497e95668a2f5092bed493bdebe2" name="a5f0c497e95668a2f5092bed493bdebe2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f0c497e95668a2f5092bed493bdebe2">&#9670;&#160;</a></span>findSupportedFormat()</h2>
+<a id="a8e5d47760cd74272334dd7ffe9d94fa7" name="a8e5d47760cd74272334dd7ffe9d94fa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e5d47760cd74272334dd7ffe9d94fa7">&#9670;&#160;</a></span>findSupportedFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -531,7 +531,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static VkFormat Mandrill::Helpers::findSupportedFormat </td>
+          <td class="memname">static MANDRILL_API VkFormat Mandrill::Helpers::findSupportedFormat </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
           <td class="paramname"><em>pDevice</em>, </td>
@@ -581,8 +581,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a71cde99aad0277021f5db0219a1b15e5" name="a71cde99aad0277021f5db0219a1b15e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71cde99aad0277021f5db0219a1b15e5">&#9670;&#160;</a></span>imageBarrier()</h2>
+<a id="a4576dad7e5bfe226758ffb518d26aa91" name="a4576dad7e5bfe226758ffb518d26aa91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4576dad7e5bfe226758ffb518d26aa91">&#9670;&#160;</a></span>imageBarrier()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -591,7 +591,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void Mandrill::Helpers::imageBarrier </td>
+          <td class="memname">static MANDRILL_API void Mandrill::Helpers::imageBarrier </td>
           <td>(</td>
           <td class="paramtype">VkCommandBuffer&#160;</td>
           <td class="paramname"><em>cmd</em>, </td>
@@ -675,8 +675,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af467988744f61409c48de786c8b8f932" name="af467988744f61409c48de786c8b8f932"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af467988744f61409c48de786c8b8f932">&#9670;&#160;</a></span>random()</h2>
+<a id="ac11fb7e1218164e1e94e89ea9d3e8987" name="ac11fb7e1218164e1e94e89ea9d3e8987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac11fb7e1218164e1e94e89ea9d3e8987">&#9670;&#160;</a></span>random()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -685,7 +685,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static float Mandrill::Helpers::random </td>
+          <td class="memname">static MANDRILL_API float Mandrill::Helpers::random </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>reset</em> = <code>false</code></td><td>)</td>
