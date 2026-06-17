@@ -19,10 +19,11 @@ var NAVTREEINDEX0 =
 "Pass_8h_source.html":[7,0,0,16],
 "Pipeline_8h_source.html":[7,0,0,17],
 "RayTracingPipeline_8h_source.html":[7,0,0,18],
-"Scene_8h_source.html":[7,0,0,19],
-"Shader_8h_source.html":[7,0,0,20],
-"Swapchain_8h_source.html":[7,0,0,21],
-"Texture_8h_source.html":[7,0,0,22],
+"RenderGraph_8h_source.html":[7,0,0,19],
+"Scene_8h_source.html":[7,0,0,20],
+"Shader_8h_source.html":[7,0,0,21],
+"Swapchain_8h_source.html":[7,0,0,22],
+"Texture_8h_source.html":[7,0,0,23],
 "annotated.html":[6,0],
 "classMandrill_1_1AccelerationStructure.html":[6,0,0,0],
 "classMandrill_1_1AccelerationStructure.html#a1ec1ed9f9bf9b493beb8db0998837fd9":[6,0,0,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "classMandrill_1_1Scene.html#ac65e9735e15daeb89f72d2380db9c7f2":[6,0,0,15,9],
 "classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069":[6,0,0,15,19],
 "classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364":[6,0,0,15,3],
-"classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939":[6,0,0,15,15],
-"classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e":[6,0,0,15,12]
+"classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939":[6,0,0,15,15]
 };
