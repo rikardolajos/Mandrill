@@ -269,18 +269,18 @@ namespace Mandrill
         /// <summary>
         /// Destructor for pipeline.
         /// </summary>
-        MANDRILL_API ~Pipeline();
+        MANDRILL_API virtual ~Pipeline();
 
         /// <summary>
         /// Bind a pipeline for rendering and set its dynamic states.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
-        MANDRILL_API void bind(VkCommandBuffer cmd);
+        MANDRILL_API virtual void bind(VkCommandBuffer cmd);
 
         /// <summary>
         /// Recreate a pipeline. Call this if shader source code has changed and should be reloaded.
         /// </summary>
-        MANDRILL_API void recreate();
+        MANDRILL_API virtual void recreate();
 
         /// <summary>
         /// Get the pipeline handle.

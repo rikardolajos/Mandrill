@@ -6,10 +6,12 @@
 
 using namespace Mandrill;
 
+// Indexed by error code - GLFW_NOT_INITIALIZED (0x00010001), so this must stay in sync with the order in glfw3.h
 static const std::string_view GLFWErrors[] = {
-    "GLFW_NOT_INITIALIZED",     "GLFW_NO_CURRENT_CONTEXT", "GLFW_INVALID_ENUM",
-    "GLFW_INVALID_VALUE",       "GLFW_OUT_OF_MEMORY",      "GLFW_API_UNAVAILABLE",
-    "GLFW_VERSION_UNAVAILABLE", "GLFW_PLATFORM_ERROR",     "GLFW_FORMAT_UNAVAILABLE",
+    "GLFW_NOT_INITIALIZED",       "GLFW_NO_CURRENT_CONTEXT",   "GLFW_INVALID_ENUM",        "GLFW_INVALID_VALUE",
+    "GLFW_OUT_OF_MEMORY",         "GLFW_API_UNAVAILABLE",      "GLFW_VERSION_UNAVAILABLE", "GLFW_PLATFORM_ERROR",
+    "GLFW_FORMAT_UNAVAILABLE",    "GLFW_NO_WINDOW_CONTEXT",    "GLFW_CURSOR_UNAVAILABLE",  "GLFW_FEATURE_UNAVAILABLE",
+    "GLFW_FEATURE_UNIMPLEMENTED", "GLFW_PLATFORM_UNAVAILABLE",
 };
 
 static const std::map<enum VkResult, std::string_view> vulkanErrors{
@@ -62,15 +64,27 @@ void Check::GLFW(const std::source_location loc)
 {
     const char* desc;
     int code = glfwGetError(&desc);
-    if (code != GLFW_NO_ERROR) {
-        Log::Error("{}:{}: GLFW failed with {}: {}\n", loc.file_name(), loc.line(), GLFWErrors[code - 0x00010001],
-                   desc);
+    if (code == GLFW_NO_ERROR) {
+        return;
     }
+
+    // A newer GLFW than the table above knows about will report a code that is out of range
+    size_t index = static_cast<size_t>(code - GLFW_NOT_INITIALIZED);
+    std::string name = index < std::size(GLFWErrors) ? std::string(GLFWErrors[index]) : std::format("0x{:08X}", code);
+
+    Log::Error("{}:{}: GLFW failed with {}: {}", loc.file_name(), loc.line(), name, desc ? desc : "no description");
 }
 
 void Check::Vk(VkResult res, const std::source_location loc)
 {
-    if (res != VK_SUCCESS) {
-        Log::Error("{}:{}: Vulkan failed with {}", loc.file_name(), loc.line(), vulkanErrors.at(res));
+    if (res == VK_SUCCESS) {
+        return;
     }
+
+    // Vulkan gains result codes over time, so an unknown one must not be an error in the error handler itself
+    auto found = vulkanErrors.find(res);
+    std::string name = found != vulkanErrors.end() ? std::string(found->second)
+                                                   : std::format("unknown VkResult {}", static_cast<int>(res));
+
+    Log::Error("{}:{}: Vulkan failed with {}", loc.file_name(), loc.line(), name);
 }

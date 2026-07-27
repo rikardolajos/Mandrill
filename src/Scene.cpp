@@ -159,7 +159,7 @@ uint32_t Scene::addNode()
     return count(mNodes) - 1;
 }
 
-static glm::mat4 extractTransform(tinygltf::Node node)
+static glm::mat4 extractTransform(const tinygltf::Node& node)
 {
     glm::mat4 transform = glm::identity<glm::mat4>();
     glm::mat4 T = glm::identity<glm::mat4>();
@@ -216,6 +216,22 @@ std::vector<uint32_t> Scene::addNodesFromFile(const std::filesystem::path& path,
             ret = loader.LoadBinaryFromFile(&model, &err, &warn, path.string());
         }
 
+        if (!ret) {
+            // addMeshFromFile() above has already reported the details
+            return newNodeIndices;
+        }
+
+        // A glTF node refers to a glTF mesh, but addMeshFromFile() created one Mandrill mesh per primitive, appended
+        // to any meshes the scene already held. Walking the primitives in the same order recovers which Mandrill
+        // meshes belong to which glTF mesh.
+        std::vector<std::vector<uint32_t>> gltfMeshToMeshIndices(model.meshes.size());
+        size_t nextMeshIndex = 0;
+        for (size_t m = 0; m < model.meshes.size(); m++) {
+            for (size_t p = 0; p < model.meshes[m].primitives.size() && nextMeshIndex < newMeshIndices.size(); p++) {
+                gltfMeshToMeshIndices[m].push_back(newMeshIndices[nextMeshIndex++]);
+            }
+        }
+
         // Load scenes if available
 
         struct ParseNode {
@@ -246,9 +262,11 @@ std::vector<uint32_t> Scene::addNodesFromFile(const std::filesystem::path& path,
             glm::mat4 transform = parseNode.parentTransform * extractTransform(node);
 
             // Process node
-            if (node.mesh >= 0) {
+            if (node.mesh >= 0 && static_cast<size_t>(node.mesh) < gltfMeshToMeshIndices.size()) {
                 auto mandrillNodeIndex = addNode();
-                mNodes[mandrillNodeIndex].addMesh(static_cast<uint32_t>(node.mesh));
+                for (auto meshIndex : gltfMeshToMeshIndices[node.mesh]) {
+                    mNodes[mandrillNodeIndex].addMesh(meshIndex);
+                }
                 mNodes[mandrillNodeIndex].setTransform(transform);
                 newNodeIndices.push_back(mandrillNodeIndex);
             }
@@ -609,10 +627,12 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
 
     // Loop over shapes
     for (auto& shape : shapes) {
-        // One mesh per material in shape
-        std::set<int> matIDs;
-        for (int matID : shape.mesh.material_ids) {
-            matIDs.insert(matID);
+        // One mesh per material in shape. Resolving the slot per vertex through std::distance on a set iterator is a
+        // linear walk, so build the mapping once up front instead.
+        std::set<int> matIDs(shape.mesh.material_ids.begin(), shape.mesh.material_ids.end());
+        std::unordered_map<int, uint32_t> matIDToMeshIndex;
+        for (int matID : matIDs) {
+            matIDToMeshIndex.emplace(matID, count(matIDToMeshIndex));
         }
 
         std::vector<Mesh> shapeMesh(matIDs.size());
@@ -645,7 +665,7 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
                 }
 
                 // Find the mesh corresponding to the material
-                auto meshIndex = std::distance(matIDs.find(materialIndex), matIDs.end()) - 1;
+                uint32_t meshIndex = matIDToMeshIndex.at(materialIndex);
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
                 shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
@@ -741,9 +761,9 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
         mat.params.indexOfRefraction = material.ior;
         mat.params.opacity = material.dissolve;
 
-        auto setTexture = [this, path, materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                                     std::string textureName, ptr<Texture> pMissingTexture,
-                                                     std::string& textureKey) {
+        auto setTexture = [this, &path, &materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                                       const std::string& textureName, ptr<Texture> pMissingTexture,
+                                                       std::string& textureKey) {
             if (!textureName.empty()) {
                 auto fullPath =
                     std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
@@ -781,7 +801,8 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
 }
 
 template <typename T>
-static void readCastInsertIndices(tinygltf::Model model, tinygltf::Accessor accessor, std::vector<uint32_t>& indices)
+static void readCastInsertIndices(const tinygltf::Model& model, const tinygltf::Accessor& accessor,
+                                  std::vector<uint32_t>& indices)
 {
     const auto& bufferView = model.bufferViews[accessor.bufferView];
     const auto& buffer = model.buffers[bufferView.buffer];
@@ -970,8 +991,11 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
         mat.params.opacity =
             1.0f - static_cast<float>(getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor"));
 
-        auto setTexture = [this, path, model](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                              int textureIndex, ptr<Texture> pMissingTexture, std::string& textureKey) {
+        // Captured by reference, the model in particular: copying it would deep copy every buffer in the file, once
+        // per material
+        auto setTexture = [this, &path, &model](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                                int textureIndex, ptr<Texture> pMissingTexture,
+                                                std::string& textureKey) {
             if (textureIndex >= 0) {
                 std::string textureName = model.images[model.textures[textureIndex].source].uri;
                 if (textureName.empty()) {

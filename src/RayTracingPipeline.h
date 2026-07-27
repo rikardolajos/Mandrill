@@ -99,7 +99,7 @@ namespace Mandrill
         /// Bind pipeline for rendering.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
-        MANDRILL_API void bind(VkCommandBuffer cmd);
+        MANDRILL_API void bind(VkCommandBuffer cmd) override;
 
         /// <summary>
         /// Transition an image for writing to.
@@ -118,7 +118,7 @@ namespace Mandrill
         /// <summary>
         /// Recreate a pipeline. Call this if shader source code has changed and should be reloaded.
         /// </summary>
-        MANDRILL_API void recreate();
+        MANDRILL_API void recreate() override;
 
         /// <summary>
         /// Get the raygen group shader binding table record.

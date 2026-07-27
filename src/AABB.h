@@ -7,7 +7,7 @@ namespace Mandrill
     struct AABB {
         // An empty box: min > max, so the first expand() call sets both corners to the incoming value. Starting at
         // (0, 0, 0) would force every box to contain the world origin.
-        glm::vec3 min = glm::vec3(std::numeric_limits<float>::max());  // Minimum corner of the bounding box
+        glm::vec3 min = glm::vec3(std::numeric_limits<float>::max());    // Minimum corner of the bounding box
         glm::vec3 max = glm::vec3(std::numeric_limits<float>::lowest()); // Maximum corner of the bounding box
 
         bool empty() const

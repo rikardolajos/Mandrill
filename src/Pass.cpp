@@ -95,7 +95,7 @@ void Pass::begin(VkCommandBuffer cmd, std::vector<glm::vec4> clearColors, VkClea
         depthAttachmentInfo = {
             .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
             .imageView = mpDepthAttachment->getImageView(),
-            .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+            .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
             .loadOp = loadOpDepth,
             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
             .clearValue = {.depthStencil = clearDepthStencil},
@@ -142,7 +142,7 @@ void Pass::begin(VkCommandBuffer cmd, ptr<Image> pImage)
         depthAttachmentInfo = {
             .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
             .imageView = mpDepthAttachment->getImageView(),
-            .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+            .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
             .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
             .clearValue = {.depthStencil = {.depth = 1.0f, .stencil = 0}},
@@ -227,9 +227,8 @@ void Pass::createExplicitPass(std::vector<ptr<Image>> colorAttachments, ptr<Imag
         return;
     }
 
-    VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
-
     mColorAttachments.clear();
+    mFormats.clear();
 
     for (auto& attachment : colorAttachments) {
         mColorAttachments.push_back(attachment);

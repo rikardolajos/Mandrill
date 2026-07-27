@@ -132,18 +132,33 @@ MANDRILL_API void Swapchain::waitForFence()
 
 VkCommandBuffer Swapchain::acquireNextImage()
 {
-    waitForFence();
-    Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
+    // An out of date swapchain acquires no image and signals no semaphore, so it has to be recreated and the acquire
+    // retried before a frame can be recorded. The fresh swapchain can be out of date in turn (while the window is
+    // being dragged, say), but give up rather than spin forever if it never settles.
+    const uint32_t maxAttempts = 8;
+    uint32_t attempt = 0;
+    for (; attempt < maxAttempts; attempt++) {
+        waitForFence();
 
-    // Acquire index of next image in the swapchain
-    VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
-                                            mPresentFinishedSemaphores[mInFlightIndex], nullptr, &mImageIndex);
+        VkResult result = vkAcquireNextImageKHR(mpDevice->getDevice(), mSwapchain, UINT64_MAX,
+                                                mPresentFinishedSemaphores[mInFlightIndex], nullptr, &mImageIndex);
 
-    // Check if swapchain needs to be reconstructed
-    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-        recreate();
-    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-        Log::Error("Failed to acquire next swapchain image");
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+            recreate();
+            continue;
+        }
+
+        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+            Log::Error("Failed to acquire next swapchain image");
+        }
+
+        // Reset only once a frame is actually going to be submitted to signal the fence again
+        Check::Vk(vkResetFences(mpDevice->getDevice(), 1, &mInFlightFences[mInFlightIndex]));
+        break;
+    }
+
+    if (attempt == maxAttempts) {
+        Log::Error("Failed to acquire a swapchain image after {} attempts", maxAttempts);
     }
 
     VkCommandBufferBeginInfo bi = {

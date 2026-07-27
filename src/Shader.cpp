@@ -186,7 +186,7 @@ static void findDependenciesAndCompile(const std::filesystem::path& input, VkSha
     compile(src, dst, stageFlag);
 }
 
-// Read SPIR-V from file
+// Read SPIR-V from file. The returned vector holds words, so its size() is a word count, not a byte count.
 static std::vector<uint32_t> readSpirv(const std::filesystem::path& src)
 {
     std::filesystem::path dst = src;
@@ -195,28 +195,32 @@ static std::vector<uint32_t> readSpirv(const std::filesystem::path& src)
     std::ifstream is(dst, std::ios::binary);
     if (!is.is_open()) {
         Log::Error("Unable to open {}", dst.string());
+        return {};
     }
 
     is.seekg(0, std::ios_base::end);
-    auto length = is.tellg();
+    std::streamoff length = is.tellg();
     is.seekg(0, std::ios_base::beg);
 
-    std::vector<uint32_t> buffer(length);
+    if (length <= 0 || length % sizeof(uint32_t) != 0) {
+        Log::Error("{} is not a valid SPIR-V module ({} bytes)", dst.string(), length);
+        return {};
+    }
 
+    std::vector<uint32_t> buffer(static_cast<size_t>(length) / sizeof(uint32_t));
     is.read(reinterpret_cast<char*>(buffer.data()), length);
-    is.close();
 
     return buffer;
 }
 
-static VkShaderModule createModule(ptr<Device> pDevice, std::vector<uint32_t> spirvBytes)
+static VkShaderModule createModule(ptr<Device> pDevice, const std::vector<uint32_t>& spirv)
 {
     VkShaderModule module;
 
     VkShaderModuleCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        .codeSize = spirvBytes.size(),
-        .pCode = spirvBytes.data(),
+        .codeSize = spirv.size() * sizeof(uint32_t),
+        .pCode = spirv.data(),
     };
 
     Check::Vk(vkCreateShaderModule(pDevice->getDevice(), &ci, nullptr, &module));
@@ -224,9 +228,9 @@ static VkShaderModule createModule(ptr<Device> pDevice, std::vector<uint32_t> sp
     return module;
 }
 
-static ptr<spv_reflect::ShaderModule> createReflections(std::vector<uint32_t> spirvBytes)
+static ptr<spv_reflect::ShaderModule> createReflections(const std::vector<uint32_t>& spirv)
 {
-    spv_reflect::ShaderModule moduleReflect(spirvBytes.size(), spirvBytes.data());
+    spv_reflect::ShaderModule moduleReflect(spirv.size() * sizeof(uint32_t), spirv.data());
     return make_ptr<spv_reflect::ShaderModule>(std::move(moduleReflect));
 }
 
@@ -311,9 +315,18 @@ void Shader::createShader()
 {
     // Load modules
     for (size_t i = 0; i < mModules.size(); i++) {
-        auto spirvBytes = readSpirv(mSrcFilenames[i]);
-        mModules[i] = createModule(mpDevice, spirvBytes);
-        mReflections[i] = createReflections(spirvBytes);
+        auto spirv = readSpirv(mSrcFilenames[i]);
+        if (spirv.empty()) {
+            // Leave the stage empty rather than feeding an invalid module to the pipeline. Clearing matters on
+            // reload(), where these still hold the previous load's module and reflection.
+            Log::Error("Skipping shader stage {}, no SPIR-V was loaded", mSrcFilenames[i].string());
+            mModules[i] = VK_NULL_HANDLE;
+            mReflections[i].reset();
+            mStages[i] = {};
+            continue;
+        }
+        mModules[i] = createModule(mpDevice, spirv);
+        mReflections[i] = createReflections(spirv);
         mStages[i] = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage = mStageFlags[i],
@@ -329,6 +342,10 @@ void Shader::createShader()
     std::vector<VkShaderStageFlags> stageFlags;
     std::vector<std::map<uint32_t, uint32_t>> bindingCount;
     for (size_t i = 0; i < mReflections.size(); i++) {
+        if (!mReflections[i]) {
+            continue; // Stage failed to load, already reported above
+        }
+
         uint32_t bindingsCount = 0;
         mReflections[i]->EnumerateDescriptorBindings(&bindingsCount, nullptr);
         std::vector<SpvReflectDescriptorBinding*> bindings(bindingsCount);
@@ -413,6 +430,10 @@ void Shader::createShader()
     // Create push constant ranges
     mPushConstantRanges.clear();
     for (size_t i = 0; i < mReflections.size(); i++) {
+        if (!mReflections[i]) {
+            continue; // Stage failed to load, already reported above
+        }
+
         uint32_t pushConstCount = 0;
         mReflections[i]->EnumeratePushConstantBlocks(&pushConstCount, nullptr);
         std::vector<SpvReflectBlockVariable*> pushConsts(pushConstCount);
