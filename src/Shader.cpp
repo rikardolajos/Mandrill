@@ -341,16 +341,10 @@ void Shader::createShader()
         stageFlags.resize(std::max(stageFlags.size(), static_cast<size_t>(maxSet + 1)));
         bindingCount.resize(std::max(bindingCount.size(), static_cast<size_t>(maxSet + 1)));
 
-        // Resolve specialization constants (if used for array dimensions)
-        for (auto& binding : bindings) {
-            if (binding->array.dims_count != 0) {
-            }
-        }
         uint32_t specConstCount = 0;
         mReflections[i]->EnumerateSpecializationConstants(&specConstCount, nullptr);
         std::vector<SpvReflectSpecializationConstant*> specConsts(specConstCount);
         mReflections[i]->EnumerateSpecializationConstants(&specConstCount, specConsts.data());
-        mSpecializationInfos[i]->pMapEntries->constantID;
 
         for (auto& binding : bindings) {
             descriptorSets[binding->set].emplace(binding->binding, binding);
