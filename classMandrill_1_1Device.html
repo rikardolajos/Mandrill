@@ -108,9 +108,9 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Device.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9756a745cc4454d687f506d332553289" id="r_a9756a745cc4454d687f506d332553289"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a9756a745cc4454d687f506d332553289">Device</a> (GLFWwindow *pWindow, const std::vector&lt; const char * &gt; &amp;extensions=std::vector&lt; const char * &gt;(), VkPhysicalDeviceFeatures2 *pFeatures=nullptr, uint32_t physicalDeviceIndex=0)</td></tr>
-<tr class="memdesc:a9756a745cc4454d687f506d332553289"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties.  <br /></td></tr>
-<tr class="separator:a9756a745cc4454d687f506d332553289"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a849119d173c474b158b5a588a97f61ab" id="r_a849119d173c474b158b5a588a97f61ab"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a849119d173c474b158b5a588a97f61ab">Device</a> (GLFWwindow *pWindow, const std::vector&lt; const char * &gt; &amp;extensions=std::vector&lt; const char * &gt;(), VkPhysicalDeviceFeatures2 *pFeatures=nullptr, uint32_t physicalDeviceIndex=std::numeric_limits&lt; uint32_t &gt;::max())</td></tr>
+<tr class="memdesc:a849119d173c474b158b5a588a97f61ab"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties.  <br /></td></tr>
+<tr class="separator:a849119d173c474b158b5a588a97f61ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dabc419c8d8df3a686c33ce042bc99a" id="r_a9dabc419c8d8df3a686c33ce042bc99a"><td class="memItemLeft" align="right" valign="top"><a id="a9dabc419c8d8df3a686c33ce042bc99a" name="a9dabc419c8d8df3a686c33ce042bc99a"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> ()</td></tr>
 <tr class="memdesc:a9dabc419c8d8df3a686c33ce042bc99a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for device. <br /></td></tr>
@@ -209,8 +209,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> class abstracting the physical and logical Vulkan device, as well as handling extensions and features. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9756a745cc4454d687f506d332553289" name="a9756a745cc4454d687f506d332553289"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9756a745cc4454d687f506d332553289">&#9670;&#160;</a></span>Device()</h2>
+<a id="a849119d173c474b158b5a588a97f61ab" name="a849119d173c474b158b5a588a97f61ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a849119d173c474b158b5a588a97f61ab">&#9670;&#160;</a></span>Device()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +237,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>physicalDeviceIndex</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>physicalDeviceIndex</em> = <code>std::numeric_limits&lt;uint32_t&gt;::max()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -253,7 +253,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
     <tr><td class="paramname">pWindow</td><td>GLFW window to create render context for</td></tr>
     <tr><td class="paramname">extensions</td><td>Extra device extensions to activate</td></tr>
     <tr><td class="paramname">pFeatures</td><td>Pointer to a pNext-chain of features to link with when creating device, can be nullptr in which case a set of required default features will be used</td></tr>
-    <tr><td class="paramname">physicalDeviceIndex</td><td>Physical device to use. Set this explicitly if device 0 is not the intended one.</td></tr>
+    <tr><td class="paramname">physicalDeviceIndex</td><td>Physical device to use. If not set, the first discrete device is used, or device 0.</td></tr>
   </table>
   </dd>
 </dl>

@@ -1,6 +1,6 @@
 var classMandrill_1_1Device =
 [
-    [ "Device", "classMandrill_1_1Device.html#a9756a745cc4454d687f506d332553289", null ],
+    [ "Device", "classMandrill_1_1Device.html#a849119d173c474b158b5a588a97f61ab", null ],
     [ "~Device", "classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a", null ],
     [ "createAccelerationStructure", "classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744", null ],
     [ "createBuffer", "classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900", null ],
