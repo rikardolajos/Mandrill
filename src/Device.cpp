@@ -161,7 +161,7 @@ void Device::createInstance()
         .applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
         .pEngineName = MANDRILL_NAME,
         .engineVersion = VK_MAKE_API_VERSION(0, MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH),
-        .apiVersion = VK_API_VERSION_1_3,
+        .apiVersion = VK_API_VERSION_1_4,
     };
 
     uint32_t n;
