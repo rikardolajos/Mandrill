@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('AABB_8h_source.html',''); initResizabl
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keyword">struct </span>AABB {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>        <span class="comment">// An empty box: min &gt; max, so the first expand() call sets both corners to the incoming value. Starting at</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        <span class="comment">// (0, 0, 0) would force every box to contain the world origin.</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        glm::vec3 min = glm::vec3(std::numeric_limits&lt;float&gt;::max());  <span class="comment">// Minimum corner of the bounding box</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        glm::vec3 min = glm::vec3(std::numeric_limits&lt;float&gt;::max());    <span class="comment">// Minimum corner of the bounding box</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        glm::vec3 max = glm::vec3(std::numeric_limits&lt;float&gt;::lowest()); <span class="comment">// Maximum corner of the bounding box</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keywordtype">bool</span> empty()<span class="keyword"> const</span></div>

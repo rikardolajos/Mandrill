@@ -5,7 +5,7 @@ var searchData=
   ['raytracer_2',['RayTracer',['../index.html#autotoc_md10',1,'']]],
   ['raytracingpipeline_3',['raytracingpipeline',['../classMandrill_1_1RayTracingPipeline.html#af9c3a5e8d0eb9ba307c50a52d7275e9b',1,'Mandrill::RayTracingPipeline::RayTracingPipeline()'],['../classMandrill_1_1RayTracingPipeline.html',1,'Mandrill::RayTracingPipeline']]],
   ['read_4',['read',['../classMandrill_1_1RayTracingPipeline.html#a5f9cb1f16b7500afbe53fb5497853c76',1,'Mandrill::RayTracingPipeline']]],
-  ['recreate_5',['recreate',['../classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991',1,'Mandrill::Pipeline::recreate()'],['../classMandrill_1_1RayTracingPipeline.html#ade409a7a0f5bcd4dac88c59558beb3d2',1,'Mandrill::RayTracingPipeline::recreate()'],['../classMandrill_1_1Swapchain.html#a22c8b321d6dc6bf715ce5ae006c90bc4',1,'Mandrill::Swapchain::recreate()']]],
+  ['recreate_5',['recreate',['../classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991',1,'Mandrill::Pipeline::recreate()'],['../classMandrill_1_1RayTracingPipeline.html#ad8f9e80a8df83510f4cd121d4ecb0d4d',1,'Mandrill::RayTracingPipeline::recreate()'],['../classMandrill_1_1Swapchain.html#a22c8b321d6dc6bf715ce5ae006c90bc4',1,'Mandrill::Swapchain::recreate()']]],
   ['recreated_6',['recreated',['../classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026',1,'Mandrill::Swapchain']]],
   ['reference_7',['API Reference',['../index.html#autotoc_md1',1,'']]],
   ['reload_8',['reload',['../classMandrill_1_1Shader.html#a7d3a2d0c4d1dc1c61338459e9ae09d8c',1,'Mandrill::Shader']]],
