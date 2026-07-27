@@ -378,7 +378,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             vkGetPhysicalDeviceProperties(mPhysicalDevice, &mProperties.physicalDevice);
             vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mProperties.memory);
             mProperties.rayTracingPipeline = rtp;
-            mProperties.accelerationStucture = asp;
+            mProperties.accelerationStructure = asp;
         }
 
         Log::Info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,

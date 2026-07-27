@@ -28,7 +28,7 @@ namespace Mandrill
         VkPhysicalDeviceProperties physicalDevice;
         VkPhysicalDeviceMemoryProperties memory;
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipeline;
-        VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStucture;
+        VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStructure;
     };
 
     /// <summary>
