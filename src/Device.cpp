@@ -273,6 +273,7 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 
     if (!count) {
         Log::Error("No Vulkan queue family available");
+        return std::numeric_limits<uint32_t>::max();
     }
 
     Log::Debug("Available queue families for selected device: {}", count);
@@ -287,6 +288,7 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 
     if (index == count) {
         Log::Error("No Vulkan queue found for requested families");
+        return std::numeric_limits<uint32_t>::max();
     }
 
     // Check that the selected queue family supports PRESENT
@@ -294,6 +296,7 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
     Check::Vk(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &supported));
     if (!supported) {
         Log::Error("Selected queue family does not support PRESENT");
+        return std::numeric_limits<uint32_t>::max();
     }
 
     return index;
