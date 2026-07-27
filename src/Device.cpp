@@ -322,8 +322,28 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     std::vector<VkPhysicalDevice> physicalDevices(n);
     Check::Vk(vkEnumeratePhysicalDevices(mInstance, &n, physicalDevices.data()));
 
+    if (physicalDeviceIndex != std::numeric_limits<uint32_t>::max()) {
+        if (physicalDeviceIndex >= n) {
+            Log::Error("Requested device index out-of-bounds: {} ({} available)", physicalDeviceIndex, n);
+        }
+    } else {
+        for (uint32_t i = 0; i < n; i++) {
+            VkPhysicalDeviceProperties2 prop = {
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
+            };
+
+            vkGetPhysicalDeviceProperties2(physicalDevices[i], &prop);
+
+            if (prop.properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+                physicalDeviceIndex = i;
+                break;
+            }
+        }
+    }
+
+
     Log::Info("Available devices ({}):", n);
-    for (uint32_t i = 0; i < count(physicalDevices); i++) {
+    for (uint32_t i = 0; i < n; i++) {
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtp = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
         };

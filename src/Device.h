@@ -46,11 +46,10 @@ namespace Mandrill
         /// <param name="extensions">Extra device extensions to activate</param>
         /// <param name="pFeatures">Pointer to a pNext-chain of features to link with when creating device, can be
         /// nullptr in which case a set of required default features will be used</param> <param
-        /// name="physicalDeviceIndex">Physical device to use. Set this explicitly if device 0 is not the intended
-        /// one.</param>
+        /// name="physicalDeviceIndex">Physical device to use. If not set, the first discrete device is used, or device 0.</param>
         MANDRILL_API Device(GLFWwindow* pWindow,
                             const std::vector<const char*>& extensions = std::vector<const char*>(),
-                            VkPhysicalDeviceFeatures2* pFeatures = nullptr, uint32_t physicalDeviceIndex = 0);
+                            VkPhysicalDeviceFeatures2* pFeatures = nullptr, uint32_t physicalDeviceIndex = std::numeric_limits<uint32_t>::max());
 
         /// <summary>
         /// Destructor for device.
