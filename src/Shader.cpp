@@ -67,9 +67,6 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 {
     Log::Debug("Compiling {}", input.string());
 
-    auto depFile = output.parent_path() / output.stem();
-    depFile += ".d";
-
     std::ifstream file(input, std::ios::binary);
     if (!file.is_open()) {
         Log::Error("Unable to open {}", input.string());
