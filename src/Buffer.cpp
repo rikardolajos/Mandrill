@@ -2,6 +2,7 @@
 
 #include "Error.h"
 #include "Helpers.h"
+#include "Log.h"
 
 using namespace Mandrill;
 
@@ -82,6 +83,9 @@ void Buffer::copyFromHost(const void* pData, VkDeviceSize size, VkDeviceSize off
 
     } else {
         // Transfer directly without staging buffer
+        if (offset + size > mSize) {
+            Log::Error("Buffer copy failed, offset + size > buffer size");
+        }
         char* pOffsettedHostMap = (char*)mpHostMap + offset;
         std::memcpy(pOffsettedHostMap, pData, size);
     }
