@@ -45,6 +45,9 @@ void RayTracingPipeline::recreate()
     destroyPipeline();
     mpShader->reload();
     createPipeline();
+
+    // The shader group handles belong to the pipeline that was just destroyed, so the table has to be rebuilt
+    createShaderBindingTable();
 }
 
 void RayTracingPipeline::createPipeline()
@@ -61,7 +64,8 @@ void RayTracingPipeline::createPipeline()
         .layout = mpShader->getPipelineLayout(),
     };
 
-    vkCreateRayTracingPipelinesKHR(mpDevice->getDevice(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &ci, nullptr, &mPipeline);
+    Check::Vk(vkCreateRayTracingPipelinesKHR(mpDevice->getDevice(), VK_NULL_HANDLE, VK_NULL_HANDLE, 1, &ci, nullptr,
+                                             &mPipeline));
 }
 
 

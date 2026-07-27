@@ -52,14 +52,14 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
         return;
     }
 
-    std::memcpy(mpTransformDevice + frameInFlightIndex, &mTransform, sizeof(glm::mat4));
-
     mpPipeline->bind(cmd);
 
     // Bind descriptor set for node transform
     VkDeviceSize alignment = pScene->mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    uint32_t nodeDescriptorOffset =
-        static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * frameInFlightIndex);
+    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
+    uint32_t nodeDescriptorOffset = static_cast<uint32_t>(transformStride * frameInFlightIndex);
+
+    std::memcpy(mpTransformDevice + transformStride * frameInFlightIndex, &mTransform, sizeof(glm::mat4));
 
 #ifdef _DEBUG
     if (!mpDescriptor) {
@@ -117,7 +117,8 @@ Scene::~Scene()
 {
 }
 
-void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex, bool frustumCulling) const
+void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
+                   bool frustumCulling) const
 {
     if (mNodes.empty()) {
         return;
@@ -339,7 +340,7 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
     if (path.extension() == ".obj") {
         newMeshIndices = loadFromOBJ(path, materialPath);
     } else if (path.extension() == ".gltf" || path.extension() == ".glb") {
-        newMeshIndices = loadFromGLTF(path, materialPath);
+        newMeshIndices = loadFromGLTF(path);
     } else {
         Log::Error("Unsupported file format: {}", path.extension().string());
         return {};
@@ -387,30 +388,36 @@ void Scene::compile(uint32_t framesInFlightCount)
 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
 
+    // Both buffers are bound with a descriptor offset, so every entry has to start on an aligned boundary. That
+    // alignment, not the size of the struct, is the stride to use when addressing the entries from the host as well.
+    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
+    VkDeviceSize materialParamsStride = Helpers::alignTo(sizeof(MaterialParams), alignment);
+
     // Transforms can change between frames, material parameters can not
-    VkDeviceSize transformsSize = Helpers::alignTo(sizeof(glm::mat4), alignment) * mNodes.size() * framesInFlightCount;
+    VkDeviceSize transformsSize = transformStride * mNodes.size() * framesInFlightCount;
     mpTransforms = mpDevice->createBuffer(transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    VkDeviceSize materialParamsSize = Helpers::alignTo(sizeof(MaterialParams), alignment) * mMaterials.size();
+    VkDeviceSize materialParamsSize = materialParamsStride * mMaterials.size();
     mpMaterialParams = mpDevice->createBuffer(materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
-    glm::mat4* transforms = static_cast<glm::mat4*>(mpTransforms->getHostMap());
+    std::byte* transforms = static_cast<std::byte*>(mpTransforms->getHostMap());
+    const glm::mat4 identity = glm::identity<glm::mat4>();
     for (uint32_t i = 0; i < count(mNodes); i++) {
-        mNodes[i].mpTransformDevice = transforms + i * framesInFlightCount;
+        mNodes[i].mpTransformDevice = transforms + i * transformStride * framesInFlightCount;
         for (uint32_t c = 0; c < framesInFlightCount; c++) {
-            *(mNodes[i].mpTransformDevice + c) = glm::mat4(1.0f);
+            std::memcpy(mNodes[i].mpTransformDevice + c * transformStride, &identity, sizeof(glm::mat4));
         }
     }
 
     // Associate each material with a part of the material params buffer
-    MaterialParams* materialParams = static_cast<MaterialParams*>(mpMaterialParams->getHostMap());
+    std::byte* materialParams = static_cast<std::byte*>(mpMaterialParams->getHostMap());
     for (uint32_t i = 0; i < count(mMaterials); i++) {
-        mMaterials[i].paramsDevice = materialParams + i;
+        mMaterials[i].paramsOffset = i * materialParamsStride;
+        mMaterials[i].paramsDevice = reinterpret_cast<MaterialParams*>(materialParams + mMaterials[i].paramsOffset);
         *mMaterials[i].paramsDevice = mMaterials[i].params;
-        mMaterials[i].paramsOffset = Helpers::alignTo(i * sizeof(MaterialParams), alignment);
     }
 
     // For ray tracing a global list is used and this struct keeps track of the texture indices
@@ -420,7 +427,7 @@ void Scene::compile(uint32_t framesInFlightCount)
 
     MaterialDevice* materials = static_cast<MaterialDevice*>(mpMaterialBuffer->getHostMap());
     for (uint32_t i = 0; i < count(mMaterials); i++) {
-        memcpy(&materials[i].params, materialParams + i, sizeof(MaterialParams));
+        materials[i].params = mMaterials[i].params;
         materials[i].diffuseTextureIndex =
             static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].diffuseTexturePath)));
         materials[i].specularTextureIndex =
@@ -458,7 +465,10 @@ void Scene::compile(uint32_t framesInFlightCount)
 void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                               uint32_t frameInFlightCount)
 {
-    // Node transforms
+    // Node transforms. Must use the same stride as Scene::compile() and Node::render().
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
+
     VkDeviceSize offset = 0;
     for (auto& node : mNodes) {
         std::vector<DescriptorDesc> desc;
@@ -466,9 +476,7 @@ void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descript
         desc.back().range = sizeof(glm::mat4);
         desc.back().offset = offset;
 
-        offset += Helpers::alignTo(sizeof(glm::mat4),
-                                   mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment) *
-                  frameInFlightCount;
+        offset += transformStride * frameInFlightCount;
 
         // Set layout for set 1
         node.mpDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[1]);
@@ -782,7 +790,7 @@ static void readCastInsertIndices(tinygltf::Model model, tinygltf::Accessor acce
                    [](T index) { return static_cast<uint32_t>(index); });
 }
 
-std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, const std::filesystem::path& materialPath)
+std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
 {
     std::vector<uint32_t> newMeshIndices;
 
@@ -954,17 +962,16 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
         mat.params.ambient.b = 0.0f;
 
         mat.params.emission.r = static_cast<float>(material.emissiveFactor[0]);
-        mat.params.emission.g = static_cast<float>(material.emissiveFactor[0]);
-        mat.params.emission.b = static_cast<float>(material.emissiveFactor[0]);
+        mat.params.emission.g = static_cast<float>(material.emissiveFactor[1]);
+        mat.params.emission.b = static_cast<float>(material.emissiveFactor[2]);
 
         mat.params.shininess = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
         mat.params.indexOfRefraction = static_cast<float>(getExtensionValue(material, "KHR_materials_ior", "ior"));
         mat.params.opacity =
             1.0f - static_cast<float>(getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor"));
 
-        auto setTexture = [this, path, materialPath,
-                           model](std::unordered_map<std::string, ptr<Texture>>& loadedTextures, int textureIndex,
-                                  ptr<Texture> pMissingTexture, std::string& textureKey) {
+        auto setTexture = [this, path, model](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
+                                              int textureIndex, ptr<Texture> pMissingTexture, std::string& textureKey) {
             if (textureIndex >= 0) {
                 std::string textureName = model.images[model.textures[textureIndex].source].uri;
                 if (textureName.empty()) {
@@ -985,8 +992,7 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path, con
 
                     return true;
                 }
-                auto fullPath =
-                    std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
+                auto fullPath = std::filesystem::canonical(path.parent_path() / textureName);
                 textureKey = fullPath.string();
                 addTexture(textureKey);
                 return true;

@@ -5,8 +5,15 @@
 namespace Mandrill
 {
     struct AABB {
-        glm::vec3 min; // Minimum corner of the bounding box
-        glm::vec3 max; // Maximum corner of the bounding box
+        // An empty box: min > max, so the first expand() call sets both corners to the incoming value. Starting at
+        // (0, 0, 0) would force every box to contain the world origin.
+        glm::vec3 min = glm::vec3(std::numeric_limits<float>::max());  // Minimum corner of the bounding box
+        glm::vec3 max = glm::vec3(std::numeric_limits<float>::lowest()); // Maximum corner of the bounding box
+
+        bool empty() const
+        {
+            return min.x > max.x || min.y > max.y || min.z > max.z;
+        }
 
         void expand(const struct AABB aabb)
         {
@@ -20,29 +27,34 @@ namespace Mandrill
             max = glm::max(max, point);
         }
 
+        // Transforming only the min and max corners is only valid for axis-aligned scale and translation. Under a
+        // rotation the transformed corners are no longer the extremes (min can even end up greater than max), so all
+        // eight corners have to be transformed and the extremes recomputed.
         void transform(const glm::mat4& transform)
         {
-            min = transform * glm::vec4(min, 1.0f);
-            max = transform * glm::vec4(max, 1.0f);
+            if (empty()) {
+                return;
+            }
+
+            const glm::vec3 corners[8] = {
+                {min.x, min.y, min.z}, {max.x, min.y, min.z}, {min.x, max.y, min.z}, {max.x, max.y, min.z},
+                {min.x, min.y, max.z}, {max.x, min.y, max.z}, {min.x, max.y, max.z}, {max.x, max.y, max.z},
+            };
+
+            AABB transformed;
+            for (const auto& corner : corners) {
+                transformed.expand(glm::vec3(transform * glm::vec4(corner, 1.0f)));
+            }
+
+            *this = transformed;
         }
 
         static struct AABB calculate(const std::vector<glm::vec3>& points)
         {
             AABB aabb;
-            if (points.empty()) {
-                aabb.min = glm::vec3(0.0f);
-                aabb.max = glm::vec3(0.0f);
-                return aabb;
-            }
-
-            aabb.min = points[0];
-            aabb.max = points[0];
-
             for (const auto& point : points) {
-                aabb.min = glm::min(aabb.min, point);
-                aabb.max = glm::max(aabb.max, point);
+                aabb.expand(point);
             }
-
             return aabb;
         }
     };

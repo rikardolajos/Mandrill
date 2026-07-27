@@ -198,7 +198,9 @@ namespace Mandrill
         std::vector<uint32_t> mMeshIndices;
 
         glm::mat4 mTransform;
-        glm::mat4* mpTransformDevice;
+        // Points at this node's slot in the scene transform buffer. The per-frame copies within that slot are spaced by
+        // the uniform buffer offset alignment, not by sizeof(glm::mat4), so this is a byte pointer.
+        std::byte* mpTransformDevice;
         ptr<Descriptor> mpDescriptor;
 
         bool mVisible;
@@ -493,8 +495,7 @@ namespace Mandrill
 
         std::vector<uint32_t> loadFromOBJ(const std::filesystem::path& path,
                                           const std::filesystem::path& materialPath = "");
-        std::vector<uint32_t> loadFromGLTF(const std::filesystem::path& path,
-                                           const std::filesystem::path& materialPath = "");
+        std::vector<uint32_t> loadFromGLTF(const std::filesystem::path& path);
         void addTexture(std::string texturePath);
         void addTextureFromMemory(const uint8_t* pData, size_t size, const std::string& textureName);
 

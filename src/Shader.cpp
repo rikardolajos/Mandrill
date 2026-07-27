@@ -91,10 +91,10 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
 #ifdef _DEBUG
     options.SetGenerateDebugInfo();
     options.SetWarningsAsErrors();
+    options.SetOptimizationLevel(shaderc_optimization_level_zero);
 #else
     options.SetOptimizationLevel(shaderc_optimization_level_performance);
 #endif
-    options.SetOptimizationLevel(shaderc_optimization_level_zero);
 
     shaderc_shader_kind kind = shaderc_glsl_infer_from_source;
     switch (stageFlag) {
@@ -323,10 +323,11 @@ void Shader::createShader()
         };
     }
 
-    // Collect descriptor set layouts
+    // Collect descriptor set layouts. Both maps are indexed by set, and then keyed on the binding number. Binding
+    // numbers are not necessarily contiguous, so they cannot be used as indices into a vector.
     std::vector<std::map<uint32_t, SpvReflectDescriptorBinding*>> descriptorSets;
     std::vector<VkShaderStageFlags> stageFlags;
-    std::vector<std::vector<uint32_t>> bindingCount;
+    std::vector<std::map<uint32_t, uint32_t>> bindingCount;
     for (size_t i = 0; i < mReflections.size(); i++) {
         uint32_t bindingsCount = 0;
         mReflections[i]->EnumerateDescriptorBindings(&bindingsCount, nullptr);
@@ -351,13 +352,14 @@ void Shader::createShader()
             stageFlags[binding->set] |= static_cast<VkShaderStageFlagBits>(mReflections[i]->GetShaderStage());
 
             if (binding->array.dims_count == 0) {
-                bindingCount[binding->set].push_back(binding->count);
+                bindingCount[binding->set].insert_or_assign(binding->binding, binding->count);
             } else if (binding->array.dims_count == 1) {
                 if (binding->type_description->traits.array.spec_constant_op_ids[0] != 0xffffffff) {
                     uint32_t id = binding->type_description->traits.array.spec_constant_op_ids[0];
-                    bindingCount[binding->set].push_back(getSpecializationConstant(mSpecializationInfos, id));
+                    bindingCount[binding->set].insert_or_assign(binding->binding,
+                                                                getSpecializationConstant(mSpecializationInfos, id));
                 } else if (binding->array.dims[0] > 0) {
-                    bindingCount[binding->set].push_back(binding->array.dims[0]);
+                    bindingCount[binding->set].insert_or_assign(binding->binding, binding->array.dims[0]);
                 } else if (binding->array.dims[0] == 0) {
                     Log::Error("Unsized array: cannot determine descriptor set layout. Use sized arrays or "
                                "specialization constants.");
@@ -388,11 +390,13 @@ void Shader::createShader()
     mDescriptorSetLayouts.resize(descriptorSets.size());
     for (uint32_t i = 0; i < count(descriptorSets); i++) {
         std::vector<VkDescriptorSetLayoutBinding> bindings;
-        for (uint32_t j = 0; j < count(descriptorSets[i]); j++) {
+        for (auto& [bindingNumber, binding] : descriptorSets[i]) {
+            // A count is missing only if the binding was rejected above, in which case an error has been logged already
+            auto found = bindingCount[i].find(bindingNumber);
             bindings.push_back({
-                .binding = descriptorSets[i][j]->binding,
-                .descriptorType = getType(descriptorSets[i][j]),
-                .descriptorCount = bindingCount[i][j],
+                .binding = bindingNumber,
+                .descriptorType = getType(binding),
+                .descriptorCount = found != bindingCount[i].end() ? found->second : 1,
                 .stageFlags = stageFlags[i],
             });
         }

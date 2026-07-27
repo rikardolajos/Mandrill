@@ -7,10 +7,14 @@
 namespace Mandrill
 {
     struct Frustum {
-        glm::vec4 planes[6]; // Left, Right, Top, Bottom, Near, Far
+        glm::vec4 planes[6]; // Left, Right, Bottom, Top, Near, Far
 
         bool intersects(const AABB& aabb) const
         {
+            if (aabb.empty()) {
+                return false; // Nothing to draw, so nothing to keep
+            }
+
             for (const auto& plane : planes) {
                 glm::vec3 normal = glm::vec3(plane);
                 float distance = plane.w;

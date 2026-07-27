@@ -166,7 +166,7 @@ void AccelerationStructure::createBLASes(VkBuildAccelerationStructureFlagsKHR fl
 
         if (batchSize >= batchMemoryLimit || i == count(mBLASes) - 1) {
             VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
-            for (uint32_t j = batchStart; j < batchLength; j++) {
+            for (uint32_t j = batchStart; j < batchStart + batchLength; j++) {
                 BLAS* b = &mBLASes[j];
                 vkCmdBuildAccelerationStructuresKHR(cmd, 1, &b->buildInfo.geometry, &b->buildInfo.range);
 
@@ -291,8 +291,8 @@ void AccelerationStructure::createTLAS(VkBuildAccelerationStructureFlagsKHR flag
         Check::Vk(vkCreateAccelerationStructureKHR(mpDevice->getDevice(), &ci, nullptr, &mTLAS));
     }
 
-    // Create bigger scratch buffer if needed
-    VkDeviceSize scratchSize = std::max(mBuildInfo.size.accelerationStructureSize, mBuildInfo.size.updateScratchSize);
+    // Create bigger scratch buffer if needed. The same buffer serves both build and update, so take the larger.
+    VkDeviceSize scratchSize = std::max(mBuildInfo.size.buildScratchSize, mBuildInfo.size.updateScratchSize);
     if (scratchSize > mpScratch->getSize()) {
         VkBufferUsageFlags usage = mpScratch->getUsage();
         VkMemoryPropertyFlags properties = mpScratch->getProperties();
