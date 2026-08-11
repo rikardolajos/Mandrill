@@ -17,7 +17,11 @@ public:
         FLAG_TONEMAP = 1 << 7,
         FLAG_ENV_IMPORTANCE = 1 << 8,
         FLAG_MIS = 1 << 9,
+        FLAG_DEBUG_TRUNCATION = 1 << 10,
     };
+
+    // Value of the NEE depth field that means "no limit", must match RayMarcher.frag
+    static constexpr int NEE_DEPTH_UNLIMITED = 255;
 
     // Push constants are limited to 128 bytes on some devices, hence the packing of bounces and samples
     struct PushConstant {
@@ -192,6 +196,7 @@ public:
         flags |= mTonemap ? FLAG_TONEMAP : 0;
         flags |= mEnvImportanceSampling ? FLAG_ENV_IMPORTANCE : 0;
         flags |= mMultipleImportanceSampling ? FLAG_MIS : 0;
+        flags |= mDebugTruncation ? FLAG_DEBUG_TRUNCATION : 0;
 
         PushConstant pushConstant = {
             .inverseModel = glm::inverse(mVolumeModelMatrix),
@@ -202,7 +207,9 @@ public:
             .viewport = glm::vec2(mWidth, mHeight),
             .frameIndex = mAccumulatedFrames,
             .flags = flags,
-            .bouncesAndSamples = static_cast<uint32_t>(mMaxBounces) | (static_cast<uint32_t>(mSamplesPerFrame) << 16),
+            .bouncesAndSamples = static_cast<uint32_t>(mMaxBounces) |
+                                 (static_cast<uint32_t>(mSamplesPerFrame) << 16) |
+                                 (static_cast<uint32_t>(mNeeDepth) << 24),
             .albedo = mAlbedo,
             .seed = mFrameCounter++,
             .exposure = mExposure,
@@ -295,10 +302,13 @@ public:
                 resetAccum |= ImGui::Checkbox("Accumulate", &mAccumulate);
                 resetAccum |= ImGui::Checkbox("Multi-scatter", &mMultiScatter);
                 if (mMultiScatter) {
-                    resetAccum |= ImGui::SliderInt("Max bounces", &mMaxBounces, 1, 512);
+                    resetAccum |= ImGui::SliderInt("Max bounces", &mMaxBounces, 1, 4096, "%d",
+                                                   ImGuiSliderFlags_Logarithmic);
                     if (ImGui::IsItemHovered()) {
                         ImGui::SetTooltip("A dense cloud needs hundreds of scattering events before light escapes. "
-                                          "Too low a limit truncates those paths and the volume turns dark.");
+                                          "Paths that hit this limit are dropped with whatever energy they still "
+                                          "carry, which darkens the volume. Use the truncated paths view to see "
+                                          "whether the limit is actually being reached.");
                     }
                 }
                 resetAccum |= ImGui::Checkbox("Next event estimation", &mNextEventEstimation);
@@ -314,6 +324,15 @@ public:
                         ImGui::SetTooltip("Combine light sampling with phase function sampling, weighting each by how "
                                           "likely it was to produce the direction. Light sampling wins for small "
                                           "bright lights, phase sampling for broad skies and strong anisotropy.");
+                    }
+                    resetAccum |= ImGui::SliderInt("NEE depth", &mNeeDepth, 1, NEE_DEPTH_UNLIMITED,
+                                                   mNeeDepth >= NEE_DEPTH_UNLIMITED ? "unlimited" : "%d",
+                                                   ImGuiSliderFlags_Logarithmic);
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("Stop tracing shadow rays past this scattering event. Deep inside a dense "
+                                          "volume they are blocked anyway, so skipping them makes deep paths far "
+                                          "cheaper. Past the limit the escaping rays account for the environment on "
+                                          "their own, so the result stays unbiased.");
                     }
                 }
                 resetAccum |= ImGui::Checkbox("Russian roulette", &mRussianRoulette);
@@ -340,6 +359,14 @@ public:
             ImGui::SeparatorText("Display");
             ImGui::Checkbox("Tonemap", &mTonemap);
             ImGui::DragFloat("Exposure", &mExposure, 0.01f, 0.0f, 100.0f);
+
+            // This one changes what is written into the accumulation buffer, so it does reset it
+            resetAccum |= ImGui::Checkbox("Show truncated paths", &mDebugTruncation);
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("Show the fraction of paths that ran out of bounces instead of the image. Black "
+                                  "means no energy is being lost to the bounce limit, white means every path is "
+                                  "being cut short.");
+            }
 
             ImGui::SeparatorText("Environment Map");
             if (ImGui::Button("Load##EnvMap")) {
@@ -470,12 +497,15 @@ private:
     // Water droplets absorb almost nothing in the visible range; a value like 0.95 renders a cloud as dark smoke
     float mAlbedo = 0.999f;
     float mEnvIntensity = 1.0f;
-    int mMaxBounces = 128;
+    int mMaxBounces = 256;
     int mSamplesPerFrame = 1;
+    // Shadow rays deep inside a dense volume are blocked anyway, so tracing them everywhere is mostly wasted work
+    int mNeeDepth = 16;
 
     // Display settings
     bool mTonemap = true;
     float mExposure = 1.0f;
+    bool mDebugTruncation = false;
 
     uint32_t mAccumulatedFrames = 0;
     uint32_t mFrameCounter = 0;

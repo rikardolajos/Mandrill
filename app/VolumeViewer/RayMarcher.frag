@@ -23,6 +23,10 @@ const uint FLAG_HG_PHASE         = 1u << 6;
 const uint FLAG_TONEMAP          = 1u << 7;
 const uint FLAG_ENV_IMPORTANCE   = 1u << 8;
 const uint FLAG_MIS              = 1u << 9;
+const uint FLAG_DEBUG_TRUNCATION = 1u << 10;
+
+// Value of the NEE depth field that means "no limit"
+const int NEE_DEPTH_UNLIMITED = 255;
 
 // Optical depth beyond which a shadow ray is considered fully blocked (exp(-24) is far below one 32-bit float ULP
 // of the accumulated result). Without this, dense volumes make every shadow march run to MAX_STEPS.
@@ -72,7 +76,20 @@ int maxBounces()
 
 int samplesPerFrame()
 {
-    return int(pc.bouncesAndSamples >> 16);
+    return int((pc.bouncesAndSamples >> 16) & 0xffu);
+}
+
+int neeDepth()
+{
+    return int(pc.bouncesAndSamples >> 24);
+}
+
+// Beyond the NEE depth the shadow march is skipped and the environment is estimated by the escaping ray alone.
+// That stays unbiased as long as those escapes are then counted in full rather than MIS weighted.
+bool neeActiveAt(int scatterEvent)
+{
+    int depth = neeDepth();
+    return depth >= NEE_DEPTH_UNLIMITED || scatterEvent < depth;
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -366,10 +383,14 @@ vec3 samplePhaseDirection(vec3 dir)
 // Path tracing
 // --------------------------------------------------------------------------------------------------
 
-vec3 tracePath(vec3 origin, vec3 dir)
+// Traces one path. Sets truncated if the path was still alive when it ran into the bounce limit, which is the one
+// place where energy is dropped rather than accounted for.
+vec3 tracePath(vec3 origin, vec3 dir, out bool truncated)
 {
     vec3 radiance = vec3(0.0);
     vec3 throughput = vec3(1.0);
+
+    truncated = false;
 
     int bounceLimit = (pc.flags & FLAG_MULTI_SCATTER) != 0u ? maxBounces() : 1;
 
@@ -384,9 +405,10 @@ vec3 tracePath(vec3 origin, vec3 dir)
         // Weight for the environment radiance should this ray escape. The camera ray is not something next
         // event estimation could have sampled, so it always counts in full. After a scattering event the
         // same radiance is also estimated by next event estimation: with MIS the two strategies are combined,
-        // without it the escaped ray is dropped and next event estimation accounts for all of it.
+        // without it the escaped ray is dropped and next event estimation accounts for all of it. Past the NEE
+        // depth no shadow ray was traced, so the escape carries the whole contribution again.
         float escapeWeight = 1.0;
-        if (bounce > 0 && nee) {
+        if (bounce > 0 && nee && neeActiveAt(bounce - 1)) {
             escapeWeight = mis ? misWeight(phasePdf, environmentPdf(dir)) : 0.0;
         }
 
@@ -409,8 +431,10 @@ vec3 tracePath(vec3 origin, vec3 dir)
             break;
         }
 
-        // Path is truncated at the bounce limit
+        // The path is still carrying energy but has run out of bounces, so this is where the estimator loses
+        // energy. Russian roulette terminating a path is not truncation, it is compensated for.
         if (bounce == bounceLimit) {
+            truncated = true;
             break;
         }
 
@@ -420,7 +444,7 @@ vec3 tracePath(vec3 origin, vec3 dir)
 
         // Next event estimation: sample a direction towards the environment and estimate the
         // transmittance with a shadow march
-        if (nee) {
+        if (nee && neeActiveAt(bounce)) {
             vec3 lightDir;
             float pdf;
 
@@ -546,17 +570,28 @@ void main()
     bool accumulate = (pc.flags & FLAG_ACCUMULATE) != 0u;
 
     vec3 total = vec3(0.0);
+    int truncatedCount = 0;
     int spp = max(samplesPerFrame(), 1);
     for (int s = 0; s < spp; s++) {
         vec2 jitter = accumulate ? rand2() - 0.5 : vec2(0.0);
         vec3 dir = cameraRay(jitter, origin);
-        total += tracePath(origin, dir);
+        bool truncated;
+        total += tracePath(origin, dir, truncated);
+        if (truncated) {
+            truncatedCount++;
+        }
     }
     vec3 radiance = total / float(spp);
 
     // A single non-finite sample would otherwise poison the pixel for the rest of the accumulation
     if (any(isnan(radiance)) || any(isinf(radiance))) {
         radiance = vec3(0.0);
+    }
+
+    // Accumulate the truncation rate in place of radiance so that it converges the same way
+    bool debugTruncation = (pc.flags & FLAG_DEBUG_TRUNCATION) != 0u;
+    if (debugTruncation) {
+        radiance = vec3(float(truncatedCount) / float(spp));
     }
 
     if (accumulate) {
@@ -570,5 +605,6 @@ void main()
         radiance = accum.rgb / accum.a;
     }
 
-    fragColor = vec4(display(radiance), 1.0);
+    // The truncation rate is a fraction, not a radiance, so it is shown as is
+    fragColor = vec4(debugTruncation ? radiance : display(radiance), 1.0);
 }
