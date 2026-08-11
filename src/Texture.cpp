@@ -5,6 +5,7 @@
 #include "Helpers.h"
 #include "Log.h"
 
+#include <glm/gtc/packing.hpp>
 #include <stb_image.h>
 
 using namespace Mandrill;
@@ -30,17 +31,53 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
 
         std::string pathStr = fullPath.string();
         int width, height, channels;
-        stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-        channels = STBI_rgb_alpha;
 
-        if (!pData) {
-            Log::Error("Failed to load texture");
-            return;
+        // A floating-point target format selects the floating-point loader, which preserves the full dynamic range of
+        // HDR files and converts LDR files from sRGB to linear
+        const bool halfFloat = format == VK_FORMAT_R16G16B16A16_SFLOAT;
+        const bool fullFloat = format == VK_FORMAT_R32G32B32A32_SFLOAT;
+
+        if (halfFloat || fullFloat) {
+            float* pData = stbi_loadf(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+            channels = STBI_rgb_alpha;
+
+            if (!pData) {
+                Log::Error("Failed to load texture");
+                return;
+            }
+
+            if (halfFloat) {
+                // Bright pixels such as suns can exceed the half-float range, and the resulting infinities would
+                // propagate through any renderer that accumulates them
+                std::vector<uint16_t> halfData(static_cast<size_t>(width) * height * channels);
+                for (size_t i = 0; i < halfData.size(); i++) {
+                    halfData[i] = glm::packHalf1x16(std::min(pData[i], 65504.0f));
+                }
+                create(format, halfData.data(), width, height, 1, sizeof(uint16_t) * channels, mipmaps);
+            } else {
+                create(format, pData, width, height, 1, sizeof(float) * channels, mipmaps);
+            }
+
+            stbi_image_free(pData);
+        } else {
+            if (stbi_is_hdr(pathStr.c_str())) {
+                Log::Warning("{} is an HDR image but is loaded into an 8-bit format, so its dynamic range will be "
+                             "lost. Use VK_FORMAT_R16G16B16A16_SFLOAT or VK_FORMAT_R32G32B32A32_SFLOAT to keep it.",
+                             path.string());
+            }
+
+            stbi_uc* pData = stbi_load(pathStr.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+            channels = STBI_rgb_alpha;
+
+            if (!pData) {
+                Log::Error("Failed to load texture");
+                return;
+            }
+
+            create(format, pData, width, height, 1, sizeof(stbi_uc) * channels, mipmaps);
+
+            stbi_image_free(pData);
         }
-
-        create(format, pData, width, height, 1, sizeof(stbi_uc) * channels, mipmaps);
-
-        stbi_image_free(pData);
         break;
     }
     case TextureType::Texture3D: {
