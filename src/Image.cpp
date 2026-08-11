@@ -5,18 +5,28 @@
 
 using namespace Mandrill;
 
+namespace
+{
+    // Falls back to guessing from the extent, which is ambiguous for images that are one texel tall
+    VkImageType resolveImageType(VkImageType requested, uint32_t height, uint32_t depth)
+    {
+        if (requested != VK_IMAGE_TYPE_MAX_ENUM) {
+            return requested;
+        }
+        return height == 1 ? VK_IMAGE_TYPE_1D : (depth == 1 ? VK_IMAGE_TYPE_2D : VK_IMAGE_TYPE_3D);
+    }
+} // namespace
+
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
              VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-             VkMemoryPropertyFlags properties)
+             VkMemoryPropertyFlags properties, VkImageType type)
     : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mPitch(0), mMipLevels(mipLevels),
       mFormat(format), mTiling(tiling), mUsage(usage), mProperties(properties), mImageView(VK_NULL_HANDLE),
-      mOwnMemory(true), mpHostMap(nullptr)
+      mOwnMemory(true), mpHostMap(nullptr), mType(resolveImageType(type, height, depth))
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = mHeight == 1  ? VK_IMAGE_TYPE_1D
-                     : mDepth == 1 ? VK_IMAGE_TYPE_2D
-                                   : VK_IMAGE_TYPE_3D,
+        .imageType = mType,
         .format = mFormat,
         .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
@@ -62,16 +72,14 @@ Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t dept
 
 Image::Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
              VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-             VkDeviceMemory memory, VkDeviceSize offset)
+             VkDeviceMemory memory, VkDeviceSize offset, VkImageType type)
     : mpDevice(pDevice), mWidth(width), mHeight(height), mDepth(depth), mPitch(0), mMipLevels(mipLevels),
       mFormat(format), mTiling(tiling), mUsage(usage), mProperties(0), mImageView(VK_NULL_HANDLE), mMemory(memory),
-      mOwnMemory(false), mpHostMap(nullptr)
+      mOwnMemory(false), mpHostMap(nullptr), mType(resolveImageType(type, height, depth))
 {
     VkImageCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = mHeight == 1  ? VK_IMAGE_TYPE_1D
-                     : mDepth == 1 ? VK_IMAGE_TYPE_2D
-                                   : VK_IMAGE_TYPE_3D,
+        .imageType = mType,
         .format = format,
         .extent = {.width = mWidth, .height = mHeight, .depth = mDepth},
         .mipLevels = mipLevels,
@@ -117,19 +125,31 @@ Image::~Image()
     vkDestroyImage(mpDevice->getDevice(), mImage, nullptr);
 }
 
-void Image::createImageView(VkImageAspectFlags aspectFlags)
+void Image::createImageView(VkImageAspectFlags aspectFlags, VkImageViewType viewType)
 {
     if (mImageView) {
         vkDeviceWaitIdle(mpDevice->getDevice());
         vkDestroyImageView(mpDevice->getDevice(), mImageView, nullptr);
     }
 
+    if (viewType == VK_IMAGE_VIEW_TYPE_MAX_ENUM) {
+        switch (mType) {
+        case VK_IMAGE_TYPE_1D:
+            viewType = VK_IMAGE_VIEW_TYPE_1D;
+            break;
+        case VK_IMAGE_TYPE_3D:
+            viewType = VK_IMAGE_VIEW_TYPE_3D;
+            break;
+        default:
+            viewType = VK_IMAGE_VIEW_TYPE_2D;
+            break;
+        }
+    }
+
     VkImageViewCreateInfo ci = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = mImage,
-        .viewType = mHeight == 1  ? VK_IMAGE_VIEW_TYPE_1D
-                    : mDepth == 1 ? VK_IMAGE_VIEW_TYPE_2D
-                                  : VK_IMAGE_VIEW_TYPE_3D,
+        .viewType = viewType,
         .format = mFormat,
         .components = {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
                        .g = VK_COMPONENT_SWIZZLE_IDENTITY,

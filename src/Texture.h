@@ -153,8 +153,8 @@ namespace Mandrill
         }
 
     private:
-        void create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
-                    uint32_t bytesPerPixel, bool mipmaps);
+        void create(TextureType type, VkFormat format, const void* pData, uint32_t width, uint32_t height,
+                    uint32_t depth, uint32_t bytesPerPixel, bool mipmaps);
         void generateMipmaps(VkCommandBuffer cmd);
         void createSampler();
 

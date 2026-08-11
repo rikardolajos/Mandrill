@@ -53,9 +53,9 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
                 for (size_t i = 0; i < halfData.size(); i++) {
                     halfData[i] = glm::packHalf1x16(std::min(pData[i], 65504.0f));
                 }
-                create(format, halfData.data(), width, height, 1, sizeof(uint16_t) * channels, mipmaps);
+                create(type, format, halfData.data(), width, height, 1, sizeof(uint16_t) * channels, mipmaps);
             } else {
-                create(format, pData, width, height, 1, sizeof(float) * channels, mipmaps);
+                create(type, format, pData, width, height, 1, sizeof(float) * channels, mipmaps);
             }
 
             stbi_image_free(pData);
@@ -74,7 +74,7 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
                 return;
             }
 
-            create(format, pData, width, height, 1, sizeof(stbi_uc) * channels, mipmaps);
+            create(type, format, pData, width, height, 1, sizeof(stbi_uc) * channels, mipmaps);
 
             stbi_image_free(pData);
         }
@@ -120,7 +120,7 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
             }
         }
 
-        create(format, volumeData.data(), sizeX, sizeY, sizeZ, sizeof(float), false);
+        create(type, format, volumeData.data(), sizeX, sizeY, sizeZ, sizeof(float), false);
 #else
         Log::Error("Trying to load a Texture3D but Mandrill was not compiled with OpenVDB support. OpenVDB can be "
                    "installed using vcpkg:\n\t`vcpkg install openvdb`");
@@ -139,7 +139,7 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const v
                  uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps)
     : mpDevice(pDevice), mImageInfo{0}
 {
-    create(format, pData, width, height, depth, bytesPerPixel, mipmaps);
+    create(type, format, pData, width, height, depth, bytesPerPixel, mipmaps);
     createSampler();
 }
 
@@ -167,18 +167,27 @@ Texture::~Texture()
     vkDestroySampler(mpDevice->getDevice(), mSampler, nullptr);
 }
 
-void Texture::create(VkFormat format, const void* pData, uint32_t width, uint32_t height, uint32_t depth,
-                     uint32_t bytesPerPixel, bool mipmaps)
+void Texture::create(TextureType type, VkFormat format, const void* pData, uint32_t width, uint32_t height,
+                     uint32_t depth, uint32_t bytesPerPixel, bool mipmaps)
 {
     uint32_t mipLevels = 1;
     if (mipmaps) {
         mipLevels = static_cast<uint32_t>(std::floor(log2(std::max(width, height))) + 1);
     }
 
+    // The extent alone is ambiguous for small textures, so the requested texture type decides the image type. A
+    // 1 x 1 2D texture is a common placeholder and would otherwise be created as a 1D image.
+    VkImageType imageType = VK_IMAGE_TYPE_2D;
+    if (type == TextureType::Texture1D) {
+        imageType = VK_IMAGE_TYPE_1D;
+    } else if (type == TextureType::Texture3D) {
+        imageType = VK_IMAGE_TYPE_3D;
+    }
+
     mpImage = make_ptr<Image>(
         mpDevice, width, height, depth, mipLevels, VK_SAMPLE_COUNT_1_BIT, format, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageType);
 
     if (pData) {
         VkDeviceSize size = width * height * depth * bytesPerPixel;

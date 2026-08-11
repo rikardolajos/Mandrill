@@ -29,9 +29,12 @@ namespace Mandrill
         /// <param name="tiling">Tiling mode to use</param>
         /// <param name="usage">How the image will be used</param>
         /// <param name="properties">Which memory properties to require</param>
+        /// <param name="type">Image type. Defaults to deriving it from the extent, which cannot tell a 1 x 1 2D
+        /// image from a 1D one, so pass it explicitly when the dimensionality matters</param>
         MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
-                           VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
+                           VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
+                           VkImageType type = VK_IMAGE_TYPE_MAX_ENUM);
 
         /// <summary>
         /// Create a new Image using memory that has already been allocated.
@@ -47,9 +50,12 @@ namespace Mandrill
         /// <param name="usage">How the image will be used</param>
         /// <param name="memory">Allocated memory to use for image</param>
         /// <param name="offset">Where in the allocated memory the image should be stored</param>
+        /// <param name="type">Image type. Defaults to deriving it from the extent, which cannot tell a 1 x 1 2D
+        /// image from a 1D one, so pass it explicitly when the dimensionality matters</param>
         MANDRILL_API Image(ptr<Device> pDevice, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
-                           VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);
+                           VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset,
+                           VkImageType type = VK_IMAGE_TYPE_MAX_ENUM);
 
         /// <summary>
         /// Destructor for image
@@ -60,7 +66,10 @@ namespace Mandrill
         /// Create a default image view for Image object.
         /// </summary>
         /// <param name="aspectFlags">Aspect flags to use for image view</param>
-        MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags);
+        /// <param name="viewType">View type. Defaults to matching the image type, which is what a shader sampling
+        /// the image expects</param>
+        MANDRILL_API void createImageView(VkImageAspectFlags aspectFlags,
+                                          VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_MAX_ENUM);
 
         /// <summary>
         /// Get the VkImage handle.
@@ -204,5 +213,6 @@ namespace Mandrill
         uint32_t mMipLevels;
         VkFormat mFormat;
         VkImageTiling mTiling;
+        VkImageType mType;
     };
 } // namespace Mandrill
