@@ -15,6 +15,7 @@ public:
         FLAG_ENV_LIGHT = 1 << 5,
         FLAG_HG_PHASE = 1 << 6,
         FLAG_TONEMAP = 1 << 7,
+        FLAG_ENV_IMPORTANCE = 1 << 8,
     };
 
     // Push constants are limited to 128 bytes on some devices, hence the packing of bounces and samples
@@ -110,10 +111,7 @@ public:
             VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
 
         // Fallback environment map (plain white) used by the ray marcher until one is loaded
-        glm::vec4 whitePixel = glm::vec4(1.0f);
-        mpDummyEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
-                                                          VK_FORMAT_R32G32B32A32_SFLOAT, &whitePixel, 1, 1, 1,
-                                                          static_cast<uint32_t>(sizeof whitePixel), false);
+        mpDummyEnvironmentMap = std::make_shared<EnvironmentMap>(mpDevice);
 
         // Buffer for temporal accumulation
         createAccumulationImage();
@@ -191,6 +189,7 @@ public:
         flags |= mEnvironmentLight ? FLAG_ENV_LIGHT : 0;
         flags |= mHenyeyGreenstein ? FLAG_HG_PHASE : 0;
         flags |= mTonemap ? FLAG_TONEMAP : 0;
+        flags |= mEnvImportanceSampling ? FLAG_ENV_IMPORTANCE : 0;
 
         PushConstant pushConstant = {
             .inverseModel = glm::inverse(mVolumeModelMatrix),
@@ -301,6 +300,14 @@ public:
                     }
                 }
                 resetAccum |= ImGui::Checkbox("Next event estimation", &mNextEventEstimation);
+                if (mNextEventEstimation) {
+                    resetAccum |= ImGui::Checkbox("Environment importance sampling", &mEnvImportanceSampling);
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("Sample light directions proportionally to the radiance in the environment "
+                                          "map. Without it, a small bright region such as a sun is found only rarely "
+                                          "and each hit carries a large weight, which shows up as fireflies.");
+                    }
+                }
                 resetAccum |= ImGui::Checkbox("Russian roulette", &mRussianRoulette);
                 resetAccum |= ImGui::Checkbox("Environment light", &mEnvironmentLight);
                 resetAccum |= ImGui::Checkbox("Henyey-Greenstein phase", &mHenyeyGreenstein);
@@ -331,11 +338,11 @@ public:
                 mEnvironmentMapPath =
                     OpenFile(mpWindow, "Supported image files (*.hdr, *.png)\0*.HDR;*.PNG\0All (*.*)\0*.*\0");
                 if (!mEnvironmentMapPath.empty()) {
-                    mpEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
-                                                                 mEnvironmentMapFormat, mEnvironmentMapPath, false);
+                    mpEnvironmentMap =
+                        std::make_shared<EnvironmentMap>(mpDevice, mEnvironmentMapPath, mEnvironmentMapFormat);
 
                     std::vector<DescriptorDesc> desc;
-                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
+                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap->getTexture());
                     mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
                         desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
 
@@ -401,11 +408,14 @@ private:
 
         auto pEnvMap = mpEnvironmentMap ? mpEnvironmentMap : mpDummyEnvironmentMap;
 
+        // Descriptors are written in binding order, so this must match the layout in RayMarcher.frag
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pEnvMap);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pEnvMap->getTexture());
         desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpAccumImage);
         desc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, pEnvMap->getMarginalDistribution());
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, pEnvMap->getConditionalDistribution());
         mpRayMarchDescriptor =
             mpDevice->createDescriptor(desc, mpRayMarchingPipeline->getShader()->getDescriptorSetLayout(1));
     }
@@ -418,8 +428,8 @@ private:
     std::shared_ptr<Camera> mpCamera;
 
     std::shared_ptr<Pipeline> mpEnvironmentMapPipeline;
-    std::shared_ptr<Texture> mpEnvironmentMap;
-    std::shared_ptr<Texture> mpDummyEnvironmentMap;
+    std::shared_ptr<EnvironmentMap> mpEnvironmentMap;
+    std::shared_ptr<EnvironmentMap> mpDummyEnvironmentMap;
     VkFormat mEnvironmentMapFormat;
     std::filesystem::path mEnvironmentMapPath;
     std::shared_ptr<Descriptor> mpEnvironmentMapDescriptor;
@@ -443,6 +453,7 @@ private:
     bool mAccumulate = true;
     bool mMultiScatter = true;
     bool mNextEventEstimation = true;
+    bool mEnvImportanceSampling = true;
     bool mRussianRoulette = true;
     bool mEnvironmentLight = true;
     bool mHenyeyGreenstein = true;

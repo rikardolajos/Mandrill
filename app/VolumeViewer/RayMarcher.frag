@@ -21,6 +21,7 @@ const uint FLAG_RUSSIAN_ROULETTE = 1u << 4;
 const uint FLAG_ENV_LIGHT        = 1u << 5;
 const uint FLAG_HG_PHASE         = 1u << 6;
 const uint FLAG_TONEMAP          = 1u << 7;
+const uint FLAG_ENV_IMPORTANCE   = 1u << 8;
 
 // Optical depth beyond which a shadow ray is considered fully blocked (exp(-24) is far below one 32-bit float ULP
 // of the accumulated result). Without this, dense volumes make every shadow march run to MAX_STEPS.
@@ -36,6 +37,16 @@ layout(set = 0, binding = 0) uniform CameraUniformDynamic {
 layout(set = 1, binding = 0) uniform sampler3D volume;
 layout(set = 1, binding = 1) uniform sampler2D environmentMap;
 layout(set = 1, binding = 2, rgba32f) uniform image2D accumImage;
+
+// Cumulative distribution functions for importance sampling the environment map, normalized to [0, 1]. The marginal
+// selects a row, the conditional selects a texel within that row.
+layout(std430, set = 1, binding = 3) readonly buffer MarginalDistribution {
+    float marginalCdf[];
+};
+
+layout(std430, set = 1, binding = 4) readonly buffer ConditionalDistribution {
+    float conditionalCdf[];
+};
 
 // Push constants are limited to 128 bytes on some devices, hence the packing of bounces and samples
 layout(push_constant) uniform PushConstant {
@@ -106,6 +117,14 @@ vec2 worldToLatlongMap(vec3 dir)
     return uv;
 }
 
+vec3 latlongMapToWorld(float u, float v)
+{
+    float theta = v * M_PI;
+    float phi = (u - 0.5) * 2.0 * M_PI;
+    float sinTheta = sin(theta);
+    return vec3(sinTheta * cos(phi), -cos(theta), -sinTheta * sin(phi));
+}
+
 vec3 environmentRadiance(vec3 dir)
 {
     vec3 radiance = vec3(1.0);
@@ -113,6 +132,74 @@ vec3 environmentRadiance(vec3 dir)
         radiance = texture(environmentMap, worldToLatlongMap(dir)).rgb;
     }
     return pc.envIntensity * radiance;
+}
+
+// Largest index i in [0, n - 1] such that cdf[i] <= xi, where the CDF holds n + 1 values
+int findIntervalMarginal(int n, float xi)
+{
+    int first = 0;
+    int len = n + 1;
+    while (len > 0) {
+        int halfLen = len >> 1;
+        int middle = first + halfLen;
+        if (marginalCdf[middle] <= xi) {
+            first = middle + 1;
+            len -= halfLen + 1;
+        } else {
+            len = halfLen;
+        }
+    }
+    return clamp(first - 1, 0, n - 1);
+}
+
+int findIntervalConditional(int base, int n, float xi)
+{
+    int first = 0;
+    int len = n + 1;
+    while (len > 0) {
+        int halfLen = len >> 1;
+        int middle = first + halfLen;
+        if (conditionalCdf[base + middle] <= xi) {
+            first = middle + 1;
+            len -= halfLen + 1;
+        } else {
+            len = halfLen;
+        }
+    }
+    return clamp(first - 1, 0, n - 1);
+}
+
+// Sample a direction proportionally to the radiance in the environment map, by inverting the marginal CDF over rows
+// and then the conditional CDF within the chosen row. Returns the pdf with respect to solid angle.
+vec3 sampleEnvironmentDirection(out float pdf)
+{
+    ivec2 size = textureSize(environmentMap, 0);
+
+    float xiU = rand();
+    float xiV = rand();
+
+    int row = findIntervalMarginal(size.y, xiV);
+    float marginalBin = marginalCdf[row + 1] - marginalCdf[row];
+    float dv = marginalBin > 0.0 ? (xiV - marginalCdf[row]) / marginalBin : 0.0;
+    float v = (float(row) + dv) / float(size.y);
+
+    int base = row * (size.x + 1);
+    int col = findIntervalConditional(base, size.x, xiU);
+    float conditionalBin = conditionalCdf[base + col + 1] - conditionalCdf[base + col];
+    float du = conditionalBin > 0.0 ? (xiU - conditionalCdf[base + col]) / conditionalBin : 0.0;
+    float u = (float(col) + du) / float(size.x);
+
+    float sinTheta = sin(v * M_PI);
+    if (sinTheta <= 0.0) {
+        pdf = 0.0;
+        return vec3(0.0, 1.0, 0.0);
+    }
+
+    // Convert the density from texture space to solid angle, where dw = 2 pi^2 sin(theta) du dv
+    float pdfTexture = (marginalBin * float(size.y)) * (conditionalBin * float(size.x));
+    pdf = pdfTexture / (2.0 * M_PI * M_PI * sinTheta);
+
+    return latlongMapToWorld(u, v);
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -286,17 +373,29 @@ vec3 tracePath(vec3 origin, vec3 dir)
         // Next event estimation: sample a direction towards the environment and estimate the
         // transmittance with a shadow march
         if ((pc.flags & FLAG_NEE) != 0u) {
-            vec3 lightDir = sampleSphere();
-            float pdf = 1.0 / (4.0 * M_PI);
-            vec3 lo = toModel(origin);
-            vec3 ld = toModelDir(lightDir);
-            float sEnter, sExit;
-            float visibility = 1.0;
-            if (intersectVolume(lo, ld, sEnter, sExit)) {
-                visibility = transmittance(lo, ld, sEnter, sExit);
+            vec3 lightDir;
+            float pdf;
+
+            // Importance sampling the map is only meaningful when the map is what is lighting the scene
+            const uint importanceSample = FLAG_ENV_IMPORTANCE | FLAG_ENV_LIGHT;
+            if ((pc.flags & importanceSample) == importanceSample) {
+                lightDir = sampleEnvironmentDirection(pdf);
+            } else {
+                lightDir = sampleSphere();
+                pdf = 1.0 / (4.0 * M_PI);
             }
-            radiance +=
-                throughput * phaseEval(dot(dir, lightDir)) * visibility * environmentRadiance(lightDir) / pdf;
+
+            if (pdf > 0.0) {
+                vec3 lo = toModel(origin);
+                vec3 ld = toModelDir(lightDir);
+                float sEnter, sExit;
+                float visibility = 1.0;
+                if (intersectVolume(lo, ld, sEnter, sExit)) {
+                    visibility = transmittance(lo, ld, sEnter, sExit);
+                }
+                radiance +=
+                    throughput * phaseEval(dot(dir, lightDir)) * visibility * environmentRadiance(lightDir) / pdf;
+            }
         }
 
         dir = samplePhaseDirection(dir);
