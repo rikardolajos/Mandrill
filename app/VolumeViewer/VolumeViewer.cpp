@@ -5,14 +5,34 @@ using namespace Mandrill;
 class VolumeViewer : public App
 {
 public:
+    // Feature flags, must match RayMarcher.frag
+    enum RayMarcherFlags : uint32_t {
+        FLAG_PATH_TRACING = 1 << 0,
+        FLAG_ACCUMULATE = 1 << 1,
+        FLAG_MULTI_SCATTER = 1 << 2,
+        FLAG_NEE = 1 << 3,
+        FLAG_RUSSIAN_ROULETTE = 1 << 4,
+        FLAG_ENV_LIGHT = 1 << 5,
+        FLAG_HG_PHASE = 1 << 6,
+        FLAG_TONEMAP = 1 << 7,
+    };
+
+    // Push constants are limited to 128 bytes on some devices, hence the packing of bounces and samples
     struct PushConstant {
         glm::mat4 inverseModel;
         glm::vec3 gridMin;
-        float _padding0;
+        float phaseG;
         glm::vec3 gridMax;
-        float _padding1;
+        float envIntensity;
         glm::vec2 viewport;
+        uint32_t frameIndex;
+        uint32_t flags;
+        uint32_t bouncesAndSamples;
+        float albedo;
+        uint32_t seed;
+        float exposure;
     };
+    static_assert(sizeof(PushConstant) == 128, "PushConstant must match the block in RayMarcher.frag");
 
     struct SpecializationConstants {
         int maxSteps;
@@ -83,6 +103,21 @@ public:
         mpCamera->setFov(60.0f);
         mpCamera->createDescriptor(VK_SHADER_STAGE_FRAGMENT_BIT);
 
+        // Environment maps are loaded into a float format to keep the dynamic range of HDR files. Prefer full float,
+        // but fall back to half float if the device cannot filter it.
+        mEnvironmentMapFormat = Helpers::findSupportedFormat(
+            mpDevice, {VK_FORMAT_R32G32B32A32_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT}, VK_IMAGE_TILING_OPTIMAL,
+            VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
+
+        // Fallback environment map (plain white) used by the ray marcher until one is loaded
+        glm::vec4 whitePixel = glm::vec4(1.0f);
+        mpDummyEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
+                                                          VK_FORMAT_R32G32B32A32_SFLOAT, &whitePixel, 1, 1, 1,
+                                                          static_cast<uint32_t>(sizeof whitePixel), false);
+
+        // Buffer for temporal accumulation
+        createAccumulationImage();
+
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
     }
@@ -107,10 +142,28 @@ public:
         if (mpSwapchain->recreated()) {
             mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
             mpPass->update(mpSwapchain->getExtent());
+            // The accumulation buffer must match the new resolution
+            createAccumulationImage();
+            createRayMarchDescriptor();
+            resetAccumulation();
+        }
+
+        // Restart accumulation whenever the camera moves
+        glm::mat4 view = mpCamera->getViewMatrix(mpSwapchain->getInFlightIndex());
+        if (view != mPrevView) {
+            mPrevView = view;
+            resetAccumulation();
         }
 
         // Acquire frame from swapchain and prepare rasterizer
         VkCommandBuffer cmd = mpSwapchain->acquireNextImage();
+
+        // Make last frame's accumulation writes visible before this frame reads them
+        Helpers::imageBarrier(cmd, mpAccumImage->getImage(), VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+                              VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+                              VK_ACCESS_2_SHADER_STORAGE_READ_BIT | VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT,
+                              VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         //  Camera descriptor
@@ -128,11 +181,30 @@ public:
         }
         glm::vec3 gridMin = mVolumeModelPosition - (mVolumeModelScale * volumeDim / 2.0f);
         glm::vec3 gridMax = gridMin + mVolumeModelScale * volumeDim;
+
+        uint32_t flags = 0;
+        flags |= mPathTracing ? FLAG_PATH_TRACING : 0;
+        flags |= mAccumulate ? FLAG_ACCUMULATE : 0;
+        flags |= mMultiScatter ? FLAG_MULTI_SCATTER : 0;
+        flags |= mNextEventEstimation ? FLAG_NEE : 0;
+        flags |= mRussianRoulette ? FLAG_RUSSIAN_ROULETTE : 0;
+        flags |= mEnvironmentLight ? FLAG_ENV_LIGHT : 0;
+        flags |= mHenyeyGreenstein ? FLAG_HG_PHASE : 0;
+        flags |= mTonemap ? FLAG_TONEMAP : 0;
+
         PushConstant pushConstant = {
             .inverseModel = glm::inverse(mVolumeModelMatrix),
             .gridMin = gridMin,
+            .phaseG = mPhaseG,
             .gridMax = gridMax,
+            .envIntensity = mEnvIntensity,
             .viewport = glm::vec2(mWidth, mHeight),
+            .frameIndex = mAccumulatedFrames,
+            .flags = flags,
+            .bouncesAndSamples = static_cast<uint32_t>(mMaxBounces) | (static_cast<uint32_t>(mSamplesPerFrame) << 16),
+            .albedo = mAlbedo,
+            .seed = mFrameCounter++,
+            .exposure = mExposure,
         };
         vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstant, &pushConstant);
@@ -146,10 +218,14 @@ public:
         }
 
         // Render volume
-        if (mpVolume) {
+        if (mpVolume && mpRayMarchDescriptor) {
             mpRayMarchingPipeline->bind(cmd);
-            mpVolumeDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRayMarchingPipeline->getLayout(), 1);
+            mpRayMarchDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRayMarchingPipeline->getLayout(), 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
+
+            if (mPathTracing && mAccumulate) {
+                mAccumulatedFrames++;
+            }
         }
 
         // Draw GUI
@@ -167,6 +243,8 @@ public:
         App::baseGUI(mpDevice, mpSwapchain, mPipelines);
 
         if (ImGui::Begin("Volume Viewer")) {
+            bool resetAccum = false;
+
             ImGui::SeparatorText("Volume");
             if (ImGui::Button("Load##Volume")) {
                 mVolumePath = OpenFile(mpWindow, "OpenVDB file (*.vdb)\0*.VDB\0All (*.*)\0*.*\0");
@@ -177,20 +255,18 @@ public:
                                              VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                                              VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
 
-                    std::vector<DescriptorDesc> desc;
-                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
-                    mpVolumeDescriptor =
-                        mpDevice->createDescriptor(desc, mpRayMarchingPipeline->getShader()->getDescriptorSetLayout(1));
+                    createRayMarchDescriptor();
 
                     glm::vec3 volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
                                                     mpVolume->getImage()->getDepth());
                     mVolumeModelScale = 1.0f / glm::max(volumeDim.x, glm::max(volumeDim.y, volumeDim.z));
+                    resetAccum = true;
                 }
             }
             ImGui::SameLine();
             ImGui::TextUnformatted(mVolumePath.string().c_str());
             bool recreatePipeline = false;
-            recreatePipeline |= ImGui::DragFloat("Density", &mSpecializationConstants.density, 0.01f, 0.0f, 100.0f);
+            recreatePipeline |= ImGui::DragFloat("Density", &mSpecializationConstants.density, 0.1f, 0.0f, 10000.0f);
 
             bool newModelMatrix = false;
             newModelMatrix |= ImGui::DragFloat("Scale", &mVolumeModelScale, 0.01f);
@@ -198,6 +274,7 @@ public:
             if (newModelMatrix) {
                 mVolumeModelMatrix = glm::scale(glm::vec3(mVolumeModelScale));
                 mVolumeModelMatrix = glm::translate(mVolumeModelMatrix, mVolumeModelPosition);
+                resetAccum = true;
             }
 
             ImGui::SeparatorText("Ray Marcher");
@@ -208,7 +285,46 @@ public:
 
             if (recreatePipeline) {
                 mpRayMarchingPipeline->recreate();
+                resetAccum = true;
             }
+
+            ImGui::SeparatorText("Path Tracer");
+            resetAccum |= ImGui::Checkbox("Path tracing", &mPathTracing);
+            if (mPathTracing) {
+                resetAccum |= ImGui::Checkbox("Accumulate", &mAccumulate);
+                resetAccum |= ImGui::Checkbox("Multi-scatter", &mMultiScatter);
+                if (mMultiScatter) {
+                    resetAccum |= ImGui::SliderInt("Max bounces", &mMaxBounces, 1, 512);
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("A dense cloud needs hundreds of scattering events before light escapes. "
+                                          "Too low a limit truncates those paths and the volume turns dark.");
+                    }
+                }
+                resetAccum |= ImGui::Checkbox("Next event estimation", &mNextEventEstimation);
+                resetAccum |= ImGui::Checkbox("Russian roulette", &mRussianRoulette);
+                resetAccum |= ImGui::Checkbox("Environment light", &mEnvironmentLight);
+                resetAccum |= ImGui::Checkbox("Henyey-Greenstein phase", &mHenyeyGreenstein);
+                if (mHenyeyGreenstein) {
+                    resetAccum |= ImGui::SliderFloat("Anisotropy", &mPhaseG, -0.99f, 0.99f);
+                }
+                resetAccum |= ImGui::SliderFloat("Scattering albedo", &mAlbedo, 0.0f, 1.0f, "%.4f");
+                if (ImGui::IsItemHovered()) {
+                    ImGui::SetTooltip("Fraction of light surviving each scattering event. Clouds are near 1.0; every "
+                                      "bit below that compounds over hundreds of events and turns them into smoke.");
+                }
+                resetAccum |= ImGui::SliderFloat("Environment intensity", &mEnvIntensity, 0.0f, 10.0f);
+                resetAccum |= ImGui::SliderInt("Samples per frame", &mSamplesPerFrame, 1, 16);
+                ImGui::Text("Accumulated frames: %u", mAccumulatedFrames);
+                ImGui::SameLine();
+                if (ImGui::Button("Reset")) {
+                    resetAccum = true;
+                }
+            }
+
+            // Display settings do not affect the accumulated radiance, so they must not reset it
+            ImGui::SeparatorText("Display");
+            ImGui::Checkbox("Tonemap", &mTonemap);
+            ImGui::DragFloat("Exposure", &mExposure, 0.01f, 0.0f, 100.0f);
 
             ImGui::SeparatorText("Environment Map");
             if (ImGui::Button("Load##EnvMap")) {
@@ -216,16 +332,24 @@ public:
                     OpenFile(mpWindow, "Supported image files (*.hdr, *.png)\0*.HDR;*.PNG\0All (*.*)\0*.*\0");
                 if (!mEnvironmentMapPath.empty()) {
                     mpEnvironmentMap = std::make_shared<Texture>(mpDevice, TextureType::Texture2D,
-                                                                 VK_FORMAT_R8G8B8A8_UNORM, mEnvironmentMapPath, false);
+                                                                 mEnvironmentMapFormat, mEnvironmentMapPath, false);
 
                     std::vector<DescriptorDesc> desc;
                     desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
                     mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
                         desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
+
+                    // The ray marcher samples the environment map too
+                    createRayMarchDescriptor();
+                    resetAccum = true;
                 }
             }
             ImGui::SameLine();
             ImGui::TextUnformatted(mEnvironmentMapPath.string().c_str());
+
+            if (resetAccum) {
+                resetAccumulation();
+            }
         }
 
         ImGui::End();
@@ -247,6 +371,45 @@ public:
     }
 
 private:
+    void resetAccumulation()
+    {
+        mAccumulatedFrames = 0;
+    }
+
+    void createAccumulationImage()
+    {
+        mpAccumImage = mpDevice->createImage(mpSwapchain->getExtent().width, mpSwapchain->getExtent().height, 1, 1,
+                                             VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R32G32B32A32_SFLOAT,
+                                             VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT,
+                                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        mpAccumImage->createImageView(VK_IMAGE_ASPECT_COLOR_BIT);
+
+        // Transition to general layout for storage image access
+        VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+        Helpers::imageBarrier(cmd, mpAccumImage->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                              VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+                              VK_ACCESS_2_SHADER_STORAGE_READ_BIT | VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT,
+                              VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+        Helpers::cmdEnd(mpDevice, cmd);
+    }
+
+    void createRayMarchDescriptor()
+    {
+        if (!mpVolume) {
+            return;
+        }
+
+        auto pEnvMap = mpEnvironmentMap ? mpEnvironmentMap : mpDummyEnvironmentMap;
+
+        std::vector<DescriptorDesc> desc;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pEnvMap);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpAccumImage);
+        desc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+        mpRayMarchDescriptor =
+            mpDevice->createDescriptor(desc, mpRayMarchingPipeline->getShader()->getDescriptorSetLayout(1));
+    }
+
     std::shared_ptr<Device> mpDevice;
     std::shared_ptr<Swapchain> mpSwapchain;
     std::shared_ptr<Pass> mpPass;
@@ -256,6 +419,8 @@ private:
 
     std::shared_ptr<Pipeline> mpEnvironmentMapPipeline;
     std::shared_ptr<Texture> mpEnvironmentMap;
+    std::shared_ptr<Texture> mpDummyEnvironmentMap;
+    VkFormat mEnvironmentMapFormat;
     std::filesystem::path mEnvironmentMapPath;
     std::shared_ptr<Descriptor> mpEnvironmentMapDescriptor;
 
@@ -265,11 +430,36 @@ private:
     float mVolumeModelScale = 1.0;
     glm::vec3 mVolumeModelPosition = glm::vec3(0.0f);
     glm::mat4 mVolumeModelMatrix = glm::mat4(1.0f);
-    std::shared_ptr<Descriptor> mpVolumeDescriptor;
+    std::shared_ptr<Descriptor> mpRayMarchDescriptor;
+
+    std::shared_ptr<Image> mpAccumImage;
 
     std::vector<VkSpecializationMapEntry> mSpecializationMapEntries;
     VkSpecializationInfo mSpecializationInfo;
     SpecializationConstants mSpecializationConstants;
+
+    // Path tracer settings
+    bool mPathTracing = true;
+    bool mAccumulate = true;
+    bool mMultiScatter = true;
+    bool mNextEventEstimation = true;
+    bool mRussianRoulette = true;
+    bool mEnvironmentLight = true;
+    bool mHenyeyGreenstein = true;
+    float mPhaseG = 0.6f;
+    // Water droplets absorb almost nothing in the visible range; a value like 0.95 renders a cloud as dark smoke
+    float mAlbedo = 0.999f;
+    float mEnvIntensity = 1.0f;
+    int mMaxBounces = 128;
+    int mSamplesPerFrame = 1;
+
+    // Display settings
+    bool mTonemap = true;
+    float mExposure = 1.0f;
+
+    uint32_t mAccumulatedFrames = 0;
+    uint32_t mFrameCounter = 0;
+    glm::mat4 mPrevView = glm::mat4(0.0f);
 };
 
 int main()
