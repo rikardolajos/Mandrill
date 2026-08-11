@@ -22,6 +22,7 @@ const uint FLAG_ENV_LIGHT        = 1u << 5;
 const uint FLAG_HG_PHASE         = 1u << 6;
 const uint FLAG_TONEMAP          = 1u << 7;
 const uint FLAG_ENV_IMPORTANCE   = 1u << 8;
+const uint FLAG_MIS              = 1u << 9;
 
 // Optical depth beyond which a shadow ray is considered fully blocked (exp(-24) is far below one 32-bit float ULP
 // of the accumulated result). Without this, dense volumes make every shadow march run to MAX_STEPS.
@@ -202,6 +203,42 @@ vec3 sampleEnvironmentDirection(out float pdf)
     return latlongMapToWorld(u, v);
 }
 
+// The pdf that sampleEnvironmentDirection would have produced for a given direction, needed to weight the two
+// sampling strategies against each other. Falls back to the uniform pdf when the distribution is not in use.
+float environmentPdf(vec3 dir)
+{
+    const uint importanceSample = FLAG_ENV_IMPORTANCE | FLAG_ENV_LIGHT;
+    if ((pc.flags & importanceSample) != importanceSample) {
+        return 1.0 / (4.0 * M_PI);
+    }
+
+    ivec2 size = textureSize(environmentMap, 0);
+    vec2 uv = worldToLatlongMap(dir);
+
+    float sinTheta = sin(uv.y * M_PI);
+    if (sinTheta <= 0.0) {
+        return 0.0;
+    }
+
+    int col = clamp(int(uv.x * float(size.x)), 0, size.x - 1);
+    int row = clamp(int(uv.y * float(size.y)), 0, size.y - 1);
+    int base = row * (size.x + 1);
+
+    float marginalBin = marginalCdf[row + 1] - marginalCdf[row];
+    float conditionalBin = conditionalCdf[base + col + 1] - conditionalCdf[base + col];
+
+    return (marginalBin * float(size.y)) * (conditionalBin * float(size.x)) / (2.0 * M_PI * M_PI * sinTheta);
+}
+
+// Power heuristic with an exponent of two
+float misWeight(float pdfA, float pdfB)
+{
+    float a = pdfA * pdfA;
+    float b = pdfB * pdfB;
+    float denom = a + b;
+    return denom > 0.0 ? a / denom : 0.0;
+}
+
 // --------------------------------------------------------------------------------------------------
 // Volume
 // --------------------------------------------------------------------------------------------------
@@ -336,27 +373,38 @@ vec3 tracePath(vec3 origin, vec3 dir)
 
     int bounceLimit = (pc.flags & FLAG_MULTI_SCATTER) != 0u ? maxBounces() : 1;
 
+    bool nee = (pc.flags & FLAG_NEE) != 0u;
+    bool mis = nee && (pc.flags & FLAG_MIS) != 0u;
+
+    // Pdf of the phase-sampled direction the current ray is travelling in, needed to weight the environment
+    // radiance against next event estimation if the ray escapes
+    float phasePdf = 0.0;
+
     for (int bounce = 0; bounce <= bounceLimit; bounce++) {
-        // With NEE enabled, in-scattered radiance is collected at each scattering event instead of
-        // when the path escapes, so escaped paths that have scattered must not also count the
-        // environment
-        bool countEscape = bounce == 0 || (pc.flags & FLAG_NEE) == 0u;
+        // Weight for the environment radiance should this ray escape. The camera ray is not something next
+        // event estimation could have sampled, so it always counts in full. After a scattering event the
+        // same radiance is also estimated by next event estimation: with MIS the two strategies are combined,
+        // without it the escaped ray is dropped and next event estimation accounts for all of it.
+        float escapeWeight = 1.0;
+        if (bounce > 0 && nee) {
+            escapeWeight = mis ? misWeight(phasePdf, environmentPdf(dir)) : 0.0;
+        }
 
         vec3 o = toModel(origin);
         vec3 d = toModelDir(dir);
 
         float tEnter, tExit;
         if (!intersectVolume(o, d, tEnter, tExit)) {
-            if (countEscape) {
-                radiance += throughput * environmentRadiance(dir);
+            if (escapeWeight > 0.0) {
+                radiance += escapeWeight * throughput * environmentRadiance(dir);
             }
             break;
         }
 
         float tScatter = sampleScatterDistance(o, d, tEnter, tExit);
         if (tScatter < 0.0) {
-            if (countEscape) {
-                radiance += throughput * environmentRadiance(dir);
+            if (escapeWeight > 0.0) {
+                radiance += escapeWeight * throughput * environmentRadiance(dir);
             }
             break;
         }
@@ -372,7 +420,7 @@ vec3 tracePath(vec3 origin, vec3 dir)
 
         // Next event estimation: sample a direction towards the environment and estimate the
         // transmittance with a shadow march
-        if ((pc.flags & FLAG_NEE) != 0u) {
+        if (nee) {
             vec3 lightDir;
             float pdf;
 
@@ -386,19 +434,28 @@ vec3 tracePath(vec3 origin, vec3 dir)
             }
 
             if (pdf > 0.0) {
-                vec3 lo = toModel(origin);
-                vec3 ld = toModelDir(lightDir);
-                float sEnter, sExit;
-                float visibility = 1.0;
-                if (intersectVolume(lo, ld, sEnter, sExit)) {
-                    visibility = transmittance(lo, ld, sEnter, sExit);
+                // Sampling the phase function is exact, so the phase value doubles as the pdf that the other
+                // strategy would have had for this direction
+                float phaseValue = phaseEval(dot(dir, lightDir));
+                float weight = mis ? misWeight(pdf, phaseValue) : 1.0;
+
+                if (weight > 0.0) {
+                    vec3 lo = toModel(origin);
+                    vec3 ld = toModelDir(lightDir);
+                    float sEnter, sExit;
+                    float visibility = 1.0;
+                    if (intersectVolume(lo, ld, sEnter, sExit)) {
+                        visibility = transmittance(lo, ld, sEnter, sExit);
+                    }
+                    radiance +=
+                        weight * throughput * phaseValue * visibility * environmentRadiance(lightDir) / pdf;
                 }
-                radiance +=
-                    throughput * phaseEval(dot(dir, lightDir)) * visibility * environmentRadiance(lightDir) / pdf;
             }
         }
 
-        dir = samplePhaseDirection(dir);
+        vec3 scatterDir = samplePhaseDirection(dir);
+        phasePdf = phaseEval(dot(dir, scatterDir));
+        dir = scatterDir;
 
         // Russian roulette after a few bounces. The survival probability must be allowed to reach 1.0: clamping it
         // lower would kill paths in a high-albedo medium such as a cloud, where hundreds of scattering events are

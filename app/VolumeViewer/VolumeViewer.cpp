@@ -16,6 +16,7 @@ public:
         FLAG_HG_PHASE = 1 << 6,
         FLAG_TONEMAP = 1 << 7,
         FLAG_ENV_IMPORTANCE = 1 << 8,
+        FLAG_MIS = 1 << 9,
     };
 
     // Push constants are limited to 128 bytes on some devices, hence the packing of bounces and samples
@@ -190,6 +191,7 @@ public:
         flags |= mHenyeyGreenstein ? FLAG_HG_PHASE : 0;
         flags |= mTonemap ? FLAG_TONEMAP : 0;
         flags |= mEnvImportanceSampling ? FLAG_ENV_IMPORTANCE : 0;
+        flags |= mMultipleImportanceSampling ? FLAG_MIS : 0;
 
         PushConstant pushConstant = {
             .inverseModel = glm::inverse(mVolumeModelMatrix),
@@ -306,6 +308,12 @@ public:
                         ImGui::SetTooltip("Sample light directions proportionally to the radiance in the environment "
                                           "map. Without it, a small bright region such as a sun is found only rarely "
                                           "and each hit carries a large weight, which shows up as fireflies.");
+                    }
+                    resetAccum |= ImGui::Checkbox("Multiple importance sampling", &mMultipleImportanceSampling);
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("Combine light sampling with phase function sampling, weighting each by how "
+                                          "likely it was to produce the direction. Light sampling wins for small "
+                                          "bright lights, phase sampling for broad skies and strong anisotropy.");
                     }
                 }
                 resetAccum |= ImGui::Checkbox("Russian roulette", &mRussianRoulette);
@@ -454,6 +462,7 @@ private:
     bool mMultiScatter = true;
     bool mNextEventEstimation = true;
     bool mEnvImportanceSampling = true;
+    bool mMultipleImportanceSampling = true;
     bool mRussianRoulette = true;
     bool mEnvironmentLight = true;
     bool mHenyeyGreenstein = true;
