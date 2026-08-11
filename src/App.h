@@ -266,12 +266,16 @@ namespace Mandrill
 
     protected:
         /// <summary>
-        /// Window width in pixels.
+        /// Initial window width in pixels. This does not follow resizing, it is the size the window is restored to
+        /// by resetFramebufferSize() and when leaving fullscreen. For the current size, use the extent of the
+        /// swapchain or the pass.
         /// </summary>
         uint32_t mWidth;
 
         /// <summary>
-        /// Window height in pixels.
+        /// Initial window height in pixels. This does not follow resizing, it is the size the window is restored to
+        /// by resetFramebufferSize() and when leaving fullscreen. For the current size, use the extent of the
+        /// swapchain or the pass.
         /// </summary>
         uint32_t mHeight;
 

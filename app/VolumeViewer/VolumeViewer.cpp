@@ -136,6 +136,10 @@ public:
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
             mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+        } else {
+            // Still refresh the uniforms, otherwise a resize while the GUI holds the input focus would never
+            // reach the shader with the new projection matrix
+            mpCamera->update(mpSwapchain->getInFlightIndex());
         }
     }
 
@@ -144,6 +148,8 @@ public:
         // Check if camera matrix and attachments need to be updated
         if (mpSwapchain->recreated()) {
             mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
+            // update() ran before the swapchain was recreated, so push the new projection for this frame too
+            mpCamera->update(mpSwapchain->getInFlightIndex());
             mpPass->update(mpSwapchain->getExtent());
             // The accumulation buffer must match the new resolution
             createAccumulationImage();
@@ -176,7 +182,11 @@ public:
         mpCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpEnvironmentMapPipeline->getLayout(), 0,
                                         cameraDescriptorOffset);
 
-        // Push constants
+        // Push constants. The viewport must be the current framebuffer size, since the shaders turn fragment
+        // coordinates into ray directions with it. App::mWidth and mHeight are the initial window size and do not
+        // follow resizing.
+        VkExtent2D extent = mpSwapchain->getExtent();
+
         glm::vec3 volumeDim(1.0f);
         if (mpVolume) {
             volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
@@ -204,7 +214,7 @@ public:
             .phaseG = mPhaseG,
             .gridMax = gridMax,
             .envIntensity = mEnvIntensity,
-            .viewport = glm::vec2(mWidth, mHeight),
+            .viewport = glm::vec2(extent.width, extent.height),
             .frameIndex = mAccumulatedFrames,
             .flags = flags,
             .bouncesAndSamples = static_cast<uint32_t>(mMaxBounces) |
