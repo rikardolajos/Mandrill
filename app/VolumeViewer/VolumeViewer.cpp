@@ -285,6 +285,27 @@ public:
                 resetAccum = true;
             }
 
+            ImGui::SeparatorText("Environment Map");
+            if (ImGui::Button("Load##EnvMap")) {
+                mEnvironmentMapPath =
+                    OpenFile(mpWindow, "Supported image files (*.hdr, *.png)\0*.HDR;*.PNG\0All (*.*)\0*.*\0");
+                if (!mEnvironmentMapPath.empty()) {
+                    mpEnvironmentMap =
+                        std::make_shared<EnvironmentMap>(mpDevice, mEnvironmentMapPath, mEnvironmentMapFormat);
+
+                    std::vector<DescriptorDesc> desc;
+                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap->getTexture());
+                    mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
+                        desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
+
+                    // The ray marcher samples the environment map too
+                    createRayMarchDescriptor();
+                    resetAccum = true;
+                }
+            }
+            ImGui::SameLine();
+            ImGui::TextUnformatted(mEnvironmentMapPath.string().c_str());
+
             ImGui::SeparatorText("Ray Marcher");
             recreatePipeline |= ImGui::DragInt("Max steps", &mSpecializationConstants.maxSteps, 1.0f);
 
@@ -367,27 +388,6 @@ public:
                                   "means no energy is being lost to the bounce limit, white means every path is "
                                   "being cut short.");
             }
-
-            ImGui::SeparatorText("Environment Map");
-            if (ImGui::Button("Load##EnvMap")) {
-                mEnvironmentMapPath =
-                    OpenFile(mpWindow, "Supported image files (*.hdr, *.png)\0*.HDR;*.PNG\0All (*.*)\0*.*\0");
-                if (!mEnvironmentMapPath.empty()) {
-                    mpEnvironmentMap =
-                        std::make_shared<EnvironmentMap>(mpDevice, mEnvironmentMapPath, mEnvironmentMapFormat);
-
-                    std::vector<DescriptorDesc> desc;
-                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap->getTexture());
-                    mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
-                        desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
-
-                    // The ray marcher samples the environment map too
-                    createRayMarchDescriptor();
-                    resetAccum = true;
-                }
-            }
-            ImGui::SameLine();
-            ImGui::TextUnformatted(mEnvironmentMapPath.string().c_str());
 
             if (resetAccum) {
                 resetAccumulation();
