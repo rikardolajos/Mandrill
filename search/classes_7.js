@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['node_0',['Node',['../classMandrill_1_1Node.html',1,'Mandrill']]]
+  ['layout_0',['Layout',['../classMandrill_1_1Layout.html',1,'Mandrill']]],
+  ['log_1',['Log',['../classMandrill_1_1Log.html',1,'Mandrill']]]
 ];

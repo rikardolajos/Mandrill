@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['helpers_0',['Helpers',['../classMandrill_1_1Helpers.html',1,'Mandrill']]]
+  ['environmentmap_0',['EnvironmentMap',['../classMandrill_1_1EnvironmentMap.html',1,'Mandrill']]]
 ];
