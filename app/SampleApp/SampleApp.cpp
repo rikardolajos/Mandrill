@@ -80,7 +80,6 @@ public:
 
         // Setup camera
         mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
-        mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -99,11 +98,11 @@ public:
         mpUniform = mpDevice->createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        // Descriptor set for model matrix and texture
-        std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniform, 0, sizeof(glm::mat4));
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpTexture);
-        mpDescriptor = mpDevice->createDescriptor(descriptorDesc, pShader->getDescriptorSetLayout(1));
+        // Attach the resources to the names they have in the shader. Both uniform buffers hold one copy per frame in
+        // flight and are bound with a dynamic offset, so their range covers a single copy.
+        pShader->setResource("camera", mpCamera->getUniformBuffer(), 0, sizeof(CameraMatrices));
+        pShader->setResource("mesh", mpUniform, 0, sizeof(glm::mat4));
+        pShader->setResource("diffuseTexture", mpTexture);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -149,16 +148,16 @@ public:
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-        // Bind descriptor sets
+        // Bind the resources attached to the shader, picking this frame's copy of each uniform with an offset
         VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
         uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
                                                                 mpSwapchain->getInFlightIndex());
-        mpCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 0,
-                                        cameraDescriptorOffset);
-
         uint32_t sceneDescriptorOffset =
             static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getInFlightIndex());
-        mpDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, sceneDescriptorOffset);
+
+        auto pShader = mpPipeline->getShader();
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, {sceneDescriptorOffset});
 
         // Bind vertex and index buffers
         VkBuffer vertexBuffer = mpVertexBuffer->getBuffer();
@@ -239,7 +238,6 @@ private:
     float mAngle = 0.0f;
 
     std::shared_ptr<Buffer> mpUniform;
-    std::shared_ptr<Descriptor> mpDescriptor;
 };
 
 int main()

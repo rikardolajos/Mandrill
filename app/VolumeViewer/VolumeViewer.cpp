@@ -107,7 +107,13 @@ public:
         mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+        // Attach the camera uniforms to both shaders. The buffer holds one copy per frame in flight and is bound
+        // with a dynamic offset, so the range covers a single copy.
+        mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
+                                                           sizeof(CameraMatrices));
+        mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
+                                                        sizeof(CameraMatrices));
 
         // Environment maps are loaded into a float format to keep the dynamic range of HDR files. Prefer full float,
         // but fall back to half float if the device cannot filter it.
@@ -117,6 +123,7 @@ public:
 
         // Fallback environment map (plain white) used by the ray marcher until one is loaded
         mpDummyEnvironmentMap = std::make_shared<EnvironmentMap>(mpDevice);
+        setEnvironmentMapResources();
 
         // Buffer for temporal accumulation
         createAccumulationImage();
@@ -153,7 +160,6 @@ public:
             mpPass->update(mpSwapchain->getExtent());
             // The accumulation buffer must match the new resolution
             createAccumulationImage();
-            createRayMarchDescriptor();
             resetAccumulation();
         }
 
@@ -175,12 +181,10 @@ public:
 
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        //  Camera descriptor
+        // Offset that picks this frame's copy of the camera matrices out of the shared uniform buffer
         VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
         uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
                                                                 mpSwapchain->getInFlightIndex());
-        mpCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpEnvironmentMapPipeline->getLayout(), 0,
-                                        cameraDescriptorOffset);
 
         // Push constants. The viewport must be the current framebuffer size, since the shaders turn fragment
         // coordinates into ray directions with it. App::mWidth and mHeight are the initial window size and do not
@@ -227,18 +231,21 @@ public:
         vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstant, &pushConstant);
 
-        // Render environment map
+        // Render environment map. Set 0 is per-frame and takes the dynamic offset, set 1 holds the map itself.
         if (mpEnvironmentMap) {
+            auto pShader = mpEnvironmentMapPipeline->getShader();
             mpEnvironmentMapPipeline->bind(cmd);
-            mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                             mpEnvironmentMapPipeline->getLayout(), 1);
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
 
         // Render volume
-        if (mpVolume && mpRayMarchDescriptor) {
+        if (mpVolume) {
+            auto pShader = mpRayMarchingPipeline->getShader();
             mpRayMarchingPipeline->bind(cmd);
-            mpRayMarchDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpRayMarchingPipeline->getLayout(), 1);
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
 
             if (mPathTracing && mAccumulate) {
@@ -273,7 +280,7 @@ public:
                                              VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                                              VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
 
-                    createRayMarchDescriptor();
+                    mpRayMarchingPipeline->getShader()->setResource("volume", mpVolume);
 
                     glm::vec3 volumeDim = glm::vec3(mpVolume->getImage()->getWidth(), mpVolume->getImage()->getHeight(),
                                                     mpVolume->getImage()->getDepth());
@@ -303,13 +310,7 @@ public:
                     mpEnvironmentMap =
                         std::make_shared<EnvironmentMap>(mpDevice, mEnvironmentMapPath, mEnvironmentMapFormat);
 
-                    std::vector<DescriptorDesc> desc;
-                    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap->getTexture());
-                    mpEnvironmentMapDescriptor = mpDevice->createDescriptor(
-                        desc, mpEnvironmentMapPipeline->getShader()->getDescriptorSetLayout(1));
-
-                    // The ray marcher samples the environment map too
-                    createRayMarchDescriptor();
+                    setEnvironmentMapResources();
                     resetAccum = true;
                 }
             }
@@ -443,26 +444,22 @@ private:
                               VK_ACCESS_2_SHADER_STORAGE_READ_BIT | VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT,
                               VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
         Helpers::cmdEnd(mpDevice, cmd);
+
+        mpRayMarchingPipeline->getShader()->setResource("accumImage", mpAccumImage);
     }
 
-    void createRayMarchDescriptor()
+    // Attaches the environment map, and the distribution used to importance sample it, to both shaders. Falls back
+    // to the white placeholder until a map has been loaded.
+    void setEnvironmentMapResources()
     {
-        if (!mpVolume) {
-            return;
-        }
-
         auto pEnvMap = mpEnvironmentMap ? mpEnvironmentMap : mpDummyEnvironmentMap;
 
-        // Descriptors are written in binding order, so this must match the layout in RayMarcher.frag
-        std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpVolume);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pEnvMap->getTexture());
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, mpAccumImage);
-        desc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, pEnvMap->getMarginalDistribution());
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, pEnvMap->getConditionalDistribution());
-        mpRayMarchDescriptor =
-            mpDevice->createDescriptor(desc, mpRayMarchingPipeline->getShader()->getDescriptorSetLayout(1));
+        mpEnvironmentMapPipeline->getShader()->setResource("environmentMap", pEnvMap->getTexture());
+
+        auto pShader = mpRayMarchingPipeline->getShader();
+        pShader->setResource("environmentMap", pEnvMap->getTexture());
+        pShader->setResource("MarginalDistribution", pEnvMap->getMarginalDistribution());
+        pShader->setResource("ConditionalDistribution", pEnvMap->getConditionalDistribution());
     }
 
     std::shared_ptr<Device> mpDevice;
@@ -477,7 +474,6 @@ private:
     std::shared_ptr<EnvironmentMap> mpDummyEnvironmentMap;
     VkFormat mEnvironmentMapFormat;
     std::filesystem::path mEnvironmentMapPath;
-    std::shared_ptr<Descriptor> mpEnvironmentMapDescriptor;
 
     std::shared_ptr<Pipeline> mpRayMarchingPipeline;
     std::shared_ptr<Texture> mpVolume;
@@ -485,7 +481,6 @@ private:
     float mVolumeModelScale = 1.0;
     glm::vec3 mVolumeModelPosition = glm::vec3(0.0f);
     glm::mat4 mVolumeModelMatrix = glm::mat4(1.0f);
-    std::shared_ptr<Descriptor> mpRayMarchDescriptor;
 
     std::shared_ptr<Image> mpAccumImage;
 

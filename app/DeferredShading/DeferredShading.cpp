@@ -88,15 +88,14 @@ public:
         Helpers::cmdEnd(mpDevice, cmd);
     }
 
-    void createAttachmentDescriptor()
+    // Hand the G-buffer attachments to the resolve shader. The order the attachments are created in has to match the
+    // names here, which is the one thing the shader cannot tell us.
+    void setAttachmentResources()
     {
-        std::vector<DescriptorDesc> descriptorDesc;
-        for (auto& attachment : mColorAttachments) {
-            descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, attachment);
-            descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-        }
-        mpColorAttachmentDescriptor = mpDevice->createDescriptor(
-            descriptorDesc, mPipelines[RESOLVE_PASS]->getShader()->getDescriptorSetLayout(0));
+        auto pShader = mPipelines[RESOLVE_PASS]->getShader();
+        pShader->setResource("inPosition", mColorAttachments[0]);
+        pShader->setResource("inNormal", mColorAttachments[1]);
+        pShader->setResource("inAlbedo", mColorAttachments[2]);
     }
 
     DeferredShading() : App("Deferred Shading", 1920, 1080)
@@ -137,7 +136,7 @@ public:
         mPipelines.emplace_back(mpDevice->createPipeline(mpResolvePass, pResolveShader, pipelineDesc));
 
         // Create descriptor for resolve pass input attachments
-        createAttachmentDescriptor();
+        setAttachmentResources();
 
         // Load scene
         auto meshIndices = mpScene->addMeshFromFile(GetResourcePath("scenes/crytek_sponza/sponza.obj"));
@@ -188,7 +187,7 @@ public:
         if (mpSwapchain->recreated()) {
             mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
             createAttachments();
-            createAttachmentDescriptor();
+            setAttachmentResources();
             mpGBufferPass->update(mColorAttachments, mpDepthAttachment);
             mpResolvePass->update(mpSwapchain->getExtent());
         }
@@ -216,9 +215,8 @@ public:
         // Bind the pipeline for the full-screen quad
         mPipelines[RESOLVE_PASS]->bind(cmd);
 
-        // Bind descriptors for color attachments
-        mpColorAttachmentDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelines[RESOLVE_PASS]->getLayout(),
-                                          0);
+        // Bind the G-buffer attachments
+        mPipelines[RESOLVE_PASS]->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 
         // Push constants
         PushConstants pushConstants = {
@@ -283,7 +281,6 @@ private:
     std::vector<std::shared_ptr<Pipeline>> mPipelines;
 
     std::vector<std::shared_ptr<Image>> mColorAttachments;
-    std::shared_ptr<Descriptor> mpColorAttachmentDescriptor;
 
     std::shared_ptr<Image> mpDepthAttachment;
 

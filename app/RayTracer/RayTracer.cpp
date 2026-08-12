@@ -20,16 +20,6 @@ public:
         return image;
     }
 
-    static std::shared_ptr<Descriptor> createImageDescriptor(std::shared_ptr<Device> pDevice,
-                                                             std::shared_ptr<Image> pImage,
-                                                             VkDescriptorSetLayout setLayout)
-    {
-        std::vector<DescriptorDesc> descriptorDesc;
-        descriptorDesc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, pImage);
-        descriptorDesc.back().imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-        return pDevice->createDescriptor(descriptorDesc, setLayout);
-    }
-
     RayTracer() : App("Ray Tracer", 1920, 1080)
     {
         // Create a Vulkan instance and device
@@ -130,9 +120,8 @@ public:
         mpCamera->setFov(60.0f);
         mpCamera->createRayTracingDescriptor(VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 
-        // Image descriptor (layout is in set 3)
-        mImageDescriptorSetLayout = pShader->getDescriptorSetLayout(3);
-        mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
+        // The image the rays are written to
+        pShader->setResource("image", mpImage);
 
         // Initialize GUI
         App::createGUI(mpDevice, mpPass);
@@ -171,7 +160,7 @@ public:
             mpPass->update(mpSwapchain->getExtent());
             // Also update render image since swapchain changed
             mpImage = createImage(mpDevice, mpSwapchain);
-            mpImageDescriptor = createImageDescriptor(mpDevice, mpImage, mImageDescriptorSetLayout);
+            mpPipeline->getShader()->setResource("image", mpImage);
         }
 
         // Acquire frame from swapchain
@@ -192,7 +181,7 @@ public:
 
         // Bind descriptors
         mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout(), mpSwapchain->getInFlightIndex());
-        mpImageDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, mpPipeline->getLayout(), 3);
+        mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, 3);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();
@@ -257,8 +246,6 @@ private:
     std::shared_ptr<Pass> mpPass;
     std::shared_ptr<RayTracingPipeline> mpPipeline;
     std::shared_ptr<Image> mpImage;
-    std::shared_ptr<Descriptor> mpImageDescriptor;
-    VkDescriptorSetLayout mImageDescriptorSetLayout;
 
     std::shared_ptr<AccelerationStructure> mpAccelerationStructure;
     std::shared_ptr<Scene> mpScene;
