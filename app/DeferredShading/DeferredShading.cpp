@@ -123,7 +123,9 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("DeferredShading/GBuffer.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("DeferredShading/GBuffer.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pGBufferShader = mpDevice->createShader(shaderDesc);
+        // Set 0 is only the camera, which carries its frame offset in the descriptor and can be pushed. The node
+        // transforms and the material sets stay allocated.
+        auto pGBufferShader = mpDevice->createShader(shaderDesc, {0});
 
         shaderDesc.clear();
         shaderDesc.emplace_back("DeferredShading/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);

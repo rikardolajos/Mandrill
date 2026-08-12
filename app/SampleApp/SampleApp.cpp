@@ -73,7 +73,9 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SampleApp/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SampleApp/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pShader = mpDevice->createShader(shaderDesc);
+        // Set 0 is only the camera, which selects its frame's copy through the offset in the descriptor, so it can
+        // be pushed. Set 1 still holds a dynamic model matrix and stays an allocated set.
+        auto pShader = mpDevice->createShader(shaderDesc, {0});
 
         // Create a pipeline for rendering using the shader
         mpPipeline = mpDevice->createPipeline(mpPass, pShader, PipelineDesc());
@@ -98,9 +100,8 @@ public:
         mpUniform = mpDevice->createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        // Attach the resources to the names they have in the shader. Both uniform buffers hold one copy per frame in
-        // flight and are bound with a dynamic offset, so their range covers a single copy.
-        pShader->setResource("camera", mpCamera->getUniformBuffer(), 0, sizeof(CameraMatrices));
+        // Attach the resources to the names they have in the shader. The model matrix is rebound with a dynamic
+        // offset, so its range covers a single copy. The camera is attached per frame in render().
         pShader->setResource("mesh", mpUniform, 0, sizeof(glm::mat4));
         pShader->setResource("diffuseTexture", mpTexture);
 
@@ -148,15 +149,17 @@ public:
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-        // Bind the resources attached to the shader, picking this frame's copy of each uniform with an offset
+        // Bind the resources attached to the shader. The camera is pushed, so it carries this frame's offset in the
+        // descriptor itself, while the model matrix set is allocated and takes a dynamic offset when bound.
         VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
-                                                                mpSwapchain->getInFlightIndex());
+        VkDeviceSize cameraOffset =
+            Helpers::alignTo(sizeof(CameraMatrices), alignment) * mpSwapchain->getInFlightIndex();
         uint32_t sceneDescriptorOffset =
             static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getInFlightIndex());
 
         auto pShader = mpPipeline->getShader();
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+        pShader->setResource("camera", mpCamera->getUniformBuffer(), cameraOffset, sizeof(CameraMatrices));
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
         pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, {sceneDescriptorOffset});
 
         // Bind vertex and index buffers

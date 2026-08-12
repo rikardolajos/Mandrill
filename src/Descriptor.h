@@ -22,9 +22,8 @@ namespace Mandrill
         uint32_t arrayCount = 0;
 
         /// <summary>
-        /// Descriptor description for a buffer descriptor. To get a *_DYNAMIC type, name the desctriptor block so that
-        /// it ends with *Dynamic. See the SampleApp with CameraUniformDynamic and Mes´hUniformDynamic blocks in the
-        /// vertex shader.
+        /// Descriptor description for a buffer descriptor. To get a *_DYNAMIC type, name the descriptor block so that
+        /// it ends with *Dynamic. See the MeshUniformDynamic block in the SampleApp vertex shader.
         /// </summary>
         /// <param name="type">Type of descriptor</param>
         /// <param name="pResource">Buffer to use</param>
@@ -48,9 +47,8 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Descriptor description for other resources. To get a *_DYNAMIC type, name the desctriptor block so that
-        /// it ends with *Dynamic. See the SampleApp with CameraUniformDynamic and Mes´hUniformDynamic blocks in the
-        /// vertex shader.
+        /// Descriptor description for other resources. To get a *_DYNAMIC type, name the descriptor block so that
+        /// it ends with *Dynamic. See the MeshUniformDynamic block in the SampleApp vertex shader.
         /// </summary>
         /// <param name="type">Type of descriptor</param>
         /// <param name="pResource">Resource to use</param>

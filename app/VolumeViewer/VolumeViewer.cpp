@@ -68,9 +68,9 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/Environment.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        // Set 1 holds the environment map, which is pushed straight into the command buffer. Set 0 is the camera,
-        // which is bound with a dynamic offset and therefore has to stay an allocated set.
-        auto pEnvMapShader = mpDevice->createShader(shaderDesc, {1});
+        // Both sets are pushed straight into the command buffer. The camera in set 0 selects its frame's copy
+        // through the offset in the descriptor itself, so it needs no dynamic descriptor.
+        auto pEnvMapShader = mpDevice->createShader(shaderDesc, {0, 1});
         mpEnvironmentMapPipeline = mpDevice->createPipeline(mpPass, pEnvMapShader, pipelineDesc);
 
         // Specialization constants for ray marching shader
@@ -93,9 +93,9 @@ public:
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/RayMarcher.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT,
                                 &mSpecializationInfo);
-        // Set 1 holds the volume, environment map, accumulation image and the two distribution buffers, none of
-        // which are dynamic, so the whole set can be pushed
-        auto pRayMarchShader = mpDevice->createShader(shaderDesc, {1});
+        // Set 0 is the camera and set 1 holds the volume, environment map, accumulation image and the two
+        // distribution buffers. None of them are dynamic, so both sets can be pushed.
+        auto pRayMarchShader = mpDevice->createShader(shaderDesc, {0, 1});
 
         pipelineDesc.depthTestEnable = VK_TRUE;
         pipelineDesc.colorBlendAttachmentStates[0].blendEnable = VK_TRUE;
@@ -108,13 +108,6 @@ public:
         mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-
-        // Attach the camera uniforms to both shaders. The buffer holds one copy per frame in flight and is bound
-        // with a dynamic offset, so the range covers a single copy.
-        mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
-                                                           sizeof(CameraMatrices));
-        mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
-                                                        sizeof(CameraMatrices));
 
         // Environment maps are loaded into a float format to keep the dynamic range of HDR files. Prefer full float,
         // but fall back to half float if the device cannot filter it.
@@ -182,10 +175,15 @@ public:
 
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        // Offset that picks this frame's copy of the camera matrices out of the shared uniform buffer
+        // Point the camera resource at this frame's copy of the matrices. The sets are pushed, so re-attaching every
+        // frame costs nothing but the lookup.
         VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
-                                                                mpSwapchain->getInFlightIndex());
+        VkDeviceSize cameraOffset =
+            Helpers::alignTo(sizeof(CameraMatrices), alignment) * mpSwapchain->getInFlightIndex();
+        mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), cameraOffset,
+                                                           sizeof(CameraMatrices));
+        mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), cameraOffset,
+                                                        sizeof(CameraMatrices));
 
         // Push constants. The viewport must be the current framebuffer size, since the shaders turn fragment
         // coordinates into ray directions with it. App::mWidth and mHeight are the initial window size and do not
@@ -236,7 +234,7 @@ public:
         if (mpEnvironmentMap) {
             auto pShader = mpEnvironmentMapPipeline->getShader();
             mpEnvironmentMapPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
@@ -245,7 +243,7 @@ public:
         if (mpVolume) {
             auto pShader = mpRayMarchingPipeline->getShader();
             mpRayMarchingPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
 

@@ -60,7 +60,9 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("SceneViewer/VertexShader.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("SceneViewer/FragmentShader.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pShader = mpDevice->createShader(shaderDesc);
+        // Set 0 is only the camera, which carries its frame offset in the descriptor and can be pushed. The node
+        // transforms and the material sets stay allocated.
+        auto pShader = mpDevice->createShader(shaderDesc, {0});
 
         // Create a pipeline filled polygon rendering
         mPipelines.emplace_back(mpDevice->createPipeline(mpPass, pShader, PipelineDesc()));

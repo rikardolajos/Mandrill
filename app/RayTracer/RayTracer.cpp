@@ -62,9 +62,9 @@ public:
         shaderDesc.emplace_back("RayTracer/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
         shaderDesc.emplace_back("RayTracer/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                                 &mSpecializationInfo);
-        // Only set 3, the output image, is ours to push. Sets 0 to 2 are allocated and bound by the camera and the
-        // scene, so they have to stay ordinary sets.
-        auto pShader = mpDevice->createShader(shaderDesc, {3});
+        // Set 0 is the camera, which carries its frame offset in the descriptor, and set 3 is the output image. Set
+        // 1 holds the scene, whose texture array is too large to push, and set 2 the environment map.
+        auto pShader = mpDevice->createShader(shaderDesc, {0, 3});
 
         // Create pipeline with recursion depth and shader groups
         RayTracingPipelineDesc pipelineDesc(1, 1, 1);
