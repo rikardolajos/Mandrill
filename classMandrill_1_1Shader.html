@@ -93,6 +93,7 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Shader.html',''); ini
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classMandrill_1_1Shader-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Mandrill::Shader Class Reference</div></div>
@@ -104,6 +105,12 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Shader.html',''); ini
 
 <p><code>#include &lt;<a class="el" href="Shader_8h_source.html">Shader.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structMandrill_1_1Shader_1_1ResourceInfo.html">ResourceInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where a named resource lives in the shader, as reflected from the SPIR-V.  <a href="structMandrill_1_1Shader_1_1ResourceInfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5bcd170ee0634a2c2a82aade77c67510" id="r_a5bcd170ee0634a2c2a82aade77c67510"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a5bcd170ee0634a2c2a82aade77c67510">Shader</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, const std::vector&lt; ShaderDesc &gt; &amp;desc)</td></tr>
@@ -115,8 +122,35 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Shader</b> (
 <tr class="separator:aff01df87e8a102f270b5b135a295e59d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d3a2d0c4d1dc1c61338459e9ae09d8c" id="r_a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="memItemLeft" align="right" valign="top"><a id="a7d3a2d0c4d1dc1c61338459e9ae09d8c" name="a7d3a2d0c4d1dc1c61338459e9ae09d8c"></a>
 MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</b> ()</td></tr>
-<tr class="memdesc:a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reload shader code from disk and recompile it. <br /></td></tr>
+<tr class="memdesc:a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reload shader code from disk and recompile it. Resources attached with <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a> are kept and are resolved against the new reflection, so they do not have to be set again. <br /></td></tr>
 <tr class="separator:a7d3a2d0c4d1dc1c61338459e9ae09d8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac24a0f4aa36761f628c41f2553780821" id="r_ac24a0f4aa36761f628c41f2553780821"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt; pBuffer, VkDeviceSize offset=0, VkDeviceSize range=VK_WHOLE_SIZE)</td></tr>
+<tr class="memdesc:ac24a0f4aa36761f628c41f2553780821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storage buffer, and where it is bound, follows from the shader.  <br /></td></tr>
+<tr class="separator:ac24a0f4aa36761f628c41f2553780821"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ff33870d9935473343fcf368791fd30" id="r_a5ff33870d9935473343fcf368791fd30"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a5ff33870d9935473343fcf368791fd30">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; pTexture)</td></tr>
+<tr class="memdesc:a5ff33870d9935473343fcf368791fd30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a texture to a named combined image sampler in the shader.  <br /></td></tr>
+<tr class="separator:a5ff33870d9935473343fcf368791fd30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad86e037ee67017661d005e632628927f" id="r_ad86e037ee67017661d005e632628927f"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ad86e037ee67017661d005e632628927f">setResource</a> (const std::string &amp;name, const std::vector&lt; ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; &gt; &amp;textures)</td></tr>
+<tr class="memdesc:ad86e037ee67017661d005e632628927f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach an array of textures to a named combined image sampler array in the shader.  <br /></td></tr>
+<tr class="separator:ad86e037ee67017661d005e632628927f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad52869792e5ff7e95e82b02672b68482" id="r_ad52869792e5ff7e95e82b02672b68482"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ad52869792e5ff7e95e82b02672b68482">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pImage, VkImageLayout layout=VK_IMAGE_LAYOUT_UNDEFINED)</td></tr>
+<tr class="memdesc:ad52869792e5ff7e95e82b02672b68482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach an image to a named storage image or input attachment in the shader.  <br /></td></tr>
+<tr class="separator:ad52869792e5ff7e95e82b02672b68482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ec056e8f4c170c1d24e8b08d7c5dd7e" id="r_a5ec056e8f4c170c1d24e8b08d7c5dd7e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a5ec056e8f4c170c1d24e8b08d7c5dd7e">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt; pAccelerationStructure)</td></tr>
+<tr class="memdesc:a5ec056e8f4c170c1d24e8b08d7c5dd7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach an acceleration structure to a named resource in the shader.  <br /></td></tr>
+<tr class="separator:a5ec056e8f4c170c1d24e8b08d7c5dd7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac15c098db6d9dfe90d9bcadb70bf1659" id="r_ac15c098db6d9dfe90d9bcadb70bf1659"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">bindResources</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)</td></tr>
+<tr class="memdesc:ac15c098db6d9dfe90d9bcadb70bf1659"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors need an offset and should be bound with the overload that takes one.  <br /></td></tr>
+<tr class="separator:ac15c098db6d9dfe90d9bcadb70bf1659"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad343e514e770b1d15fd75dcdbac5f495" id="r_ad343e514e770b1d15fd75dcdbac5f495"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ad343e514e770b1d15fd75dcdbac5f495">bindResources</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, const std::vector&lt; uint32_t &gt; &amp;dynamicOffsets={})</td></tr>
+<tr class="memdesc:ad343e514e770b1d15fd75dcdbac5f495"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind one descriptor set. Use this for per-frame or per-mesh sets, where the same set is bound several times with different dynamic offsets.  <br /></td></tr>
+<tr class="separator:ad343e514e770b1d15fd75dcdbac5f495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dd1031aeba7ce57cbede4eb8942354f" id="r_a3dd1031aeba7ce57cbede4eb8942354f"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">hasResource</a> (const std::string &amp;name) const</td></tr>
+<tr class="memdesc:a3dd1031aeba7ce57cbede4eb8942354f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether the shader has a resource with a given name.  <br /></td></tr>
+<tr class="separator:a3dd1031aeba7ce57cbede4eb8942354f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa59402d7ec7b902840f62eee73e8f4d9" id="r_aa59402d7ec7b902840f62eee73e8f4d9"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::optional&lt; <a class="el" href="structMandrill_1_1Shader_1_1ResourceInfo.html">ResourceInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">getResourceInfo</a> (const std::string &amp;name) const</td></tr>
+<tr class="memdesc:aa59402d7ec7b902840f62eee73e8f4d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get where a named resource lives in the shader.  <br /></td></tr>
+<tr class="separator:aa59402d7ec7b902840f62eee73e8f4d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa118cffbe1952109a2a3af0d87658ab" id="r_aaa118cffbe1952109a2a3af0d87658ab"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; VkShaderModule &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">getModules</a> () const</td></tr>
 <tr class="memdesc:aaa118cffbe1952109a2a3af0d87658ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get shader module handles.  <br /></td></tr>
 <tr class="separator:aaa118cffbe1952109a2a3af0d87658ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,6 +172,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot reloading of shader source code during execution. </p>
+<p>Resources can be attached by the name they have in the shader, using <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a>. Which set and binding they belong to, and which descriptor type they are, is taken from the shader reflection, so the application never has to describe a descriptor. Call <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors ne...">bindResources()</a> to bind them for a draw or dispatch.</p>
+<p><a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a> attaches a resource, it is not a per-frame update. Data that varies per frame or per mesh belongs in a single buffer that is attached once and bound repeatedly with a dynamic offset, which is what the <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors ne...">bindResources()</a> overload taking a set and offsets is for. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5bcd170ee0634a2c2a82aade77c67510" name="a5bcd170ee0634a2c2a82aade77c67510"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5bcd170ee0634a2c2a82aade77c67510">&#9670;&#160;</a></span>Shader()</h2>
@@ -177,6 +213,94 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac15c098db6d9dfe90d9bcadb70bf1659" name="ac15c098db6d9dfe90d9bcadb70bf1659"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac15c098db6d9dfe90d9bcadb70bf1659">&#9670;&#160;</a></span>bindResources() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::bindResources </td>
+          <td>(</td>
+          <td class="paramtype">VkCommandBuffer&#160;</td>
+          <td class="paramname"><em>cmd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkPipelineBindPoint&#160;</td>
+          <td class="paramname"><em>bindPoint</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors need an offset and should be bound with the overload that takes one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
+    <tr><td class="paramname">bindPoint</td><td>Bind point in pipeline</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad343e514e770b1d15fd75dcdbac5f495" name="ad343e514e770b1d15fd75dcdbac5f495"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad343e514e770b1d15fd75dcdbac5f495">&#9670;&#160;</a></span>bindResources() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::bindResources </td>
+          <td>(</td>
+          <td class="paramtype">VkCommandBuffer&#160;</td>
+          <td class="paramname"><em>cmd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkPipelineBindPoint&#160;</td>
+          <td class="paramname"><em>bindPoint</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>set</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dynamicOffsets</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bind one descriptor set. Use this for per-frame or per-mesh sets, where the same set is bound several times with different dynamic offsets. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
+    <tr><td class="paramname">bindPoint</td><td>Bind point in pipeline</td></tr>
+    <tr><td class="paramname">set</td><td>Set to bind</td></tr>
+    <tr><td class="paramname">dynamicOffsets</td><td>Offsets for the dynamic descriptors in the set, in binding order</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ab76dcdb010b19b5a96bfbc30a84b4476" name="ab76dcdb010b19b5a96bfbc30a84b4476"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab76dcdb010b19b5a96bfbc30a84b4476">&#9670;&#160;</a></span>getDescriptorSetLayout()</h2>
 
@@ -318,6 +442,41 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 
 </div>
 </div>
+<a id="aa59402d7ec7b902840f62eee73e8f4d9" name="aa59402d7ec7b902840f62eee73e8f4d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa59402d7ec7b902840f62eee73e8f4d9">&#9670;&#160;</a></span>getResourceInfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API std::optional&lt; <a class="el" href="structMandrill_1_1Shader_1_1ResourceInfo.html">ResourceInfo</a> &gt; Mandrill::Shader::getResourceInfo </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get where a named resource lives in the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reflected information, or nothing if the shader does not declare it</dd></dl>
+
+</div>
+</div>
 <a id="a784ce04e322bd1f545fc42324d590865" name="a784ce04e322bd1f545fc42324d590865"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a784ce04e322bd1f545fc42324d590865">&#9670;&#160;</a></span>getStages()</h2>
 
@@ -343,6 +502,247 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 
 <p>Get pipeline shader stage create infos. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of pipeline shader stage create infos</dd></dl>
+
+</div>
+</div>
+<a id="a3dd1031aeba7ce57cbede4eb8942354f" name="a3dd1031aeba7ce57cbede4eb8942354f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dd1031aeba7ce57cbede4eb8942354f">&#9670;&#160;</a></span>hasResource()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API bool Mandrill::Shader::hasResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether the shader has a resource with a given name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the shader declares it</dd></dl>
+
+</div>
+</div>
+<a id="ad86e037ee67017661d005e632628927f" name="ad86e037ee67017661d005e632628927f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad86e037ee67017661d005e632628927f">&#9670;&#160;</a></span>setResource() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::setResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>textures</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Attach an array of textures to a named combined image sampler array in the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+    <tr><td class="paramname">textures</td><td>Textures to attach</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5ec056e8f4c170c1d24e8b08d7c5dd7e" name="a5ec056e8f4c170c1d24e8b08d7c5dd7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ec056e8f4c170c1d24e8b08d7c5dd7e">&#9670;&#160;</a></span>setResource() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::setResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt;&#160;</td>
+          <td class="paramname"><em>pAccelerationStructure</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Attach an acceleration structure to a named resource in the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+    <tr><td class="paramname">pAccelerationStructure</td><td>Acceleration structure to attach</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac24a0f4aa36761f628c41f2553780821" name="ac24a0f4aa36761f628c41f2553780821"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac24a0f4aa36761f628c41f2553780821">&#9670;&#160;</a></span>setResource() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::setResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td>
+          <td class="paramname"><em>pBuffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>range</em> = <code>VK_WHOLE_SIZE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storage buffer, and where it is bound, follows from the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader. Either the variable name, or the block type name for blocks that are declared without an instance name.</td></tr>
+    <tr><td class="paramname">pBuffer</td><td><a class="el" href="classMandrill_1_1Buffer.html" title="Buffer class for managing Vulkan buffers. This class handles the creation and destruction of buffers,...">Buffer</a> to attach</td></tr>
+    <tr><td class="paramname">offset</td><td>Offset into the buffer</td></tr>
+    <tr><td class="paramname">range</td><td>Range of the buffer to expose</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad52869792e5ff7e95e82b02672b68482" name="ad52869792e5ff7e95e82b02672b68482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad52869792e5ff7e95e82b02672b68482">&#9670;&#160;</a></span>setResource() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::setResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td>
+          <td class="paramname"><em>pImage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkImageLayout&#160;</td>
+          <td class="paramname"><em>layout</em> = <code>VK_IMAGE_LAYOUT_UNDEFINED</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Attach an image to a named storage image or input attachment in the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+    <tr><td class="paramname">pImage</td><td><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> to attach</td></tr>
+    <tr><td class="paramname">layout</td><td><a class="el" href="classMandrill_1_1Layout.html" title="Layout class that abstracts the handling of descriptor set layouts and push constants in Vulkan.">Layout</a> the image will be in when accessed. Defaults to the layout implied by the descriptor type.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5ff33870d9935473343fcf368791fd30" name="a5ff33870d9935473343fcf368791fd30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ff33870d9935473343fcf368791fd30">&#9670;&#160;</a></span>setResource() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shader::setResource </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td>
+          <td class="paramname"><em>pTexture</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Attach a texture to a named combined image sampler in the shader. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name of the resource in the shader</td></tr>
+    <tr><td class="paramname">pTexture</td><td><a class="el" href="classMandrill_1_1Texture.html" title="Texture class for managing textures in Vulkan.">Texture</a> to attach</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -1,13 +1,7 @@
 var searchData=
 [
-  ['random_0',['random',['../classMandrill_1_1Helpers.html#ac11fb7e1218164e1e94e89ea9d3e8987',1,'Mandrill::Helpers']]],
-  ['raytracingpipeline_1',['RayTracingPipeline',['../classMandrill_1_1RayTracingPipeline.html#af9c3a5e8d0eb9ba307c50a52d7275e9b',1,'Mandrill::RayTracingPipeline']]],
-  ['read_2',['read',['../classMandrill_1_1RayTracingPipeline.html#a5f9cb1f16b7500afbe53fb5497853c76',1,'Mandrill::RayTracingPipeline']]],
-  ['recreate_3',['recreate',['../classMandrill_1_1Pipeline.html#ae21ee10e655ee38bd92b292291d32991',1,'Mandrill::Pipeline::recreate()'],['../classMandrill_1_1RayTracingPipeline.html#ad8f9e80a8df83510f4cd121d4ecb0d4d',1,'Mandrill::RayTracingPipeline::recreate()'],['../classMandrill_1_1Swapchain.html#a22c8b321d6dc6bf715ce5ae006c90bc4',1,'Mandrill::Swapchain::recreate()']]],
-  ['recreated_4',['recreated',['../classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026',1,'Mandrill::Swapchain']]],
-  ['reload_5',['reload',['../classMandrill_1_1Shader.html#a7d3a2d0c4d1dc1c61338459e9ae09d8c',1,'Mandrill::Shader']]],
-  ['render_6',['render',['../classMandrill_1_1App.html#a2319be39fee607062dd50fea007a882d',1,'Mandrill::App::render()'],['../classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9',1,'Mandrill::Node::render()'],['../classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8',1,'Mandrill::Scene::render()']]],
-  ['rendergui_7',['renderGUI',['../classMandrill_1_1App.html#aac9602b7552b90c4d38b74ca2d0d014f',1,'Mandrill::App']]],
-  ['requestscreenshot_8',['requestScreenshot',['../classMandrill_1_1Swapchain.html#a11a163aa43bf72b63879ec0f9f131d49',1,'Mandrill::Swapchain']]],
-  ['run_9',['run',['../classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1',1,'Mandrill::App']]]
+  ['pass_0',['pass',['../classMandrill_1_1Pass.html#ab26bcb5a437e724cfc86e80966224c66',1,'Mandrill::Pass::Pass(ptr&lt; Device &gt; pDevice, std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)'],['../classMandrill_1_1Pass.html#ac0e43438f192ded5c53419efad2cf51b',1,'Mandrill::Pass::Pass(ptr&lt; Device &gt; pDevice, VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount=1, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)'],['../classMandrill_1_1Pass.html#a38453d92c152d052bf4d1df664b2b672',1,'Mandrill::Pass::Pass(ptr&lt; Device &gt; pDevice, VkExtent2D extent, std::vector&lt; VkFormat &gt; formats, bool depthAttachment=true, VkSampleCountFlagBits sampleCount=VK_SAMPLE_COUNT_1_BIT)']]],
+  ['pipeline_1',['Pipeline',['../classMandrill_1_1Pipeline.html#aac9180d980353422b67051a78f10ee22',1,'Mandrill::Pipeline']]],
+  ['pipelinedesc_2',['PipelineDesc',['../structMandrill_1_1PipelineDesc.html#a495cbdb45d00b8adcfd65549262d7c3f',1,'Mandrill::PipelineDesc']]],
+  ['present_3',['present',['../classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c',1,'Mandrill::Swapchain']]]
 ];

@@ -1,19 +1,7 @@
 var searchData=
 [
-  ['_7eaccelerationstructure_0',['~AccelerationStructure',['../classMandrill_1_1AccelerationStructure.html#aee9c35bf3db51e5b105c0946a1da5cb7',1,'Mandrill::AccelerationStructure']]],
-  ['_7eapp_1',['~App',['../classMandrill_1_1App.html#a34f1f253b1cef5f4ecbac66eaf6964ec',1,'Mandrill::App']]],
-  ['_7ebuffer_2',['~Buffer',['../classMandrill_1_1Buffer.html#a59b8743e4a5f731bdd0c4185c9ef263b',1,'Mandrill::Buffer']]],
-  ['_7ecamera_3',['~Camera',['../classMandrill_1_1Camera.html#ad1897942d0ccf91052386388a497349f',1,'Mandrill::Camera']]],
-  ['_7edescriptor_4',['~Descriptor',['../classMandrill_1_1Descriptor.html#a39ec4174511f7b5e84bd59e8b1ad2b93',1,'Mandrill::Descriptor']]],
-  ['_7edevice_5',['~Device',['../classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a',1,'Mandrill::Device']]],
-  ['_7eenvironmentmap_6',['~EnvironmentMap',['../classMandrill_1_1EnvironmentMap.html#a77218340957b486754db0ff73f37c8da',1,'Mandrill::EnvironmentMap']]],
-  ['_7eimage_7',['~Image',['../classMandrill_1_1Image.html#a0294f63700543e11c0f0da85601c7ae5',1,'Mandrill::Image']]],
-  ['_7elayout_8',['~Layout',['../classMandrill_1_1Layout.html#a9f53a76fe9a45d0f6325b42eadf51fa9',1,'Mandrill::Layout']]],
-  ['_7enode_9',['~Node',['../classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c',1,'Mandrill::Node']]],
-  ['_7epass_10',['~Pass',['../classMandrill_1_1Pass.html#abe2fe9b29d21424fe4b410fc8e98606c',1,'Mandrill::Pass']]],
-  ['_7epipeline_11',['~Pipeline',['../classMandrill_1_1Pipeline.html#a527044d53a20f851d0579fbf313a2dec',1,'Mandrill::Pipeline']]],
-  ['_7escene_12',['~Scene',['../classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1',1,'Mandrill::Scene']]],
-  ['_7eshader_13',['~Shader',['../classMandrill_1_1Shader.html#aff01df87e8a102f270b5b135a295e59d',1,'Mandrill::Shader']]],
-  ['_7eswapchain_14',['~Swapchain',['../classMandrill_1_1Swapchain.html#a5848dea9c4317e57363760ed0c052ea7',1,'Mandrill::Swapchain']]],
-  ['_7etexture_15',['~Texture',['../classMandrill_1_1Texture.html#a09c4bcb7462f64c1d20fa69dba3cee8a',1,'Mandrill::Texture']]]
+  ['waitforfence_0',['waitForFence',['../classMandrill_1_1Swapchain.html#a1d637029f0c2d70f68efaf241a3ea8e3',1,'Mandrill::Swapchain']]],
+  ['waitforscreenshot_1',['waitForScreenshot',['../classMandrill_1_1Swapchain.html#a2b16937784dee3258f29f2a76b53765e',1,'Mandrill::Swapchain']]],
+  ['warning_2',['Warning',['../classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc',1,'Mandrill::Log']]],
+  ['write_3',['write',['../classMandrill_1_1RayTracingPipeline.html#aaa770f605ca8c1262779c1b872ee4507',1,'Mandrill::RayTracingPipeline']]]
 ];

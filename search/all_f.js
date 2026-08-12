@@ -12,5 +12,6 @@ var searchData=
   ['render_9',['render',['../classMandrill_1_1App.html#a2319be39fee607062dd50fea007a882d',1,'Mandrill::App::render()'],['../classMandrill_1_1Node.html#a0fcbe2723d8a40f659e7cbea431431e9',1,'Mandrill::Node::render()'],['../classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8',1,'Mandrill::Scene::render()']]],
   ['rendergui_10',['renderGUI',['../classMandrill_1_1App.html#aac9602b7552b90c4d38b74ca2d0d014f',1,'Mandrill::App']]],
   ['requestscreenshot_11',['requestScreenshot',['../classMandrill_1_1Swapchain.html#a11a163aa43bf72b63879ec0f9f131d49',1,'Mandrill::Swapchain']]],
-  ['run_12',['run',['../classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1',1,'Mandrill::App']]]
+  ['resourceinfo_12',['ResourceInfo',['../structMandrill_1_1Shader_1_1ResourceInfo.html',1,'Mandrill::Shader']]],
+  ['run_13',['run',['../classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1',1,'Mandrill::App']]]
 ];
