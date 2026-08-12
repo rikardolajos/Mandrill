@@ -145,6 +145,12 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a5a406dd9143cf34f67001964573cc6fd" id="r_a5a406dd9143cf34f67001964573cc6fd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">supportsRayTracing</a> () const</td></tr>
 <tr class="memdesc:a5a406dd9143cf34f67001964573cc6fd"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the given context supports ray tracing.  <br /></td></tr>
 <tr class="separator:a5a406dd9143cf34f67001964573cc6fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add3a60519f0a0e784610ab8c946596a0" id="r_add3a60519f0a0e784610ab8c946596a0"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#add3a60519f0a0e784610ab8c946596a0">supportsPushDescriptors</a> () const</td></tr>
+<tr class="memdesc:add3a60519f0a0e784610ab8c946596a0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the device supports push descriptors. Sets that use them are written straight into the command buffer, so they need no descriptor pool and cannot collide with a frame that is still in flight.  <br /></td></tr>
+<tr class="separator:add3a60519f0a0e784610ab8c946596a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97ac935eadb1d3f1d6818c4429ac41a4" id="r_a97ac935eadb1d3f1d6818c4429ac41a4"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a97ac935eadb1d3f1d6818c4429ac41a4">getMaxPushDescriptors</a> () const</td></tr>
+<tr class="memdesc:a97ac935eadb1d3f1d6818c4429ac41a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the largest number of descriptors that a push descriptor set can hold.  <br /></td></tr>
+<tr class="separator:a97ac935eadb1d3f1d6818c4429ac41a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a343ac488bcc2d3f6f94b3447f39c1e49" id="r_a343ac488bcc2d3f6f94b3447f39c1e49"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">getVsync</a> () const</td></tr>
 <tr class="memdesc:a343ac488bcc2d3f6f94b3447f39c1e49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current verical sync mode.  <br /></td></tr>
 <tr class="separator:a343ac488bcc2d3f6f94b3447f39c1e49"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,9 +196,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a8a72ce7b4a1610eef8fe28dd86a07f08" id="r_a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">createScene</a> ()</td></tr>
 <tr class="memdesc:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new scene.  <br /></td></tr>
 <tr class="separator:a8a72ce7b4a1610eef8fe28dd86a07f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42372a30f593de4d78fbac6927a4ec27" id="r_a42372a30f593de4d78fbac6927a4ec27"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27">createShader</a> (const std::vector&lt; ShaderDesc &gt; &amp;desc)</td></tr>
-<tr class="memdesc:a42372a30f593de4d78fbac6927a4ec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
-<tr class="separator:a42372a30f593de4d78fbac6927a4ec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4d2155e3cf3f844500aed4c25f9e885" id="r_ad4d2155e3cf3f844500aed4c25f9e885"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ad4d2155e3cf3f844500aed4c25f9e885">createShader</a> (const std::vector&lt; ShaderDesc &gt; &amp;desc, const std::vector&lt; uint32_t &gt; &amp;pushDescriptorSets={})</td></tr>
+<tr class="memdesc:ad4d2155e3cf3f844500aed4c25f9e885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
+<tr class="separator:ad4d2155e3cf3f844500aed4c25f9e885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1df1772aee358eb7a41359c0e6ee2904" id="r_a1df1772aee358eb7a41359c0e6ee2904"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a> (uint32_t framesInFlight=2)</td></tr>
 <tr class="memdesc:a1df1772aee358eb7a41359c0e6ee2904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain.  <br /></td></tr>
 <tr class="separator:a1df1772aee358eb7a41359c0e6ee2904"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -841,8 +847,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
-<a id="a42372a30f593de4d78fbac6927a4ec27" name="a42372a30f593de4d78fbac6927a4ec27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42372a30f593de4d78fbac6927a4ec27">&#9670;&#160;</a></span>createShader()</h2>
+<a id="ad4d2155e3cf3f844500aed4c25f9e885" name="ad4d2155e3cf3f844500aed4c25f9e885"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4d2155e3cf3f844500aed4c25f9e885">&#9670;&#160;</a></span>createShader()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -851,8 +857,18 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
           <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; Device::createShader </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; ShaderDesc &gt; &amp;&#160;</td>
-          <td class="paramname"><em>desc</em></td><td>)</td>
+          <td class="paramname"><em>desc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pushDescriptorSets</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1149,6 +1165,34 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
+<a id="a97ac935eadb1d3f1d6818c4429ac41a4" name="a97ac935eadb1d3f1d6818c4429ac41a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97ac935eadb1d3f1d6818c4429ac41a4">&#9670;&#160;</a></span>getMaxPushDescriptors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Device::getMaxPushDescriptors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the largest number of descriptors that a push descriptor set can hold. </p>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of push descriptors</dd></dl>
+
+</div>
+</div>
 <a id="a370ff91a7ecc0e5bc41a25862ec5c111" name="a370ff91a7ecc0e5bc41a25862ec5c111"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a370ff91a7ecc0e5bc41a25862ec5c111">&#9670;&#160;</a></span>getPhysicalDevice()</h2>
 
@@ -1396,6 +1440,34 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="add3a60519f0a0e784610ab8c946596a0" name="add3a60519f0a0e784610ab8c946596a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add3a60519f0a0e784610ab8c946596a0">&#9670;&#160;</a></span>supportsPushDescriptors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API bool Mandrill::Device::supportsPushDescriptors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the device supports push descriptors. Sets that use them are written straight into the command buffer, so they need no descriptor pool and cannot collide with a frame that is still in flight. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if push descriptors are supported, otherwise false.</dd></dl>
 
 </div>
 </div>

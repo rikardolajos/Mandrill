@@ -113,9 +113,12 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5bcd170ee0634a2c2a82aade77c67510" id="r_a5bcd170ee0634a2c2a82aade77c67510"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a5bcd170ee0634a2c2a82aade77c67510">Shader</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, const std::vector&lt; ShaderDesc &gt; &amp;desc)</td></tr>
-<tr class="memdesc:a5bcd170ee0634a2c2a82aade77c67510"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
-<tr class="separator:a5bcd170ee0634a2c2a82aade77c67510"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e87103d5082d2a463736779c08e9a84" id="r_a0e87103d5082d2a463736779c08e9a84"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a0e87103d5082d2a463736779c08e9a84">Shader</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, const std::vector&lt; ShaderDesc &gt; &amp;desc, const std::vector&lt; uint32_t &gt; &amp;pushDescriptorSets={})</td></tr>
+<tr class="memdesc:a0e87103d5082d2a463736779c08e9a84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
+<tr class="separator:a0e87103d5082d2a463736779c08e9a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83e6f021c75e9bf06512a303cbcdfcd6" id="r_a83e6f021c75e9bf06512a303cbcdfcd6"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a83e6f021c75e9bf06512a303cbcdfcd6">isPushDescriptorSet</a> (uint32_t set) const</td></tr>
+<tr class="memdesc:a83e6f021c75e9bf06512a303cbcdfcd6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether a set uses push descriptors.  <br /></td></tr>
+<tr class="separator:a83e6f021c75e9bf06512a303cbcdfcd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff01df87e8a102f270b5b135a295e59d" id="r_aff01df87e8a102f270b5b135a295e59d"><td class="memItemLeft" align="right" valign="top"><a id="aff01df87e8a102f270b5b135a295e59d" name="aff01df87e8a102f270b5b135a295e59d"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Shader</b> ()</td></tr>
 <tr class="memdesc:aff01df87e8a102f270b5b135a295e59d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for shader. <br /></td></tr>
@@ -175,8 +178,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 <p>Resources can be attached by the name they have in the shader, using <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a>. Which set and binding they belong to, and which descriptor type they are, is taken from the shader reflection, so the application never has to describe a descriptor. Call <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors ne...">bindResources()</a> to bind them for a draw or dispatch.</p>
 <p><a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a> attaches a resource, it is not a per-frame update. Data that varies per frame or per mesh belongs in a single buffer that is attached once and bound repeatedly with a dynamic offset, which is what the <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors ne...">bindResources()</a> overload taking a set and offsets is for. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5bcd170ee0634a2c2a82aade77c67510" name="a5bcd170ee0634a2c2a82aade77c67510"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bcd170ee0634a2c2a82aade77c67510">&#9670;&#160;</a></span>Shader()</h2>
+<a id="a0e87103d5082d2a463736779c08e9a84" name="a0e87103d5082d2a463736779c08e9a84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e87103d5082d2a463736779c08e9a84">&#9670;&#160;</a></span>Shader()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +194,13 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::vector&lt; ShaderDesc &gt; &amp;&#160;</td>
-          <td class="paramname"><em>desc</em>&#160;</td>
+          <td class="paramname"><em>desc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pushDescriptorSets</em> = <code>{}</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -206,6 +215,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
     <tr><td class="paramname">desc</td><td>Description of shader being created</td></tr>
+    <tr><td class="paramname">pushDescriptorSets</td><td>Sets that should use push descriptors, which are written straight into the command buffer instead of being allocated from a pool. A set can only do this if it holds no dynamic descriptors and fits within the device limit, and it can then no longer be allocated from, so only list sets whose resources are attached with <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -537,6 +547,41 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the shader declares it</dd></dl>
+
+</div>
+</div>
+<a id="a83e6f021c75e9bf06512a303cbcdfcd6" name="a83e6f021c75e9bf06512a303cbcdfcd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83e6f021c75e9bf06512a303cbcdfcd6">&#9670;&#160;</a></span>isPushDescriptorSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API bool Mandrill::Shader::isPushDescriptorSet </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>set</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether a set uses push descriptors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">set</td><td>Set to query</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the set is pushed rather than allocated</dd></dl>
 
 </div>
 </div>

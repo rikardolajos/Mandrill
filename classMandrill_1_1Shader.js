@@ -1,7 +1,7 @@
 var classMandrill_1_1Shader =
 [
     [ "ResourceInfo", "structMandrill_1_1Shader_1_1ResourceInfo.html", "structMandrill_1_1Shader_1_1ResourceInfo" ],
-    [ "Shader", "classMandrill_1_1Shader.html#a5bcd170ee0634a2c2a82aade77c67510", null ],
+    [ "Shader", "classMandrill_1_1Shader.html#a0e87103d5082d2a463736779c08e9a84", null ],
     [ "~Shader", "classMandrill_1_1Shader.html#aff01df87e8a102f270b5b135a295e59d", null ],
     [ "bindResources", "classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659", null ],
     [ "bindResources", "classMandrill_1_1Shader.html#ad343e514e770b1d15fd75dcdbac5f495", null ],
@@ -13,6 +13,7 @@ var classMandrill_1_1Shader =
     [ "getResourceInfo", "classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9", null ],
     [ "getStages", "classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865", null ],
     [ "hasResource", "classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f", null ],
+    [ "isPushDescriptorSet", "classMandrill_1_1Shader.html#a83e6f021c75e9bf06512a303cbcdfcd6", null ],
     [ "reload", "classMandrill_1_1Shader.html#a7d3a2d0c4d1dc1c61338459e9ae09d8c", null ],
     [ "setResource", "classMandrill_1_1Shader.html#ad86e037ee67017661d005e632628927f", null ],
     [ "setResource", "classMandrill_1_1Shader.html#a5ec056e8f4c170c1d24e8b08d7c5dd7e", null ],

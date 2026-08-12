@@ -14,7 +14,7 @@ var classMandrill_1_1Device =
     [ "createPipeline", "classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62", null ],
     [ "createRayTracingPipeline", "classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd", null ],
     [ "createScene", "classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08", null ],
-    [ "createShader", "classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27", null ],
+    [ "createShader", "classMandrill_1_1Device.html#ad4d2155e3cf3f844500aed4c25f9e885", null ],
     [ "createSwapchain", "classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904", null ],
     [ "createTextureFromBuffer", "classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865", null ],
     [ "createTextureFromFile", "classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333", null ],
@@ -22,6 +22,7 @@ var classMandrill_1_1Device =
     [ "getCommandPool", "classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2", null ],
     [ "getDevice", "classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86", null ],
     [ "getInstance", "classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b", null ],
+    [ "getMaxPushDescriptors", "classMandrill_1_1Device.html#a97ac935eadb1d3f1d6818c4429ac41a4", null ],
     [ "getPhysicalDevice", "classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111", null ],
     [ "getProperties", "classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470", null ],
     [ "getQueue", "classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84", null ],
@@ -31,5 +32,6 @@ var classMandrill_1_1Device =
     [ "getVsync", "classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49", null ],
     [ "getWindow", "classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f", null ],
     [ "setVsync", "classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646", null ],
+    [ "supportsPushDescriptors", "classMandrill_1_1Device.html#add3a60519f0a0e784610ab8c946596a0", null ],
     [ "supportsRayTracing", "classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd", null ]
 ];
