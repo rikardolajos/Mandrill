@@ -90,6 +90,9 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
     options.SetWarningsAsErrors();
     options.SetOptimizationLevel(shaderc_optimization_level_zero);
 #else
+    // Debug information is kept even when optimizing, because the descriptor reflection identifies dynamic buffers
+    // by their block type name and the optimizer strips those names away otherwise
+    options.SetGenerateDebugInfo();
     options.SetOptimizationLevel(shaderc_optimization_level_performance);
 #endif
 
@@ -385,17 +388,26 @@ void Shader::createShader()
     }
 
     auto getType = [](SpvReflectDescriptorBinding* binding) -> VkDescriptorType {
-        if (binding->block.type_description) {
-            std::string typeName(binding->block.type_description->type_name);
-            if (typeName.ends_with("Dynamic")) {
-                switch (binding->descriptor_type) {
-                case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-                    return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-                case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER:
-                    return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-                }
+        // Block type names only survive if the SPIR-V kept its debug information. Without them the *Dynamic naming
+        // convention cannot be detected, so a dynamic buffer would silently end up as a regular one.
+        const char* pTypeName = binding->block.type_description ? binding->block.type_description->type_name : nullptr;
+
+        if (!pTypeName && (binding->descriptor_type == SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
+                           binding->descriptor_type == SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER)) {
+            Log::Warning("Buffer descriptor at set {} binding {} has no type name, so it cannot be identified as "
+                         "dynamic. The SPIR-V was built without debug information.",
+                         binding->set, binding->binding);
+        }
+
+        if (pTypeName && std::string_view(pTypeName).ends_with("Dynamic")) {
+            switch (binding->descriptor_type) {
+            case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+            case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+                return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
             }
         }
+
         return static_cast<VkDescriptorType>(binding->descriptor_type);
     };
 
