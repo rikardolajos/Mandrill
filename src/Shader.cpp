@@ -3,6 +3,8 @@
 #include "Error.h"
 #include "Log.h"
 
+#include <deque>
+
 using namespace Mandrill;
 
 class ShaderIncluder : public shaderc::CompileOptions::IncluderInterface
@@ -279,6 +281,8 @@ Shader::~Shader()
 {
     Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
 
+    destroyDescriptorPools();
+
     vkDestroyPipelineLayout(mpDevice->getDevice(), mPipelineLayout, nullptr);
 
     for (auto& l : mDescriptorSetLayouts) {
@@ -298,6 +302,10 @@ void Shader::reload()
 
     Check::Vk(vkDeviceWaitIdle(mpDevice->getDevice()));
 
+    // The sets were allocated against layouts that are about to be destroyed. The attached resources are kept and
+    // will be written into freshly allocated sets on the next bind.
+    destroyDescriptorPools();
+
     vkDestroyPipelineLayout(mpDevice->getDevice(), mPipelineLayout, nullptr);
 
     for (auto& l : mDescriptorSetLayouts) {
@@ -309,6 +317,17 @@ void Shader::reload()
     }
 
     createShader();
+}
+
+void Shader::destroyDescriptorPools()
+{
+    for (auto& pool : mDescriptorPools) {
+        vkDestroyDescriptorPool(mpDevice->getDevice(), pool, nullptr);
+    }
+    mDescriptorPools.clear();
+
+    std::fill(mDescriptorSets.begin(), mDescriptorSets.end(), VK_NULL_HANDLE);
+    std::fill(mSetDirty.begin(), mSetDirty.end(), true);
 }
 
 void Shader::createShader()
@@ -414,17 +433,47 @@ void Shader::createShader()
     // Create descriptor set layouts
     mDescriptorSetLayouts.clear();
     mDescriptorSetLayouts.resize(descriptorSets.size());
+
+    // Resources are looked up by name, and the pool has to be able to serve every binding the shader declares
+    mResourceInfos.clear();
+    std::map<VkDescriptorType, uint32_t> poolCounts;
+
+    // Registers a name so that setResource() can find the binding. Blocks declared without an instance name have no
+    // variable name, and are reachable through their block type name instead.
+    auto registerName = [&](const char* pName, const ResourceInfo& info) {
+        if (!pName || !pName[0]) {
+            return;
+        }
+        auto [it, inserted] = mResourceInfos.emplace(pName, info);
+        if (!inserted && (it->second.set != info.set || it->second.binding != info.binding)) {
+            Log::Warning("Shader declares '{}' at more than one binding, set {} binding {} will not be reachable by "
+                         "name. Bind it explicitly by set and binding instead.",
+                         pName, info.set, info.binding);
+        }
+    };
+
     for (uint32_t i = 0; i < count(descriptorSets); i++) {
         std::vector<VkDescriptorSetLayoutBinding> bindings;
         for (auto& [bindingNumber, binding] : descriptorSets[i]) {
             // A count is missing only if the binding was rejected above, in which case an error has been logged already
             auto found = bindingCount[i].find(bindingNumber);
+            VkDescriptorType type = getType(binding);
+            uint32_t descriptorCount = found != bindingCount[i].end() ? found->second : 1;
+
             bindings.push_back({
                 .binding = bindingNumber,
-                .descriptorType = getType(binding),
-                .descriptorCount = found != bindingCount[i].end() ? found->second : 1,
+                .descriptorType = type,
+                .descriptorCount = descriptorCount,
                 .stageFlags = stageFlags[i],
             });
+
+            ResourceInfo info = {.set = i, .binding = bindingNumber, .type = type, .count = descriptorCount};
+            registerName(binding->name, info);
+            if (binding->block.type_description) {
+                registerName(binding->block.type_description->type_name, info);
+            }
+
+            poolCounts[type] += descriptorCount;
         }
 
         VkDescriptorSetLayoutCreateInfo ci = {
@@ -435,6 +484,18 @@ void Shader::createShader()
 
         Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mDescriptorSetLayouts[i]));
     }
+
+    // Prepare descriptor set storage. A pool holds several generations of every set, so that resources can be
+    // reattached a number of times before another pool is needed.
+    mDescriptorSets.assign(descriptorSets.size(), VK_NULL_HANDLE);
+    mSetDirty.assign(descriptorSets.size(), true);
+
+    const uint32_t generationsPerPool = 8;
+    mPoolSizes.clear();
+    for (auto& [type, descriptorCount] : poolCounts) {
+        mPoolSizes.push_back({.type = type, .descriptorCount = descriptorCount * generationsPerPool});
+    }
+    mMaxSetsPerPool = count(descriptorSets) * generationsPerPool;
 
     // Create push constant ranges
     mPushConstantRanges.clear();
@@ -467,4 +528,302 @@ void Shader::createShader()
     };
 
     Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
+}
+
+const Shader::ResourceInfo* Shader::resolveResource(const std::string& name, const char* kind,
+                                                    std::initializer_list<VkDescriptorType> allowed)
+{
+    auto found = mResourceInfos.find(name);
+    if (found == mResourceInfos.end()) {
+        Log::Error("Shader has no resource named '{}'. Check the spelling against the shader, and note that a block "
+                   "declared without an instance name is reached through its block type name.",
+                   name);
+        return nullptr;
+    }
+
+    const ResourceInfo& info = found->second;
+    if (std::find(allowed.begin(), allowed.end(), info.type) == allowed.end()) {
+        Log::Error("Resource '{}' is declared as descriptor type {} in the shader and cannot be set from a {}.", name,
+                   static_cast<int>(info.type), kind);
+        return nullptr;
+    }
+
+    return &info;
+}
+
+void Shader::setResource(const std::string& name, ptr<Buffer> pBuffer, VkDeviceSize offset, VkDeviceSize range)
+{
+    const ResourceInfo* pInfo =
+        resolveResource(name, "buffer",
+                        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                         VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC});
+    if (!pInfo) {
+        return;
+    }
+
+    BoundResource resource;
+    resource.pBuffer = pBuffer;
+    resource.offset = offset;
+    resource.range = range;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::setResource(const std::string& name, ptr<Texture> pTexture)
+{
+    const ResourceInfo* pInfo = resolveResource(name, "texture", {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER});
+    if (!pInfo) {
+        return;
+    }
+
+    if (pInfo->count != 1) {
+        Log::Error("Resource '{}' is an array of {} descriptors, so it needs an array of textures.", name,
+                   pInfo->count);
+        return;
+    }
+
+    BoundResource resource;
+    resource.pTexture = pTexture;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::setResource(const std::string& name, const std::vector<ptr<Texture>>& textures)
+{
+    const ResourceInfo* pInfo = resolveResource(name, "texture array", {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER});
+    if (!pInfo) {
+        return;
+    }
+
+    if (count(textures) != pInfo->count) {
+        Log::Error("Resource '{}' has {} descriptors in the shader but {} textures were given.", name, pInfo->count,
+                   count(textures));
+        return;
+    }
+
+    BoundResource resource;
+    resource.textures = textures;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::setResource(const std::string& name, ptr<Image> pImage, VkImageLayout layout)
+{
+    const ResourceInfo* pInfo =
+        resolveResource(name, "image", {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT});
+    if (!pInfo) {
+        return;
+    }
+
+    BoundResource resource;
+    resource.pImage = pImage;
+    resource.imageLayout = layout;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::setResource(const std::string& name, ptr<AccelerationStructure> pAccelerationStructure)
+{
+    const ResourceInfo* pInfo =
+        resolveResource(name, "acceleration structure", {VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR});
+    if (!pInfo) {
+        return;
+    }
+
+    BoundResource resource;
+    resource.pAccelerationStructure = pAccelerationStructure;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::createDescriptorPool()
+{
+    if (mPoolSizes.empty()) {
+        return;
+    }
+
+    VkDescriptorPoolCreateInfo ci = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .maxSets = mMaxSetsPerPool,
+        .poolSizeCount = count(mPoolSizes),
+        .pPoolSizes = mPoolSizes.data(),
+    };
+
+    VkDescriptorPool pool;
+    Check::Vk(vkCreateDescriptorPool(mpDevice->getDevice(), &ci, nullptr, &pool));
+    mDescriptorPools.push_back(pool);
+}
+
+VkDescriptorSet Shader::allocateDescriptorSet(uint32_t set)
+{
+    if (mDescriptorPools.empty()) {
+        createDescriptorPool();
+    }
+
+    VkDescriptorSetAllocateInfo ai = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .descriptorPool = mDescriptorPools.back(),
+        .descriptorSetCount = 1,
+        .pSetLayouts = &mDescriptorSetLayouts[set],
+    };
+
+    VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+    VkResult result = vkAllocateDescriptorSets(mpDevice->getDevice(), &ai, &descriptorSet);
+
+    // Older sets are kept alive on purpose, so a pool runs out after enough reattachments and another is added
+    if (result == VK_ERROR_OUT_OF_POOL_MEMORY || result == VK_ERROR_FRAGMENTED_POOL) {
+        createDescriptorPool();
+        ai.descriptorPool = mDescriptorPools.back();
+        result = vkAllocateDescriptorSets(mpDevice->getDevice(), &ai, &descriptorSet);
+    }
+
+    Check::Vk(result);
+    return descriptorSet;
+}
+
+void Shader::updateDescriptorSet(uint32_t set)
+{
+    std::vector<VkWriteDescriptorSet> writes;
+
+    // The writes point into these, and a deque never moves what it already holds
+    std::deque<VkDescriptorBufferInfo> bufferInfos;
+    std::deque<std::vector<VkDescriptorImageInfo>> imageInfos;
+    std::deque<VkWriteDescriptorSetAccelerationStructureKHR> accelerationStructureInfos;
+    std::deque<VkAccelerationStructureKHR> accelerationStructures;
+
+    for (const auto& [name, resource] : mResources) {
+        auto found = mResourceInfos.find(name);
+        if (found == mResourceInfos.end() || found->second.set != set) {
+            continue;
+        }
+        const ResourceInfo& info = found->second;
+
+        VkWriteDescriptorSet write = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstSet = mDescriptorSets[set],
+            .dstBinding = info.binding,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = info.type,
+        };
+
+        switch (info.type) {
+        case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+        case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+        case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+        case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+            bufferInfos.push_back({
+                .buffer = resource.pBuffer->getBuffer(),
+                .offset = resource.offset,
+                .range = resource.range,
+            });
+            write.pBufferInfo = &bufferInfos.back();
+            break;
+
+        case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER: {
+            imageInfos.emplace_back();
+            auto& infos = imageInfos.back();
+            if (!resource.textures.empty()) {
+                for (const auto& pTexture : resource.textures) {
+                    infos.push_back({
+                        .sampler = pTexture->getSampler(),
+                        .imageView = pTexture->getImageView(),
+                        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    });
+                }
+            } else {
+                infos.push_back({
+                    .sampler = resource.pTexture->getSampler(),
+                    .imageView = resource.pTexture->getImageView(),
+                    .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                });
+            }
+            write.descriptorCount = count(infos);
+            write.pImageInfo = infos.data();
+            break;
+        }
+
+        case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+        case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT: {
+            VkImageLayout layout = resource.imageLayout;
+            if (layout == VK_IMAGE_LAYOUT_UNDEFINED) {
+                layout = info.type == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE ? VK_IMAGE_LAYOUT_GENERAL
+                                                                       : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            }
+            imageInfos.emplace_back();
+            imageInfos.back().push_back({
+                .sampler = VK_NULL_HANDLE,
+                .imageView = resource.pImage->getImageView(),
+                .imageLayout = layout,
+            });
+            write.pImageInfo = imageInfos.back().data();
+            break;
+        }
+
+        case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
+            accelerationStructures.push_back(resource.pAccelerationStructure->getAccelerationStructure());
+            accelerationStructureInfos.push_back({
+                .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
+                .accelerationStructureCount = 1,
+                .pAccelerationStructures = &accelerationStructures.back(),
+            });
+            write.pNext = &accelerationStructureInfos.back();
+            break;
+
+        default:
+            Log::Error("Resource '{}' has a descriptor type that cannot be written.", name);
+            continue;
+        }
+
+        writes.push_back(write);
+    }
+
+    if (!writes.empty()) {
+        vkUpdateDescriptorSets(mpDevice->getDevice(), count(writes), writes.data(), 0, nullptr);
+    }
+}
+
+void Shader::bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                           const std::vector<uint32_t>& dynamicOffsets)
+{
+    if (set >= mDescriptorSets.size()) {
+        Log::Error("Trying to bind set {}, but the shader only declares {} sets.", set, mDescriptorSets.size());
+        return;
+    }
+
+    if (mSetDirty[set]) {
+        // A set that is still being read by a frame in flight is left alone, a new one is taken instead
+        mDescriptorSets[set] = allocateDescriptorSet(set);
+        updateDescriptorSet(set);
+        mSetDirty[set] = false;
+    }
+
+    if (mDescriptorSets[set] == VK_NULL_HANDLE) {
+        return;
+    }
+
+    vkCmdBindDescriptorSets(cmd, bindPoint, mPipelineLayout, set, 1, &mDescriptorSets[set], count(dynamicOffsets),
+                            dynamicOffsets.data());
+}
+
+void Shader::bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
+{
+    // Only sets that actually have something attached are bound, so that a shader can be used before every set has
+    // been filled in
+    std::set<uint32_t> setsWithResources;
+    for (const auto& [name, resource] : mResources) {
+        auto found = mResourceInfos.find(name);
+        if (found != mResourceInfos.end()) {
+            setsWithResources.insert(found->second.set);
+        }
+    }
+
+    for (uint32_t set : setsWithResources) {
+        bindResources(cmd, bindPoint, set);
+    }
 }
