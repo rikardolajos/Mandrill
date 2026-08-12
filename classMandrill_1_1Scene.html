@@ -490,7 +490,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <tr>
 <th>Name in shader </th><th>Contents </th><th>Declared as </th><th></th></tr>
 <tr>
-<td>camera </td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> matrices (struct CameraMatrices) </td><td>uniform block named *Dynamic </td></tr>
+<td>camera </td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> matrices (struct CameraMatrices) </td><td>uniform block </td></tr>
 <tr>
 <td>mesh </td><td><a class="el" href="classMandrill_1_1Node.html" title="Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...">Node</a> model matrix (mat4) </td><td>uniform block named *Dynamic </td></tr>
 <tr>
@@ -508,7 +508,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <tr>
 <td>environmentMap </td><td>Environment map texture </td><td>sampler2D, optional </td></tr>
 </table>
-<p>The camera and the node transforms live in one buffer each and are rebound with a dynamic offset, which is why their blocks have to be named with a *Dynamic suffix. The material resources all have to share one set, since a whole material is bound in one go for every mesh; that set is found from diffuseTexture.</p>
+<p>The node transforms live in one buffer that is rebound with a dynamic offset per node, which is why that block has to be named with a *Dynamic suffix. The camera needs no such thing: it is re-attached each frame with the offset of that frame's copy. The material resources all have to share one set, since a whole material is bound in one go for every mesh; that set is found from diffuseTexture.</p>
+<p>Put the camera in a set of its own and list that set as a push descriptor set when creating the shader, so that re-attaching it per frame does not allocate anything.</p>
 <p>Only the environment map is optional. A shader that does not declare it simply renders without one.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -565,7 +566,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <tr>
 <th>Name in shader </th><th>Contents </th><th>Declared as </th><th></th></tr>
 <tr>
-<td>camera </td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> matrices (struct CameraMatrices) </td><td>uniform block named *Dynamic </td></tr>
+<td>camera </td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> matrices (struct CameraMatrices) </td><td>uniform block </td></tr>
 <tr>
 <td>scene </td><td>Acceleration structure </td><td>accelerationStructureEXT </td></tr>
 <tr>
