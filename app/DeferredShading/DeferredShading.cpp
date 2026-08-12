@@ -24,13 +24,15 @@ public:
                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     }
 
+    // The pass renders into the attachments as color attachments, and the resolve reads them back as storage
+    // images, so they have to move between those two layouts rather than staying in GENERAL throughout.
     void transitionAttachmentsForGBuffer(VkCommandBuffer cmd)
     {
         for (auto& attachment : mColorAttachments) {
             Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
                                   VK_ACCESS_2_SHADER_READ_BIT, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                                   VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_GENERAL,
-                                  VK_IMAGE_LAYOUT_GENERAL);
+                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         }
     }
 
@@ -39,7 +41,8 @@ public:
         for (auto& attachment : mColorAttachments) {
             Helpers::imageBarrier(cmd, attachment->getImage(), VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
                                   VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
-                                  VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+                                  VK_ACCESS_2_SHADER_READ_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                  VK_IMAGE_LAYOUT_GENERAL);
         }
     }
 
@@ -125,7 +128,9 @@ public:
         shaderDesc.clear();
         shaderDesc.emplace_back("DeferredShading/Resolve.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("DeferredShading/Resolve.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        auto pResolveShader = mpDevice->createShader(shaderDesc);
+        // The resolve pass only reads the G-buffer attachments, so its single set can be pushed. The G-buffer shader
+        // keeps allocated sets, since those are owned by the scene.
+        auto pResolveShader = mpDevice->createShader(shaderDesc, {0});
 
         // Create pipelines
         PipelineDesc pipelineDesc;
@@ -149,19 +154,20 @@ public:
         mpScene->getNodes()[nodeIndex].setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->compile(mpSwapchain->getFramesInFlightCount());
-        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts(),
-                                   mpSwapchain->getFramesInFlightCount());
-        mpScene->syncToDevice();
 
         // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
-        // Setup camera
+        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
+        // of them.
         mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
+
+        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader(), mpCamera,
+                                   mpSwapchain->getFramesInFlightCount());
+        mpScene->syncToDevice();
 
         // Initialize GUI
         App::createGUI(mpDevice, mpResolvePass);

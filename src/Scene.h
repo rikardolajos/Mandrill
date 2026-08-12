@@ -85,6 +85,7 @@ namespace Mandrill
 
     class Scene; // Forward declare scene so Node can befriend it
     class Pipeline;
+    class Shader;
 
     /// <summary>
     /// Scene node class for managing a single node in a scene graph. This class can hold meshes and transformations.
@@ -201,7 +202,9 @@ namespace Mandrill
         // Points at this node's slot in the scene transform buffer. The per-frame copies within that slot are spaced by
         // the uniform buffer offset alignment, not by sizeof(glm::mat4), so this is a byte pointer.
         std::byte* mpTransformDevice;
-        ptr<Descriptor> mpDescriptor;
+        // Byte offset of the same slot within the buffer. The whole scene shares one descriptor for the transforms,
+        // and this offset, plus the one for the frame in flight, is what selects this node's copy.
+        VkDeviceSize mTransformOffset;
 
         bool mVisible;
 
@@ -288,52 +291,64 @@ namespace Mandrill
         MANDRILL_API void compile(uint32_t frameInFlightCount);
 
         /// <summary>
-        /// Create desciptors for scene.
+        /// Attach the scene's resources to a shader.
         ///
-        /// The scene will use descriptor sets as follows:
+        /// Resources are matched to the shader by the name they are declared with, not by set and binding number, so
+        /// the shader decides where they end up. Declare them like this, in any set and at any binding:
         /// <table>
-        /// <caption> Descriptor Layout </caption>
-        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
-        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        /// <tr><td> Model matrix (mat4) <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        /// <tr><td> Material params (struct MaterialParams) <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-        /// <tr><td> Material diffuse texture <td> 2 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-        /// <tr><td> Material specular texture <td> 2 <td> 2 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material ambient texture <td> 2 <td> 3 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material emission texture <td> 2 <td> 4 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Material normal texture <td> 2 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-        /// <tr><td> Environment map texture <td> 3 <td> 0 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <caption> Resources the scene expects to find in the shader </caption>
+        /// <tr><th> Name in shader <th> Contents <th> Declared as <th>
+        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block named *Dynamic
+        /// <tr><td> mesh <td> Node model matrix (mat4) <td> uniform block named *Dynamic
+        /// <tr><td> materialParams <td> Material parameters (struct MaterialParams) <td> uniform block
+        /// <tr><td> diffuseTexture <td> Material diffuse texture <td> sampler2D
+        /// <tr><td> specularTexture <td> Material specular texture <td> sampler2D
+        /// <tr><td> ambientTexture <td> Material ambient texture <td> sampler2D
+        /// <tr><td> emissionTexture <td> Material emission texture <td> sampler2D
+        /// <tr><td> normalTexture <td> Material normal texture <td> sampler2D
+        /// <tr><td> environmentMap <td> Environment map texture <td> sampler2D, optional
         /// </table>
+        ///
+        /// The camera and the node transforms live in one buffer each and are rebound with a dynamic offset, which
+        /// is why their blocks have to be named with a *Dynamic suffix. The material resources all have to share one
+        /// set, since a whole material is bound in one go for every mesh; that set is found from diffuseTexture.
+        ///
+        /// Only the environment map is optional. A shader that does not declare it simply renders without one.
         /// </summary>
-        /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
-        /// Shader::getDescriptorSetLayouts())</param>
+        /// <param name="pShader">Shader the scene is rendered with, used to attach the resources</param>
+        /// <param name="pCamera">Camera whose matrices the scene is rendered with</param>
         /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
-        MANDRILL_API void createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                                            uint32_t frameInFlightCount);
+        MANDRILL_API void createDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera, uint32_t frameInFlightCount);
 
         /// <summary>
-        /// Create ray-tracing desciptors for scene.
+        /// Attach the scene's resources to a ray-tracing shader.
         ///
-        /// The scene will use descriptor sets as follows:
+        /// As with createDescriptors(), resources are matched by the name they are declared with rather than by set
+        /// and binding number:
         /// <table>
-        /// <caption> Ray-tracing Descriptor Layout </caption>
-        /// <tr><th> Usage <th> Set <th> Binding <th> Type <th>
-        /// <tr><td> Camera matrix (struct CameraMatrices) <td> 0 <td> 0 <td> VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-        /// <tr><td> Acceleration structure <td> 1 <td> 0 <td> VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR
-        /// <tr><td> Global vertex buffer <td> 1 <td> 1 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        /// <tr><td> Global index buffer <td> 1 <td> 2 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        /// <tr><td> Instance data (vertex and index offsets) <td> 1 <td> 3 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        /// <tr><td> Global material buffer <td> 1 <td> 4 <td> VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-        /// <tr><td> Global texture array <td> 1 <td> 5 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER (Array)
-        /// <tr><td> Environment map texture <td> 2 <td> 0 <td> VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+        /// <caption> Resources the scene expects to find in the shader </caption>
+        /// <tr><th> Name in shader <th> Contents <th> Declared as <th>
+        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block named *Dynamic
+        /// <tr><td> scene <td> Acceleration structure <td> accelerationStructureEXT
+        /// <tr><td> vertexBuffer <td> Global vertex buffer <td> readonly buffer block
+        /// <tr><td> indexBuffer <td> Global index buffer <td> readonly buffer block
+        /// <tr><td> instanceDataBuffer <td> Vertex and index offsets per instance <td> readonly buffer block
+        /// <tr><td> materialBuffer <td> Global material buffer <td> readonly buffer block
+        /// <tr><td> textures <td> Global texture array <td> sampler2D array
+        /// <tr><td> environmentMap <td> Environment map texture <td> sampler2D, optional
         /// </table>
+        ///
+        /// A buffer block needs an instance name for the scene to find it, since a block declared without one has no
+        /// variable name to match against. The texture array has to be sized by a specialization constant that is
+        /// set to Scene::getTextureCount().
         /// </summary>
-        /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
-        /// Shader::getDescriptorSetLayouts())</param> <param name="pAccelerationStructure">Acceleration structure to
-        /// bind</param> <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
+        /// <param name="pShader">Shader the scene is traced with, used to attach the resources</param>
+        /// <param name="pCamera">Camera whose matrices the scene is traced with</param>
+        /// <param name="pAccelerationStructure">Acceleration structure to bind</param>
+        /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
         /// needed</param>
-        MANDRILL_API void createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+        MANDRILL_API void createRayTracingDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera,
                                                       const ptr<AccelerationStructure> pAccelerationStructure,
                                                       uint32_t frameInFlightCount);
 
@@ -353,11 +368,8 @@ namespace Mandrill
         /// Bind ray-tracing descriptors.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
-        /// <param name="pCamera">Camera to use</param>
-        /// <param name="layout">Pipeline layout</param>
         /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
-                                                    uint32_t frameInFlightIndex);
+        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, uint32_t frameInFlightIndex);
 
         /// <summary>
         /// Get a reference to a node in the scene.
@@ -506,7 +518,6 @@ namespace Mandrill
         std::vector<Material> mMaterials;
         std::unordered_map<std::string, ptr<Texture>> mTextures;
         ptr<Texture> mpEnvironmentMap;
-        ptr<Descriptor> mpEnvironmentMapDescriptor;
 
         ptr<Buffer> mpVertexBuffer;
         ptr<Buffer> mpIndexBuffer;
@@ -515,7 +526,9 @@ namespace Mandrill
 
         ptr<Texture> mpMissingTexture;
 
-        ptr<Descriptor> mpRayTracingDescriptor;
+        // The shader the scene was set up against, and where the materials keep their prepared sets
+        ptr<Shader> mpShader;
+        uint32_t mMaterialSet = 0;
         ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
         ptr<Buffer> mpInstanceDataBuffer;
 

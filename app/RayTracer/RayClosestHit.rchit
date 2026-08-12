@@ -21,11 +21,11 @@ struct Vertex {
 
 layout(set = 1, binding = 1, std430) readonly buffer VertexBuffer {
 	Vertex vertices[VERTEX_COUNT];
-};
+} vertexBuffer;
 
 layout(set = 1, binding = 2, std430) readonly buffer IndexBuffer {
 	uint indices[INDEX_COUNT];
-};
+} indexBuffer;
 
 struct InstanceData {
     uint verticesOffset;
@@ -34,7 +34,7 @@ struct InstanceData {
 
 layout(set = 1, binding = 3, std430) readonly buffer InstanceDataBuffer {
 	InstanceData instanceDatas[MESH_COUNT];
-};
+} instanceDataBuffer;
 
 const uint DIFFUSE_TEXTURE_BIT = 1 << 0;
 const uint SPECULAR_TEXTURE_BIT = 1 << 1;
@@ -67,7 +67,7 @@ struct Material {
 
 layout(set = 1, binding = 4, std430) readonly buffer MaterialBuffer {
 	Material materials[MATERIAL_COUNT];
-};
+} materialBuffer;
 
 layout(set = 1, binding = 5) uniform sampler2D textures[TEXTURE_COUNT];
 
@@ -81,16 +81,16 @@ void main()
     vec3 bary = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
 
     // Material index is stored in instance custom index
-    Material material = materials[gl_InstanceCustomIndexEXT];
+    Material material = materialBuffer.materials[gl_InstanceCustomIndexEXT];
 
     // Get triangle vertices
-    InstanceData data = instanceDatas[gl_InstanceID];
-    uint i0 = indices[data.indicesOffset + gl_PrimitiveID * 3 + 0];
-    uint i1 = indices[data.indicesOffset + gl_PrimitiveID * 3 + 1];
-    uint i2 = indices[data.indicesOffset + gl_PrimitiveID * 3 + 2];
-    Vertex v0 = vertices[data.verticesOffset + i0];
-    Vertex v1 = vertices[data.verticesOffset + i1];
-    Vertex v2 = vertices[data.verticesOffset + i2];
+    InstanceData data = instanceDataBuffer.instanceDatas[gl_InstanceID];
+    uint i0 = indexBuffer.indices[data.indicesOffset + gl_PrimitiveID * 3 + 0];
+    uint i1 = indexBuffer.indices[data.indicesOffset + gl_PrimitiveID * 3 + 1];
+    uint i2 = indexBuffer.indices[data.indicesOffset + gl_PrimitiveID * 3 + 2];
+    Vertex v0 = vertexBuffer.vertices[data.verticesOffset + i0];
+    Vertex v1 = vertexBuffer.vertices[data.verticesOffset + i1];
+    Vertex v2 = vertexBuffer.vertices[data.verticesOffset + i2];
 
     vec2 uv = v0.texcoord * bary.x + v1.texcoord * bary.y + v2.texcoord * bary.z;
 

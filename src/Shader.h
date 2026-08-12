@@ -5,6 +5,8 @@
 #include "Descriptor.h"
 #include "Device.h"
 
+#include <deque>
+
 namespace Mandrill
 {
     struct ShaderDesc {
@@ -78,7 +80,22 @@ namespace Mandrill
         /// </summary>
         /// <param name="pDevice">Device to use</param>
         /// <param name="desc">Description of shader being created</param>
-        MANDRILL_API Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc);
+        /// <param name="pushDescriptorSets">Sets that should use push descriptors, which are written straight into
+        /// the command buffer instead of being allocated from a pool. A set can only do this if it holds no dynamic
+        /// descriptors and fits within the device limit, and it can then no longer be allocated from, so only list
+        /// sets whose resources are attached with setResource().</param>
+        MANDRILL_API Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc,
+                            const std::vector<uint32_t>& pushDescriptorSets = {});
+
+        /// <summary>
+        /// Check whether a set uses push descriptors.
+        /// </summary>
+        /// <param name="set">Set to query</param>
+        /// <returns>True if the set is pushed rather than allocated</returns>
+        MANDRILL_API bool isPushDescriptorSet(uint32_t set) const
+        {
+            return set < mSetIsPush.size() && mSetIsPush[set];
+        }
 
         /// <summary>
         /// Destructor for shader.
@@ -244,9 +261,20 @@ namespace Mandrill
             ptr<AccelerationStructure> pAccelerationStructure;
         };
 
+        // Backing storage for a batch of descriptor writes. The writes hold pointers into these, and a deque never
+        // moves what it already holds.
+        struct DescriptorWrites {
+            std::vector<VkWriteDescriptorSet> writes;
+            std::deque<VkDescriptorBufferInfo> buffers;
+            std::deque<std::vector<VkDescriptorImageInfo>> images;
+            std::deque<VkWriteDescriptorSetAccelerationStructureKHR> accelerationStructureInfos;
+            std::deque<VkAccelerationStructureKHR> accelerationStructures;
+        };
+
         void createShader();
         void createDescriptorPool();
         void destroyDescriptorPools();
+        void buildWrites(uint32_t set, VkDescriptorSet dstSet, DescriptorWrites& out) const;
 
         // Looks up a resource and checks that the shader expects the kind of resource being attached
         const ResourceInfo* resolveResource(const std::string& name, const char* kind,
@@ -274,6 +302,8 @@ namespace Mandrill
         std::map<std::string, ResourceInfo> mResourceInfos;
         std::map<std::string, BoundResource> mResources;
 
+        std::vector<uint32_t> mRequestedPushSets;     // Sets the application asked to be pushed
+        std::vector<bool> mSetIsPush;                 // Sets that ended up eligible and are pushed
         std::vector<VkDescriptorSet> mDescriptorSets; // One per set, the currently written set
         std::vector<bool> mSetDirty;                  // Whether the set has to be written before the next bind
 
