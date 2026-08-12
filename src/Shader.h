@@ -88,16 +88,6 @@ namespace Mandrill
                             const std::vector<uint32_t>& pushDescriptorSets = {});
 
         /// <summary>
-        /// Check whether a set uses push descriptors.
-        /// </summary>
-        /// <param name="set">Set to query</param>
-        /// <returns>True if the set is pushed rather than allocated</returns>
-        MANDRILL_API bool isPushDescriptorSet(uint32_t set) const
-        {
-            return set < mSetIsPush.size() && mSetIsPush[set];
-        }
-
-        /// <summary>
         /// Destructor for shader.
         /// </summary>
         MANDRILL_API ~Shader();
@@ -243,6 +233,16 @@ namespace Mandrill
         MANDRILL_API VkPipelineLayout getPipelineLayout() const
         {
             return mPipelineLayout;
+        }
+
+        /// <summary>
+        /// Check whether a set uses push descriptors.
+        /// </summary>
+        /// <param name="set">Set to query</param>
+        /// <returns>True if the set is pushed rather than allocated</returns>
+        MANDRILL_API bool isPushDescriptorSet(uint32_t set) const
+        {
+            return set < mSetIsPush.size() && mSetIsPush[set];
         }
 
     private:
