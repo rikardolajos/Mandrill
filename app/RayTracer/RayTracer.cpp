@@ -25,7 +25,7 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight (default)
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass for rendering GUI (depth attachment is not needed)
@@ -89,7 +89,7 @@ public:
             mpScene->getNodes()[mCubeIndex].addMesh(meshIndex);
         }
 
-        mpScene->compile(mpSwapchain->getFramesInFlightCount());
+        mpScene->compile();
         mpScene->syncToDevice();
 
         // Load environment map
@@ -110,11 +110,10 @@ public:
             mpDevice->createAccelerationStructure(mpScene, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
         // Create descriptors when layouts are defined
-        mpScene->createRayTracingDescriptors(pShader->getDescriptorSetLayouts(), mpAccelerationStructure,
-                                             mpSwapchain->getFramesInFlightCount());
+        mpScene->createRayTracingDescriptors(pShader->getDescriptorSetLayouts(), mpAccelerationStructure);
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
+        mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -137,7 +136,7 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+            mpCamera->update(mpWindow, delta, getCursorDelta());
         }
 
         mAngle += mRotationSpeed * delta;
@@ -180,7 +179,7 @@ public:
                            &pushConstants);
 
         // Bind descriptors
-        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout(), mpSwapchain->getInFlightIndex());
+        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
         mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, 3);
 
         // Trace rays

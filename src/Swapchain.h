@@ -18,11 +18,10 @@ namespace Mandrill
         MANDRILL_NON_COPYABLE(Swapchain)
 
         /// <summary>
-        /// Create a new swapchain.
+        /// Create a new swapchain. How many frames it keeps in flight is decided by the device.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="framesInFlight">How many frames in flight that should be used</param>
-        MANDRILL_API Swapchain(ptr<Device> pDevice, uint32_t framesInFlight = 2);
+        MANDRILL_API Swapchain(ptr<Device> pDevice);
 
         /// <summary>
         /// Destructor for swapchain.
@@ -168,7 +167,8 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the count of the total number of frames in flight.
+        /// Get the count of the total number of frames in flight. This is the device's count, the swapchain only
+        /// follows it.
         /// </summary>
         /// <returns>Number of frames in flight</returns>
         MANDRILL_API uint32_t getFramesInFlightCount() const

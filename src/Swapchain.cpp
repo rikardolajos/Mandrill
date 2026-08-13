@@ -63,13 +63,15 @@ static VkExtent2D chooseExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLF
     }
 }
 
-Swapchain::Swapchain(ptr<Device> pDevice, uint32_t framesInFlight) : mpDevice(pDevice)
+Swapchain::Swapchain(ptr<Device> pDevice) : mpDevice(pDevice)
 {
     querySupport();
     createSwapchain();
-    createSyncObjects(framesInFlight);
+    createSyncObjects(pDevice->getFramesInFlightCount());
     createDescriptor();
     createScreenshotStageImage();
+
+    mpDevice->setFrameInFlightIndex(mInFlightIndex);
 }
 
 Swapchain::~Swapchain()
@@ -270,6 +272,11 @@ void Swapchain::present(VkCommandBuffer cmd, ptr<Image> pImage)
 
     mPreviousInFlightIndex = mInFlightIndex;
     mInFlightIndex = (mInFlightIndex + 1) % count(mInFlightFences);
+
+    // Everything that picks a per-frame resource without being told which frame follows the device, so it has to be
+    // moved on together with the swapchain. This is the only place the index advances, which is what makes it safe to
+    // read at any point during an application's update and render.
+    mpDevice->setFrameInFlightIndex(mInFlightIndex);
 }
 
 void Swapchain::requestScreenshot()

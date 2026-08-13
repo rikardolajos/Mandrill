@@ -150,8 +150,8 @@ namespace Mandrill
         MANDRILL_API void setResource(const std::string& name, ptr<AccelerationStructure> pAccelerationStructure);
 
         /// <summary>
-        /// Bind every descriptor set that has resources attached to it, using the first copy of any per-frame
-        /// resource. Only meaningful for shaders without dynamic descriptors, bind those one set at a time instead.
+        /// Bind every descriptor set that has resources attached to it, using the current frame's copy of any
+        /// per-frame resource.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="bindPoint">Bind point in pipeline</param>
@@ -165,9 +165,10 @@ namespace Mandrill
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="bindPoint">Bind point in pipeline</param>
         /// <param name="set">Set to bind</param>
-        /// <param name="frameInFlightIndex">Used to determine which copy of the per-frame resources to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the per-frame resources to use, the current frame by
+        /// default</param>
         MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
-                                        uint32_t frameInFlightIndex = 0);
+                                        uint32_t frameInFlightIndex = kCurrentFrameInFlight);
 
         /// <summary>
         /// Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is

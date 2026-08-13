@@ -126,6 +126,11 @@ namespace Mandrill
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
+    // Every function that takes a frame in flight index accepts this to mean the frame the device is currently on,
+    // which is what the index defaults to. Pass an index explicitly to reach another frame's copy of a resource, such
+    // as the previous frame's camera matrices in a temporal technique.
+    static constexpr uint32_t kCurrentFrameInFlight = std::numeric_limits<uint32_t>::max();
+
     template <typename T>
     concept Sizable = requires(T t) {
         { t.size() } -> std::convertible_to<std::size_t>;

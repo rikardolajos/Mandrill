@@ -60,7 +60,7 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight (default)
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
@@ -79,7 +79,7 @@ public:
         mpPipeline = mpDevice->createPipeline(mpPass, pShader, PipelineDesc());
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
+        mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -93,7 +93,7 @@ public:
         setupVertexBuffers();
 
         // Uniform for sending model matrix to shaders, with one copy per frame in flight
-        mpUniform = mpDevice->createDynamicBuffer(sizeof(glm::mat4), mpSwapchain->getFramesInFlightCount());
+        mpUniform = mpDevice->createPerFrameBuffer(sizeof(glm::mat4));
 
         // Attach the resources to the names they have in the shader. Both uniform buffers hold one copy per frame in
         // flight, which the shader knows about and takes into account when binding them.
@@ -116,14 +116,14 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+            mpCamera->update(mpWindow, delta, getCursorDelta());
         }
 
         mAngle += mRotationSpeed * delta;
 
         glm::mat4 model = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        mpUniform->copyFromHost(&model, mpSwapchain->getInFlightIndex());
+        mpUniform->copyFromHost(&model);
     }
 
     void render() override
@@ -147,8 +147,8 @@ public:
         // Bind the resources attached to the shader. Both sets hold a uniform with one copy per frame in flight, and
         // the frame index is all the shader needs to pick the right one.
         auto pShader = mpPipeline->getShader();
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, mpSwapchain->getInFlightIndex());
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
 
         // Bind vertex and index buffers
         VkBuffer vertexBuffer = mpVertexBuffer->getBuffer();

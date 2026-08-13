@@ -33,12 +33,10 @@ namespace Mandrill
         MANDRILL_NON_COPYABLE(Camera)
 
         /// <summary>
-        /// Create a new camera.
+        /// Create a new camera. The matrices are kept in one copy per frame in flight, as the device is set up for.
         /// </summary>
         /// <param name="pDevice">Device to use</param>
-        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
-        /// needed</param>
-        MANDRILL_API Camera(ptr<Device> pDevice, uint32_t framesInFlightCount);
+        MANDRILL_API Camera(ptr<Device> pDevice);
 
         /// <summary>
         /// Destructor of camera.
@@ -61,8 +59,8 @@ namespace Mandrill
         /// <summary>
         /// Update function to update uniforms, without any user input movement.
         /// </summary>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        MANDRILL_API void update(uint32_t frameInFlightIndex);
+        /// <param name="frameInFlightIndex">Which copy of the matrices to write, the current frame by default</param>
+        MANDRILL_API void update(uint32_t frameInFlightIndex = kCurrentFrameInFlight);
 
         /// <summary>
         /// Update function to handle camera movements. Call this each app update.
@@ -70,8 +68,9 @@ namespace Mandrill
         /// <param name="pWindow">GLFW window to poll for input</param>
         /// <param name="delta">Time since last update</param>
         /// <param name="cursorDelta">Mouse cursor movement</param>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
-        MANDRILL_API void update(GLFWwindow* pWindow, float delta, glm::vec2 cursorDelta, uint32_t frameInFlightIndex);
+        /// <param name="frameInFlightIndex">Which copy of the matrices to write, the current frame by default</param>
+        MANDRILL_API void update(GLFWwindow* pWindow, float delta, glm::vec2 cursorDelta,
+                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight);
 
         /// <summary>
         /// Set the projection of the camera.
@@ -82,9 +81,9 @@ namespace Mandrill
         /// <summary>
         /// Get the frustum of the camera.
         /// </summary>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the matrices to read, the current frame by default</param>
         /// <returns>Camera frustum</returns>
-        MANDRILL_API Frustum getFrustum(uint32_t frameInFlightIndex) const;
+        MANDRILL_API Frustum getFrustum(uint32_t frameInFlightIndex = kCurrentFrameInFlight) const;
 
         /// <summary>
         /// Check if camera has captured the mouse movements.
@@ -222,9 +221,9 @@ namespace Mandrill
         /// <summary>
         /// Get the view matrix of the camera.
         /// </summary>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the matrices to read, the current frame by default</param>
         /// <returns>View matrix</returns>
-        MANDRILL_API glm::mat4 getViewMatrix(uint32_t frameInFlightIndex) const
+        MANDRILL_API glm::mat4 getViewMatrix(uint32_t frameInFlightIndex = kCurrentFrameInFlight) const
         {
             CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
             return matrices->view;
@@ -233,9 +232,9 @@ namespace Mandrill
         /// <summary>
         /// Get the projection matrix of the camera.
         /// </summary>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the matrices to read, the current frame by default</param>
         /// <returns>Projection matrix</returns>
-        MANDRILL_API glm::mat4 getProjectionMatrix(uint32_t frameInFlightIndex) const
+        MANDRILL_API glm::mat4 getProjectionMatrix(uint32_t frameInFlightIndex = kCurrentFrameInFlight) const
         {
             CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
             return matrices->proj;
@@ -274,9 +273,9 @@ namespace Mandrill
         /// Get the offset that selects a frame's copy of the camera matrices when binding a descriptor. Only needed
         /// when binding a descriptor by hand, a shader that the uniform buffer is attached to works this out itself.
         /// </summary>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the matrices to select, the current frame by default</param>
         /// <returns>Dynamic offset in bytes</returns>
-        MANDRILL_API uint32_t getDynamicOffset(uint32_t frameInFlightIndex) const
+        MANDRILL_API uint32_t getDynamicOffset(uint32_t frameInFlightIndex = kCurrentFrameInFlight) const
         {
             return mpUniforms->getOffset(frameInFlightIndex);
         }

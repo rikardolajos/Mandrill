@@ -15,7 +15,7 @@ namespace
 } // namespace
 
 
-Camera::Camera(ptr<Device> pDevice, uint32_t frameInFlightCount) : mpDevice(pDevice)
+Camera::Camera(ptr<Device> pDevice) : mpDevice(pDevice)
 {
     mPosition = glm::vec3(1.0f, 1.0f, 1.0f);
     setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -28,7 +28,7 @@ Camera::Camera(ptr<Device> pDevice, uint32_t frameInFlightCount) : mpDevice(pDev
     mOrthoSize = 10.0f;
     mMoveSpeed = 1.0f;
 
-    mpUniforms = mpDevice->createDynamicBuffer(sizeof(CameraMatrices), frameInFlightCount);
+    mpUniforms = mpDevice->createPerFrameBuffer(sizeof(CameraMatrices));
 }
 
 Camera::~Camera()

@@ -41,23 +41,33 @@ namespace Mandrill
         /// <summary>
         /// Get a host pointer to one of the copies.
         /// </summary>
-        /// <param name="index">Which copy to address</param>
+        /// <param name="index">Which copy to address. Defaults to the copy of the current frame in flight, which only
+        /// works for a buffer that holds exactly one copy per frame.</param>
         /// <returns>Pointer to the copy, or nullptr if the index is out of range</returns>
-        MANDRILL_API void* at(uint32_t index) const;
+        MANDRILL_API void* at(uint32_t index = kCurrentFrameInFlight) const;
 
         /// <summary>
         /// Write one of the copies. Copies getElementSize() bytes from the given data.
         /// </summary>
         /// <param name="pData">Data to copy</param>
-        /// <param name="index">Which copy to write</param>
-        MANDRILL_API void copyFromHost(const void* pData, uint32_t index);
+        /// <param name="index">Which copy to write. Defaults to the copy of the current frame in flight, which only
+        /// works for a buffer that holds exactly one copy per frame.</param>
+        MANDRILL_API void copyFromHost(const void* pData, uint32_t index = kCurrentFrameInFlight);
 
         /// <summary>
         /// Get the dynamic offset that selects one of the copies when binding a descriptor.
         /// </summary>
-        /// <param name="index">Which copy to address</param>
+        /// <param name="index">Which copy to address. Defaults to the copy of the current frame in flight, which only
+        /// works for a buffer that holds exactly one copy per frame.</param>
         /// <returns>Offset in bytes from the start of the buffer</returns>
-        MANDRILL_API uint32_t getOffset(uint32_t index) const;
+        MANDRILL_API uint32_t getOffset(uint32_t index = kCurrentFrameInFlight) const;
+
+        /// <summary>
+        /// Check whether the buffer holds exactly one copy per frame in flight, which is what makes it possible to
+        /// address it by the current frame alone.
+        /// </summary>
+        /// <returns>True if there is one copy per frame in flight</returns>
+        MANDRILL_API bool isPerFrame() const;
 
         /// <summary>
         /// Get the distance in bytes between two consecutive copies. This is the element size rounded up to the
@@ -97,6 +107,10 @@ namespace Mandrill
         }
 
     private:
+        // Turns kCurrentFrameInFlight into the frame the device is on, and reports if that cannot mean anything for
+        // this buffer because it is not laid out one copy per frame
+        uint32_t resolveIndex(uint32_t index) const;
+
         ptr<Device> mpDevice;
         ptr<Buffer> mpBuffer;
 

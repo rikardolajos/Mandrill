@@ -48,9 +48,12 @@ namespace Mandrill
         /// <param name="pFeatures">Pointer to a pNext-chain of features to link with when creating device, can be
         /// nullptr in which case a set of required default features will be used</param> <param
         /// name="physicalDeviceIndex">Physical device to use. If not set, the first discrete device is used, or device 0.</param>
+        /// <param name="framesInFlightCount">How many frames the application pipelines. This decides how many copies
+        /// every per-frame resource in the framework gets, and stays fixed for the lifetime of the device.</param>
         MANDRILL_API Device(GLFWwindow* pWindow,
                             const std::vector<const char*>& extensions = std::vector<const char*>(),
-                            VkPhysicalDeviceFeatures2* pFeatures = nullptr, uint32_t physicalDeviceIndex = std::numeric_limits<uint32_t>::max());
+                            VkPhysicalDeviceFeatures2* pFeatures = nullptr, uint32_t physicalDeviceIndex = std::numeric_limits<uint32_t>::max(),
+                            uint32_t framesInFlightCount = 2);
 
         /// <summary>
         /// Destructor for device.
@@ -166,6 +169,37 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get how many frames the application pipelines. Every resource that the host rewrites while the device may
+        /// still be reading the previous value needs this many copies, which the framework takes care of on its own.
+        /// </summary>
+        /// <returns>Number of frames in flight</returns>
+        MANDRILL_API uint32_t getFramesInFlightCount() const
+        {
+            return mFramesInFlightCount;
+        }
+
+        /// <summary>
+        /// Get the frame in flight the device is currently on. The swapchain advances this when a frame is presented,
+        /// so it is the same for the whole of an application's update and render pair.
+        /// </summary>
+        /// <returns>Index of the current frame in flight</returns>
+        MANDRILL_API uint32_t getFrameInFlightIndex() const
+        {
+            return mFrameInFlightIndex;
+        }
+
+        /// <summary>
+        /// Turn a frame in flight index that may be kCurrentFrameInFlight into a concrete one. Used by the parts of
+        /// the framework that let the caller leave the frame out.
+        /// </summary>
+        /// <param name="frameInFlightIndex">Index to resolve</param>
+        /// <returns>Index of the frame to use</returns>
+        MANDRILL_API uint32_t resolveFrameInFlightIndex(uint32_t frameInFlightIndex) const
+        {
+            return frameInFlightIndex == kCurrentFrameInFlight ? mFrameInFlightIndex : frameInFlightIndex;
+        }
+
+        /// <summary>
         /// Get the multisample anti-aliasing sample count.
         /// </summary>
         /// <returns>Sample count</returns>
@@ -192,10 +226,8 @@ namespace Mandrill
         /// <summary>
         /// Create a new camera.
         /// </summary>
-        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
-        /// needed</param>
         /// <returns>A new camera</returns>
-        MANDRILL_API ptr<Camera> createCamera(uint32_t framesInFlightCount);
+        MANDRILL_API ptr<Camera> createCamera();
 
         /// <summary>
         /// Create a new descriptor.
@@ -216,6 +248,16 @@ namespace Mandrill
         MANDRILL_API ptr<DynamicBuffer>
         createDynamicBuffer(VkDeviceSize elementSize, uint32_t elementCount,
                             VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+        /// <summary>
+        /// Create a new dynamic buffer holding exactly one copy per frame in flight. Use this for anything that is
+        /// rewritten every frame, such as a model matrix that changes with time.
+        /// </summary>
+        /// <param name="elementSize">Size of one copy in bytes</param>
+        /// <param name="usage">How the buffer will be used, which also decides the alignment of the copies</param>
+        /// <returns>A new dynamic buffer</returns>
+        MANDRILL_API ptr<DynamicBuffer>
+        createPerFrameBuffer(VkDeviceSize elementSize, VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
         /// <summary>
         /// Create a new Image and allocate memory for it.
@@ -318,11 +360,10 @@ namespace Mandrill
         MANDRILL_API ptr<Shader> createShader(const std::vector<ShaderDesc>& desc);
 
         /// <summary>
-        /// Create a new swapchain.
+        /// Create a new swapchain. How many frames it keeps in flight is decided by the device.
         /// </summary>
-        /// <param name="framesInFlight">How many frames in flight that should be used</param>
         /// <returns>A new swapchain</returns>
-        MANDRILL_API ptr<Swapchain> createSwapchain(uint32_t framesInFlight = 2);
+        MANDRILL_API ptr<Swapchain> createSwapchain();
 
         /// <summary>
         /// Create a new texture from a file.
@@ -360,6 +401,14 @@ namespace Mandrill
         MANDRILL_API ptr<Texture> createTextureFromImage(ptr<Image> pImage, bool mipmaps = false);
 
     private:
+        // The swapchain owns the pacing of the frames in flight and keeps the device's index in step with its own
+        friend class Swapchain;
+
+        void setFrameInFlightIndex(uint32_t frameInFlightIndex)
+        {
+            mFrameInFlightIndex = frameInFlightIndex;
+        }
+
 #if defined(_DEBUG)
         void createDebugMessenger();
 #endif
@@ -382,6 +431,11 @@ namespace Mandrill
         VkSurfaceKHR mSurface;
 
         DeviceProperties mProperties;
+
+        // Fixed for the lifetime of the device, since every per-frame resource is sized after it
+        uint32_t mFramesInFlightCount;
+        // Kept in step with the swapchain, which advances it once a frame has been presented
+        uint32_t mFrameInFlightIndex = 0;
 
         uint32_t mQueueFamilyIndex;
         VkCommandPool mCommandPool;

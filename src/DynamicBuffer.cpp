@@ -48,8 +48,33 @@ DynamicBuffer::~DynamicBuffer()
 {
 }
 
+bool DynamicBuffer::isPerFrame() const
+{
+    return mElementCount == mpDevice->getFramesInFlightCount();
+}
+
+uint32_t DynamicBuffer::resolveIndex(uint32_t index) const
+{
+    if (index != kCurrentFrameInFlight) {
+        return index;
+    }
+
+    // A buffer that is indexed by something else as well, like a transform that varies per node and per frame, has no
+    // element that the current frame alone points at
+    if (!isPerFrame()) {
+        Log::Error("DynamicBuffer: The current frame in flight does not address this buffer, which holds {} elements "
+                   "and not one per frame in flight. Give the element index explicitly.",
+                   mElementCount);
+        return 0;
+    }
+
+    return mpDevice->getFrameInFlightIndex();
+}
+
 void* DynamicBuffer::at(uint32_t index) const
 {
+    index = resolveIndex(index);
+
     if (index >= mElementCount) {
         Log::Error("DynamicBuffer: Element {} is out of range, the buffer holds {} elements", index, mElementCount);
         return nullptr;
@@ -70,6 +95,8 @@ void DynamicBuffer::copyFromHost(const void* pData, uint32_t index)
 
 uint32_t DynamicBuffer::getOffset(uint32_t index) const
 {
+    index = resolveIndex(index);
+
     if (index >= mElementCount) {
         Log::Error("DynamicBuffer: Element {} is out of range, the buffer holds {} elements", index, mElementCount);
         return 0;

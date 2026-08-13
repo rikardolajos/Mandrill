@@ -832,6 +832,8 @@ void Shader::updateDescriptorSet(uint32_t set)
 
 std::vector<uint32_t> Shader::getDynamicOffsets(uint32_t set, uint32_t frameInFlightIndex)
 {
+    frameInFlightIndex = mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
+
     std::vector<uint32_t> offsets;
     offsets.reserve(mDynamicBindings[set].size());
 

@@ -104,7 +104,7 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight (default
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create scene
@@ -149,16 +149,15 @@ public:
         // Scale down the model
         mpScene->getNodes()[nodeIndex].setTransform(glm::scale(glm::vec3(0.01f)));
 
-        mpScene->compile(mpSwapchain->getFramesInFlightCount());
-        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts(),
-                                   mpSwapchain->getFramesInFlightCount());
+        mpScene->compile();
+        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts());
         mpScene->syncToDevice();
 
         // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
+        mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -178,7 +177,7 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+            mpCamera->update(mpWindow, delta, getCursorDelta());
         }
     }
 
@@ -203,7 +202,7 @@ public:
         mpGBufferPass->begin(cmd, glm::vec4(0.2f, 0.6f, 1.0f, 1.0f));
 
         // Render scene
-        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
+        mpScene->render(cmd, mpCamera);
 
         // End the G-Buffer pass without any implicit image transitions
         vkCmdEndRendering(cmd);

@@ -90,9 +90,14 @@ void Device::createDebugMessenger()
 #endif
 
 Device::Device(GLFWwindow* pWindow, const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures2* pFeatures,
-               uint32_t physicalDeviceIndex)
-    : mpWindow(pWindow), mVsync(true), mRayTracingSupport(false)
+               uint32_t physicalDeviceIndex, uint32_t framesInFlightCount)
+    : mpWindow(pWindow), mVsync(true), mRayTracingSupport(false), mFramesInFlightCount(framesInFlightCount)
 {
+    if (mFramesInFlightCount == 0) {
+        Log::Error("Device: At least one frame in flight is needed");
+        mFramesInFlightCount = 1;
+    }
+
     createInstance();
 
 #if defined(_DEBUG)
@@ -540,9 +545,9 @@ ptr<Buffer> Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
     return make_ptr<Buffer>(shared_from_this(), size, usage, properties);
 }
 
-ptr<Camera> Device::createCamera(uint32_t framesInFlightCount)
+ptr<Camera> Device::createCamera()
 {
-    return make_ptr<Camera>(shared_from_this(), framesInFlightCount);
+    return make_ptr<Camera>(shared_from_this());
 }
 
 ptr<Descriptor> Device::createDescriptor(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout)
@@ -554,6 +559,11 @@ ptr<DynamicBuffer> Device::createDynamicBuffer(VkDeviceSize elementSize, uint32_
                                                VkBufferUsageFlags usage)
 {
     return make_ptr<DynamicBuffer>(shared_from_this(), elementSize, elementCount, usage);
+}
+
+ptr<DynamicBuffer> Device::createPerFrameBuffer(VkDeviceSize elementSize, VkBufferUsageFlags usage)
+{
+    return make_ptr<DynamicBuffer>(shared_from_this(), elementSize, mFramesInFlightCount, usage);
 }
 
 ptr<Image> Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,
@@ -609,9 +619,9 @@ ptr<Shader> Device::createShader(const std::vector<ShaderDesc>& desc)
     return make_ptr<Shader>(shared_from_this(), desc);
 }
 
-ptr<Swapchain> Device::createSwapchain(uint32_t framesInFlight)
+ptr<Swapchain> Device::createSwapchain()
 {
-    return make_ptr<Swapchain>(shared_from_this(), framesInFlight);
+    return make_ptr<Swapchain>(shared_from_this());
 }
 
 ptr<Texture> Device::createTextureFromFile(TextureType type, VkFormat format, const std::filesystem::path& path,

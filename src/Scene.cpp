@@ -45,12 +45,14 @@ void Node::drawMeshes(VkCommandBuffer cmd, const ptr<const Scene> pScene) const
     }
 }
 
-void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
-                  const ptr<const Scene> pScene) const
+void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene,
+                  uint32_t frameInFlightIndex) const
 {
     if (!mVisible || !mpPipeline) {
         return;
     }
+
+    frameInFlightIndex = pScene->mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
 
     mpPipeline->bind(cmd);
 
@@ -116,12 +118,14 @@ Scene::~Scene()
 {
 }
 
-void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
-                   bool frustumCulling) const
+void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, bool frustumCulling,
+                   uint32_t frameInFlightIndex) const
 {
     if (mNodes.empty()) {
         return;
     }
+
+    frameInFlightIndex = mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
 
     // Bind descriptor set for camera matrices and environment map
     pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 0,
@@ -142,7 +146,7 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t fram
             }
         }
 
-        node.render(cmd, pCamera, frameInFlightIndex, shared_from_this());
+        node.render(cmd, pCamera, shared_from_this(), frameInFlightIndex);
     }
 }
 
@@ -369,8 +373,10 @@ std::vector<uint32_t> Scene::addMeshFromFile(const std::filesystem::path& path,
     return newMeshIndices;
 }
 
-void Scene::compile(uint32_t framesInFlightCount)
+void Scene::compile()
 {
+    const uint32_t framesInFlightCount = mpDevice->getFramesInFlightCount();
+
     if (mpMissingTexture->getSampler() == VK_NULL_HANDLE) {
         Log::Error("Scene: Sampler must be set before calling compile()");
     }
@@ -472,8 +478,7 @@ void Scene::compile(uint32_t framesInFlightCount)
     }
 }
 
-void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                              uint32_t frameInFlightCount)
+void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts)
 {
     // Node transforms. The descriptor covers the node's slot and the dynamic offset picks the frame in flight, so
     // Node::render() only has to add the offset of a frame.
@@ -513,8 +518,7 @@ void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descript
 }
 
 void Scene::createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                                        const ptr<AccelerationStructure> pAccelerationStructure,
-                                        uint32_t frameInFlightCount)
+                                        const ptr<AccelerationStructure> pAccelerationStructure)
 {
     // Get a list of the textures
     std::vector<ptr<Texture>> textures;
@@ -574,6 +578,8 @@ void Scene::syncToDevice()
 void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
                                       uint32_t frameInFlightIndex)
 {
+    frameInFlightIndex = mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
+
     pCamera->getRayTracingDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0,
                                              pCamera->getDynamicOffset(frameInFlightIndex));
 

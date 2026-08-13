@@ -116,10 +116,11 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <param name="pScene">Scene which the node belongs to</param>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
-                                 const ptr<const Scene> pScene) const;
+        /// <param name="frameInFlightIndex">Which copy of the per-frame resources to use, the current frame by
+        /// default</param>
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene,
+                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) const;
 
         /// <summary>
         /// Get bounding box of the node
@@ -233,10 +234,11 @@ namespace Mandrill
         /// </summary>
         /// <param name="cmd">Command buffer to use for rendering</param>
         /// <param name="pCamera">Camera that defines which camera matrices to use</param>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
         /// <param name="frustumCulling">Cull nodes that are outside of the camera's frustum</param>
-        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frameInFlightIndex,
-                                 bool frustumCulling = true) const;
+        /// <param name="frameInFlightIndex">Which copy of the per-frame resources to use, the current frame by
+        /// default</param>
+        MANDRILL_API void render(VkCommandBuffer cmd, const ptr<Camera> pCamera, bool frustumCulling = true,
+                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) const;
 
         /// <summary>
         /// Add a node to the scene.
@@ -282,11 +284,10 @@ namespace Mandrill
                                                            const std::filesystem::path& materialPath = "");
 
         /// <summary>
-        /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.
+        /// Calculate sizes of buffers and allocate resources. Call this after all nodes have been added. Node
+        /// transforms get one copy per frame in flight, as the device is set up for.
         /// </summary>
-        /// <param name="framesInFlightCount">Used to determine how many copies of per-frame resources are
-        /// needed</param>
-        MANDRILL_API void compile(uint32_t frameInFlightCount);
+        MANDRILL_API void compile();
 
         /// <summary>
         /// Create desciptors for scene.
@@ -308,10 +309,7 @@ namespace Mandrill
         /// </summary>
         /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
         /// Shader::getDescriptorSetLayouts())</param>
-        /// <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
-        /// needed</param>
-        MANDRILL_API void createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                                            uint32_t frameInFlightCount);
+        MANDRILL_API void createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
 
         /// <summary>
         /// Create ray-tracing desciptors for scene.
@@ -332,11 +330,9 @@ namespace Mandrill
         /// </summary>
         /// <param name="descriptorSetLayouts">Vector with descriptor set layouts to use (get from
         /// Shader::getDescriptorSetLayouts())</param> <param name="pAccelerationStructure">Acceleration structure to
-        /// bind</param> <param name="frameInFlightCount">Used to determine how many copies of per-frame resources are
-        /// needed</param>
+        /// bind</param>
         MANDRILL_API void createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
-                                                      const ptr<AccelerationStructure> pAccelerationStructure,
-                                                      uint32_t frameInFlightCount);
+                                                      const ptr<AccelerationStructure> pAccelerationStructure);
 
         /// <summary>
         /// Synchronize buffers to device.
@@ -356,9 +352,10 @@ namespace Mandrill
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="pCamera">Camera to use</param>
         /// <param name="layout">Pipeline layout</param>
-        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <param name="frameInFlightIndex">Which copy of the per-frame resources to use, the current frame by
+        /// default</param>
         MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
-                                                    uint32_t frameInFlightIndex);
+                                                    uint32_t frameInFlightIndex = kCurrentFrameInFlight);
 
         /// <summary>
         /// Get a reference to a node in the scene.

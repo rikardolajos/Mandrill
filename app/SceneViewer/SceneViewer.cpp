@@ -32,11 +32,10 @@ public:
          }
 
         // Calculate and allocate buffers
-        mpScene->compile(mpSwapchain->getFramesInFlightCount());
+        mpScene->compile();
 
         // Create descriptors
-        mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
-                                   mpSwapchain->getFramesInFlightCount());
+        mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts());
 
         // Sync to GPU
         mpScene->syncToDevice();
@@ -47,7 +46,7 @@ public:
         // Create a Vulkan instance and device
         mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight (default)
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
@@ -71,7 +70,7 @@ public:
         mPipelines.emplace_back(mpDevice->createPipeline(mpPass, pShader, pipelineDesc));
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
+        mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -107,15 +106,14 @@ public:
 
             // Since we changed samplers, we need to re-create descriptors
             if (!mScenePath.empty()) {
-                mpScene->compile(mpSwapchain->getFramesInFlightCount());
-                mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts(),
-                                           mpSwapchain->getFramesInFlightCount());
+                mpScene->compile();
+                mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts());
                 mpScene->syncToDevice();
             }
         }
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+            mpCamera->update(mpWindow, delta, getCursorDelta());
         }
     }
 
@@ -139,7 +137,7 @@ public:
                            sizeof pushConstants, &pushConstants);
 
         // Render scene
-        mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex(), mFrustumCulling);
+        mpScene->render(cmd, mpCamera, mFrustumCulling);
 
         // Render lines
         if (mDrawPolygonLines) {
@@ -158,7 +156,7 @@ public:
 
             mPipelines[PIPELINE_LINE]->setLineWidth(mLineWidth);
 
-            mpScene->render(cmd, mpCamera, mpSwapchain->getInFlightIndex());
+            mpScene->render(cmd, mpCamera);
 
             // Reset pipeline
             for (auto& node : mpScene->getNodes()) {

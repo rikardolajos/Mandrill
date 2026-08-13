@@ -49,12 +49,9 @@ public:
     VolumeViewer() : App("VolumeViewer", 1920, 1080)
     {
         // Create a Vulkan instance and device
-        std::vector<const char*> extensions = {
-            VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
-        };
-        mpDevice = std::make_shared<Device>(mpWindow, extensions);
+        mpDevice = std::make_shared<Device>(mpWindow);
 
-        // Create a swapchain with 2 frames in flight (default)
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
@@ -103,7 +100,7 @@ public:
         mPipelines = {mpEnvironmentMapPipeline, mpRayMarchingPipeline};
 
         // Setup camera
-        mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
+        mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
@@ -140,11 +137,11 @@ public:
         mpSwapchain->waitForFence();
 
         if (!keyboardCapturedByGUI() && !mouseCapturedByGUI()) {
-            mpCamera->update(mpWindow, delta, getCursorDelta(), mpSwapchain->getInFlightIndex());
+            mpCamera->update(mpWindow, delta, getCursorDelta());
         } else {
             // Still refresh the uniforms, otherwise a resize while the GUI holds the input focus would never
             // reach the shader with the new projection matrix
-            mpCamera->update(mpSwapchain->getInFlightIndex());
+            mpCamera->update();
         }
     }
 
@@ -154,7 +151,7 @@ public:
         if (mpSwapchain->recreated()) {
             mpCamera->setAspectRatio(mpSwapchain->getAspectRatio());
             // update() ran before the swapchain was recreated, so push the new projection for this frame too
-            mpCamera->update(mpSwapchain->getInFlightIndex());
+            mpCamera->update();
             mpPass->update(mpSwapchain->getExtent());
             // The accumulation buffer must match the new resolution
             createAccumulationImage();
@@ -162,7 +159,7 @@ public:
         }
 
         // Restart accumulation whenever the camera moves
-        glm::mat4 view = mpCamera->getViewMatrix(mpSwapchain->getInFlightIndex());
+        glm::mat4 view = mpCamera->getViewMatrix();
         if (view != mPrevView) {
             mPrevView = view;
             resetAccumulation();
@@ -228,7 +225,7 @@ public:
         if (mpEnvironmentMap) {
             auto pShader = mpEnvironmentMapPipeline->getShader();
             mpEnvironmentMapPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
@@ -237,7 +234,7 @@ public:
         if (mpVolume) {
             auto pShader = mpRayMarchingPipeline->getShader();
             mpRayMarchingPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
 

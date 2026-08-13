@@ -19,7 +19,7 @@ public:
         };
         mpDevice = std::make_shared<Device>(mpWindow, extensions);
 
-        // Create a swapchain with 2 frames in flight (default)
+        // Create a swapchain
         mpSwapchain = mpDevice->createSwapchain();
 
         // Create a pass with 1 color attachment, depth attachment and multisampling
