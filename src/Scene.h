@@ -298,7 +298,7 @@ namespace Mandrill
         /// <table>
         /// <caption> Resources the scene expects to find in the shader </caption>
         /// <tr><th> Name in shader <th> Contents <th> Declared as <th>
-        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block
+        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block named *Dynamic
         /// <tr><td> mesh <td> Node model matrix (mat4) <td> uniform block named *Dynamic
         /// <tr><td> materialParams <td> Material parameters (struct MaterialParams) <td> uniform block
         /// <tr><td> diffuseTexture <td> Material diffuse texture <td> sampler2D
@@ -309,13 +309,9 @@ namespace Mandrill
         /// <tr><td> environmentMap <td> Environment map texture <td> sampler2D, optional
         /// </table>
         ///
-        /// The node transforms live in one buffer that is rebound with a dynamic offset per node, which is why that
-        /// block has to be named with a *Dynamic suffix. The camera needs no such thing: it is re-attached each
-        /// frame with the offset of that frame's copy. The material resources all have to share one set, since a
-        /// whole material is bound in one go for every mesh; that set is found from diffuseTexture.
-        ///
-        /// Put the camera in a set of its own and list that set as a push descriptor set when creating the shader,
-        /// so that re-attaching it per frame does not allocate anything.
+        /// The camera and the node transforms live in one buffer each and are rebound with a dynamic offset, which
+        /// is why their blocks have to be named with a *Dynamic suffix. The material resources all have to share one
+        /// set, since a whole material is bound in one go for every mesh; that set is found from diffuseTexture.
         ///
         /// Only the environment map is optional. A shader that does not declare it simply renders without one.
         /// </summary>
@@ -333,7 +329,7 @@ namespace Mandrill
         /// <table>
         /// <caption> Resources the scene expects to find in the shader </caption>
         /// <tr><th> Name in shader <th> Contents <th> Declared as <th>
-        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block
+        /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block named *Dynamic
         /// <tr><td> scene <td> Acceleration structure <td> accelerationStructureEXT
         /// <tr><td> vertexBuffer <td> Global vertex buffer <td> readonly buffer block
         /// <tr><td> indexBuffer <td> Global index buffer <td> readonly buffer block
@@ -533,9 +529,6 @@ namespace Mandrill
         // The shader the scene was set up against, and where the materials keep their prepared sets
         ptr<Shader> mpShader;
         uint32_t mMaterialSet = 0;
-
-        // Kept so that the camera can be pointed at the right frame's copy when binding
-        ptr<Buffer> mpCameraBuffer;
         ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
         ptr<Buffer> mpInstanceDataBuffer;
 

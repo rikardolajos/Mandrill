@@ -1,6 +1,6 @@
 #version 460
 
-layout(set = 0, binding = 0) uniform CameraUniform {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;

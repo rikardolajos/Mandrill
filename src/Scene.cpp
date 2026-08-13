@@ -63,10 +63,12 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
 
     std::memcpy(mpTransformDevice + transformStride * frameInFlightIndex, &mTransform, sizeof(glm::mat4));
 
-    // Camera matrices. Scene::render() already pointed the resource at this frame's copy.
+    // Camera matrices, one copy per frame in flight
     auto cameraInfo = pShader->getResourceInfo("camera");
     if (cameraInfo) {
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, cameraInfo->set);
+        uint32_t cameraOffset =
+            static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, cameraInfo->set, {cameraOffset});
     }
 
     // The whole scene shares one transforms descriptor, so the offset has to select both this node's slot and the
@@ -135,13 +137,8 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t fram
         return;
     }
 
-    // Point the camera resource at this frame's copy of the matrices. The nodes then just bind it, and since the
-    // set is pushed there is nothing allocated per frame by doing this.
-    if (mpShader) {
-        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        VkDeviceSize cameraOffset = Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex;
-        mpShader->setResource("camera", pCamera->getUniformBuffer(), cameraOffset, sizeof(CameraMatrices));
-    }
+    // The camera and environment map are bound per node now, since each node can carry its own pipeline and the
+    // resources belong to that pipeline's shader
 
     Frustum cameraFrustum = pCamera->getFrustum(frameInFlightIndex);
     for (auto& node : mNodes) {
@@ -492,10 +489,10 @@ void Scene::compile(uint32_t framesInFlightCount)
 void Scene::createDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera, uint32_t frameInFlightCount)
 {
     mpShader = pShader;
-    mpCameraBuffer = pCamera->getUniformBuffer();
 
-    // The node transforms are one buffer that is rebound with a dynamic offset per node. The camera is attached per
-    // frame in render(), since its offset changes with the frame in flight.
+    // The camera and the node transforms are single buffers that are rebound with an offset, so they are attached
+    // once here. Which set and binding they land in comes from the shader.
+    pShader->setResource("camera", pCamera->getUniformBuffer(), 0, sizeof(CameraMatrices));
     pShader->setResource("mesh", mpTransforms, 0, sizeof(glm::mat4));
 
     if (mpEnvironmentMap && pShader->hasResource("environmentMap")) {
@@ -530,7 +527,6 @@ void Scene::createRayTracingDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera
                                         uint32_t frameInFlightCount)
 {
     mpShader = pShader;
-    mpCameraBuffer = pCamera->getUniformBuffer();
 
     // Get a list of the textures
     std::vector<ptr<Texture>> textures;
@@ -586,13 +582,15 @@ void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, uint32_t frameInFligh
         return;
     }
 
-    // Point the camera resource at this frame's copy of the matrices before binding it
+    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
+    uint32_t cameraDescriptorOffset =
+        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
+
+    // The camera is the only set that needs an offset, the rest of the scene is bound as it is
     auto cameraInfo = mpShader->getResourceInfo("camera");
     if (cameraInfo) {
-        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        VkDeviceSize cameraOffset = Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex;
-        mpShader->setResource("camera", mpCameraBuffer, cameraOffset, sizeof(CameraMatrices));
-        mpShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, cameraInfo->set);
+        mpShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, cameraInfo->set,
+                                {cameraDescriptorOffset});
     }
 
     auto sceneInfo = mpShader->getResourceInfo("scene");

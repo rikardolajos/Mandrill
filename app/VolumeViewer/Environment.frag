@@ -8,7 +8,7 @@ layout(location = 0) in vec2 inTexCoord;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(set = 0, binding = 0) uniform CameraUniform {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;

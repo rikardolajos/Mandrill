@@ -32,7 +32,7 @@ const int NEE_DEPTH_UNLIMITED = 255;
 // of the accumulated result). Without this, dense volumes make every shadow march run to MAX_STEPS.
 const float TAU_CUTOFF = 24.0;
 
-layout(set = 0, binding = 0) uniform CameraUniform {
+layout(set = 0, binding = 0) uniform CameraUniformDynamic {
     mat4 view;
     mat4 view_inv;
     mat4 proj;
