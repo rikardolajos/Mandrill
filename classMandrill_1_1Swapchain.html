@@ -106,9 +106,9 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Swapchain.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa1a5113e02772249aaa7564e00cbf241" id="r_aa1a5113e02772249aaa7564e00cbf241"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#aa1a5113e02772249aaa7564e00cbf241">Swapchain</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice, uint32_t framesInFlight=2)</td></tr>
-<tr class="memdesc:aa1a5113e02772249aaa7564e00cbf241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain.  <br /></td></tr>
-<tr class="separator:aa1a5113e02772249aaa7564e00cbf241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60521d887ca359e735823a10798a3fdd" id="r_a60521d887ca359e735823a10798a3fdd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#a60521d887ca359e735823a10798a3fdd">Swapchain</a> (ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt; pDevice)</td></tr>
+<tr class="memdesc:a60521d887ca359e735823a10798a3fdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain. How many frames it keeps in flight is decided by the device.  <br /></td></tr>
+<tr class="separator:a60521d887ca359e735823a10798a3fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5848dea9c4317e57363760ed0c052ea7" id="r_a5848dea9c4317e57363760ed0c052ea7"><td class="memItemLeft" align="right" valign="top"><a id="a5848dea9c4317e57363760ed0c052ea7" name="a5848dea9c4317e57363760ed0c052ea7"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Swapchain</b> ()</td></tr>
 <tr class="memdesc:a5848dea9c4317e57363760ed0c052ea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for swapchain. <br /></td></tr>
@@ -168,7 +168,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
 <tr class="memdesc:a7b634cc5b379f5c1684240309637f878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the previous frame that was in flight. This is useful when indexing after calling <a class="el" href="classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c" title="Present a rendered image to the swapchain image.">present()</a>, like when querying for timestamps.  <br /></td></tr>
 <tr class="separator:a7b634cc5b379f5c1684240309637f878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6f098e0460ae9d4bb15f06c2ad6c0da" id="r_af6f098e0460ae9d4bb15f06c2ad6c0da"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#af6f098e0460ae9d4bb15f06c2ad6c0da">getFramesInFlightCount</a> () const</td></tr>
-<tr class="memdesc:af6f098e0460ae9d4bb15f06c2ad6c0da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the count of the total number of frames in flight.  <br /></td></tr>
+<tr class="memdesc:af6f098e0460ae9d4bb15f06c2ad6c0da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the count of the total number of frames in flight. This is the device's count, the swapchain only follows it.  <br /></td></tr>
 <tr class="separator:af6f098e0460ae9d4bb15f06c2ad6c0da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f377538a4be5eec73c1b387fde2f026" id="r_a2f377538a4be5eec73c1b387fde2f026"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026">recreated</a> () const</td></tr>
 <tr class="memdesc:a2f377538a4be5eec73c1b387fde2f026"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the swapchain was recreated during the last frame. This is reset in <a class="el" href="classMandrill_1_1Swapchain.html#a08e5b3317ec3fa620956daaf72ecb42c" title="Present a rendered image to the swapchain image.">present()</a>.  <br /></td></tr>
@@ -183,8 +183,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Swapchain.html" title="Swapchain class for managing the swapchain and its images.">Swapchain</a> class for managing the swapchain and its images. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa1a5113e02772249aaa7564e00cbf241" name="aa1a5113e02772249aaa7564e00cbf241"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1a5113e02772249aaa7564e00cbf241">&#9670;&#160;</a></span>Swapchain()</h2>
+<a id="a60521d887ca359e735823a10798a3fdd" name="a60521d887ca359e735823a10798a3fdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60521d887ca359e735823a10798a3fdd">&#9670;&#160;</a></span>Swapchain()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,27 +193,16 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
           <td class="memname">Swapchain::Swapchain </td>
           <td>(</td>
           <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Device.html">Device</a> &gt;&#160;</td>
-          <td class="paramname"><em>pDevice</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>pDevice</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>framesInFlight</em> = <code>2</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create a new swapchain. </p>
+<p>Create a new swapchain. How many frames it keeps in flight is decided by the device. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pDevice</td><td><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> to use</td></tr>
-    <tr><td class="paramname">framesInFlight</td><td>How many frames in flight that should be used</td></tr>
   </table>
   </dd>
 </dl>
@@ -320,7 +309,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>requestS
 </table>
 </div><div class="memdoc">
 
-<p>Get the count of the total number of frames in flight. </p>
+<p>Get the count of the total number of frames in flight. This is the device's count, the swapchain only follows it. </p>
 <dl class="section return"><dt>Returns</dt><dd>Number of frames in flight</dd></dl>
 
 </div>

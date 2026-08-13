@@ -121,59 +121,66 @@ $(document).ready(function(){initNavTree('DynamicBuffer_8h_source.html',''); ini
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a8acf6afb126c9cd24bf60f2ae4574da7">~DynamicBuffer</a>();</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        MANDRILL_API <span class="keywordtype">void</span>* <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a46bd231d6acb2c20453de738d96e7e08">at</a>(uint32_t index) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a145f6ef1a95125f33a685c02c748c22e">copyFromHost</a>(<span class="keyword">const</span> <span class="keywordtype">void</span>* pData, uint32_t index);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a985b3c05fc6cd5c432a9e769192a1104">getOffset</a>(uint32_t index) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">   67</a></span>        MANDRILL_API VkDeviceSize <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">getStride</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            <span class="keywordflow">return</span> mStride;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        }</div>
-</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        MANDRILL_API <span class="keywordtype">void</span>* <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459">at</a>(uint32_t index = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a0818a22c0900a15fafdb5a21cc925693">copyFromHost</a>(<span class="keyword">const</span> <span class="keywordtype">void</span>* pData, uint32_t index = kCurrentFrameInFlight);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#ae093d979dca85ff42ce84d9ca337e5b2">getOffset</a>(uint32_t index = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#ab8f6936f55d3d2c5e0ed2a8d461e9d82">isPerFrame</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="foldopen" id="foldopen00076" data-start="{" data-end="}">
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">   76</a></span>        MANDRILL_API VkDeviceSize <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">getElementSize</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="keywordflow">return</span> mElementSize;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        }</div>
+<div class="foldopen" id="foldopen00077" data-start="{" data-end="}">
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">   77</a></span>        MANDRILL_API VkDeviceSize <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">getStride</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="keywordflow">return</span> mStride;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        }</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">   85</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">getElementCount</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            <span class="keywordflow">return</span> mElementCount;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">   86</a></span>        MANDRILL_API VkDeviceSize <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">getElementSize</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="keywordflow">return</span> mElementSize;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        }</div>
 </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="foldopen" id="foldopen00094" data-start="{" data-end="}">
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">   94</a></span>        MANDRILL_API ptr&lt;Buffer&gt; <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">getBuffer</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            <span class="keywordflow">return</span> mpBuffer;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        }</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="foldopen" id="foldopen00095" data-start="{" data-end="}">
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">   95</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">getElementCount</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            <span class="keywordflow">return</span> mElementCount;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        }</div>
 </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        ptr&lt;Buffer&gt; mpBuffer;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        VkDeviceSize mElementSize;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        VkDeviceSize mStride;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        uint32_t mElementCount;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    };</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="foldopen" id="foldopen00104" data-start="{" data-end="}">
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">  104</a></span>        MANDRILL_API ptr&lt;Buffer&gt; <a class="code hl_function" href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">getBuffer</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            <span class="keywordflow">return</span> mpBuffer;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        }</div>
 </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <span class="comment">// Turns kCurrentFrameInFlight into the frame the device is on, and reports if that cannot mean anything for</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        <span class="comment">// this buffer because it is not laid out one copy per frame</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        uint32_t resolveIndex(uint32_t index) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        ptr&lt;Buffer&gt; mpBuffer;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        VkDeviceSize mElementSize;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        VkDeviceSize mStride;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        uint32_t mElementCount;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    };</div>
+</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html">Mandrill::DynamicBuffer</a></div><div class="ttdoc">Buffer holding several equally sized copies of the same data, where each copy starts on a boundary th...</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:22</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a0e0829793d2b8f86c5748288bebdac6b"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">Mandrill::DynamicBuffer::getElementSize</a></div><div class="ttdeci">MANDRILL_API VkDeviceSize getElementSize() const</div><div class="ttdoc">Get the size of one copy. This is the range a descriptor should expose.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:76</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a145f6ef1a95125f33a685c02c748c22e"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a145f6ef1a95125f33a685c02c748c22e">Mandrill::DynamicBuffer::copyFromHost</a></div><div class="ttdeci">MANDRILL_API void copyFromHost(const void *pData, uint32_t index)</div><div class="ttdoc">Write one of the copies. Copies getElementSize() bytes from the given data.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:61</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a46bd231d6acb2c20453de738d96e7e08"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a46bd231d6acb2c20453de738d96e7e08">Mandrill::DynamicBuffer::at</a></div><div class="ttdeci">MANDRILL_API void * at(uint32_t index) const</div><div class="ttdoc">Get a host pointer to one of the copies.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:51</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a543f64fffbcef720ac46c21d25da60bb"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">Mandrill::DynamicBuffer::getBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Buffer &gt; getBuffer() const</div><div class="ttdoc">Get the underlying buffer.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:94</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a0818a22c0900a15fafdb5a21cc925693"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a0818a22c0900a15fafdb5a21cc925693">Mandrill::DynamicBuffer::copyFromHost</a></div><div class="ttdeci">MANDRILL_API void copyFromHost(const void *pData, uint32_t index=kCurrentFrameInFlight)</div><div class="ttdoc">Write one of the copies. Copies getElementSize() bytes from the given data.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:86</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a0e0829793d2b8f86c5748288bebdac6b"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b">Mandrill::DynamicBuffer::getElementSize</a></div><div class="ttdeci">MANDRILL_API VkDeviceSize getElementSize() const</div><div class="ttdoc">Get the size of one copy. This is the range a descriptor should expose.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:86</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a543f64fffbcef720ac46c21d25da60bb"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a543f64fffbcef720ac46c21d25da60bb">Mandrill::DynamicBuffer::getBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Buffer &gt; getBuffer() const</div><div class="ttdoc">Get the underlying buffer.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:104</div></div>
 <div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a8acf6afb126c9cd24bf60f2ae4574da7"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a8acf6afb126c9cd24bf60f2ae4574da7">Mandrill::DynamicBuffer::~DynamicBuffer</a></div><div class="ttdeci">MANDRILL_API ~DynamicBuffer()</div><div class="ttdoc">Destructor for dynamic buffer.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:47</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_a985b3c05fc6cd5c432a9e769192a1104"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#a985b3c05fc6cd5c432a9e769192a1104">Mandrill::DynamicBuffer::getOffset</a></div><div class="ttdeci">MANDRILL_API uint32_t getOffset(uint32_t index) const</div><div class="ttdoc">Get the dynamic offset that selects one of the copies when binding a descriptor.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:71</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_aaea9c0e88e6cfedae33025dfbcae3682"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">Mandrill::DynamicBuffer::getElementCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getElementCount() const</div><div class="ttdoc">Get the number of copies in the buffer.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:85</div></div>
-<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_af9d4e018c2a0b08d38bb146b56d8f64c"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">Mandrill::DynamicBuffer::getStride</a></div><div class="ttdeci">MANDRILL_API VkDeviceSize getStride() const</div><div class="ttdoc">Get the distance in bytes between two consecutive copies. This is the element size rounded up to the ...</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:67</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_aaea9c0e88e6cfedae33025dfbcae3682"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#aaea9c0e88e6cfedae33025dfbcae3682">Mandrill::DynamicBuffer::getElementCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getElementCount() const</div><div class="ttdoc">Get the number of copies in the buffer.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:95</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_ab8f6936f55d3d2c5e0ed2a8d461e9d82"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#ab8f6936f55d3d2c5e0ed2a8d461e9d82">Mandrill::DynamicBuffer::isPerFrame</a></div><div class="ttdeci">MANDRILL_API bool isPerFrame() const</div><div class="ttdoc">Check whether the buffer holds exactly one copy per frame in flight, which is what makes it possible ...</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:51</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_abfa6bfcc3ab0ad66641e430ec896f459"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459">Mandrill::DynamicBuffer::at</a></div><div class="ttdeci">MANDRILL_API void * at(uint32_t index=kCurrentFrameInFlight) const</div><div class="ttdoc">Get a host pointer to one of the copies.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:74</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_ae093d979dca85ff42ce84d9ca337e5b2"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#ae093d979dca85ff42ce84d9ca337e5b2">Mandrill::DynamicBuffer::getOffset</a></div><div class="ttdeci">MANDRILL_API uint32_t getOffset(uint32_t index=kCurrentFrameInFlight) const</div><div class="ttdoc">Get the dynamic offset that selects one of the copies when binding a descriptor.</div><div class="ttdef"><b>Definition</b> DynamicBuffer.cpp:96</div></div>
+<div class="ttc" id="aclassMandrill_1_1DynamicBuffer_html_af9d4e018c2a0b08d38bb146b56d8f64c"><div class="ttname"><a href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">Mandrill::DynamicBuffer::getStride</a></div><div class="ttdeci">MANDRILL_API VkDeviceSize getStride() const</div><div class="ttdoc">Get the distance in bytes between two consecutive copies. This is the element size rounded up to the ...</div><div class="ttdef"><b>Definition</b> DynamicBuffer.h:77</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

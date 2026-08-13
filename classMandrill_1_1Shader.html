@@ -128,7 +128,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 <tr class="memdesc:ac24a0f4aa36761f628c41f2553780821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storage buffer, and where it is bound, follows from the shader.  <br /></td></tr>
 <tr class="separator:ac24a0f4aa36761f628c41f2553780821"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e2fd2868c6a09d57f2d020c2fc10ac2" id="r_a2e2fd2868c6a09d57f2d020c2fc10ac2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a2e2fd2868c6a09d57f2d020c2fc10ac2">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt; pBuffer)</td></tr>
-<tr class="memdesc:a2e2fd2868c6a09d57f2d020c2fc10ac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a buffer that holds one copy per frame in flight to a named resource in the shader. The resource has to be declared as a dynamic buffer in the shader, that is, its block type name has to end with *Dynamic. <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> then picks this frame's copy on its own.  <br /></td></tr>
+<tr class="memdesc:a2e2fd2868c6a09d57f2d020c2fc10ac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a buffer that holds one copy per frame in flight to a named resource in the shader. The resource has to be declared as a dynamic buffer in the shader, that is, its block type name has to end with *Dynamic. <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> then picks this frame's copy on its own.  <br /></td></tr>
 <tr class="separator:a2e2fd2868c6a09d57f2d020c2fc10ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ff33870d9935473343fcf368791fd30" id="r_a5ff33870d9935473343fcf368791fd30"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a5ff33870d9935473343fcf368791fd30">setResource</a> (const std::string &amp;name, ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt; pTexture)</td></tr>
 <tr class="memdesc:a5ff33870d9935473343fcf368791fd30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach a texture to a named combined image sampler in the shader.  <br /></td></tr>
@@ -143,13 +143,13 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 <tr class="memdesc:a5ec056e8f4c170c1d24e8b08d7c5dd7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attach an acceleration structure to a named resource in the shader.  <br /></td></tr>
 <tr class="separator:a5ec056e8f4c170c1d24e8b08d7c5dd7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac15c098db6d9dfe90d9bcadb70bf1659" id="r_ac15c098db6d9dfe90d9bcadb70bf1659"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">bindResources</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)</td></tr>
-<tr class="memdesc:ac15c098db6d9dfe90d9bcadb70bf1659"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind every descriptor set that has resources attached to it, using the first copy of any per-frame resource. Only meaningful for shaders without dynamic descriptors, bind those one set at a time instead.  <br /></td></tr>
+<tr class="memdesc:ac15c098db6d9dfe90d9bcadb70bf1659"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind every descriptor set that has resources attached to it, using the current frame's copy of any per-frame resource.  <br /></td></tr>
 <tr class="separator:ac15c098db6d9dfe90d9bcadb70bf1659"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac869314ad192ba0437ad23a49f924c5a" id="r_ac869314ad192ba0437ad23a49f924c5a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ac869314ad192ba0437ad23a49f924c5a">bindResources</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, uint32_t frameInFlightIndex=0)</td></tr>
-<tr class="memdesc:ac869314ad192ba0437ad23a49f924c5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind one descriptor set for a given frame in flight. Dynamic descriptors in the set that were attached as a <a class="el" href="classMandrill_1_1DynamicBuffer.html" title="Buffer holding several equally sized copies of the same data, where each copy starts on a boundary th...">DynamicBuffer</a> get the offset of that frame's copy, so nothing has to be worked out by the caller. A set without dynamic descriptors ignores the frame index.  <br /></td></tr>
-<tr class="separator:ac869314ad192ba0437ad23a49f924c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada5efde563241524de974c13f562302d" id="r_ada5efde563241524de974c13f562302d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#ada5efde563241524de974c13f562302d">bindResources</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, uint32_t frameInFlightIndex=kCurrentFrameInFlight)</td></tr>
+<tr class="memdesc:ada5efde563241524de974c13f562302d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind one descriptor set for a given frame in flight. Dynamic descriptors in the set that were attached as a <a class="el" href="classMandrill_1_1DynamicBuffer.html" title="Buffer holding several equally sized copies of the same data, where each copy starts on a boundary th...">DynamicBuffer</a> get the offset of that frame's copy, so nothing has to be worked out by the caller. A set without dynamic descriptors ignores the frame index.  <br /></td></tr>
+<tr class="separator:ada5efde563241524de974c13f562302d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43f073192379685c8ea060ed2318bfd3" id="r_a43f073192379685c8ea060ed2318bfd3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3">bindResourcesWithOffsets</a> (VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, const std::vector&lt; uint32_t &gt; &amp;dynamicOffsets)</td></tr>
-<tr class="memdesc:a43f073192379685c8ea060ed2318bfd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is indexed by something the shader cannot know about, such as which mesh is being drawn; for resources that only vary with the frame in flight, <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> works it out on its own.  <br /></td></tr>
+<tr class="memdesc:a43f073192379685c8ea060ed2318bfd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is indexed by something the shader cannot know about, such as which mesh is being drawn; for resources that only vary with the frame in flight, <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> works it out on its own.  <br /></td></tr>
 <tr class="separator:a43f073192379685c8ea060ed2318bfd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dd1031aeba7ce57cbede4eb8942354f" id="r_a3dd1031aeba7ce57cbede4eb8942354f"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">hasResource</a> (const std::string &amp;name) const</td></tr>
 <tr class="memdesc:a3dd1031aeba7ce57cbede4eb8942354f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether the shader has a resource with a given name.  <br /></td></tr>
@@ -178,9 +178,9 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot reloading of shader source code during execution. </p>
-<p>Resources can be attached by the name they have in the shader, using <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a>. Which set and binding they belong to, and which descriptor type they are, is taken from the shader reflection, so the application never has to describe a descriptor. Call <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> to bind them for a draw or dispatch.</p>
+<p>Resources can be attached by the name they have in the shader, using <a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a>. Which set and binding they belong to, and which descriptor type they are, is taken from the shader reflection, so the application never has to describe a descriptor. Call <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> to bind them for a draw or dispatch.</p>
 <p><a class="el" href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821" title="Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...">setResource()</a> attaches a resource, it is not a per-frame update. Data that varies per frame or per mesh belongs in a single buffer that is attached once and bound repeatedly with a dynamic offset.</p>
-<p>Attaching a <a class="el" href="classMandrill_1_1DynamicBuffer.html" title="Buffer holding several equally sized copies of the same data, where each copy starts on a boundary th...">DynamicBuffer</a> tells the shader that the resource holds one copy per frame in flight, so <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> can select the right copy from the frame index alone and the application never has to work out a dynamic offset. Resources that are indexed by something other than the frame, such as a per-mesh transform, are bound with <a class="el" href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3" title="Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is ...">bindResourcesWithOffsets()</a> instead. </p>
+<p>Attaching a <a class="el" href="classMandrill_1_1DynamicBuffer.html" title="Buffer holding several equally sized copies of the same data, where each copy starts on a boundary th...">DynamicBuffer</a> tells the shader that the resource holds one copy per frame in flight, so <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> can select the right copy from the frame index alone and the application never has to work out a dynamic offset. Resources that are indexed by something other than the frame, such as a per-mesh transform, are bound with <a class="el" href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3" title="Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is ...">bindResourcesWithOffsets()</a> instead. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5bcd170ee0634a2c2a82aade77c67510" name="a5bcd170ee0634a2c2a82aade77c67510"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5bcd170ee0634a2c2a82aade77c67510">&#9670;&#160;</a></span>Shader()</h2>
@@ -246,7 +246,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
       </table>
 </div><div class="memdoc">
 
-<p>Bind every descriptor set that has resources attached to it, using the first copy of any per-frame resource. Only meaningful for shaders without dynamic descriptors, bind those one set at a time instead. </p>
+<p>Bind every descriptor set that has resources attached to it, using the current frame's copy of any per-frame resource. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
@@ -257,8 +257,8 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 
 </div>
 </div>
-<a id="ac869314ad192ba0437ad23a49f924c5a" name="ac869314ad192ba0437ad23a49f924c5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac869314ad192ba0437ad23a49f924c5a">&#9670;&#160;</a></span>bindResources() <span class="overload">[2/2]</span></h2>
+<a id="ada5efde563241524de974c13f562302d" name="ada5efde563241524de974c13f562302d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada5efde563241524de974c13f562302d">&#9670;&#160;</a></span>bindResources() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,7 +285,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightIndex</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em> = <code>kCurrentFrameInFlight</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -301,7 +301,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
     <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
     <tr><td class="paramname">bindPoint</td><td>Bind point in pipeline</td></tr>
     <tr><td class="paramname">set</td><td>Set to bind</td></tr>
-    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which copy of the per-frame resources to use</td></tr>
+    <tr><td class="paramname">frameInFlightIndex</td><td>Which copy of the per-frame resources to use, the current frame by default</td></tr>
   </table>
   </dd>
 </dl>
@@ -346,7 +346,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
       </table>
 </div><div class="memdoc">
 
-<p>Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is indexed by something the shader cannot know about, such as which mesh is being drawn; for resources that only vary with the frame in flight, <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> works it out on its own. </p>
+<p>Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is indexed by something the shader cannot know about, such as which mesh is being drawn; for resources that only vary with the frame in flight, <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> works it out on its own. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
@@ -749,7 +749,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
       </table>
 </div><div class="memdoc">
 
-<p>Attach a buffer that holds one copy per frame in flight to a named resource in the shader. The resource has to be declared as a dynamic buffer in the shader, that is, its block type name has to end with *Dynamic. <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...">bindResources()</a> then picks this frame's copy on its own. </p>
+<p>Attach a buffer that holds one copy per frame in flight to a named resource in the shader. The resource has to be declared as a dynamic buffer in the shader, that is, its block type name has to end with *Dynamic. <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">bindResources()</a> then picks this frame's copy on its own. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>Name of the resource in the shader. Either the variable name, or the block type name for blocks that are declared without an instance name.</td></tr>

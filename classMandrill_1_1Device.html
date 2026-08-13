@@ -94,6 +94,7 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Device.html',''); ini
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classMandrill_1_1Device-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Mandrill::Device Class Reference</div></div>
 </div><!--header-->
@@ -108,9 +109,9 @@ $(document).ready(function(){initNavTree('classMandrill_1_1Device.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a849119d173c474b158b5a588a97f61ab" id="r_a849119d173c474b158b5a588a97f61ab"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a849119d173c474b158b5a588a97f61ab">Device</a> (GLFWwindow *pWindow, const std::vector&lt; const char * &gt; &amp;extensions=std::vector&lt; const char * &gt;(), VkPhysicalDeviceFeatures2 *pFeatures=nullptr, uint32_t physicalDeviceIndex=std::numeric_limits&lt; uint32_t &gt;::max())</td></tr>
-<tr class="memdesc:a849119d173c474b158b5a588a97f61ab"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties.  <br /></td></tr>
-<tr class="separator:a849119d173c474b158b5a588a97f61ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdd3d9e8957f1f36297babd726e679ba" id="r_afdd3d9e8957f1f36297babd726e679ba"><td class="memItemLeft" align="right" valign="top">MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#afdd3d9e8957f1f36297babd726e679ba">Device</a> (GLFWwindow *pWindow, const std::vector&lt; const char * &gt; &amp;extensions=std::vector&lt; const char * &gt;(), VkPhysicalDeviceFeatures2 *pFeatures=nullptr, uint32_t physicalDeviceIndex=std::numeric_limits&lt; uint32_t &gt;::max(), uint32_t framesInFlightCount=2)</td></tr>
+<tr class="memdesc:afdd3d9e8957f1f36297babd726e679ba"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties.  <br /></td></tr>
+<tr class="separator:afdd3d9e8957f1f36297babd726e679ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dabc419c8d8df3a686c33ce042bc99a" id="r_a9dabc419c8d8df3a686c33ce042bc99a"><td class="memItemLeft" align="right" valign="top"><a id="a9dabc419c8d8df3a686c33ce042bc99a" name="a9dabc419c8d8df3a686c33ce042bc99a"></a>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> ()</td></tr>
 <tr class="memdesc:a9dabc419c8d8df3a686c33ce042bc99a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for device. <br /></td></tr>
@@ -151,6 +152,15 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a0ccdd441444ce4c29dbbcb7d15dba646" id="r_a0ccdd441444ce4c29dbbcb7d15dba646"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">setVsync</a> (bool vsync)</td></tr>
 <tr class="memdesc:a0ccdd441444ce4c29dbbcb7d15dba646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a vertical sync mode.  <br /></td></tr>
 <tr class="separator:a0ccdd441444ce4c29dbbcb7d15dba646"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa743b78e6e0b84827c7951bc2c8f261a" id="r_aa743b78e6e0b84827c7951bc2c8f261a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#aa743b78e6e0b84827c7951bc2c8f261a">getFramesInFlightCount</a> () const</td></tr>
+<tr class="memdesc:aa743b78e6e0b84827c7951bc2c8f261a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get how many frames the application pipelines. Every resource that the host rewrites while the device may still be reading the previous value needs this many copies, which the framework takes care of on its own.  <br /></td></tr>
+<tr class="separator:aa743b78e6e0b84827c7951bc2c8f261a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56bf146482e7a28e0f4173c23c716272" id="r_a56bf146482e7a28e0f4173c23c716272"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a56bf146482e7a28e0f4173c23c716272">getFrameInFlightIndex</a> () const</td></tr>
+<tr class="memdesc:a56bf146482e7a28e0f4173c23c716272"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the frame in flight the device is currently on. The swapchain advances this when a frame is presented, so it is the same for the whole of an application's update and render pair.  <br /></td></tr>
+<tr class="separator:a56bf146482e7a28e0f4173c23c716272"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd35a68b47552a468c2cc39c55b0835e" id="r_afd35a68b47552a468c2cc39c55b0835e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#afd35a68b47552a468c2cc39c55b0835e">resolveFrameInFlightIndex</a> (uint32_t frameInFlightIndex) const</td></tr>
+<tr class="memdesc:afd35a68b47552a468c2cc39c55b0835e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn a frame in flight index that may be kCurrentFrameInFlight into a concrete one. Used by the parts of the framework that let the caller leave the frame out.  <br /></td></tr>
+<tr class="separator:afd35a68b47552a468c2cc39c55b0835e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ddddd83776fdce2fa38b217afc60636" id="r_a4ddddd83776fdce2fa38b217afc60636"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkSampleCountFlagBits&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636">getSampleCount</a> () const</td></tr>
 <tr class="memdesc:a4ddddd83776fdce2fa38b217afc60636"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the multisample anti-aliasing sample count.  <br /></td></tr>
 <tr class="separator:a4ddddd83776fdce2fa38b217afc60636"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,15 +170,18 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:ae57d77ea4fd291683f97f090c4005900" id="r_ae57d77ea4fd291683f97f090c4005900"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">createBuffer</a> (VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</td></tr>
 <tr class="memdesc:ae57d77ea4fd291683f97f090c4005900"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new buffer.  <br /></td></tr>
 <tr class="separator:ae57d77ea4fd291683f97f090c4005900"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed0b0b82d0fcb9106f970a8f3eb1b830" id="r_aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">createCamera</a> (uint32_t framesInFlightCount)</td></tr>
-<tr class="memdesc:aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
-<tr class="separator:aed0b0b82d0fcb9106f970a8f3eb1b830"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5146de1bb73eb5099c68b4ba10c96722" id="r_a5146de1bb73eb5099c68b4ba10c96722"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5146de1bb73eb5099c68b4ba10c96722">createCamera</a> ()</td></tr>
+<tr class="memdesc:a5146de1bb73eb5099c68b4ba10c96722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new camera.  <br /></td></tr>
+<tr class="separator:a5146de1bb73eb5099c68b4ba10c96722"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add6654c463a2a2f114093b2661f5d191" id="r_add6654c463a2a2f114093b2661f5d191"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">createDescriptor</a> (const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</td></tr>
 <tr class="memdesc:add6654c463a2a2f114093b2661f5d191"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new descriptor.  <br /></td></tr>
 <tr class="separator:add6654c463a2a2f114093b2661f5d191"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1ddae8261a3a87f6145c2ec4a60fe45" id="r_ae1ddae8261a3a87f6145c2ec4a60fe45"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ae1ddae8261a3a87f6145c2ec4a60fe45">createDynamicBuffer</a> (VkDeviceSize elementSize, uint32_t elementCount, VkBufferUsageFlags usage=VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)</td></tr>
 <tr class="memdesc:ae1ddae8261a3a87f6145c2ec4a60fe45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new dynamic buffer, holding several aligned copies of the same data.  <br /></td></tr>
 <tr class="separator:ae1ddae8261a3a87f6145c2ec4a60fe45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2d5070cc8c54c6e419060dae9b2533c" id="r_ad2d5070cc8c54c6e419060dae9b2533c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ad2d5070cc8c54c6e419060dae9b2533c">createPerFrameBuffer</a> (VkDeviceSize elementSize, VkBufferUsageFlags usage=VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)</td></tr>
+<tr class="memdesc:ad2d5070cc8c54c6e419060dae9b2533c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new dynamic buffer holding exactly one copy per frame in flight. Use this for anything that is rewritten every frame, such as a model matrix that changes with time.  <br /></td></tr>
+<tr class="separator:ad2d5070cc8c54c6e419060dae9b2533c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44f2e58304516061696846e5d1f032ff" id="r_a44f2e58304516061696846e5d1f032ff"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a> (uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)</td></tr>
 <tr class="memdesc:a44f2e58304516061696846e5d1f032ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> and allocate memory for it.  <br /></td></tr>
 <tr class="separator:a44f2e58304516061696846e5d1f032ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,9 +209,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a42372a30f593de4d78fbac6927a4ec27" id="r_a42372a30f593de4d78fbac6927a4ec27"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27">createShader</a> (const std::vector&lt; ShaderDesc &gt; &amp;desc)</td></tr>
 <tr class="memdesc:a42372a30f593de4d78fbac6927a4ec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
 <tr class="separator:a42372a30f593de4d78fbac6927a4ec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1df1772aee358eb7a41359c0e6ee2904" id="r_a1df1772aee358eb7a41359c0e6ee2904"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a> (uint32_t framesInFlight=2)</td></tr>
-<tr class="memdesc:a1df1772aee358eb7a41359c0e6ee2904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain.  <br /></td></tr>
-<tr class="separator:a1df1772aee358eb7a41359c0e6ee2904"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6da2c9a413ca0d8f5bc736f64c2b97ac" id="r_a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a6da2c9a413ca0d8f5bc736f64c2b97ac">createSwapchain</a> ()</td></tr>
+<tr class="memdesc:a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain. How many frames it keeps in flight is decided by the device.  <br /></td></tr>
+<tr class="separator:a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bde5d20fd6e42b0fe49463dd11be333" id="r_a5bde5d20fd6e42b0fe49463dd11be333"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">createTextureFromFile</a> (TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</td></tr>
 <tr class="memdesc:a5bde5d20fd6e42b0fe49463dd11be333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a file.  <br /></td></tr>
 <tr class="separator:a5bde5d20fd6e42b0fe49463dd11be333"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -208,12 +221,18 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:ad54ed2eedf3b6f89462cf1a7c23e3fa2" id="r_ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">createTextureFromImage</a> (ptr&lt; <a class="el" href="classMandrill_1_1Image.html">Image</a> &gt; pImage, bool mipmaps=false)</td></tr>
 <tr class="memdesc:ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a texture from an existing image.  <br /></td></tr>
 <tr class="separator:ad54ed2eedf3b6f89462cf1a7c23e3fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a2420518f1639a43d38fd830ce4de7d3e" id="r_a2420518f1639a43d38fd830ce4de7d3e"><td class="memItemLeft" align="right" valign="top"><a id="a2420518f1639a43d38fd830ce4de7d3e" name="a2420518f1639a43d38fd830ce4de7d3e"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></tr>
+<tr class="separator:a2420518f1639a43d38fd830ce4de7d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> class abstracting the physical and logical Vulkan device, as well as handling extensions and features. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a849119d173c474b158b5a588a97f61ab" name="a849119d173c474b158b5a588a97f61ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a849119d173c474b158b5a588a97f61ab">&#9670;&#160;</a></span>Device()</h2>
+<a id="afdd3d9e8957f1f36297babd726e679ba" name="afdd3d9e8957f1f36297babd726e679ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdd3d9e8957f1f36297babd726e679ba">&#9670;&#160;</a></span>Device()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,7 +259,13 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>physicalDeviceIndex</em> = <code>std::numeric_limits&lt;uint32_t&gt;::max()</code>&#160;</td>
+          <td class="paramname"><em>physicalDeviceIndex</em> = <code>std::numeric_limits&lt;uint32_t&gt;::max()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>framesInFlightCount</em> = <code>2</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -257,6 +282,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
     <tr><td class="paramname">extensions</td><td>Extra device extensions to activate</td></tr>
     <tr><td class="paramname">pFeatures</td><td>Pointer to a pNext-chain of features to link with when creating device, can be nullptr in which case a set of required default features will be used</td></tr>
     <tr><td class="paramname">physicalDeviceIndex</td><td>Physical device to use. If not set, the first discrete device is used, or device 0.</td></tr>
+    <tr><td class="paramname">framesInFlightCount</td><td>How many frames the application pipelines. This decides how many copies every per-frame resource in the framework gets, and stays fixed for the lifetime of the device.</td></tr>
   </table>
   </dd>
 </dl>
@@ -346,8 +372,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
-<a id="aed0b0b82d0fcb9106f970a8f3eb1b830" name="aed0b0b82d0fcb9106f970a8f3eb1b830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed0b0b82d0fcb9106f970a8f3eb1b830">&#9670;&#160;</a></span>createCamera()</h2>
+<a id="a5146de1bb73eb5099c68b4ba10c96722" name="a5146de1bb73eb5099c68b4ba10c96722"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5146de1bb73eb5099c68b4ba10c96722">&#9670;&#160;</a></span>createCamera()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -355,20 +381,13 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
         <tr>
           <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; Device::createCamera </td>
           <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>framesInFlightCount</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Create a new camera. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">framesInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>A new camera</dd></dl>
 
 </div>
@@ -786,6 +805,44 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
+<a id="ad2d5070cc8c54c6e419060dae9b2533c" name="ad2d5070cc8c54c6e419060dae9b2533c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2d5070cc8c54c6e419060dae9b2533c">&#9670;&#160;</a></span>createPerFrameBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt; Device::createPerFrameBuffer </td>
+          <td>(</td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>elementSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkBufferUsageFlags&#160;</td>
+          <td class="paramname"><em>usage</em> = <code>VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new dynamic buffer holding exactly one copy per frame in flight. Use this for anything that is rewritten every frame, such as a model matrix that changes with time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">elementSize</td><td>Size of one copy in bytes</td></tr>
+    <tr><td class="paramname">usage</td><td>How the buffer will be used, which also decides the alignment of the copies</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new dynamic buffer</dd></dl>
+
+</div>
+</div>
 <a id="a8f8e0c3e643ba9f83456fe0004f08a62" name="a8f8e0c3e643ba9f83456fe0004f08a62"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8f8e0c3e643ba9f83456fe0004f08a62">&#9670;&#160;</a></span>createPipeline()</h2>
 
@@ -916,8 +973,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 </div>
 </div>
-<a id="a1df1772aee358eb7a41359c0e6ee2904" name="a1df1772aee358eb7a41359c0e6ee2904"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1df1772aee358eb7a41359c0e6ee2904">&#9670;&#160;</a></span>createSwapchain()</h2>
+<a id="a6da2c9a413ca0d8f5bc736f64c2b97ac" name="a6da2c9a413ca0d8f5bc736f64c2b97ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6da2c9a413ca0d8f5bc736f64c2b97ac">&#9670;&#160;</a></span>createSwapchain()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -925,20 +982,13 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
         <tr>
           <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt; Device::createSwapchain </td>
           <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>framesInFlight</em> = <code>2</code></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create a new swapchain. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">framesInFlight</td><td>How many frames in flight that should be used</td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Create a new swapchain. How many frames it keeps in flight is decided by the device. </p>
 <dl class="section return"><dt>Returns</dt><dd>A new swapchain</dd></dl>
 
 </div>
@@ -1166,6 +1216,62 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 <p>Get Vulkan device handle. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vulkan device handle</dd></dl>
+
+</div>
+</div>
+<a id="a56bf146482e7a28e0f4173c23c716272" name="a56bf146482e7a28e0f4173c23c716272"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56bf146482e7a28e0f4173c23c716272">&#9670;&#160;</a></span>getFrameInFlightIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Device::getFrameInFlightIndex </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the frame in flight the device is currently on. The swapchain advances this when a frame is presented, so it is the same for the whole of an application's update and render pair. </p>
+<dl class="section return"><dt>Returns</dt><dd>Index of the current frame in flight</dd></dl>
+
+</div>
+</div>
+<a id="aa743b78e6e0b84827c7951bc2c8f261a" name="aa743b78e6e0b84827c7951bc2c8f261a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa743b78e6e0b84827c7951bc2c8f261a">&#9670;&#160;</a></span>getFramesInFlightCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Device::getFramesInFlightCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get how many frames the application pipelines. Every resource that the host rewrites while the device may still be reading the previous value needs this many copies, which the framework takes care of on its own. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of frames in flight</dd></dl>
 
 </div>
 </div>
@@ -1410,6 +1516,41 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 
 <p>Get the window that the device is bound to. </p>
 <dl class="section return"><dt>Returns</dt><dd>A GLFWwindow pointer</dd></dl>
+
+</div>
+</div>
+<a id="afd35a68b47552a468c2cc39c55b0835e" name="afd35a68b47552a468c2cc39c55b0835e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd35a68b47552a468c2cc39c55b0835e">&#9670;&#160;</a></span>resolveFrameInFlightIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Device::resolveFrameInFlightIndex </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Turn a frame in flight index that may be kCurrentFrameInFlight into a concrete one. Used by the parts of the framework that let the caller leave the frame out. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Index to resolve</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Index of the frame to use</dd></dl>
 
 </div>
 </div>

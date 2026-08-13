@@ -164,152 +164,152 @@ $(document).ready(function(){initNavTree('Shader_8h_source.html',''); initResiza
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">bindResources</a>(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">bindResources</a>(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                                        uint32_t frameInFlightIndex = 0);</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3">bindResourcesWithOffsets</a>(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>                                                   <span class="keyword">const</span> std::vector&lt;uint32_t&gt;&amp; dynamicOffsets);</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="foldopen" id="foldopen00189" data-start="{" data-end="}">
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">  189</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">hasResource</a>(<span class="keyword">const</span> std::string&amp; name)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            <span class="keywordflow">return</span> mResourceInfos.count(name) &gt; 0;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        }</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">bindResources</a>(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                                        uint32_t frameInFlightIndex = kCurrentFrameInFlight);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3">bindResourcesWithOffsets</a>(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                                                   <span class="keyword">const</span> std::vector&lt;uint32_t&gt;&amp; dynamicOffsets);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="foldopen" id="foldopen00190" data-start="{" data-end="}">
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">  190</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">hasResource</a>(<span class="keyword">const</span> std::string&amp; name)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <span class="keywordflow">return</span> mResourceInfos.count(name) &gt; 0;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
 </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="foldopen" id="foldopen00199" data-start="{" data-end="}">
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">  199</a></span>        MANDRILL_API std::optional&lt;ResourceInfo&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">getResourceInfo</a>(<span class="keyword">const</span> std::string&amp; name)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            <span class="keyword">auto</span> found = mResourceInfos.find(name);</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            <span class="keywordflow">return</span> found == mResourceInfos.end() ? std::nullopt : std::optional&lt;ResourceInfo&gt;(found-&gt;second);</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        }</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
+<div class="foldopen" id="foldopen00200" data-start="{" data-end="}">
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">  200</a></span>        MANDRILL_API std::optional&lt;ResourceInfo&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">getResourceInfo</a>(<span class="keyword">const</span> std::string&amp; name)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            <span class="keyword">auto</span> found = mResourceInfos.find(name);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            <span class="keywordflow">return</span> found == mResourceInfos.end() ? std::nullopt : std::optional&lt;ResourceInfo&gt;(found-&gt;second);</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        }</div>
 </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="foldopen" id="foldopen00209" data-start="{" data-end="}">
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">  209</a></span>        MANDRILL_API std::vector&lt;VkShaderModule&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">getModules</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            <span class="keywordflow">return</span> mModules;</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        }</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
+<div class="foldopen" id="foldopen00210" data-start="{" data-end="}">
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">  210</a></span>        MANDRILL_API std::vector&lt;VkShaderModule&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">getModules</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keywordflow">return</span> mModules;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        }</div>
 </div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
-<div class="foldopen" id="foldopen00218" data-start="{" data-end="}">
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">  218</a></span>        MANDRILL_API std::vector&lt;VkPipelineShaderStageCreateInfo&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">getStages</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            <span class="keywordflow">return</span> mStages;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        }</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
+<div class="foldopen" id="foldopen00219" data-start="{" data-end="}">
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">  219</a></span>        MANDRILL_API std::vector&lt;VkPipelineShaderStageCreateInfo&gt; <a class="code hl_function" href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">getStages</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            <span class="keywordflow">return</span> mStages;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        }</div>
 </div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
-<div class="foldopen" id="foldopen00227" data-start="{" data-end="}">
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">  227</a></span>        MANDRILL_API VkDescriptorSetLayout <a class="code hl_function" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">getDescriptorSetLayout</a>(uint32_t set)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            <span class="keywordflow">return</span> mDescriptorSetLayouts[set];</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        }</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="foldopen" id="foldopen00228" data-start="{" data-end="}">
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">  228</a></span>        MANDRILL_API VkDescriptorSetLayout <a class="code hl_function" href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">getDescriptorSetLayout</a>(uint32_t set)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            <span class="keywordflow">return</span> mDescriptorSetLayouts[set];</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        }</div>
 </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
-<div class="foldopen" id="foldopen00236" data-start="{" data-end="}">
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">  236</a></span>        MANDRILL_API <span class="keyword">const</span> std::vector&lt;VkDescriptorSetLayout&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">getDescriptorSetLayouts</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            <span class="keywordflow">return</span> mDescriptorSetLayouts;</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span> </div>
+<div class="foldopen" id="foldopen00237" data-start="{" data-end="}">
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">  237</a></span>        MANDRILL_API <span class="keyword">const</span> std::vector&lt;VkDescriptorSetLayout&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">getDescriptorSetLayouts</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>            <span class="keywordflow">return</span> mDescriptorSetLayouts;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        }</div>
 </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span> </div>
-<div class="foldopen" id="foldopen00245" data-start="{" data-end="}">
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">  245</a></span>        MANDRILL_API <span class="keyword">const</span> std::vector&lt;VkPushConstantRange&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">getPushConstantRanges</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            <span class="keywordflow">return</span> mPushConstantRanges;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        }</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
+<div class="foldopen" id="foldopen00246" data-start="{" data-end="}">
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">  246</a></span>        MANDRILL_API <span class="keyword">const</span> std::vector&lt;VkPushConstantRange&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">getPushConstantRanges</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            <span class="keywordflow">return</span> mPushConstantRanges;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        }</div>
 </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="foldopen" id="foldopen00254" data-start="{" data-end="}">
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">  254</a></span>        MANDRILL_API VkPipelineLayout <a class="code hl_function" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">getPipelineLayout</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>            <span class="keywordflow">return</span> mPipelineLayout;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="foldopen" id="foldopen00255" data-start="{" data-end="}">
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno"><a class="line" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">  255</a></span>        MANDRILL_API VkPipelineLayout <a class="code hl_function" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">getPipelineLayout</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>            <span class="keywordflow">return</span> mPipelineLayout;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        }</div>
 </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        <span class="comment">// A resource attached to the shader. Only the members matching the reflected descriptor type are used.</span></div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="keyword">struct </span>BoundResource {</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            ptr&lt;Buffer&gt; pBuffer;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            VkDeviceSize offset = 0;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            VkDeviceSize range = VK_WHOLE_SIZE;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            ptr&lt;DynamicBuffer&gt; pDynamicBuffer;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            ptr&lt;Texture&gt; pTexture;</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            std::vector&lt;ptr&lt;Texture&gt;&gt; textures;</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            ptr&lt;Image&gt; pImage;</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            ptr&lt;AccelerationStructure&gt; pAccelerationStructure;</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        };</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        <span class="keywordtype">void</span> createShader();</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        <span class="keywordtype">void</span> createDescriptorPool();</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keywordtype">void</span> destroyDescriptorPools();</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span> </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        <span class="comment">// Looks up a resource and checks that the shader expects the kind of resource being attached</span></div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="keyword">const</span> ResourceInfo* resolveResource(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> <span class="keywordtype">char</span>* kind,</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                                            std::initializer_list&lt;VkDescriptorType&gt; allowed);</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        VkDescriptorSet allocateDescriptorSet(uint32_t set);</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        <span class="keywordtype">void</span> updateDescriptorSet(uint32_t set);</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="comment">// Offsets for the dynamic descriptors of a set, in binding order, taken from the per-frame resources</span></div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        std::vector&lt;uint32_t&gt; getDynamicOffsets(uint32_t set, uint32_t frameInFlightIndex);</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <span class="keywordtype">void</span> bindSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                     <span class="keyword">const</span> std::vector&lt;uint32_t&gt;&amp; dynamicOffsets);</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        std::vector&lt;VkShaderModule&gt; mModules;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        std::vector&lt;ptr&lt;spv_reflect::ShaderModule&gt;&gt; mReflections;</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        std::vector&lt;VkPipelineShaderStageCreateInfo&gt; mStages;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        std::vector&lt;std::string&gt; mEntries;</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        std::vector&lt;std::filesystem::path&gt; mSrcFilenames;</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        std::vector&lt;VkShaderStageFlagBits&gt; mStageFlags;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        std::vector&lt;VkSpecializationInfo*&gt; mSpecializationInfos;</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        std::vector&lt;VkDescriptorSetLayout&gt; mDescriptorSetLayouts; <span class="comment">// One per set</span></div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        <span class="comment">// Bindings of each set that are of a dynamic type, in ascending binding order, which is the order Vulkan</span></div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="comment">// consumes the dynamic offsets in</span></div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>        std::vector&lt;std::vector&lt;uint32_t&gt;&gt; mDynamicBindings;</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        std::vector&lt;VkPushConstantRange&gt; mPushConstantRanges;</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        VkPipelineLayout mPipelineLayout;</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        <span class="comment">// Resources are kept keyed on name so that they survive a reload, where set and binding could change</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        std::map&lt;std::string, ResourceInfo&gt; mResourceInfos;</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        std::map&lt;std::string, BoundResource&gt; mResources;</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        std::vector&lt;VkDescriptorSet&gt; mDescriptorSets; <span class="comment">// One per set, the currently written set</span></div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        std::vector&lt;bool&gt; mSetDirty;                  <span class="comment">// Whether the set has to be written before the next bind</span></div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span> </div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        <span class="comment">// Sets are never written in place, a new one is taken from the pool instead, so that a set still being read</span></div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        <span class="comment">// by a frame in flight is left untouched. Pools are only reclaimed when the shader is destroyed or reloaded.</span></div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        std::vector&lt;VkDescriptorPool&gt; mDescriptorPools;</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        std::vector&lt;VkDescriptorPoolSize&gt; mPoolSizes;</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        uint32_t mMaxSetsPerPool = 0;</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        <span class="comment">// Dynamic bindings that have already been reported as not selectable by frame, so that the report does not</span></div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        <span class="comment">// repeat itself every frame. Keyed on set and binding.</span></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        std::set&lt;uint64_t&gt; mReportedDynamicBindings;</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    };</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="comment">// A resource attached to the shader. Only the members matching the reflected descriptor type are used.</span></div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        <span class="keyword">struct </span>BoundResource {</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            ptr&lt;Buffer&gt; pBuffer;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            VkDeviceSize offset = 0;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            VkDeviceSize range = VK_WHOLE_SIZE;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            ptr&lt;DynamicBuffer&gt; pDynamicBuffer;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            ptr&lt;Texture&gt; pTexture;</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            std::vector&lt;ptr&lt;Texture&gt;&gt; textures;</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            ptr&lt;Image&gt; pImage;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            ptr&lt;AccelerationStructure&gt; pAccelerationStructure;</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        };</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        <span class="keywordtype">void</span> createShader();</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keywordtype">void</span> createDescriptorPool();</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordtype">void</span> destroyDescriptorPools();</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="comment">// Looks up a resource and checks that the shader expects the kind of resource being attached</span></div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="keyword">const</span> ResourceInfo* resolveResource(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> <span class="keywordtype">char</span>* kind,</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                                            std::initializer_list&lt;VkDescriptorType&gt; allowed);</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        VkDescriptorSet allocateDescriptorSet(uint32_t set);</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        <span class="keywordtype">void</span> updateDescriptorSet(uint32_t set);</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        <span class="comment">// Offsets for the dynamic descriptors of a set, in binding order, taken from the per-frame resources</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        std::vector&lt;uint32_t&gt; getDynamicOffsets(uint32_t set, uint32_t frameInFlightIndex);</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        <span class="keywordtype">void</span> bindSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                     <span class="keyword">const</span> std::vector&lt;uint32_t&gt;&amp; dynamicOffsets);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        std::vector&lt;VkShaderModule&gt; mModules;</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        std::vector&lt;ptr&lt;spv_reflect::ShaderModule&gt;&gt; mReflections;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        std::vector&lt;VkPipelineShaderStageCreateInfo&gt; mStages;</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        std::vector&lt;std::string&gt; mEntries;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        std::vector&lt;std::filesystem::path&gt; mSrcFilenames;</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        std::vector&lt;VkShaderStageFlagBits&gt; mStageFlags;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        std::vector&lt;VkSpecializationInfo*&gt; mSpecializationInfos;</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        std::vector&lt;VkDescriptorSetLayout&gt; mDescriptorSetLayouts; <span class="comment">// One per set</span></div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="comment">// Bindings of each set that are of a dynamic type, in ascending binding order, which is the order Vulkan</span></div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>        <span class="comment">// consumes the dynamic offsets in</span></div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        std::vector&lt;std::vector&lt;uint32_t&gt;&gt; mDynamicBindings;</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        std::vector&lt;VkPushConstantRange&gt; mPushConstantRanges;</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        VkPipelineLayout mPipelineLayout;</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        <span class="comment">// Resources are kept keyed on name so that they survive a reload, where set and binding could change</span></div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        std::map&lt;std::string, ResourceInfo&gt; mResourceInfos;</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        std::map&lt;std::string, BoundResource&gt; mResources;</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span> </div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        std::vector&lt;VkDescriptorSet&gt; mDescriptorSets; <span class="comment">// One per set, the currently written set</span></div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        std::vector&lt;bool&gt; mSetDirty;                  <span class="comment">// Whether the set has to be written before the next bind</span></div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span> </div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        <span class="comment">// Sets are never written in place, a new one is taken from the pool instead, so that a set still being read</span></div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        <span class="comment">// by a frame in flight is left untouched. Pools are only reclaimed when the shader is destroyed or reloaded.</span></div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        std::vector&lt;VkDescriptorPool&gt; mDescriptorPools;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        std::vector&lt;VkDescriptorPoolSize&gt; mPoolSizes;</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        uint32_t mMaxSetsPerPool = 0;</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span> </div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        <span class="comment">// Dynamic bindings that have already been reported as not selectable by frame, so that the report does not</span></div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        <span class="comment">// repeat itself every frame. Keyed on set and binding.</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>        std::set&lt;uint64_t&gt; mReportedDynamicBindings;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    };</div>
 </div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Shader_html"><div class="ttname"><a href="classMandrill_1_1Shader.html">Mandrill::Shader</a></div><div class="ttdoc">Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...</div><div class="ttdef"><b>Definition</b> Shader.h:63</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a3dd1031aeba7ce57cbede4eb8942354f"><div class="ttname"><a href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">Mandrill::Shader::hasResource</a></div><div class="ttdeci">MANDRILL_API bool hasResource(const std::string &amp;name) const</div><div class="ttdoc">Check whether the shader has a resource with a given name.</div><div class="ttdef"><b>Definition</b> Shader.h:189</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a3ddb1089630ab8cc39297ddf07cfaad1"><div class="ttname"><a href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">Mandrill::Shader::getPushConstantRanges</a></div><div class="ttdeci">MANDRILL_API const std::vector&lt; VkPushConstantRange &gt; &amp; getPushConstantRanges() const</div><div class="ttdoc">Get the push constant ranges.</div><div class="ttdef"><b>Definition</b> Shader.h:245</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a43f073192379685c8ea060ed2318bfd3"><div class="ttname"><a href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3">Mandrill::Shader::bindResourcesWithOffsets</a></div><div class="ttdeci">MANDRILL_API void bindResourcesWithOffsets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, const std::vector&lt; uint32_t &gt; &amp;dynamicOffsets)</div><div class="ttdoc">Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is ...</div><div class="ttdef"><b>Definition</b> Shader.cpp:882</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a4647edd2f83e6c0483942795e121f43a"><div class="ttname"><a href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">Mandrill::Shader::getPipelineLayout</a></div><div class="ttdeci">MANDRILL_API VkPipelineLayout getPipelineLayout() const</div><div class="ttdoc">Get tthe pipeline layout.</div><div class="ttdef"><b>Definition</b> Shader.h:254</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a761b955eb7735ea9abd41abdd6685658"><div class="ttname"><a href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">Mandrill::Shader::getDescriptorSetLayouts</a></div><div class="ttdeci">MANDRILL_API const std::vector&lt; VkDescriptorSetLayout &gt; &amp; getDescriptorSetLayouts() const</div><div class="ttdoc">Get the descriptor set layouts.</div><div class="ttdef"><b>Definition</b> Shader.h:236</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_a784ce04e322bd1f545fc42324d590865"><div class="ttname"><a href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">Mandrill::Shader::getStages</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; VkPipelineShaderStageCreateInfo &gt; getStages() const</div><div class="ttdoc">Get pipeline shader stage create infos.</div><div class="ttdef"><b>Definition</b> Shader.h:218</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a3dd1031aeba7ce57cbede4eb8942354f"><div class="ttname"><a href="classMandrill_1_1Shader.html#a3dd1031aeba7ce57cbede4eb8942354f">Mandrill::Shader::hasResource</a></div><div class="ttdeci">MANDRILL_API bool hasResource(const std::string &amp;name) const</div><div class="ttdoc">Check whether the shader has a resource with a given name.</div><div class="ttdef"><b>Definition</b> Shader.h:190</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a3ddb1089630ab8cc39297ddf07cfaad1"><div class="ttname"><a href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">Mandrill::Shader::getPushConstantRanges</a></div><div class="ttdeci">MANDRILL_API const std::vector&lt; VkPushConstantRange &gt; &amp; getPushConstantRanges() const</div><div class="ttdoc">Get the push constant ranges.</div><div class="ttdef"><b>Definition</b> Shader.h:246</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a43f073192379685c8ea060ed2318bfd3"><div class="ttname"><a href="classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3">Mandrill::Shader::bindResourcesWithOffsets</a></div><div class="ttdeci">MANDRILL_API void bindResourcesWithOffsets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set, const std::vector&lt; uint32_t &gt; &amp;dynamicOffsets)</div><div class="ttdoc">Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is ...</div><div class="ttdef"><b>Definition</b> Shader.cpp:884</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a4647edd2f83e6c0483942795e121f43a"><div class="ttname"><a href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">Mandrill::Shader::getPipelineLayout</a></div><div class="ttdeci">MANDRILL_API VkPipelineLayout getPipelineLayout() const</div><div class="ttdoc">Get tthe pipeline layout.</div><div class="ttdef"><b>Definition</b> Shader.h:255</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a761b955eb7735ea9abd41abdd6685658"><div class="ttname"><a href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658">Mandrill::Shader::getDescriptorSetLayouts</a></div><div class="ttdeci">MANDRILL_API const std::vector&lt; VkDescriptorSetLayout &gt; &amp; getDescriptorSetLayouts() const</div><div class="ttdoc">Get the descriptor set layouts.</div><div class="ttdef"><b>Definition</b> Shader.h:237</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_a784ce04e322bd1f545fc42324d590865"><div class="ttname"><a href="classMandrill_1_1Shader.html#a784ce04e322bd1f545fc42324d590865">Mandrill::Shader::getStages</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; VkPipelineShaderStageCreateInfo &gt; getStages() const</div><div class="ttdoc">Get pipeline shader stage create infos.</div><div class="ttdef"><b>Definition</b> Shader.h:219</div></div>
 <div class="ttc" id="aclassMandrill_1_1Shader_html_a7d3a2d0c4d1dc1c61338459e9ae09d8c"><div class="ttname"><a href="classMandrill_1_1Shader.html#a7d3a2d0c4d1dc1c61338459e9ae09d8c">Mandrill::Shader::reload</a></div><div class="ttdeci">MANDRILL_API void reload()</div><div class="ttdoc">Reload shader code from disk and recompile it. Resources attached with setResource() are kept and are...</div><div class="ttdef"><b>Definition</b> Shader.cpp:297</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_aa59402d7ec7b902840f62eee73e8f4d9"><div class="ttname"><a href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">Mandrill::Shader::getResourceInfo</a></div><div class="ttdeci">MANDRILL_API std::optional&lt; ResourceInfo &gt; getResourceInfo(const std::string &amp;name) const</div><div class="ttdoc">Get where a named resource lives in the shader.</div><div class="ttdef"><b>Definition</b> Shader.h:199</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_aaa118cffbe1952109a2a3af0d87658ab"><div class="ttname"><a href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">Mandrill::Shader::getModules</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; VkShaderModule &gt; getModules() const</div><div class="ttdoc">Get shader module handles.</div><div class="ttdef"><b>Definition</b> Shader.h:209</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_ab76dcdb010b19b5a96bfbc30a84b4476"><div class="ttname"><a href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">Mandrill::Shader::getDescriptorSetLayout</a></div><div class="ttdeci">MANDRILL_API VkDescriptorSetLayout getDescriptorSetLayout(uint32_t set) const</div><div class="ttdoc">Get the descriptor set layout of one set.</div><div class="ttdef"><b>Definition</b> Shader.h:227</div></div>
-<div class="ttc" id="aclassMandrill_1_1Shader_html_ac15c098db6d9dfe90d9bcadb70bf1659"><div class="ttname"><a href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">Mandrill::Shader::bindResources</a></div><div class="ttdeci">MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)</div><div class="ttdoc">Bind every descriptor set that has resources attached to it, using the first copy of any per-frame re...</div><div class="ttdef"><b>Definition</b> Shader.cpp:917</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_aa59402d7ec7b902840f62eee73e8f4d9"><div class="ttname"><a href="classMandrill_1_1Shader.html#aa59402d7ec7b902840f62eee73e8f4d9">Mandrill::Shader::getResourceInfo</a></div><div class="ttdeci">MANDRILL_API std::optional&lt; ResourceInfo &gt; getResourceInfo(const std::string &amp;name) const</div><div class="ttdoc">Get where a named resource lives in the shader.</div><div class="ttdef"><b>Definition</b> Shader.h:200</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_aaa118cffbe1952109a2a3af0d87658ab"><div class="ttname"><a href="classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab">Mandrill::Shader::getModules</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; VkShaderModule &gt; getModules() const</div><div class="ttdoc">Get shader module handles.</div><div class="ttdef"><b>Definition</b> Shader.h:210</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_ab76dcdb010b19b5a96bfbc30a84b4476"><div class="ttname"><a href="classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476">Mandrill::Shader::getDescriptorSetLayout</a></div><div class="ttdeci">MANDRILL_API VkDescriptorSetLayout getDescriptorSetLayout(uint32_t set) const</div><div class="ttdoc">Get the descriptor set layout of one set.</div><div class="ttdef"><b>Definition</b> Shader.h:228</div></div>
+<div class="ttc" id="aclassMandrill_1_1Shader_html_ac15c098db6d9dfe90d9bcadb70bf1659"><div class="ttname"><a href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659">Mandrill::Shader::bindResources</a></div><div class="ttdeci">MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)</div><div class="ttdoc">Bind every descriptor set that has resources attached to it, using the current frame's copy of any pe...</div><div class="ttdef"><b>Definition</b> Shader.cpp:919</div></div>
 <div class="ttc" id="aclassMandrill_1_1Shader_html_ac24a0f4aa36761f628c41f2553780821"><div class="ttname"><a href="classMandrill_1_1Shader.html#ac24a0f4aa36761f628c41f2553780821">Mandrill::Shader::setResource</a></div><div class="ttdeci">MANDRILL_API void setResource(const std::string &amp;name, ptr&lt; Buffer &gt; pBuffer, VkDeviceSize offset=0, VkDeviceSize range=VK_WHOLE_SIZE)</div><div class="ttdoc">Attach a buffer to a named resource in the shader. Whether it ends up as a uniform buffer or a storag...</div><div class="ttdef"><b>Definition</b> Shader.cpp:568</div></div>
 <div class="ttc" id="aclassMandrill_1_1Shader_html_aff01df87e8a102f270b5b135a295e59d"><div class="ttname"><a href="classMandrill_1_1Shader.html#aff01df87e8a102f270b5b135a295e59d">Mandrill::Shader::~Shader</a></div><div class="ttdeci">MANDRILL_API ~Shader()</div><div class="ttdoc">Destructor for shader.</div><div class="ttdef"><b>Definition</b> Shader.cpp:280</div></div>
 <div class="ttc" id="astructMandrill_1_1Shader_1_1ResourceInfo_html"><div class="ttname"><a href="structMandrill_1_1Shader_1_1ResourceInfo.html">Mandrill::Shader::ResourceInfo</a></div><div class="ttdoc">Where a named resource lives in the shader, as reflected from the SPIR-V.</div><div class="ttdef"><b>Definition</b> Shader.h:70</div></div>

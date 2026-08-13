@@ -115,9 +115,9 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()</td></tr>
 <tr class="memdesc:a3b8cec2e32546713915f8c6303c951f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for scene. <br /></td></tr>
 <tr class="separator:a3b8cec2e32546713915f8c6303c951f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b6d6b7b1ae401f9c52df55a6140e1e8" id="r_a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, uint32_t frameInFlightIndex, bool frustumCulling=true) const</td></tr>
-<tr class="memdesc:a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
-<tr class="separator:a7b6d6b7b1ae401f9c52df55a6140e1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d1a8e850ff9372d000c500013c5cd07" id="r_a3d1a8e850ff9372d000c500013c5cd07"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07">render</a> (VkCommandBuffer cmd, const ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, bool frustumCulling=true, uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</td></tr>
+<tr class="memdesc:a3d1a8e850ff9372d000c500013c5cd07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render all the nodes in the scene.  <br /></td></tr>
+<tr class="separator:a3d1a8e850ff9372d000c500013c5cd07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82ec0ac8c1bc8cd64d8627d0573d2a44" id="r_a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">addNode</a> ()</td></tr>
 <tr class="memdesc:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a node to the scene.  <br /></td></tr>
 <tr class="separator:a82ec0ac8c1bc8cd64d8627d0573d2a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -133,21 +133,22 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <tr class="memitem:a2715b11db38a70753f26d66b32581e18" id="r_a2715b11db38a70753f26d66b32581e18"><td class="memItemLeft" align="right" valign="top">MANDRILL_API std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">addMeshFromFile</a> (const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</td></tr>
 <tr class="memdesc:a2715b11db38a70753f26d66b32581e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file.  <br /></td></tr>
 <tr class="separator:a2715b11db38a70753f26d66b32581e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea7a8f2c2cd5568c2c8e4ac641e24f0c" id="r_aea7a8f2c2cd5568c2c8e4ac641e24f0c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#aea7a8f2c2cd5568c2c8e4ac641e24f0c">compile</a> (uint32_t frameInFlightCount)</td></tr>
-<tr class="memdesc:aea7a8f2c2cd5568c2c8e4ac641e24f0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate sizes of buffers and allocate resources. Call this after all nodes have been added.  <br /></td></tr>
-<tr class="separator:aea7a8f2c2cd5568c2c8e4ac641e24f0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac65e9735e15daeb89f72d2380db9c7f2" id="r_ac65e9735e15daeb89f72d2380db9c7f2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#ac65e9735e15daeb89f72d2380db9c7f2">createDescriptors</a> (const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts, uint32_t frameInFlightCount)</td></tr>
-<tr class="memdesc:ac65e9735e15daeb89f72d2380db9c7f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create desciptors for scene.  <br /></td></tr>
-<tr class="separator:ac65e9735e15daeb89f72d2380db9c7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d3980eda45e43fa934eadfe94df3c1c" id="r_a1d3980eda45e43fa934eadfe94df3c1c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c">createRayTracingDescriptors</a> (const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts, const ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt; pAccelerationStructure, uint32_t frameInFlightCount)</td></tr>
-<tr class="memdesc:a1d3980eda45e43fa934eadfe94df3c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create ray-tracing desciptors for scene.  <br /></td></tr>
-<tr class="separator:a1d3980eda45e43fa934eadfe94df3c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a614c3b2be3acf93f0014ffd68dd38aec" id="r_a614c3b2be3acf93f0014ffd68dd38aec"><td class="memItemLeft" align="right" valign="top"><a id="a614c3b2be3acf93f0014ffd68dd38aec" name="a614c3b2be3acf93f0014ffd68dd38aec"></a>
+MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>compile</b> ()</td></tr>
+<tr class="memdesc:a614c3b2be3acf93f0014ffd68dd38aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate sizes of buffers and allocate resources. Call this after all nodes have been added. <a class="el" href="classMandrill_1_1Node.html" title="Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...">Node</a> transforms get one copy per frame in flight, as the device is set up for. <br /></td></tr>
+<tr class="separator:a614c3b2be3acf93f0014ffd68dd38aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a338cfa63a416f22cd1dbdeb22ab70c31" id="r_a338cfa63a416f22cd1dbdeb22ab70c31"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a338cfa63a416f22cd1dbdeb22ab70c31">createDescriptors</a> (const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts)</td></tr>
+<tr class="memdesc:a338cfa63a416f22cd1dbdeb22ab70c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create desciptors for scene.  <br /></td></tr>
+<tr class="separator:a338cfa63a416f22cd1dbdeb22ab70c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fa0c65d69cb1c406051616cc5f75eb4" id="r_a4fa0c65d69cb1c406051616cc5f75eb4"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a4fa0c65d69cb1c406051616cc5f75eb4">createRayTracingDescriptors</a> (const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts, const ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt; pAccelerationStructure)</td></tr>
+<tr class="memdesc:a4fa0c65d69cb1c406051616cc5f75eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create ray-tracing desciptors for scene.  <br /></td></tr>
+<tr class="separator:a4fa0c65d69cb1c406051616cc5f75eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba588e677211de76531221b7b5a1d42d" id="r_aba588e677211de76531221b7b5a1d42d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">syncToDevice</a> ()</td></tr>
 <tr class="memdesc:aba588e677211de76531221b7b5a1d42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronize buffers to device.  <br /></td></tr>
 <tr class="separator:aba588e677211de76531221b7b5a1d42d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40fd82a0b65816031e3d43a1a8ddc2d1" id="r_a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a40fd82a0b65816031e3d43a1a8ddc2d1">bindRayTracingDescriptors</a> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, VkPipelineLayout layout, uint32_t frameInFlightIndex)</td></tr>
-<tr class="memdesc:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind ray-tracing descriptors.  <br /></td></tr>
-<tr class="separator:a40fd82a0b65816031e3d43a1a8ddc2d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dc4995af6e93919319501a541b8d42c" id="r_a5dc4995af6e93919319501a541b8d42c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a5dc4995af6e93919319501a541b8d42c">bindRayTracingDescriptors</a> (VkCommandBuffer cmd, ptr&lt; <a class="el" href="classMandrill_1_1Camera.html">Camera</a> &gt; pCamera, VkPipelineLayout layout, uint32_t frameInFlightIndex=kCurrentFrameInFlight)</td></tr>
+<tr class="memdesc:a5dc4995af6e93919319501a541b8d42c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind ray-tracing descriptors.  <br /></td></tr>
+<tr class="separator:a5dc4995af6e93919319501a541b8d42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb306e7db8f71cb20f51bffe7c1a0069" id="r_acb306e7db8f71cb20f51bffe7c1a0069"><td class="memItemLeft" align="right" valign="top">MANDRILL_API <a class="el" href="classMandrill_1_1Node.html">Node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">getNode</a> (uint32_t nodeIndex)</td></tr>
 <tr class="memdesc:acb306e7db8f71cb20f51bffe7c1a0069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to a node in the scene.  <br /></td></tr>
 <tr class="separator:acb306e7db8f71cb20f51bffe7c1a0069"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -389,8 +390,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 
 </div>
 </div>
-<a id="a40fd82a0b65816031e3d43a1a8ddc2d1" name="a40fd82a0b65816031e3d43a1a8ddc2d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40fd82a0b65816031e3d43a1a8ddc2d1">&#9670;&#160;</a></span>bindRayTracingDescriptors()</h2>
+<a id="a5dc4995af6e93919319501a541b8d42c" name="a5dc4995af6e93919319501a541b8d42c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dc4995af6e93919319501a541b8d42c">&#9670;&#160;</a></span>bindRayTracingDescriptors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -417,7 +418,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightIndex</em>&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em> = <code>kCurrentFrameInFlight</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -433,41 +434,15 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
     <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
     <tr><td class="paramname">pCamera</td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> to use</td></tr>
     <tr><td class="paramname">layout</td><td><a class="el" href="classMandrill_1_1Pipeline.html" title="Pipeline class for managing Vulkan graphics pipelines.">Pipeline</a> layout</td></tr>
-    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+    <tr><td class="paramname">frameInFlightIndex</td><td>Which copy of the per-frame resources to use, the current frame by default</td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="aea7a8f2c2cd5568c2c8e4ac641e24f0c" name="aea7a8f2c2cd5568c2c8e4ac641e24f0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea7a8f2c2cd5568c2c8e4ac641e24f0c">&#9670;&#160;</a></span>compile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::compile </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightCount</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculate sizes of buffers and allocate resources. Call this after all nodes have been added. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">framesInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac65e9735e15daeb89f72d2380db9c7f2" name="ac65e9735e15daeb89f72d2380db9c7f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac65e9735e15daeb89f72d2380db9c7f2">&#9670;&#160;</a></span>createDescriptors()</h2>
+<a id="a338cfa63a416f22cd1dbdeb22ab70c31" name="a338cfa63a416f22cd1dbdeb22ab70c31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a338cfa63a416f22cd1dbdeb22ab70c31">&#9670;&#160;</a></span>createDescriptors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -476,18 +451,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
           <td class="memname">void Scene::createDescriptors </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; VkDescriptorSetLayout &gt; &amp;&#160;</td>
-          <td class="paramname"><em>descriptorSetLayouts</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>descriptorSetLayouts</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightCount</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -519,15 +484,14 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">descriptorSetLayouts</td><td>Vector with descriptor set layouts to use (get from <a class="el" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658" title="Get the descriptor set layouts.">Shader::getDescriptorSetLayouts()</a>)</td></tr>
-    <tr><td class="paramname">frameInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a1d3980eda45e43fa934eadfe94df3c1c" name="a1d3980eda45e43fa934eadfe94df3c1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d3980eda45e43fa934eadfe94df3c1c">&#9670;&#160;</a></span>createRayTracingDescriptors()</h2>
+<a id="a4fa0c65d69cb1c406051616cc5f75eb4" name="a4fa0c65d69cb1c406051616cc5f75eb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fa0c65d69cb1c406051616cc5f75eb4">&#9670;&#160;</a></span>createRayTracingDescriptors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -542,13 +506,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const ptr&lt; <a class="el" href="classMandrill_1_1AccelerationStructure.html">AccelerationStructure</a> &gt;&#160;</td>
-          <td class="paramname"><em>pAccelerationStructure</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightCount</em>&#160;</td>
+          <td class="paramname"><em>pAccelerationStructure</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -584,7 +542,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
   <table class="params">
     <tr><td class="paramname">descriptorSetLayouts</td><td>Vector with descriptor set layouts to use (get from <a class="el" href="classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658" title="Get the descriptor set layouts.">Shader::getDescriptorSetLayouts()</a>)</td></tr>
     <tr><td class="paramname">pAccelerationStructure</td><td>Acceleration structure to bind</td></tr>
-    <tr><td class="paramname">frameInFlightCount</td><td>Used to determine how many copies of per-frame resources are needed</td></tr>
   </table>
   </dd>
 </dl>
@@ -996,8 +953,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
 
 </div>
 </div>
-<a id="a7b6d6b7b1ae401f9c52df55a6140e1e8" name="a7b6d6b7b1ae401f9c52df55a6140e1e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b6d6b7b1ae401f9c52df55a6140e1e8">&#9670;&#160;</a></span>render()</h2>
+<a id="a3d1a8e850ff9372d000c500013c5cd07" name="a3d1a8e850ff9372d000c500013c5cd07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d1a8e850ff9372d000c500013c5cd07">&#9670;&#160;</a></span>render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1017,14 +974,14 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightIndex</em>, </td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>frustumCulling</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>frustumCulling</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em> = <code>kCurrentFrameInFlight</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1039,8 +996,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Scene</b> ()
   <table class="params">
     <tr><td class="paramname">cmd</td><td>Command buffer to use for rendering</td></tr>
     <tr><td class="paramname">pCamera</td><td><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> that defines which camera matrices to use</td></tr>
-    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
     <tr><td class="paramname">frustumCulling</td><td>Cull nodes that are outside of the camera's frustum</td></tr>
+    <tr><td class="paramname">frameInFlightIndex</td><td>Which copy of the per-frame resources to use, the current frame by default</td></tr>
   </table>
   </dd>
 </dl>

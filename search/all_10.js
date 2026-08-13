@@ -35,6 +35,6 @@ var searchData=
   ['stenciltestenable_32',['stencilTestEnable',['../structMandrill_1_1PipelineDesc.html#ac553cb258b1f99927b9e049596940df3',1,'Mandrill::PipelineDesc']]],
   ['submodule_33',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
   ['supportsraytracing_34',['supportsRayTracing',['../classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd',1,'Mandrill::Device']]],
-  ['swapchain_35',['swapchain',['../classMandrill_1_1Swapchain.html#aa1a5113e02772249aaa7564e00cbf241',1,'Mandrill::Swapchain::Swapchain()'],['../classMandrill_1_1Swapchain.html',1,'Mandrill::Swapchain']]],
+  ['swapchain_35',['swapchain',['../classMandrill_1_1Swapchain.html#a60521d887ca359e735823a10798a3fdd',1,'Mandrill::Swapchain::Swapchain()'],['../classMandrill_1_1Swapchain.html',1,'Mandrill::Swapchain']]],
   ['synctodevice_36',['syncToDevice',['../classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d',1,'Mandrill::Scene']]]
 ];

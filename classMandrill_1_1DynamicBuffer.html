@@ -113,15 +113,18 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffer</b> ()</td></tr>
 <tr class="memdesc:a8acf6afb126c9cd24bf60f2ae4574da7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for dynamic buffer. <br /></td></tr>
 <tr class="separator:a8acf6afb126c9cd24bf60f2ae4574da7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46bd231d6acb2c20453de738d96e7e08" id="r_a46bd231d6acb2c20453de738d96e7e08"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#a46bd231d6acb2c20453de738d96e7e08">at</a> (uint32_t index) const</td></tr>
-<tr class="memdesc:a46bd231d6acb2c20453de738d96e7e08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a host pointer to one of the copies.  <br /></td></tr>
-<tr class="separator:a46bd231d6acb2c20453de738d96e7e08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a145f6ef1a95125f33a685c02c748c22e" id="r_a145f6ef1a95125f33a685c02c748c22e"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#a145f6ef1a95125f33a685c02c748c22e">copyFromHost</a> (const void *pData, uint32_t index)</td></tr>
-<tr class="memdesc:a145f6ef1a95125f33a685c02c748c22e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write one of the copies. Copies <a class="el" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b" title="Get the size of one copy. This is the range a descriptor should expose.">getElementSize()</a> bytes from the given data.  <br /></td></tr>
-<tr class="separator:a145f6ef1a95125f33a685c02c748c22e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a985b3c05fc6cd5c432a9e769192a1104" id="r_a985b3c05fc6cd5c432a9e769192a1104"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#a985b3c05fc6cd5c432a9e769192a1104">getOffset</a> (uint32_t index) const</td></tr>
-<tr class="memdesc:a985b3c05fc6cd5c432a9e769192a1104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the dynamic offset that selects one of the copies when binding a descriptor.  <br /></td></tr>
-<tr class="separator:a985b3c05fc6cd5c432a9e769192a1104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfa6bfcc3ab0ad66641e430ec896f459" id="r_abfa6bfcc3ab0ad66641e430ec896f459"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459">at</a> (uint32_t index=kCurrentFrameInFlight) const</td></tr>
+<tr class="memdesc:abfa6bfcc3ab0ad66641e430ec896f459"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a host pointer to one of the copies.  <br /></td></tr>
+<tr class="separator:abfa6bfcc3ab0ad66641e430ec896f459"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0818a22c0900a15fafdb5a21cc925693" id="r_a0818a22c0900a15fafdb5a21cc925693"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#a0818a22c0900a15fafdb5a21cc925693">copyFromHost</a> (const void *pData, uint32_t index=kCurrentFrameInFlight)</td></tr>
+<tr class="memdesc:a0818a22c0900a15fafdb5a21cc925693"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write one of the copies. Copies <a class="el" href="classMandrill_1_1DynamicBuffer.html#a0e0829793d2b8f86c5748288bebdac6b" title="Get the size of one copy. This is the range a descriptor should expose.">getElementSize()</a> bytes from the given data.  <br /></td></tr>
+<tr class="separator:a0818a22c0900a15fafdb5a21cc925693"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae093d979dca85ff42ce84d9ca337e5b2" id="r_ae093d979dca85ff42ce84d9ca337e5b2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#ae093d979dca85ff42ce84d9ca337e5b2">getOffset</a> (uint32_t index=kCurrentFrameInFlight) const</td></tr>
+<tr class="memdesc:ae093d979dca85ff42ce84d9ca337e5b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the dynamic offset that selects one of the copies when binding a descriptor.  <br /></td></tr>
+<tr class="separator:ae093d979dca85ff42ce84d9ca337e5b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8f6936f55d3d2c5e0ed2a8d461e9d82" id="r_ab8f6936f55d3d2c5e0ed2a8d461e9d82"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#ab8f6936f55d3d2c5e0ed2a8d461e9d82">isPerFrame</a> () const</td></tr>
+<tr class="memdesc:ab8f6936f55d3d2c5e0ed2a8d461e9d82"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether the buffer holds exactly one copy per frame in flight, which is what makes it possible to address it by the current frame alone.  <br /></td></tr>
+<tr class="separator:ab8f6936f55d3d2c5e0ed2a8d461e9d82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9d4e018c2a0b08d38bb146b56d8f64c" id="r_af9d4e018c2a0b08d38bb146b56d8f64c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkDeviceSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1DynamicBuffer.html#af9d4e018c2a0b08d38bb146b56d8f64c">getStride</a> () const</td></tr>
 <tr class="memdesc:af9d4e018c2a0b08d38bb146b56d8f64c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the distance in bytes between two consecutive copies. This is the element size rounded up to the alignment the device requires of descriptor offsets, so it is not necessarily the element size.  <br /></td></tr>
 <tr class="separator:af9d4e018c2a0b08d38bb146b56d8f64c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,7 +140,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Buffer.html" title="Buffer class for managing Vulkan buffers. This class handles the creation and destruction of buffers,...">Buffer</a> holding several equally sized copies of the same data, where each copy starts on a boundary that the device accepts as a descriptor offset. Use it for data that the host rewrites while the device may still be reading the previous value, which typically means one copy per frame in flight. </p>
-<p>The copies are addressed by index, on the host with <a class="el" href="classMandrill_1_1DynamicBuffer.html#a46bd231d6acb2c20453de738d96e7e08" title="Get a host pointer to one of the copies.">at()</a> and on the device with <a class="el" href="classMandrill_1_1DynamicBuffer.html#a985b3c05fc6cd5c432a9e769192a1104" title="Get the dynamic offset that selects one of the copies when binding a descriptor.">getOffset()</a>, so the alignment never has to be repeated at the call site and the host and the device can never disagree on the stride.</p>
+<p>The copies are addressed by index, on the host with <a class="el" href="classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459" title="Get a host pointer to one of the copies.">at()</a> and on the device with <a class="el" href="classMandrill_1_1DynamicBuffer.html#ae093d979dca85ff42ce84d9ca337e5b2" title="Get the dynamic offset that selects one of the copies when binding a descriptor.">getOffset()</a>, so the alignment never has to be repeated at the call site and the host and the device can never disagree on the stride.</p>
 <p>A resource that is indexed by more than one thing, such as a node transform that varies both per node and per frame in flight, uses one element per combination and lays them out with the fastest varying index last. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a562c76ae8d268caa90610f10b7c60acd" name="a562c76ae8d268caa90610f10b7c60acd"></a>
@@ -192,8 +195,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a46bd231d6acb2c20453de738d96e7e08" name="a46bd231d6acb2c20453de738d96e7e08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46bd231d6acb2c20453de738d96e7e08">&#9670;&#160;</a></span>at()</h2>
+<a id="abfa6bfcc3ab0ad66641e430ec896f459" name="abfa6bfcc3ab0ad66641e430ec896f459"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfa6bfcc3ab0ad66641e430ec896f459">&#9670;&#160;</a></span>at()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +205,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
           <td class="memname">void * DynamicBuffer::at </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em></td><td>)</td>
+          <td class="paramname"><em>index</em> = <code>kCurrentFrameInFlight</code></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -211,7 +214,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 <p>Get a host pointer to one of the copies. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Which copy to address</td></tr>
+    <tr><td class="paramname">index</td><td>Which copy to address. Defaults to the copy of the current frame in flight, which only works for a buffer that holds exactly one copy per frame.</td></tr>
   </table>
   </dd>
 </dl>
@@ -219,8 +222,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 
 </div>
 </div>
-<a id="a145f6ef1a95125f33a685c02c748c22e" name="a145f6ef1a95125f33a685c02c748c22e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a145f6ef1a95125f33a685c02c748c22e">&#9670;&#160;</a></span>copyFromHost()</h2>
+<a id="a0818a22c0900a15fafdb5a21cc925693" name="a0818a22c0900a15fafdb5a21cc925693"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0818a22c0900a15fafdb5a21cc925693">&#9670;&#160;</a></span>copyFromHost()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,7 +238,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
+          <td class="paramname"><em>index</em> = <code>kCurrentFrameInFlight</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -249,7 +252,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pData</td><td>Data to copy</td></tr>
-    <tr><td class="paramname">index</td><td>Which copy to write</td></tr>
+    <tr><td class="paramname">index</td><td>Which copy to write. Defaults to the copy of the current frame in flight, which only works for a buffer that holds exactly one copy per frame.</td></tr>
   </table>
   </dd>
 </dl>
@@ -340,8 +343,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 
 </div>
 </div>
-<a id="a985b3c05fc6cd5c432a9e769192a1104" name="a985b3c05fc6cd5c432a9e769192a1104"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a985b3c05fc6cd5c432a9e769192a1104">&#9670;&#160;</a></span>getOffset()</h2>
+<a id="ae093d979dca85ff42ce84d9ca337e5b2" name="ae093d979dca85ff42ce84d9ca337e5b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae093d979dca85ff42ce84d9ca337e5b2">&#9670;&#160;</a></span>getOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -350,7 +353,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
           <td class="memname">uint32_t DynamicBuffer::getOffset </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>index</em></td><td>)</td>
+          <td class="paramname"><em>index</em> = <code>kCurrentFrameInFlight</code></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -359,7 +362,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 <p>Get the dynamic offset that selects one of the copies when binding a descriptor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">index</td><td>Which copy to address</td></tr>
+    <tr><td class="paramname">index</td><td>Which copy to address. Defaults to the copy of the current frame in flight, which only works for a buffer that holds exactly one copy per frame.</td></tr>
   </table>
   </dd>
 </dl>
@@ -392,6 +395,26 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~DynamicBuffe
 
 <p>Get the distance in bytes between two consecutive copies. This is the element size rounded up to the alignment the device requires of descriptor offsets, so it is not necessarily the element size. </p>
 <dl class="section return"><dt>Returns</dt><dd>Stride in bytes</dd></dl>
+
+</div>
+</div>
+<a id="ab8f6936f55d3d2c5e0ed2a8d461e9d82" name="ab8f6936f55d3d2c5e0ed2a8d461e9d82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8f6936f55d3d2c5e0ed2a8d461e9d82">&#9670;&#160;</a></span>isPerFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DynamicBuffer::isPerFrame </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> whether the buffer holds exactly one copy per frame in flight, which is what makes it possible to address it by the current frame alone. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if there is one copy per frame in flight</dd></dl>
 
 </div>
 </div>

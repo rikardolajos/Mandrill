@@ -7,10 +7,10 @@ var classMandrill_1_1Scene =
     [ "addMeshFromFile", "classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18", null ],
     [ "addNode", "classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44", null ],
     [ "addNodesFromFile", "classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c", null ],
-    [ "bindRayTracingDescriptors", "classMandrill_1_1Scene.html#a40fd82a0b65816031e3d43a1a8ddc2d1", null ],
-    [ "compile", "classMandrill_1_1Scene.html#aea7a8f2c2cd5568c2c8e4ac641e24f0c", null ],
-    [ "createDescriptors", "classMandrill_1_1Scene.html#ac65e9735e15daeb89f72d2380db9c7f2", null ],
-    [ "createRayTracingDescriptors", "classMandrill_1_1Scene.html#a1d3980eda45e43fa934eadfe94df3c1c", null ],
+    [ "bindRayTracingDescriptors", "classMandrill_1_1Scene.html#a5dc4995af6e93919319501a541b8d42c", null ],
+    [ "compile", "classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec", null ],
+    [ "createDescriptors", "classMandrill_1_1Scene.html#a338cfa63a416f22cd1dbdeb22ab70c31", null ],
+    [ "createRayTracingDescriptors", "classMandrill_1_1Scene.html#a4fa0c65d69cb1c406051616cc5f75eb4", null ],
     [ "getIndexCount", "classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89", null ],
     [ "getMaterialCount", "classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e", null ],
     [ "getMeshCount", "classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b", null ],
@@ -24,7 +24,7 @@ var classMandrill_1_1Scene =
     [ "getTextureCount", "classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969", null ],
     [ "getTextures", "classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85", null ],
     [ "getVertexCount", "classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31", null ],
-    [ "render", "classMandrill_1_1Scene.html#a7b6d6b7b1ae401f9c52df55a6140e1e8", null ],
+    [ "render", "classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07", null ],
     [ "setEnvironmentMap", "classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7", null ],
     [ "syncToDevice", "classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d", null ]
 ];

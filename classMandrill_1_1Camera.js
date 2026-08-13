@@ -1,19 +1,19 @@
 var classMandrill_1_1Camera =
 [
-    [ "Camera", "classMandrill_1_1Camera.html#ad2609a7969c5cc914ab1ddfb2ad85f82", null ],
+    [ "Camera", "classMandrill_1_1Camera.html#a90538918b8b1dc447bc869f9423ddaf5", null ],
     [ "~Camera", "classMandrill_1_1Camera.html#ad1897942d0ccf91052386388a497349f", null ],
     [ "captureMouse", "classMandrill_1_1Camera.html#ae15384bab360985073066dc0a3fbaa15", null ],
     [ "createDescriptor", "classMandrill_1_1Camera.html#aec558d6ced1e0fef3e89576e405ac21b", null ],
     [ "createRayTracingDescriptor", "classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806", null ],
     [ "getDescriptor", "classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca", null ],
     [ "getDirection", "classMandrill_1_1Camera.html#a8499b00e5db4e7ec887a7f25532e7cea", null ],
-    [ "getDynamicOffset", "classMandrill_1_1Camera.html#a01bec4dd83c48dbb76d332a7eac421a2", null ],
-    [ "getFrustum", "classMandrill_1_1Camera.html#afe5e307168c92aae446290547863dfbe", null ],
+    [ "getDynamicOffset", "classMandrill_1_1Camera.html#a54b343677895d976ffbd3022e7a19062", null ],
+    [ "getFrustum", "classMandrill_1_1Camera.html#ae97ad81c4cca4563b6c5444985dd95fb", null ],
     [ "getPosition", "classMandrill_1_1Camera.html#a1a60552025657d495efa00aa6b556a4a", null ],
-    [ "getProjectionMatrix", "classMandrill_1_1Camera.html#a252577fc4d00c0fdd459b2f5d3f2b416", null ],
+    [ "getProjectionMatrix", "classMandrill_1_1Camera.html#ad4544e0c1f7fb7ed87adcc03a4502055", null ],
     [ "getRayTracingDescriptor", "classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c", null ],
     [ "getUniformBuffer", "classMandrill_1_1Camera.html#af52c97572782a5fb42bb52e08d8a7386", null ],
-    [ "getViewMatrix", "classMandrill_1_1Camera.html#a7290640c0d3d4ccca6bcd7791ed21c1a", null ],
+    [ "getViewMatrix", "classMandrill_1_1Camera.html#aecc1c4bf0a8d764a47df6517bef90260", null ],
     [ "isMouseCaptured", "classMandrill_1_1Camera.html#a686a40e98216fa2e93f6b810d4b35991", null ],
     [ "setAspectRatio", "classMandrill_1_1Camera.html#a1a19b9b88655fcacd8a4a37fef491fda", null ],
     [ "setDirection", "classMandrill_1_1Camera.html#af913d566462815cc46a0f125dacea94b", null ],
@@ -26,6 +26,6 @@ var classMandrill_1_1Camera =
     [ "setTarget", "classMandrill_1_1Camera.html#afa487d43ab4d69f4af71af379b429fe8", null ],
     [ "setUp", "classMandrill_1_1Camera.html#a1ee1515c14b548bc1443dfaf258692a8", null ],
     [ "toggleMouseCapture", "classMandrill_1_1Camera.html#a3d0ced3f339ec36cc71ed8338dcc8164", null ],
-    [ "update", "classMandrill_1_1Camera.html#a0b0e030d6a660472ed541cb3625d0842", null ],
-    [ "update", "classMandrill_1_1Camera.html#a596204934bcfb5208ebe59759260482e", null ]
+    [ "update", "classMandrill_1_1Camera.html#af17213ee9b39cc599dee22bcfdd2d276", null ],
+    [ "update", "classMandrill_1_1Camera.html#ad5bb5a609ac016b897a4e4574d0b9754", null ]
 ];
