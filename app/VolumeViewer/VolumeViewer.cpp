@@ -108,12 +108,10 @@ public:
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Attach the camera uniforms to both shaders. The buffer holds one copy per frame in flight and is bound
-        // with a dynamic offset, so the range covers a single copy.
-        mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
-                                                           sizeof(CameraMatrices));
-        mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer(), 0,
-                                                        sizeof(CameraMatrices));
+        // Attach the camera uniforms to both shaders. The buffer holds one copy per frame in flight, which the shaders
+        // know about and take into account when binding it.
+        mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer());
+        mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer());
 
         // Environment maps are loaded into a float format to keep the dynamic range of HDR files. Prefer full float,
         // but fall back to half float if the device cannot filter it.
@@ -181,11 +179,6 @@ public:
 
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        // Offset that picks this frame's copy of the camera matrices out of the shared uniform buffer
-        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
-                                                                mpSwapchain->getInFlightIndex());
-
         // Push constants. The viewport must be the current framebuffer size, since the shaders turn fragment
         // coordinates into ray directions with it. App::mWidth and mHeight are the initial window size and do not
         // follow resizing.
@@ -231,11 +224,11 @@ public:
         vkCmdPushConstants(cmd, mpEnvironmentMapPipeline->getLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                            sizeof pushConstant, &pushConstant);
 
-        // Render environment map. Set 0 is per-frame and takes the dynamic offset, set 1 holds the map itself.
+        // Render environment map. Set 0 is per-frame and picks this frame's camera matrices, set 1 holds the map.
         if (mpEnvironmentMap) {
             auto pShader = mpEnvironmentMapPipeline->getShader();
             mpEnvironmentMapPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
         }
@@ -244,7 +237,7 @@ public:
         if (mpVolume) {
             auto pShader = mpRayMarchingPipeline->getShader();
             mpRayMarchingPipeline->bind(cmd);
-            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
             pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
             vkCmdDraw(cmd, 3, 1, 0, 0);
 

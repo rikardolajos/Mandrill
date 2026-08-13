@@ -4,6 +4,7 @@
 
 #include "Descriptor.h"
 #include "Device.h"
+#include "DynamicBuffer.h"
 
 namespace Mandrill
 {
@@ -51,8 +52,12 @@ namespace Mandrill
     /// has to describe a descriptor. Call bindResources() to bind them for a draw or dispatch.
     ///
     /// setResource() attaches a resource, it is not a per-frame update. Data that varies per frame or per mesh
-    /// belongs in a single buffer that is attached once and bound repeatedly with a dynamic offset, which is what
-    /// the bindResources() overload taking a set and offsets is for.
+    /// belongs in a single buffer that is attached once and bound repeatedly with a dynamic offset.
+    ///
+    /// Attaching a DynamicBuffer tells the shader that the resource holds one copy per frame in flight, so
+    /// bindResources() can select the right copy from the frame index alone and the application never has to work out
+    /// a dynamic offset. Resources that are indexed by something other than the frame, such as a per-mesh transform,
+    /// are bound with bindResourcesWithOffsets() instead.
     /// </summary>
     class Shader
     {
@@ -104,6 +109,16 @@ namespace Mandrill
                                       VkDeviceSize range = VK_WHOLE_SIZE);
 
         /// <summary>
+        /// Attach a buffer that holds one copy per frame in flight to a named resource in the shader. The resource
+        /// has to be declared as a dynamic buffer in the shader, that is, its block type name has to end with
+        /// *Dynamic. bindResources() then picks this frame's copy on its own.
+        /// </summary>
+        /// <param name="name">Name of the resource in the shader. Either the variable name, or the block type name
+        /// for blocks that are declared without an instance name.</param>
+        /// <param name="pBuffer">Buffer to attach, with one element per frame in flight</param>
+        MANDRILL_API void setResource(const std::string& name, ptr<DynamicBuffer> pBuffer);
+
+        /// <summary>
         /// Attach a texture to a named combined image sampler in the shader.
         /// </summary>
         /// <param name="name">Name of the resource in the shader</param>
@@ -135,23 +150,36 @@ namespace Mandrill
         MANDRILL_API void setResource(const std::string& name, ptr<AccelerationStructure> pAccelerationStructure);
 
         /// <summary>
-        /// Bind every descriptor set that has resources attached to it. Sets that contain dynamic descriptors need
-        /// an offset and should be bound with the overload that takes one.
+        /// Bind every descriptor set that has resources attached to it, using the first copy of any per-frame
+        /// resource. Only meaningful for shaders without dynamic descriptors, bind those one set at a time instead.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="bindPoint">Bind point in pipeline</param>
         MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 
         /// <summary>
-        /// Bind one descriptor set. Use this for per-frame or per-mesh sets, where the same set is bound several
-        /// times with different dynamic offsets.
+        /// Bind one descriptor set for a given frame in flight. Dynamic descriptors in the set that were attached as
+        /// a DynamicBuffer get the offset of that frame's copy, so nothing has to be worked out by the caller. A set
+        /// without dynamic descriptors ignores the frame index.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="bindPoint">Bind point in pipeline</param>
+        /// <param name="set">Set to bind</param>
+        /// <param name="frameInFlightIndex">Used to determine which copy of the per-frame resources to use</param>
+        MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                                        uint32_t frameInFlightIndex = 0);
+
+        /// <summary>
+        /// Bind one descriptor set with dynamic offsets given explicitly. Use this when a dynamic descriptor is
+        /// indexed by something the shader cannot know about, such as which mesh is being drawn; for resources that
+        /// only vary with the frame in flight, bindResources() works it out on its own.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
         /// <param name="bindPoint">Bind point in pipeline</param>
         /// <param name="set">Set to bind</param>
         /// <param name="dynamicOffsets">Offsets for the dynamic descriptors in the set, in binding order</param>
-        MANDRILL_API void bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
-                                        const std::vector<uint32_t>& dynamicOffsets = {});
+        MANDRILL_API void bindResourcesWithOffsets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                                                   const std::vector<uint32_t>& dynamicOffsets);
 
         /// <summary>
         /// Check whether the shader has a resource with a given name.
@@ -235,6 +263,8 @@ namespace Mandrill
             VkDeviceSize offset = 0;
             VkDeviceSize range = VK_WHOLE_SIZE;
 
+            ptr<DynamicBuffer> pDynamicBuffer;
+
             ptr<Texture> pTexture;
             std::vector<ptr<Texture>> textures;
 
@@ -255,6 +285,11 @@ namespace Mandrill
         VkDescriptorSet allocateDescriptorSet(uint32_t set);
         void updateDescriptorSet(uint32_t set);
 
+        // Offsets for the dynamic descriptors of a set, in binding order, taken from the per-frame resources
+        std::vector<uint32_t> getDynamicOffsets(uint32_t set, uint32_t frameInFlightIndex);
+        void bindSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                     const std::vector<uint32_t>& dynamicOffsets);
+
         ptr<Device> mpDevice;
 
         std::vector<VkShaderModule> mModules;
@@ -267,6 +302,9 @@ namespace Mandrill
         std::vector<VkSpecializationInfo*> mSpecializationInfos;
 
         std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts; // One per set
+        // Bindings of each set that are of a dynamic type, in ascending binding order, which is the order Vulkan
+        // consumes the dynamic offsets in
+        std::vector<std::vector<uint32_t>> mDynamicBindings;
         std::vector<VkPushConstantRange> mPushConstantRanges;
         VkPipelineLayout mPipelineLayout;
 
@@ -282,5 +320,9 @@ namespace Mandrill
         std::vector<VkDescriptorPool> mDescriptorPools;
         std::vector<VkDescriptorPoolSize> mPoolSizes;
         uint32_t mMaxSetsPerPool = 0;
+
+        // Dynamic bindings that have already been reported as not selectable by frame, so that the report does not
+        // repeat itself every frame. Keyed on set and binding.
+        std::set<uint64_t> mReportedDynamicBindings;
     };
 } // namespace Mandrill

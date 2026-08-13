@@ -430,9 +430,17 @@ void Shader::createShader()
         return static_cast<VkDescriptorType>(binding->descriptor_type);
     };
 
+    auto isDynamic = [](VkDescriptorType type) {
+        return type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC || type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+    };
+
     // Create descriptor set layouts
     mDescriptorSetLayouts.clear();
     mDescriptorSetLayouts.resize(descriptorSets.size());
+
+    mDynamicBindings.clear();
+    mDynamicBindings.resize(descriptorSets.size());
+    mReportedDynamicBindings.clear();
 
     // Resources are looked up by name, and the pool has to be able to serve every binding the shader declares
     mResourceInfos.clear();
@@ -454,6 +462,8 @@ void Shader::createShader()
 
     for (uint32_t i = 0; i < count(descriptorSets); i++) {
         std::vector<VkDescriptorSetLayoutBinding> bindings;
+        // The map is keyed on binding number, so this visits the bindings in the order Vulkan expects the dynamic
+        // offsets to be given in
         for (auto& [bindingNumber, binding] : descriptorSets[i]) {
             // A count is missing only if the binding was rejected above, in which case an error has been logged already
             auto found = bindingCount[i].find(bindingNumber);
@@ -471,6 +481,10 @@ void Shader::createShader()
             registerName(binding->name, info);
             if (binding->block.type_description) {
                 registerName(binding->block.type_description->type_name, info);
+            }
+
+            if (isDynamic(type)) {
+                mDynamicBindings[i].push_back(bindingNumber);
             }
 
             poolCounts[type] += descriptorCount;
@@ -565,6 +579,34 @@ void Shader::setResource(const std::string& name, ptr<Buffer> pBuffer, VkDeviceS
     resource.pBuffer = pBuffer;
     resource.offset = offset;
     resource.range = range;
+
+    mResources[name] = resource;
+    mSetDirty[pInfo->set] = true;
+}
+
+void Shader::setResource(const std::string& name, ptr<DynamicBuffer> pBuffer)
+{
+    const ResourceInfo* pInfo =
+        resolveResource(name, "dynamic buffer",
+                        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                         VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC});
+    if (!pInfo) {
+        return;
+    }
+
+    if (pInfo->type != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC &&
+        pInfo->type != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC) {
+        Log::Warning("Resource '{}' holds one copy per frame in flight but is not declared as a dynamic buffer in the "
+                     "shader, so every frame will read the first copy. Name its block type with a *Dynamic suffix.",
+                     name);
+    }
+
+    // The descriptor covers a single copy and the dynamic offset picks which one, so it is written at offset zero
+    BoundResource resource;
+    resource.pBuffer = pBuffer->getBuffer();
+    resource.offset = 0;
+    resource.range = pBuffer->getElementSize();
+    resource.pDynamicBuffer = pBuffer;
 
     mResources[name] = resource;
     mSetDirty[pInfo->set] = true;
@@ -788,14 +830,75 @@ void Shader::updateDescriptorSet(uint32_t set)
     }
 }
 
+std::vector<uint32_t> Shader::getDynamicOffsets(uint32_t set, uint32_t frameInFlightIndex)
+{
+    std::vector<uint32_t> offsets;
+    offsets.reserve(mDynamicBindings[set].size());
+
+    for (uint32_t binding : mDynamicBindings[set]) {
+        const BoundResource* pResource = nullptr;
+        for (const auto& [name, resource] : mResources) {
+            auto found = mResourceInfos.find(name);
+            if (found != mResourceInfos.end() && found->second.set == set && found->second.binding == binding) {
+                pResource = &resource;
+                break;
+            }
+        }
+
+        if (pResource && pResource->pDynamicBuffer) {
+            offsets.push_back(pResource->pDynamicBuffer->getOffset(frameInFlightIndex));
+            continue;
+        }
+
+        // Nothing to pick a copy from, so the descriptor is bound at its own offset. Harmless for frame zero, but
+        // any other frame asked for something that cannot be delivered and would silently render stale data.
+        if (frameInFlightIndex != 0) {
+            uint64_t key = (static_cast<uint64_t>(set) << 32) | binding;
+            if (mReportedDynamicBindings.insert(key).second) {
+                Log::Error("Set {} binding {} is a dynamic descriptor, but what is attached to it does not hold one "
+                           "copy per frame in flight. Attach a DynamicBuffer, or bind the set with "
+                           "bindResourcesWithOffsets().",
+                           set, binding);
+            }
+        }
+
+        offsets.push_back(0);
+    }
+
+    return offsets;
+}
+
 void Shader::bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
-                           const std::vector<uint32_t>& dynamicOffsets)
+                           uint32_t frameInFlightIndex)
 {
     if (set >= mDescriptorSets.size()) {
         Log::Error("Trying to bind set {}, but the shader only declares {} sets.", set, mDescriptorSets.size());
         return;
     }
 
+    bindSet(cmd, bindPoint, set, getDynamicOffsets(set, frameInFlightIndex));
+}
+
+void Shader::bindResourcesWithOffsets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                                      const std::vector<uint32_t>& dynamicOffsets)
+{
+    if (set >= mDescriptorSets.size()) {
+        Log::Error("Trying to bind set {}, but the shader only declares {} sets.", set, mDescriptorSets.size());
+        return;
+    }
+
+    if (dynamicOffsets.size() != mDynamicBindings[set].size()) {
+        Log::Error("Set {} has {} dynamic descriptors but {} offsets were given.", set, mDynamicBindings[set].size(),
+                   dynamicOffsets.size());
+        return;
+    }
+
+    bindSet(cmd, bindPoint, set, dynamicOffsets);
+}
+
+void Shader::bindSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, uint32_t set,
+                     const std::vector<uint32_t>& dynamicOffsets)
+{
     if (mSetDirty[set]) {
         // A set that is still being read by a frame in flight is left alone, a new one is taken instead
         mDescriptorSets[set] = allocateDescriptorSet(set);

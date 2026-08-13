@@ -3,6 +3,7 @@
 #include "AccelerationStructure.h"
 #include "Buffer.h"
 #include "Descriptor.h"
+#include "DynamicBuffer.h"
 #include "Error.h"
 #include "Extension.h"
 #include "Image.h"
@@ -547,6 +548,12 @@ ptr<Camera> Device::createCamera(uint32_t framesInFlightCount)
 ptr<Descriptor> Device::createDescriptor(const std::vector<DescriptorDesc>& desc, VkDescriptorSetLayout layout)
 {
     return make_ptr<Descriptor>(shared_from_this(), desc, layout);
+}
+
+ptr<DynamicBuffer> Device::createDynamicBuffer(VkDeviceSize elementSize, uint32_t elementCount,
+                                               VkBufferUsageFlags usage)
+{
+    return make_ptr<DynamicBuffer>(shared_from_this(), elementSize, elementCount, usage);
 }
 
 ptr<Image> Device::createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,

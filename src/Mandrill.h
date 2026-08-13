@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Descriptor.h"
 #include "Device.h"
+#include "DynamicBuffer.h"
 #include "EnvironmentMap.h"
 #include "Error.h"
 #include "Extension.h"

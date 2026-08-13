@@ -10,6 +10,7 @@ namespace Mandrill
     class Camera;
     struct DescriptorDesc;
     class Descriptor;
+    class DynamicBuffer;
     class Image;
     class Pass;
     struct PipelineDesc;
@@ -204,6 +205,17 @@ namespace Mandrill
         /// <returns>A new descriptor</returns>
         MANDRILL_API ptr<Descriptor> createDescriptor(const std::vector<DescriptorDesc>& desc,
                                                       VkDescriptorSetLayout layout);
+
+        /// <summary>
+        /// Create a new dynamic buffer, holding several aligned copies of the same data.
+        /// </summary>
+        /// <param name="elementSize">Size of one copy in bytes</param>
+        /// <param name="elementCount">Number of copies to allocate</param>
+        /// <param name="usage">How the buffer will be used, which also decides the alignment of the copies</param>
+        /// <returns>A new dynamic buffer</returns>
+        MANDRILL_API ptr<DynamicBuffer>
+        createDynamicBuffer(VkDeviceSize elementSize, uint32_t elementCount,
+                            VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
         /// <summary>
         /// Create a new Image and allocate memory for it.

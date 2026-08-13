@@ -13,6 +13,8 @@ add_library(Mandrill SHARED
 	"Descriptor.h"
 	"Device.cpp"
 	"Device.h"
+	"DynamicBuffer.cpp"
+	"DynamicBuffer.h"
 	"EnvironmentMap.cpp"
 	"EnvironmentMap.h"
 	"Error.cpp"

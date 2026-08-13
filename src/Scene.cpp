@@ -22,7 +22,7 @@ Node::Node()
 {
     mTransform = glm::identity<glm::mat4>();
     mVisible = true;
-    mpTransformDevice = nullptr;
+    mTransformIndex = 0;
 }
 
 Node::~Node()
@@ -54,12 +54,11 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t frame
 
     mpPipeline->bind(cmd);
 
-    // Bind descriptor set for node transform
-    VkDeviceSize alignment = pScene->mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
-    uint32_t nodeDescriptorOffset = static_cast<uint32_t>(transformStride * frameInFlightIndex);
+    // Bind descriptor set for node transform. The descriptor already covers this node's slot, so the offset only has
+    // to select the copy belonging to this frame in flight.
+    uint32_t nodeDescriptorOffset = pScene->mpTransforms->getOffset(frameInFlightIndex);
 
-    std::memcpy(mpTransformDevice + transformStride * frameInFlightIndex, &mTransform, sizeof(glm::mat4));
+    pScene->mpTransforms->copyFromHost(&mTransform, mTransformIndex + frameInFlightIndex);
 
 #ifdef _DEBUG
     if (!mpDescriptor) {
@@ -125,11 +124,8 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, uint32_t fram
     }
 
     // Bind descriptor set for camera matrices and environment map
-    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    uint32_t cameraDescriptorOffset =
-        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
     pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 0,
-                                   cameraDescriptorOffset);
+                                   pCamera->getDynamicOffset(frameInFlightIndex));
 
     if (mpEnvironmentMapDescriptor) {
         mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 3);
@@ -406,27 +402,23 @@ void Scene::compile(uint32_t framesInFlightCount)
 
     VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
 
-    // Both buffers are bound with a descriptor offset, so every entry has to start on an aligned boundary. That
-    // alignment, not the size of the struct, is the stride to use when addressing the entries from the host as well.
-    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
+    // Material parameters are bound with a descriptor offset, so every entry has to start on an aligned boundary.
+    // That alignment, not the size of the struct, is the stride to use when addressing the entries from the host too.
     VkDeviceSize materialParamsStride = Helpers::alignTo(sizeof(MaterialParams), alignment);
 
     // Transforms can change between frames, material parameters can not
-    VkDeviceSize transformsSize = transformStride * mNodes.size() * framesInFlightCount;
-    mpTransforms = mpDevice->createBuffer(transformsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    mpTransforms = mpDevice->createDynamicBuffer(sizeof(glm::mat4), count(mNodes) * framesInFlightCount);
 
     VkDeviceSize materialParamsSize = materialParamsStride * mMaterials.size();
     mpMaterialParams = mpDevice->createBuffer(materialParamsSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    // Associate each node with a part of the transforms buffer, and with multiple copies for each frame in flight
-    std::byte* transforms = static_cast<std::byte*>(mpTransforms->getHostMap());
+    // Associate each node with a part of the transforms buffer, with one copy for each frame in flight
     const glm::mat4 identity = glm::identity<glm::mat4>();
     for (uint32_t i = 0; i < count(mNodes); i++) {
-        mNodes[i].mpTransformDevice = transforms + i * transformStride * framesInFlightCount;
+        mNodes[i].mTransformIndex = i * framesInFlightCount;
         for (uint32_t c = 0; c < framesInFlightCount; c++) {
-            std::memcpy(mNodes[i].mpTransformDevice + c * transformStride, &identity, sizeof(glm::mat4));
+            mpTransforms->copyFromHost(&identity, mNodes[i].mTransformIndex + c);
         }
     }
 
@@ -483,18 +475,13 @@ void Scene::compile(uint32_t framesInFlightCount)
 void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
                               uint32_t frameInFlightCount)
 {
-    // Node transforms. Must use the same stride as Scene::compile() and Node::render().
-    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    VkDeviceSize transformStride = Helpers::alignTo(sizeof(glm::mat4), alignment);
-
-    VkDeviceSize offset = 0;
+    // Node transforms. The descriptor covers the node's slot and the dynamic offset picks the frame in flight, so
+    // Node::render() only has to add the offset of a frame.
     for (auto& node : mNodes) {
         std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpTransforms);
-        desc.back().range = sizeof(glm::mat4);
-        desc.back().offset = offset;
-
-        offset += transformStride * frameInFlightCount;
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpTransforms->getBuffer());
+        desc.back().range = mpTransforms->getElementSize();
+        desc.back().offset = mpTransforms->getOffset(node.mTransformIndex);
 
         // Set layout for set 1
         node.mpDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[1]);
@@ -587,11 +574,8 @@ void Scene::syncToDevice()
 void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
                                       uint32_t frameInFlightIndex)
 {
-    VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-    uint32_t cameraDescriptorOffset =
-        static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) * frameInFlightIndex);
     pCamera->getRayTracingDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0,
-                                             cameraDescriptorOffset);
+                                             pCamera->getDynamicOffset(frameInFlightIndex));
 
     mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 1);
 

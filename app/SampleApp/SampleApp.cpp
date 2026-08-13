@@ -92,16 +92,13 @@ public:
         // Vertices in scene
         setupVertexBuffers();
 
-        // Uniform for sending model matrix to shaders
-        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        VkDeviceSize size = Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getFramesInFlightCount();
-        mpUniform = mpDevice->createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        // Uniform for sending model matrix to shaders, with one copy per frame in flight
+        mpUniform = mpDevice->createDynamicBuffer(sizeof(glm::mat4), mpSwapchain->getFramesInFlightCount());
 
         // Attach the resources to the names they have in the shader. Both uniform buffers hold one copy per frame in
-        // flight and are bound with a dynamic offset, so their range covers a single copy.
-        pShader->setResource("camera", mpCamera->getUniformBuffer(), 0, sizeof(CameraMatrices));
-        pShader->setResource("mesh", mpUniform, 0, sizeof(glm::mat4));
+        // flight, which the shader knows about and takes into account when binding them.
+        pShader->setResource("camera", mpCamera->getUniformBuffer());
+        pShader->setResource("mesh", mpUniform);
         pShader->setResource("diffuseTexture", mpTexture);
 
         // Initialize GUI
@@ -126,8 +123,7 @@ public:
 
         glm::mat4 model = glm::rotate(glm::mat4(1.0f), mAngle, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        VkDeviceSize offset = sizeof(glm::mat4) * mpSwapchain->getInFlightIndex();
-        mpUniform->copyFromHost(&model, sizeof(glm::mat4), offset);
+        mpUniform->copyFromHost(&model, mpSwapchain->getInFlightIndex());
     }
 
     void render() override
@@ -148,16 +144,11 @@ public:
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-        // Bind the resources attached to the shader, picking this frame's copy of each uniform with an offset
-        VkDeviceSize alignment = mpDevice->getProperties().physicalDevice.limits.minUniformBufferOffsetAlignment;
-        uint32_t cameraDescriptorOffset = static_cast<uint32_t>(Helpers::alignTo(sizeof(CameraMatrices), alignment) *
-                                                                mpSwapchain->getInFlightIndex());
-        uint32_t sceneDescriptorOffset =
-            static_cast<uint32_t>(Helpers::alignTo(sizeof(glm::mat4), alignment) * mpSwapchain->getInFlightIndex());
-
+        // Bind the resources attached to the shader. Both sets hold a uniform with one copy per frame in flight, and
+        // the frame index is all the shader needs to pick the right one.
         auto pShader = mpPipeline->getShader();
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, {cameraDescriptorOffset});
-        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, {sceneDescriptorOffset});
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, mpSwapchain->getInFlightIndex());
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, mpSwapchain->getInFlightIndex());
 
         // Bind vertex and index buffers
         VkBuffer vertexBuffer = mpVertexBuffer->getBuffer();
@@ -237,7 +228,7 @@ private:
     float mRotationSpeed = 0.2f;
     float mAngle = 0.0f;
 
-    std::shared_ptr<Buffer> mpUniform;
+    std::shared_ptr<DynamicBuffer> mpUniform;
 };
 
 int main()

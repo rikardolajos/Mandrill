@@ -28,9 +28,7 @@ Camera::Camera(ptr<Device> pDevice, uint32_t frameInFlightCount) : mpDevice(pDev
     mOrthoSize = 10.0f;
     mMoveSpeed = 1.0f;
 
-    mpUniforms = std::make_shared<Buffer>(mpDevice, frameInFlightCount * sizeof(CameraMatrices),
-                                          VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    mpUniforms = mpDevice->createDynamicBuffer(sizeof(CameraMatrices), frameInFlightCount);
 }
 
 Camera::~Camera()
@@ -62,7 +60,8 @@ void Camera::createDescriptor(VkShaderStageFlags stageFlags)
     Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mDescriptorSetLayout));
 
     std::vector<DescriptorDesc> desc;
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
+    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms->getBuffer(), 0,
+                      mpUniforms->getElementSize());
     mpDescriptor = mpDevice->createDescriptor(desc, mDescriptorSetLayout);
 }
 
@@ -84,14 +83,15 @@ void Camera::createRayTracingDescriptor(VkShaderStageFlags stageFlags)
     Check::Vk(vkCreateDescriptorSetLayout(mpDevice->getDevice(), &ci, nullptr, &mRayTracingDescriptorSetLayout));
 
     std::vector<DescriptorDesc> desc;
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms, 0, sizeof(CameraMatrices));
+    desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpUniforms->getBuffer(), 0,
+                      mpUniforms->getElementSize());
     mpRayTracingDescriptor = mpDevice->createDescriptor(desc, mRayTracingDescriptorSetLayout);
 }
 
 void Camera::update(uint32_t frameInFlightIndex)
 {
     // Update uniform buffer
-    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
     matrices->view = glm::lookAt(mPosition, mPosition + mDirection, mUp);
     matrices->view_inv = glm::inverse(matrices->view);
     matrices->proj = mProjection;
@@ -182,7 +182,7 @@ void Camera::update(GLFWwindow* pWindow, float delta, glm::vec2 cursorDelta, uin
     }
 
     // Update uniform buffer
-    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
     matrices->view = glm::lookAt(mPosition, mPosition + mDirection, mUp);
     matrices->view_inv = glm::inverse(matrices->view);
     matrices->proj = mProjection;
@@ -210,7 +210,7 @@ Frustum Camera::getFrustum(uint32_t frameInFlightIndex) const
 {
     Frustum frustum = {};
 
-    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+    CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
     glm::mat4 vp = matrices->proj * matrices->view;
 
     glm::vec4 r0 = getRow(vp, 0);

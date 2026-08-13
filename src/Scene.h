@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Descriptor.h"
 #include "Device.h"
+#include "DynamicBuffer.h"
 #include "Layout.h"
 #include "Swapchain.h"
 #include "Texture.h"
@@ -198,9 +199,9 @@ namespace Mandrill
         std::vector<uint32_t> mMeshIndices;
 
         glm::mat4 mTransform;
-        // Points at this node's slot in the scene transform buffer. The per-frame copies within that slot are spaced by
-        // the uniform buffer offset alignment, not by sizeof(glm::mat4), so this is a byte pointer.
-        std::byte* mpTransformDevice;
+        // Index of this node's first element in the scene transform buffer. The node's copy for a frame in flight is
+        // that element plus the frame index.
+        uint32_t mTransformIndex;
         ptr<Descriptor> mpDescriptor;
 
         bool mVisible;
@@ -510,7 +511,8 @@ namespace Mandrill
 
         ptr<Buffer> mpVertexBuffer;
         ptr<Buffer> mpIndexBuffer;
-        ptr<Buffer> mpTransforms;
+        // One transform per node and frame in flight, laid out with the frame index varying fastest
+        ptr<DynamicBuffer> mpTransforms;
         ptr<Buffer> mpMaterialParams;
 
         ptr<Texture> mpMissingTexture;

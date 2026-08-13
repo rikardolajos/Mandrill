@@ -5,6 +5,7 @@
 #include "Buffer.h"
 #include "Descriptor.h"
 #include "Device.h"
+#include "DynamicBuffer.h"
 #include "Frustum.h"
 #include "Swapchain.h"
 
@@ -225,7 +226,7 @@ namespace Mandrill
         /// <returns>View matrix</returns>
         MANDRILL_API glm::mat4 getViewMatrix(uint32_t frameInFlightIndex) const
         {
-            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
             return matrices->view;
         }
 
@@ -236,7 +237,7 @@ namespace Mandrill
         /// <returns>Projection matrix</returns>
         MANDRILL_API glm::mat4 getProjectionMatrix(uint32_t frameInFlightIndex) const
         {
-            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->getHostMap()) + frameInFlightIndex;
+            CameraMatrices* matrices = static_cast<CameraMatrices*>(mpUniforms->at(frameInFlightIndex));
             return matrices->proj;
         }
 
@@ -260,12 +261,24 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the buffer containing the camera matrices. This can be used for custom descriptor creation.
+        /// Get the buffer containing the camera matrices, with one copy per frame in flight. Attach this to a shader
+        /// resource, or use it for custom descriptor creation.
         /// </summary>
         /// <returns>Uniform buffer</returns>
-        MANDRILL_API ptr<Buffer> getUniformBuffer() const
+        MANDRILL_API ptr<DynamicBuffer> getUniformBuffer() const
         {
             return mpUniforms;
+        }
+
+        /// <summary>
+        /// Get the offset that selects a frame's copy of the camera matrices when binding a descriptor. Only needed
+        /// when binding a descriptor by hand, a shader that the uniform buffer is attached to works this out itself.
+        /// </summary>
+        /// <param name="frameInFlightIndex">Used to determine which resource to use</param>
+        /// <returns>Dynamic offset in bytes</returns>
+        MANDRILL_API uint32_t getDynamicOffset(uint32_t frameInFlightIndex) const
+        {
+            return mpUniforms->getOffset(frameInFlightIndex);
         }
 
     private:
@@ -286,7 +299,7 @@ namespace Mandrill
         glm::vec3 mUp;
         float mMoveSpeed;
 
-        ptr<Buffer> mpUniforms;
+        ptr<DynamicBuffer> mpUniforms;
         ptr<Descriptor> mpDescriptor;
         ptr<Descriptor> mpRayTracingDescriptor;
         VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
