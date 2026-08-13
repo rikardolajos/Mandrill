@@ -29,7 +29,6 @@ namespace Mandrill
         VkPhysicalDeviceMemoryProperties memory;
         VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipeline;
         VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStructure;
-        VkPhysicalDevicePushDescriptorPropertiesKHR pushDescriptor;
     };
 
     /// <summary>
@@ -145,25 +144,6 @@ namespace Mandrill
         MANDRILL_API bool supportsRayTracing() const
         {
             return mRayTracingSupport;
-        }
-
-        /// <summary>
-        /// Check if the device supports push descriptors. Sets that use them are written straight into the command
-        /// buffer, so they need no descriptor pool and cannot collide with a frame that is still in flight.
-        /// </summary>
-        /// <returns>True if push descriptors are supported, otherwise false.</returns>
-        MANDRILL_API bool supportsPushDescriptors() const
-        {
-            return mPushDescriptorSupport;
-        }
-
-        /// <summary>
-        /// Get the largest number of descriptors that a push descriptor set can hold.
-        /// </summary>
-        /// <returns>Maximum number of push descriptors</returns>
-        MANDRILL_API uint32_t getMaxPushDescriptors() const
-        {
-            return mProperties.pushDescriptor.maxPushDescriptors;
         }
 
         /// <summary>
@@ -323,8 +303,7 @@ namespace Mandrill
         /// </summary>
         /// <param name="desc">Description of shader being created</param>
         /// <returns>A new shader</returns>
-        MANDRILL_API ptr<Shader> createShader(const std::vector<ShaderDesc>& desc,
-                                              const std::vector<uint32_t>& pushDescriptorSets = {});
+        MANDRILL_API ptr<Shader> createShader(const std::vector<ShaderDesc>& desc);
 
         /// <summary>
         /// Create a new swapchain.
@@ -397,7 +376,6 @@ namespace Mandrill
         VkQueue mQueue;
 
         bool mRayTracingSupport;
-        bool mPushDescriptorSupport = false;
         bool mVsync;
     };
 } // namespace Mandrill

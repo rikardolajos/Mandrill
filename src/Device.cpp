@@ -356,14 +356,9 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             .pNext = &rtp,
         };
 
-        VkPhysicalDevicePushDescriptorPropertiesKHR pdp = {
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
-            .pNext = &asp,
-        };
-
         VkPhysicalDeviceDescriptorBufferPropertiesEXT descriptorBuffer = {
             .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT,
-            .pNext = &pdp,
+            .pNext = &asp,
         };
 
         VkPhysicalDeviceDriverProperties driver = {
@@ -384,7 +379,6 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
             vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mProperties.memory);
             mProperties.rayTracingPipeline = rtp;
             mProperties.accelerationStructure = asp;
-            mProperties.pushDescriptor = pdp;
         }
 
         Log::Info(" * [{}] {}, driver: {} {}, Vulkan {}.{}.{} {}", i, prop.properties.deviceName, driver.driverName,
@@ -401,22 +395,6 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
         deviceExtensions.insert(deviceExtensions.end(), raytracingExtensions.begin(), raytracingExtensions.end());
     } else {
         Log::Warning("The chosen physical device does not support ray tracing");
-    }
-
-    // Push descriptors are enabled whenever the device has them, so that shaders can use them without every app
-    // having to ask. It is skipped if the app already requested the extension itself.
-    std::vector<const char*> pushDescriptorExtensions = {VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME};
-    mPushDescriptorSupport = checkDeviceExtensionSupport(mPhysicalDevice, pushDescriptorExtensions, print);
-
-    if (mPushDescriptorSupport) {
-        bool alreadyRequested = std::any_of(deviceExtensions.begin(), deviceExtensions.end(), [](const char* pName) {
-            return std::strcmp(pName, VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME) == 0;
-        });
-        if (!alreadyRequested) {
-            deviceExtensions.push_back(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME);
-        }
-    } else {
-        Log::Warning("The chosen physical device does not support push descriptors");
     }
 
     // Check for extension support
@@ -619,9 +597,9 @@ ptr<Scene> Device::createScene()
     return make_ptr<Scene>(shared_from_this());
 }
 
-ptr<Shader> Device::createShader(const std::vector<ShaderDesc>& desc, const std::vector<uint32_t>& pushDescriptorSets)
+ptr<Shader> Device::createShader(const std::vector<ShaderDesc>& desc)
 {
-    return make_ptr<Shader>(shared_from_this(), desc, pushDescriptorSets);
+    return make_ptr<Shader>(shared_from_this(), desc);
 }
 
 ptr<Swapchain> Device::createSwapchain(uint32_t framesInFlight)

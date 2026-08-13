@@ -49,7 +49,10 @@ public:
     VolumeViewer() : App("VolumeViewer", 1920, 1080)
     {
         // Create a Vulkan instance and device
-        mpDevice = std::make_shared<Device>(mpWindow);
+        std::vector<const char*> extensions = {
+            VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
+        };
+        mpDevice = std::make_shared<Device>(mpWindow, extensions);
 
         // Create a swapchain with 2 frames in flight (default)
         mpSwapchain = mpDevice->createSwapchain();
@@ -68,9 +71,7 @@ public:
         std::vector<ShaderDesc> shaderDesc;
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/Environment.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT);
-        // Set 1 holds the environment map, which is pushed straight into the command buffer. Set 0 is the camera,
-        // which is bound with a dynamic offset and therefore has to stay an allocated set.
-        auto pEnvMapShader = mpDevice->createShader(shaderDesc, {1});
+        auto pEnvMapShader = mpDevice->createShader(shaderDesc);
         mpEnvironmentMapPipeline = mpDevice->createPipeline(mpPass, pEnvMapShader, pipelineDesc);
 
         // Specialization constants for ray marching shader
@@ -93,9 +94,7 @@ public:
         shaderDesc.emplace_back("VolumeViewer/Fullscreen.vert", "main", VK_SHADER_STAGE_VERTEX_BIT);
         shaderDesc.emplace_back("VolumeViewer/RayMarcher.frag", "main", VK_SHADER_STAGE_FRAGMENT_BIT,
                                 &mSpecializationInfo);
-        // Set 1 holds the volume, environment map, accumulation image and the two distribution buffers, none of
-        // which are dynamic, so the whole set can be pushed
-        auto pRayMarchShader = mpDevice->createShader(shaderDesc, {1});
+        auto pRayMarchShader = mpDevice->createShader(shaderDesc);
 
         pipelineDesc.depthTestEnable = VK_TRUE;
         pipelineDesc.colorBlendAttachmentStates[0].blendEnable = VK_TRUE;

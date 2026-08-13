@@ -1,7 +1,6 @@
 #include "Shader.h"
 
 #include "Error.h"
-#include "Extension.h"
 #include "Log.h"
 
 #include <deque>
@@ -88,10 +87,6 @@ static bool compile(const std::filesystem::path& input, const std::filesystem::p
     options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
     options.SetTargetSpirv(shaderc_spirv_version_1_6);
     options.SetIncluder(std::make_unique<ShaderIncluder>());
-
-    // Bindings that the shader declares but never reads would otherwise be optimized away, which changes the
-    // descriptor set layouts on a reload and invalidates any descriptor set already allocated from them
-    options.SetPreserveBindings(true);
 #ifdef _DEBUG
     options.SetGenerateDebugInfo();
     options.SetWarningsAsErrors();
@@ -262,9 +257,7 @@ static uint32_t getSpecializationConstant(const std::vector<VkSpecializationInfo
     return value;
 }
 
-Shader::Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc,
-               const std::vector<uint32_t>& pushDescriptorSets)
-    : mpDevice(pDevice), mRequestedPushSets(pushDescriptorSets)
+Shader::Shader(ptr<Device> pDevice, const std::vector<ShaderDesc>& desc) : mpDevice(pDevice)
 {
     mModules.resize(desc.size());
     mReflections.resize(desc.size());
@@ -444,7 +437,6 @@ void Shader::createShader()
     // Resources are looked up by name, and the pool has to be able to serve every binding the shader declares
     mResourceInfos.clear();
     std::map<VkDescriptorType, uint32_t> poolCounts;
-    uint32_t allocatedSetCount = 0;
 
     // Registers a name so that setResource() can find the binding. Blocks declared without an instance name have no
     // variable name, and are reachable through their block type name instead.
@@ -460,13 +452,8 @@ void Shader::createShader()
         }
     };
 
-    mSetIsPush.assign(descriptorSets.size(), false);
-
     for (uint32_t i = 0; i < count(descriptorSets); i++) {
         std::vector<VkDescriptorSetLayoutBinding> bindings;
-        bool hasDynamic = false;
-        uint32_t descriptorsInSet = 0;
-
         for (auto& [bindingNumber, binding] : descriptorSets[i]) {
             // A count is missing only if the binding was rejected above, in which case an error has been logged already
             auto found = bindingCount[i].find(bindingNumber);
@@ -486,41 +473,11 @@ void Shader::createShader()
                 registerName(binding->block.type_description->type_name, info);
             }
 
-            hasDynamic |= type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC ||
-                          type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-            descriptorsInSet += descriptorCount;
-        }
-
-        // A set can only be pushed if the application asked for it and the set qualifies
-        if (std::find(mRequestedPushSets.begin(), mRequestedPushSets.end(), i) != mRequestedPushSets.end()) {
-            if (!mpDevice->supportsPushDescriptors()) {
-                Log::Warning("Set {} was requested as a push descriptor set, but the device does not support push "
-                             "descriptors. Falling back to an allocated set.",
-                             i);
-            } else if (hasDynamic) {
-                Log::Warning("Set {} was requested as a push descriptor set, but it holds dynamic descriptors, which "
-                             "are not allowed there. Falling back to an allocated set.",
-                             i);
-            } else if (descriptorsInSet > mpDevice->getMaxPushDescriptors()) {
-                Log::Warning("Set {} was requested as a push descriptor set, but it holds {} descriptors and the "
-                             "device allows at most {}. Falling back to an allocated set.",
-                             i, descriptorsInSet, mpDevice->getMaxPushDescriptors());
-            } else {
-                mSetIsPush[i] = true;
-            }
-        }
-
-        // Pushed sets are never allocated, so they must not be counted towards the pool
-        if (!mSetIsPush[i]) {
-            for (auto& binding : bindings) {
-                poolCounts[binding.descriptorType] += binding.descriptorCount;
-            }
-            allocatedSetCount++;
+            poolCounts[type] += descriptorCount;
         }
 
         VkDescriptorSetLayoutCreateInfo ci = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-            .flags = mSetIsPush[i] ? VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR : 0u,
             .bindingCount = count(bindings),
             .pBindings = bindings.data(),
         };
@@ -538,7 +495,7 @@ void Shader::createShader()
     for (auto& [type, descriptorCount] : poolCounts) {
         mPoolSizes.push_back({.type = type, .descriptorCount = descriptorCount * generationsPerPool});
     }
-    mMaxSetsPerPool = allocatedSetCount * generationsPerPool;
+    mMaxSetsPerPool = count(descriptorSets) * generationsPerPool;
 
     // Create push constant ranges
     mPushConstantRanges.clear();
@@ -729,14 +686,15 @@ VkDescriptorSet Shader::allocateDescriptorSet(uint32_t set)
     return descriptorSet;
 }
 
-void Shader::buildWrites(uint32_t set, VkDescriptorSet dstSet, DescriptorWrites& out) const
+void Shader::updateDescriptorSet(uint32_t set)
 {
-    std::vector<VkWriteDescriptorSet>& writes = out.writes;
-    std::deque<VkDescriptorBufferInfo>& bufferInfos = out.buffers;
-    std::deque<std::vector<VkDescriptorImageInfo>>& imageInfos = out.images;
-    std::deque<VkWriteDescriptorSetAccelerationStructureKHR>& accelerationStructureInfos =
-        out.accelerationStructureInfos;
-    std::deque<VkAccelerationStructureKHR>& accelerationStructures = out.accelerationStructures;
+    std::vector<VkWriteDescriptorSet> writes;
+
+    // The writes point into these, and a deque never moves what it already holds
+    std::deque<VkDescriptorBufferInfo> bufferInfos;
+    std::deque<std::vector<VkDescriptorImageInfo>> imageInfos;
+    std::deque<VkWriteDescriptorSetAccelerationStructureKHR> accelerationStructureInfos;
+    std::deque<VkAccelerationStructureKHR> accelerationStructures;
 
     for (const auto& [name, resource] : mResources) {
         auto found = mResourceInfos.find(name);
@@ -747,7 +705,7 @@ void Shader::buildWrites(uint32_t set, VkDescriptorSet dstSet, DescriptorWrites&
 
         VkWriteDescriptorSet write = {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .dstSet = dstSet,
+            .dstSet = mDescriptorSets[set],
             .dstBinding = info.binding,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -824,15 +782,9 @@ void Shader::buildWrites(uint32_t set, VkDescriptorSet dstSet, DescriptorWrites&
 
         writes.push_back(write);
     }
-}
 
-void Shader::updateDescriptorSet(uint32_t set)
-{
-    DescriptorWrites writes;
-    buildWrites(set, mDescriptorSets[set], writes);
-
-    if (!writes.writes.empty()) {
-        vkUpdateDescriptorSets(mpDevice->getDevice(), count(writes.writes), writes.writes.data(), 0, nullptr);
+    if (!writes.empty()) {
+        vkUpdateDescriptorSets(mpDevice->getDevice(), count(writes), writes.data(), 0, nullptr);
     }
 }
 
@@ -841,23 +793,6 @@ void Shader::bindResources(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint, u
 {
     if (set >= mDescriptorSets.size()) {
         Log::Error("Trying to bind set {}, but the shader only declares {} sets.", set, mDescriptorSets.size());
-        return;
-    }
-
-    // A pushed set is written straight into the command buffer, so there is nothing to allocate, nothing to keep
-    // track of between frames, and no set that a frame in flight could still be reading
-    if (mSetIsPush[set]) {
-        if (!dynamicOffsets.empty()) {
-            Log::Error("Set {} uses push descriptors and cannot take dynamic offsets.", set);
-        }
-
-        DescriptorWrites writes;
-        buildWrites(set, VK_NULL_HANDLE, writes);
-
-        if (!writes.writes.empty()) {
-            vkCmdPushDescriptorSetKHR(cmd, bindPoint, mPipelineLayout, set, count(writes.writes),
-                                      writes.writes.data());
-        }
         return;
     }
 

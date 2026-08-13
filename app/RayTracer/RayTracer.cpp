@@ -62,9 +62,7 @@ public:
         shaderDesc.emplace_back("RayTracer/RayMiss.rmiss", "main", VK_SHADER_STAGE_MISS_BIT_KHR);
         shaderDesc.emplace_back("RayTracer/RayClosestHit.rchit", "main", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
                                 &mSpecializationInfo);
-        // Only set 3, the output image, is ours to push. Sets 0 to 2 are allocated and bound by the camera and the
-        // scene, so they have to stay ordinary sets.
-        auto pShader = mpDevice->createShader(shaderDesc, {3});
+        auto pShader = mpDevice->createShader(shaderDesc);
 
         // Create pipeline with recursion depth and shader groups
         RayTracingPipelineDesc pipelineDesc(1, 1, 1);
@@ -111,16 +109,16 @@ public:
         mpAccelerationStructure =
             mpDevice->createAccelerationStructure(mpScene, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
-        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
-        // of them.
+        // Create descriptors when layouts are defined
+        mpScene->createRayTracingDescriptors(pShader->getDescriptorSetLayouts(), mpAccelerationStructure,
+                                             mpSwapchain->getFramesInFlightCount());
+
+        // Setup camera
         mpCamera = mpDevice->createCamera(mpSwapchain->getFramesInFlightCount());
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-
-        // Attach the scene resources now that the acceleration structure exists
-        mpScene->createRayTracingDescriptors(pShader, mpCamera, mpAccelerationStructure,
-                                             mpSwapchain->getFramesInFlightCount());
+        mpCamera->createRayTracingDescriptor(VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 
         // The image the rays are written to
         pShader->setResource("image", mpImage);
@@ -182,7 +180,7 @@ public:
                            &pushConstants);
 
         // Bind descriptors
-        mpScene->bindRayTracingDescriptors(cmd, mpSwapchain->getInFlightIndex());
+        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout(), mpSwapchain->getInFlightIndex());
         mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, 3);
 
         // Trace rays
