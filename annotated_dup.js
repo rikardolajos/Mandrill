@@ -7,6 +7,7 @@ var annotated_dup =
       [ "Camera", "classMandrill_1_1Camera.html", "classMandrill_1_1Camera" ],
       [ "Descriptor", "classMandrill_1_1Descriptor.html", "classMandrill_1_1Descriptor" ],
       [ "Device", "classMandrill_1_1Device.html", "classMandrill_1_1Device" ],
+      [ "DynamicBuffer", "classMandrill_1_1DynamicBuffer.html", "classMandrill_1_1DynamicBuffer" ],
       [ "EnvironmentMap", "classMandrill_1_1EnvironmentMap.html", "classMandrill_1_1EnvironmentMap" ],
       [ "Helpers", "classMandrill_1_1Helpers.html", null ],
       [ "Image", "classMandrill_1_1Image.html", "classMandrill_1_1Image" ],

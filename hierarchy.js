@@ -6,6 +6,7 @@ var hierarchy =
     [ "Mandrill::Camera", "classMandrill_1_1Camera.html", null ],
     [ "Mandrill::Descriptor", "classMandrill_1_1Descriptor.html", null ],
     [ "Mandrill::Device", "classMandrill_1_1Device.html", null ],
+    [ "Mandrill::DynamicBuffer", "classMandrill_1_1DynamicBuffer.html", null ],
     [ "Mandrill::EnvironmentMap", "classMandrill_1_1EnvironmentMap.html", null ],
     [ "Mandrill::Helpers", "classMandrill_1_1Helpers.html", null ],
     [ "Mandrill::Image", "classMandrill_1_1Image.html", null ],

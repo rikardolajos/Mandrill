@@ -185,9 +185,12 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:a58af72ed9d244f37ca0eb368b1e9d87c" id="r_a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c">getRayTracingDescriptor</a> () const</td></tr>
 <tr class="memdesc:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
 <tr class="separator:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e6fae32c77907e8e1b643fdf5fbed06" id="r_a6e6fae32c77907e8e1b643fdf5fbed06"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a6e6fae32c77907e8e1b643fdf5fbed06">getUniformBuffer</a> () const</td></tr>
-<tr class="memdesc:a6e6fae32c77907e8e1b643fdf5fbed06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the buffer containing the camera matrices. This can be used for custom descriptor creation.  <br /></td></tr>
-<tr class="separator:a6e6fae32c77907e8e1b643fdf5fbed06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af52c97572782a5fb42bb52e08d8a7386" id="r_af52c97572782a5fb42bb52e08d8a7386"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#af52c97572782a5fb42bb52e08d8a7386">getUniformBuffer</a> () const</td></tr>
+<tr class="memdesc:af52c97572782a5fb42bb52e08d8a7386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the buffer containing the camera matrices, with one copy per frame in flight. Attach this to a shader resource, or use it for custom descriptor creation.  <br /></td></tr>
+<tr class="separator:af52c97572782a5fb42bb52e08d8a7386"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01bec4dd83c48dbb76d332a7eac421a2" id="r_a01bec4dd83c48dbb76d332a7eac421a2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a01bec4dd83c48dbb76d332a7eac421a2">getDynamicOffset</a> (uint32_t frameInFlightIndex) const</td></tr>
+<tr class="memdesc:a01bec4dd83c48dbb76d332a7eac421a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the offset that selects a frame's copy of the camera matrices when binding a descriptor. Only needed when binding a descriptor by hand, a shader that the uniform buffer is attached to works this out itself.  <br /></td></tr>
+<tr class="separator:a01bec4dd83c48dbb76d332a7eac421a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classMandrill_1_1Camera.html" title="Camera class for managing camera properties and transformations in a 3D scene.">Camera</a> class for managing camera properties and transformations in a 3D scene. </p>
@@ -372,6 +375,41 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 </div>
 </div>
+<a id="a01bec4dd83c48dbb76d332a7eac421a2" name="a01bec4dd83c48dbb76d332a7eac421a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01bec4dd83c48dbb76d332a7eac421a2">&#9670;&#160;</a></span>getDynamicOffset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API uint32_t Mandrill::Camera::getDynamicOffset </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frameInFlightIndex</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the offset that selects a frame's copy of the camera matrices when binding a descriptor. Only needed when binding a descriptor by hand, a shader that the uniform buffer is attached to works this out itself. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameInFlightIndex</td><td>Used to determine which resource to use</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Dynamic offset in bytes</dd></dl>
+
+</div>
+</div>
 <a id="afe5e307168c92aae446290547863dfbe" name="afe5e307168c92aae446290547863dfbe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe5e307168c92aae446290547863dfbe">&#9670;&#160;</a></span>getFrustum()</h2>
 
@@ -490,8 +528,8 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 
 </div>
 </div>
-<a id="a6e6fae32c77907e8e1b643fdf5fbed06" name="a6e6fae32c77907e8e1b643fdf5fbed06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e6fae32c77907e8e1b643fdf5fbed06">&#9670;&#160;</a></span>getUniformBuffer()</h2>
+<a id="af52c97572782a5fb42bb52e08d8a7386" name="af52c97572782a5fb42bb52e08d8a7386"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af52c97572782a5fb42bb52e08d8a7386">&#9670;&#160;</a></span>getUniformBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -500,7 +538,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Buffer.html">Buffer</a> &gt; Mandrill::Camera::getUniformBuffer </td>
+          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt; Mandrill::Camera::getUniformBuffer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -513,7 +551,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 </table>
 </div><div class="memdoc">
 
-<p>Get the buffer containing the camera matrices. This can be used for custom descriptor creation. </p>
+<p>Get the buffer containing the camera matrices, with one copy per frame in flight. Attach this to a shader resource, or use it for custom descriptor creation. </p>
 <dl class="section return"><dt>Returns</dt><dd>Uniform buffer</dd></dl>
 
 </div>

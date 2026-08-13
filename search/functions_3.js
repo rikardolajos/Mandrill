@@ -5,5 +5,6 @@ var searchData=
   ['destroygui_2',['destroyGUI',['../classMandrill_1_1App.html#ae1f85a1abcf91f6ea4a070b7b4aaf5c3',1,'Mandrill::App']]],
   ['destroypipeline_3',['destroyPipeline',['../classMandrill_1_1Pipeline.html#a01fc1d24a99e5149cb06765d4b503254',1,'Mandrill::Pipeline']]],
   ['device_4',['Device',['../classMandrill_1_1Device.html#a849119d173c474b158b5a588a97f61ab',1,'Mandrill::Device']]],
-  ['drawmeshes_5',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]]
+  ['drawmeshes_5',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]],
+  ['dynamicbuffer_6',['DynamicBuffer',['../classMandrill_1_1DynamicBuffer.html#a562c76ae8d268caa90610f10b7c60acd',1,'Mandrill::DynamicBuffer']]]
 ];

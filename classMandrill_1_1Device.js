@@ -6,6 +6,7 @@ var classMandrill_1_1Device =
     [ "createBuffer", "classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900", null ],
     [ "createCamera", "classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830", null ],
     [ "createDescriptor", "classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191", null ],
+    [ "createDynamicBuffer", "classMandrill_1_1Device.html#ae1ddae8261a3a87f6145c2ec4a60fe45", null ],
     [ "createImage", "classMandrill_1_1Device.html#a2b370bbfad75811b51588da347bb8342", null ],
     [ "createImage", "classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff", null ],
     [ "createPass", "classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5", null ],
