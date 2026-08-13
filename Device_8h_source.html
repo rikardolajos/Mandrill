@@ -131,236 +131,217 @@ $(document).ready(function(){initNavTree('Device_8h_source.html',''); initResiza
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        VkPhysicalDeviceMemoryProperties memory;</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipeline;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        VkPhysicalDeviceAccelerationStructurePropertiesKHR accelerationStructure;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        VkPhysicalDevicePushDescriptorPropertiesKHR pushDescriptor;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    };</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html">   38</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Device.html">Device</a> : <span class="keyword">public</span> std::enable_shared_from_this&lt;Device&gt;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Device.html">Device</a>)</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Device.html">Device</a>(GLFWwindow* pWindow,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                            <span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions = std::vector&lt;const char*&gt;(),</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                            VkPhysicalDeviceFeatures2* pFeatures = <span class="keyword">nullptr</span>, uint32_t physicalDeviceIndex = std::numeric_limits&lt;uint32_t&gt;::max());</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a">~Device</a>();</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">   64</a></span>        MANDRILL_API VkDevice <a class="code hl_function" href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">getDevice</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            <span class="keywordflow">return</span> mDevice;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    };</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html">   37</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Device.html">Device</a> : <span class="keyword">public</span> std::enable_shared_from_this&lt;Device&gt;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Device.html">Device</a>)</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Device.html">Device</a>(GLFWwindow* pWindow,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                            <span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions = std::vector&lt;const char*&gt;(),</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                            VkPhysicalDeviceFeatures2* pFeatures = <span class="keyword">nullptr</span>, uint32_t physicalDeviceIndex = std::numeric_limits&lt;uint32_t&gt;::max());</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a">~Device</a>();</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="foldopen" id="foldopen00063" data-start="{" data-end="}">
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">   63</a></span>        MANDRILL_API VkDevice <a class="code hl_function" href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">getDevice</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">return</span> mDevice;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">   73</a></span>        MANDRILL_API VkInstance <a class="code hl_function" href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">getInstance</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="keywordflow">return</span> mInstance;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="foldopen" id="foldopen00072" data-start="{" data-end="}">
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">   72</a></span>        MANDRILL_API VkInstance <a class="code hl_function" href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">getInstance</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            <span class="keywordflow">return</span> mInstance;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        }</div>
 </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="foldopen" id="foldopen00082" data-start="{" data-end="}">
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">   82</a></span>        MANDRILL_API VkPhysicalDevice <a class="code hl_function" href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">getPhysicalDevice</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">return</span> mPhysicalDevice;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="foldopen" id="foldopen00081" data-start="{" data-end="}">
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">   81</a></span>        MANDRILL_API VkPhysicalDevice <a class="code hl_function" href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">getPhysicalDevice</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="keywordflow">return</span> mPhysicalDevice;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        }</div>
 </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">   91</a></span>        MANDRILL_API DeviceProperties <a class="code hl_function" href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">getProperties</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="keywordflow">return</span> mProperties;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        }</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">   90</a></span>        MANDRILL_API DeviceProperties <a class="code hl_function" href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">getProperties</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keywordflow">return</span> mProperties;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        }</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="foldopen" id="foldopen00100" data-start="{" data-end="}">
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">  100</a></span>        MANDRILL_API GLFWwindow* <a class="code hl_function" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">getWindow</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            <span class="keywordflow">return</span> mpWindow;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        }</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">   99</a></span>        MANDRILL_API GLFWwindow* <a class="code hl_function" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">getWindow</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            <span class="keywordflow">return</span> mpWindow;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        }</div>
 </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="foldopen" id="foldopen00109" data-start="{" data-end="}">
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">  109</a></span>        MANDRILL_API VkSurfaceKHR <a class="code hl_function" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">getSurface</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keywordflow">return</span> mSurface;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        }</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="foldopen" id="foldopen00108" data-start="{" data-end="}">
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">  108</a></span>        MANDRILL_API VkSurfaceKHR <a class="code hl_function" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">getSurface</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            <span class="keywordflow">return</span> mSurface;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        }</div>
 </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="foldopen" id="foldopen00118" data-start="{" data-end="}">
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">  118</a></span>        MANDRILL_API VkCommandPool <a class="code hl_function" href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">getCommandPool</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>            <span class="keywordflow">return</span> mCommandPool;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        }</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="foldopen" id="foldopen00117" data-start="{" data-end="}">
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">  117</a></span>        MANDRILL_API VkCommandPool <a class="code hl_function" href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">getCommandPool</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>            <span class="keywordflow">return</span> mCommandPool;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        }</div>
 </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="foldopen" id="foldopen00127" data-start="{" data-end="}">
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">  127</a></span>        MANDRILL_API VkQueue <a class="code hl_function" href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">getQueue</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            <span class="keywordflow">return</span> mQueue;</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        }</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="foldopen" id="foldopen00126" data-start="{" data-end="}">
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">  126</a></span>        MANDRILL_API VkQueue <a class="code hl_function" href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">getQueue</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">return</span> mQueue;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        }</div>
 </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="foldopen" id="foldopen00136" data-start="{" data-end="}">
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">  136</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">getQueueFamily</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>            <span class="keywordflow">return</span> mQueueFamilyIndex;</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        }</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="foldopen" id="foldopen00135" data-start="{" data-end="}">
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">  135</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">getQueueFamily</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>            <span class="keywordflow">return</span> mQueueFamilyIndex;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        }</div>
 </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
-<div class="foldopen" id="foldopen00145" data-start="{" data-end="}">
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">  145</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">supportsRayTracing</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            <span class="keywordflow">return</span> mRayTracingSupport;</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="foldopen" id="foldopen00144" data-start="{" data-end="}">
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">  144</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">supportsRayTracing</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>            <span class="keywordflow">return</span> mRayTracingSupport;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        }</div>
 </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
-<div class="foldopen" id="foldopen00155" data-start="{" data-end="}">
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#add3a60519f0a0e784610ab8c946596a0">  155</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Device.html#add3a60519f0a0e784610ab8c946596a0">supportsPushDescriptors</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            <span class="keywordflow">return</span> mPushDescriptorSupport;</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        }</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="foldopen" id="foldopen00153" data-start="{" data-end="}">
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">  153</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">getVsync</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            <span class="keywordflow">return</span> mVsync;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        }</div>
 </div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="foldopen" id="foldopen00164" data-start="{" data-end="}">
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a97ac935eadb1d3f1d6818c4429ac41a4">  164</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Device.html#a97ac935eadb1d3f1d6818c4429ac41a4">getMaxPushDescriptors</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            <span class="keywordflow">return</span> mProperties.pushDescriptor.maxPushDescriptors;</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        }</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
+<div class="foldopen" id="foldopen00162" data-start="{" data-end="}">
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">  162</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">setVsync</a>(<span class="keywordtype">bool</span> vsync)</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        {</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            mVsync = vsync;</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        }</div>
 </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
-<div class="foldopen" id="foldopen00173" data-start="{" data-end="}">
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">  173</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">getVsync</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            <span class="keywordflow">return</span> mVsync;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        }</div>
-</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
-<div class="foldopen" id="foldopen00182" data-start="{" data-end="}">
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno"><a class="line" href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">  182</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">setVsync</a>(<span class="keywordtype">bool</span> vsync)</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        {</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            mVsync = vsync;</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        }</div>
-</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        MANDRILL_API VkSampleCountFlagBits <a class="code hl_function" href="classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636">getSampleCount</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        MANDRILL_API ptr&lt;AccelerationStructure&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744">createAccelerationStructure</a>(std::weak_ptr&lt;Scene&gt; wpScene,</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                                                                            VkBuildAccelerationStructureFlagsKHR flags);</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        MANDRILL_API ptr&lt;Buffer&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">createBuffer</a>(VkDeviceSize size, VkBufferUsageFlags usage,</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                                              VkMemoryPropertyFlags properties);</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        MANDRILL_API ptr&lt;Camera&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">createCamera</a>(uint32_t framesInFlightCount);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        MANDRILL_API ptr&lt;Descriptor&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">createDescriptor</a>(<span class="keyword">const</span> std::vector&lt;DescriptorDesc&gt;&amp; desc,</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                                                      VkDescriptorSetLayout layout);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a>(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a>(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(std::vector&lt;ptr&lt;Image&gt;&gt; colorAttachments, ptr&lt;Image&gt; pDepthAttachment);</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount = 1,</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                                          <span class="keywordtype">bool</span> depthAttachment = <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(VkExtent2D extent, std::vector&lt;VkFormat&gt; formats, <span class="keywordtype">bool</span> depthAttachment = <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        MANDRILL_API ptr&lt;Pipeline&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a>(ptr&lt;Pass&gt; pPass, ptr&lt;Shader&gt; pShader, <span class="keyword">const</span> <a class="code hl_struct" href="structMandrill_1_1PipelineDesc.html">PipelineDesc</a>&amp; desc);</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        MANDRILL_API ptr&lt;RayTracingPipeline&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a>(ptr&lt;Shader&gt; pShader,</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                                                                      <span class="keyword">const</span> RayTracingPipelineDesc&amp; desc);</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        MANDRILL_API VkSampleCountFlagBits <a class="code hl_function" href="classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636">getSampleCount</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        MANDRILL_API ptr&lt;AccelerationStructure&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744">createAccelerationStructure</a>(std::weak_ptr&lt;Scene&gt; wpScene,</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                                                                            VkBuildAccelerationStructureFlagsKHR flags);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        MANDRILL_API ptr&lt;Buffer&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">createBuffer</a>(VkDeviceSize size, VkBufferUsageFlags usage,</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                                              VkMemoryPropertyFlags properties);</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        MANDRILL_API ptr&lt;Camera&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">createCamera</a>(uint32_t framesInFlightCount);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        MANDRILL_API ptr&lt;Descriptor&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">createDescriptor</a>(<span class="keyword">const</span> std::vector&lt;DescriptorDesc&gt;&amp; desc,</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                                                      VkDescriptorSetLayout layout);</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a>(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                                            VkImageUsageFlags usage, VkMemoryPropertyFlags properties);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        MANDRILL_API ptr&lt;Image&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">createImage</a>(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels,</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                                            VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                                            VkImageUsageFlags usage, VkDeviceMemory memory, VkDeviceSize offset);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(std::vector&lt;ptr&lt;Image&gt;&gt; colorAttachments, ptr&lt;Image&gt; pDepthAttachment);</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(VkExtent2D extent, VkFormat format, uint32_t colorAttachmentCount = 1,</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                                          <span class="keywordtype">bool</span> depthAttachment = <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        MANDRILL_API ptr&lt;Pass&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">createPass</a>(VkExtent2D extent, std::vector&lt;VkFormat&gt; formats, <span class="keywordtype">bool</span> depthAttachment = <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                                          VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        MANDRILL_API ptr&lt;Pipeline&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a>(ptr&lt;Pass&gt; pPass, ptr&lt;Shader&gt; pShader, <span class="keyword">const</span> <a class="code hl_struct" href="structMandrill_1_1PipelineDesc.html">PipelineDesc</a>&amp; desc);</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        MANDRILL_API ptr&lt;RayTracingPipeline&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a>(ptr&lt;Shader&gt; pShader,</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                                                                      <span class="keyword">const</span> RayTracingPipelineDesc&amp; desc);</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        MANDRILL_API ptr&lt;Scene&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">createScene</a>();</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        MANDRILL_API ptr&lt;Shader&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27">createShader</a>(<span class="keyword">const</span> std::vector&lt;ShaderDesc&gt;&amp; desc);</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        MANDRILL_API ptr&lt;Swapchain&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a>(uint32_t framesInFlight = 2);</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        MANDRILL_API ptr&lt;Scene&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">createScene</a>();</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        MANDRILL_API ptr&lt;Shader&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ad4d2155e3cf3f844500aed4c25f9e885">createShader</a>(<span class="keyword">const</span> std::vector&lt;ShaderDesc&gt;&amp; desc,</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                                              <span class="keyword">const</span> std::vector&lt;uint32_t&gt;&amp; pushDescriptorSets = {});</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span> </div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        MANDRILL_API ptr&lt;Swapchain&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">createSwapchain</a>(uint32_t framesInFlight = 2);</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">createTextureFromFile</a>(TextureType type, VkFormat format,</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                                                        <span class="keyword">const</span> std::filesystem::path&amp; path, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">createTextureFromBuffer</a>(TextureType type, VkFormat format, <span class="keyword">const</span> <span class="keywordtype">void</span>* pData,</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>                                                          uint32_t width, uint32_t height, uint32_t depth,</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                                                          uint32_t bytesPerPixel, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">createTextureFromFile</a>(TextureType type, VkFormat format,</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>                                                        <span class="keyword">const</span> std::filesystem::path&amp; path, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">createTextureFromBuffer</a>(TextureType type, VkFormat format, <span class="keyword">const</span> <span class="keywordtype">void</span>* pData,</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                                                          uint32_t width, uint32_t height, uint32_t depth,</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>                                                          uint32_t bytesPerPixel, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span> </div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">createTextureFromImage</a>(ptr&lt;Image&gt; pImage, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span> </div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>        <span class="keywordtype">void</span> createDebugMessenger();</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        <span class="keywordtype">void</span> createInstance();</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        <span class="keywordtype">void</span> createDevice(<span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions, VkPhysicalDeviceFeatures2* pFeatures,</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>                          uint32_t physicalDeviceIndex);</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        <span class="keywordtype">void</span> createCommandPool();</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        <span class="keywordtype">void</span> createSurface();</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        <span class="keywordtype">void</span> createExtensionProcAddrs();</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span> </div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        GLFWwindow* mpWindow;</div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span> </div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        MANDRILL_API ptr&lt;Texture&gt; <a class="code hl_function" href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">createTextureFromImage</a>(ptr&lt;Image&gt; pImage, <span class="keywordtype">bool</span> mipmaps = <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span> </div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        <span class="keywordtype">void</span> createDebugMessenger();</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        <span class="keywordtype">void</span> createInstance();</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        <span class="keywordtype">void</span> createDevice(<span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; extensions, VkPhysicalDeviceFeatures2* pFeatures,</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                          uint32_t physicalDeviceIndex);</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>        <span class="keywordtype">void</span> createCommandPool();</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>        <span class="keywordtype">void</span> createSurface();</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        <span class="keywordtype">void</span> createExtensionProcAddrs();</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span> </div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>        GLFWwindow* mpWindow;</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span> </div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        VkDebugUtilsMessengerEXT mDebugMessenger;</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span> </div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>        VkInstance mInstance;</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>        VkPhysicalDevice mPhysicalDevice;</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>        VkDevice mDevice;</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        VkSurfaceKHR mSurface;</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>        DeviceProperties mProperties;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>        uint32_t mQueueFamilyIndex;</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>        VkCommandPool mCommandPool;</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        VkQueue mQueue;</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span> </div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        <span class="keywordtype">bool</span> mRayTracingSupport;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>        <span class="keywordtype">bool</span> mPushDescriptorSupport = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>        <span class="keywordtype">bool</span> mVsync;</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>    };</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span><span class="preprocessor">#if defined(_DEBUG)</span></div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        VkDebugUtilsMessengerEXT mDebugMessenger;</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span> </div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        VkInstance mInstance;</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        VkPhysicalDevice mPhysicalDevice;</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        VkDevice mDevice;</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        VkSurfaceKHR mSurface;</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span> </div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>        DeviceProperties mProperties;</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        uint32_t mQueueFamilyIndex;</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        VkCommandPool mCommandPool;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        VkQueue mQueue;</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>        <span class="keywordtype">bool</span> mRayTracingSupport;</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>        <span class="keywordtype">bool</span> mVsync;</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    };</div>
 </div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>} <span class="comment">// namespace Mandrill</span></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html"><div class="ttname"><a href="classMandrill_1_1Device.html">Mandrill::Device</a></div><div class="ttdoc">Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...</div><div class="ttdef"><b>Definition</b> Device.h:39</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a0ccdd441444ce4c29dbbcb7d15dba646"><div class="ttname"><a href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">Mandrill::Device::setVsync</a></div><div class="ttdeci">MANDRILL_API void setVsync(bool vsync)</div><div class="ttdoc">Set a vertical sync mode.</div><div class="ttdef"><b>Definition</b> Device.h:182</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a1df1772aee358eb7a41359c0e6ee2904"><div class="ttname"><a href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">Mandrill::Device::createSwapchain</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Swapchain &gt; createSwapchain(uint32_t framesInFlight=2)</div><div class="ttdoc">Create a new swapchain.</div><div class="ttdef"><b>Definition</b> Device.cpp:627</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a2dd99277f8c15abc82af19785ffc6a86"><div class="ttname"><a href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">Mandrill::Device::getDevice</a></div><div class="ttdeci">MANDRILL_API VkDevice getDevice() const</div><div class="ttdoc">Get Vulkan device handle.</div><div class="ttdef"><b>Definition</b> Device.h:64</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a343ac488bcc2d3f6f94b3447f39c1e49"><div class="ttname"><a href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">Mandrill::Device::getVsync</a></div><div class="ttdeci">MANDRILL_API bool getVsync() const</div><div class="ttdoc">Get the current verical sync mode.</div><div class="ttdef"><b>Definition</b> Device.h:173</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a370ff91a7ecc0e5bc41a25862ec5c111"><div class="ttname"><a href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">Mandrill::Device::getPhysicalDevice</a></div><div class="ttdeci">MANDRILL_API VkPhysicalDevice getPhysicalDevice() const</div><div class="ttdoc">Get Vulkan physical device handle.</div><div class="ttdef"><b>Definition</b> Device.h:82</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a3b50068ab69d3a9062cb92e49dcc81f1"><div class="ttname"><a href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">Mandrill::Device::getQueueFamily</a></div><div class="ttdeci">MANDRILL_API uint32_t getQueueFamily() const</div><div class="ttdoc">Get the queue family.</div><div class="ttdef"><b>Definition</b> Device.h:136</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a42cc76f0d4596e77bc9668aa7c230744"><div class="ttname"><a href="classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744">Mandrill::Device::createAccelerationStructure</a></div><div class="ttdeci">MANDRILL_API ptr&lt; AccelerationStructure &gt; createAccelerationStructure(std::weak_ptr&lt; Scene &gt; wpScene, VkBuildAccelerationStructureFlagsKHR flags)</div><div class="ttdoc">Create a new acceleration structure.</div><div class="ttdef"><b>Definition</b> Device.cpp:553</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a44f2e58304516061696846e5d1f032ff"><div class="ttname"><a href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">Mandrill::Device::createImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Image &gt; createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Create a new Image and allocate memory for it.</div><div class="ttdef"><b>Definition</b> Device.cpp:574</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a4963be9c0476c1996190567298b90a84"><div class="ttname"><a href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">Mandrill::Device::getQueue</a></div><div class="ttdeci">MANDRILL_API VkQueue getQueue() const</div><div class="ttdoc">Get the queue.</div><div class="ttdef"><b>Definition</b> Device.h:127</div></div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html"><div class="ttname"><a href="classMandrill_1_1Device.html">Mandrill::Device</a></div><div class="ttdoc">Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...</div><div class="ttdef"><b>Definition</b> Device.h:38</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a0ccdd441444ce4c29dbbcb7d15dba646"><div class="ttname"><a href="classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646">Mandrill::Device::setVsync</a></div><div class="ttdeci">MANDRILL_API void setVsync(bool vsync)</div><div class="ttdoc">Set a vertical sync mode.</div><div class="ttdef"><b>Definition</b> Device.h:162</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a1df1772aee358eb7a41359c0e6ee2904"><div class="ttname"><a href="classMandrill_1_1Device.html#a1df1772aee358eb7a41359c0e6ee2904">Mandrill::Device::createSwapchain</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Swapchain &gt; createSwapchain(uint32_t framesInFlight=2)</div><div class="ttdoc">Create a new swapchain.</div><div class="ttdef"><b>Definition</b> Device.cpp:605</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a2dd99277f8c15abc82af19785ffc6a86"><div class="ttname"><a href="classMandrill_1_1Device.html#a2dd99277f8c15abc82af19785ffc6a86">Mandrill::Device::getDevice</a></div><div class="ttdeci">MANDRILL_API VkDevice getDevice() const</div><div class="ttdoc">Get Vulkan device handle.</div><div class="ttdef"><b>Definition</b> Device.h:63</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a343ac488bcc2d3f6f94b3447f39c1e49"><div class="ttname"><a href="classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49">Mandrill::Device::getVsync</a></div><div class="ttdeci">MANDRILL_API bool getVsync() const</div><div class="ttdoc">Get the current verical sync mode.</div><div class="ttdef"><b>Definition</b> Device.h:153</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a370ff91a7ecc0e5bc41a25862ec5c111"><div class="ttname"><a href="classMandrill_1_1Device.html#a370ff91a7ecc0e5bc41a25862ec5c111">Mandrill::Device::getPhysicalDevice</a></div><div class="ttdeci">MANDRILL_API VkPhysicalDevice getPhysicalDevice() const</div><div class="ttdoc">Get Vulkan physical device handle.</div><div class="ttdef"><b>Definition</b> Device.h:81</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a3b50068ab69d3a9062cb92e49dcc81f1"><div class="ttname"><a href="classMandrill_1_1Device.html#a3b50068ab69d3a9062cb92e49dcc81f1">Mandrill::Device::getQueueFamily</a></div><div class="ttdeci">MANDRILL_API uint32_t getQueueFamily() const</div><div class="ttdoc">Get the queue family.</div><div class="ttdef"><b>Definition</b> Device.h:135</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a42372a30f593de4d78fbac6927a4ec27"><div class="ttname"><a href="classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27">Mandrill::Device::createShader</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Shader &gt; createShader(const std::vector&lt; ShaderDesc &gt; &amp;desc)</div><div class="ttdoc">Create a new shader.</div><div class="ttdef"><b>Definition</b> Device.cpp:600</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a42cc76f0d4596e77bc9668aa7c230744"><div class="ttname"><a href="classMandrill_1_1Device.html#a42cc76f0d4596e77bc9668aa7c230744">Mandrill::Device::createAccelerationStructure</a></div><div class="ttdeci">MANDRILL_API ptr&lt; AccelerationStructure &gt; createAccelerationStructure(std::weak_ptr&lt; Scene &gt; wpScene, VkBuildAccelerationStructureFlagsKHR flags)</div><div class="ttdoc">Create a new acceleration structure.</div><div class="ttdef"><b>Definition</b> Device.cpp:531</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a44f2e58304516061696846e5d1f032ff"><div class="ttname"><a href="classMandrill_1_1Device.html#a44f2e58304516061696846e5d1f032ff">Mandrill::Device::createImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Image &gt; createImage(uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Create a new Image and allocate memory for it.</div><div class="ttdef"><b>Definition</b> Device.cpp:552</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a4963be9c0476c1996190567298b90a84"><div class="ttname"><a href="classMandrill_1_1Device.html#a4963be9c0476c1996190567298b90a84">Mandrill::Device::getQueue</a></div><div class="ttdeci">MANDRILL_API VkQueue getQueue() const</div><div class="ttdoc">Get the queue.</div><div class="ttdef"><b>Definition</b> Device.h:126</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_a4ddddd83776fdce2fa38b217afc60636"><div class="ttname"><a href="classMandrill_1_1Device.html#a4ddddd83776fdce2fa38b217afc60636">Mandrill::Device::getSampleCount</a></div><div class="ttdeci">MANDRILL_API VkSampleCountFlagBits getSampleCount() const</div><div class="ttdoc">Get the multisample anti-aliasing sample count.</div><div class="ttdef"><b>Definition</b> Device.cpp:128</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a5983cdc34f15dc641865618476750bcd"><div class="ttname"><a href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">Mandrill::Device::createRayTracingPipeline</a></div><div class="ttdeci">MANDRILL_API ptr&lt; RayTracingPipeline &gt; createRayTracingPipeline(ptr&lt; Shader &gt; pShader, const RayTracingPipelineDesc &amp;desc)</div><div class="ttdoc">Create a new ray tracing pipeline.</div><div class="ttdef"><b>Definition</b> Device.cpp:612</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a5a406dd9143cf34f67001964573cc6fd"><div class="ttname"><a href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">Mandrill::Device::supportsRayTracing</a></div><div class="ttdeci">MANDRILL_API bool supportsRayTracing() const</div><div class="ttdoc">Check if the given context supports ray tracing.</div><div class="ttdef"><b>Definition</b> Device.h:145</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a5bde5d20fd6e42b0fe49463dd11be333"><div class="ttname"><a href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">Mandrill::Device::createTextureFromFile</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromFile(TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</div><div class="ttdoc">Create a new texture from a file.</div><div class="ttdef"><b>Definition</b> Device.cpp:632</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a7aa32396ea63b077c6d8196680d03c1b"><div class="ttname"><a href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">Mandrill::Device::getInstance</a></div><div class="ttdeci">MANDRILL_API VkInstance getInstance() const</div><div class="ttdoc">Get Vulkan instance handle.</div><div class="ttdef"><b>Definition</b> Device.h:73</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a8a72ce7b4a1610eef8fe28dd86a07f08"><div class="ttname"><a href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">Mandrill::Device::createScene</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Scene &gt; createScene()</div><div class="ttdoc">Create a new scene.</div><div class="ttdef"><b>Definition</b> Device.cpp:617</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a8b8998f1102e62cce22b2c69ad9c7865"><div class="ttname"><a href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">Mandrill::Device::createTextureFromBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromBuffer(TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps=false)</div><div class="ttdoc">Create a new texture from a buffer.</div><div class="ttdef"><b>Definition</b> Device.cpp:638</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a8f8e0c3e643ba9f83456fe0004f08a62"><div class="ttname"><a href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">Mandrill::Device::createPipeline</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Pipeline &gt; createPipeline(ptr&lt; Pass &gt; pPass, ptr&lt; Shader &gt; pShader, const PipelineDesc &amp;desc)</div><div class="ttdoc">Create a new pipeline.</div><div class="ttdef"><b>Definition</b> Device.cpp:607</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a97ac935eadb1d3f1d6818c4429ac41a4"><div class="ttname"><a href="classMandrill_1_1Device.html#a97ac935eadb1d3f1d6818c4429ac41a4">Mandrill::Device::getMaxPushDescriptors</a></div><div class="ttdeci">MANDRILL_API uint32_t getMaxPushDescriptors() const</div><div class="ttdoc">Get the largest number of descriptors that a push descriptor set can hold.</div><div class="ttdef"><b>Definition</b> Device.h:164</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a5983cdc34f15dc641865618476750bcd"><div class="ttname"><a href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">Mandrill::Device::createRayTracingPipeline</a></div><div class="ttdeci">MANDRILL_API ptr&lt; RayTracingPipeline &gt; createRayTracingPipeline(ptr&lt; Shader &gt; pShader, const RayTracingPipelineDesc &amp;desc)</div><div class="ttdoc">Create a new ray tracing pipeline.</div><div class="ttdef"><b>Definition</b> Device.cpp:590</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a5a406dd9143cf34f67001964573cc6fd"><div class="ttname"><a href="classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd">Mandrill::Device::supportsRayTracing</a></div><div class="ttdeci">MANDRILL_API bool supportsRayTracing() const</div><div class="ttdoc">Check if the given context supports ray tracing.</div><div class="ttdef"><b>Definition</b> Device.h:144</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a5bde5d20fd6e42b0fe49463dd11be333"><div class="ttname"><a href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">Mandrill::Device::createTextureFromFile</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromFile(TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</div><div class="ttdoc">Create a new texture from a file.</div><div class="ttdef"><b>Definition</b> Device.cpp:610</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a7aa32396ea63b077c6d8196680d03c1b"><div class="ttname"><a href="classMandrill_1_1Device.html#a7aa32396ea63b077c6d8196680d03c1b">Mandrill::Device::getInstance</a></div><div class="ttdeci">MANDRILL_API VkInstance getInstance() const</div><div class="ttdoc">Get Vulkan instance handle.</div><div class="ttdef"><b>Definition</b> Device.h:72</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a8a72ce7b4a1610eef8fe28dd86a07f08"><div class="ttname"><a href="classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08">Mandrill::Device::createScene</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Scene &gt; createScene()</div><div class="ttdoc">Create a new scene.</div><div class="ttdef"><b>Definition</b> Device.cpp:595</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a8b8998f1102e62cce22b2c69ad9c7865"><div class="ttname"><a href="classMandrill_1_1Device.html#a8b8998f1102e62cce22b2c69ad9c7865">Mandrill::Device::createTextureFromBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromBuffer(TextureType type, VkFormat format, const void *pData, uint32_t width, uint32_t height, uint32_t depth, uint32_t bytesPerPixel, bool mipmaps=false)</div><div class="ttdoc">Create a new texture from a buffer.</div><div class="ttdef"><b>Definition</b> Device.cpp:616</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a8f8e0c3e643ba9f83456fe0004f08a62"><div class="ttname"><a href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">Mandrill::Device::createPipeline</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Pipeline &gt; createPipeline(ptr&lt; Pass &gt; pPass, ptr&lt; Shader &gt; pShader, const PipelineDesc &amp;desc)</div><div class="ttdoc">Create a new pipeline.</div><div class="ttdef"><b>Definition</b> Device.cpp:585</div></div>
 <div class="ttc" id="aclassMandrill_1_1Device_html_a9dabc419c8d8df3a686c33ce042bc99a"><div class="ttname"><a href="classMandrill_1_1Device.html#a9dabc419c8d8df3a686c33ce042bc99a">Mandrill::Device::~Device</a></div><div class="ttdeci">MANDRILL_API ~Device()</div><div class="ttdoc">Destructor for device.</div><div class="ttdef"><b>Definition</b> Device.cpp:107</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_a9eeb85d2d99854da4c5c080ee2c4834f"><div class="ttname"><a href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">Mandrill::Device::getWindow</a></div><div class="ttdeci">MANDRILL_API GLFWwindow * getWindow() const</div><div class="ttdoc">Get the window that the device is bound to.</div><div class="ttdef"><b>Definition</b> Device.h:100</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_aa29da1889ceb8a261d9e265f3bf1cdd2"><div class="ttname"><a href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">Mandrill::Device::getCommandPool</a></div><div class="ttdeci">MANDRILL_API VkCommandPool getCommandPool() const</div><div class="ttdoc">Get the command pool.</div><div class="ttdef"><b>Definition</b> Device.h:118</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_aacb32843af581be3fa55cfe3fa6d06f5"><div class="ttname"><a href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">Mandrill::Device::createPass</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Pass &gt; createPass(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)</div><div class="ttdoc">Create a pass with explicit color and depth attachments.</div><div class="ttdef"><b>Definition</b> Device.cpp:590</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_ad2f825009e45e3432532aa9671944ff7"><div class="ttname"><a href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">Mandrill::Device::getSurface</a></div><div class="ttdeci">MANDRILL_API VkSurfaceKHR getSurface() const</div><div class="ttdoc">Get the presentation surface of the application.</div><div class="ttdef"><b>Definition</b> Device.h:109</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_ad4d2155e3cf3f844500aed4c25f9e885"><div class="ttname"><a href="classMandrill_1_1Device.html#ad4d2155e3cf3f844500aed4c25f9e885">Mandrill::Device::createShader</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Shader &gt; createShader(const std::vector&lt; ShaderDesc &gt; &amp;desc, const std::vector&lt; uint32_t &gt; &amp;pushDescriptorSets={})</div><div class="ttdoc">Create a new shader.</div><div class="ttdef"><b>Definition</b> Device.cpp:622</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_ad54ed2eedf3b6f89462cf1a7c23e3fa2"><div class="ttname"><a href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">Mandrill::Device::createTextureFromImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromImage(ptr&lt; Image &gt; pImage, bool mipmaps=false)</div><div class="ttdoc">Create a texture from an existing image.</div><div class="ttdef"><b>Definition</b> Device.cpp:644</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_add3a60519f0a0e784610ab8c946596a0"><div class="ttname"><a href="classMandrill_1_1Device.html#add3a60519f0a0e784610ab8c946596a0">Mandrill::Device::supportsPushDescriptors</a></div><div class="ttdeci">MANDRILL_API bool supportsPushDescriptors() const</div><div class="ttdoc">Check if the device supports push descriptors. Sets that use them are written straight into the comma...</div><div class="ttdef"><b>Definition</b> Device.h:155</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_add6654c463a2a2f114093b2661f5d191"><div class="ttname"><a href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">Mandrill::Device::createDescriptor</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Descriptor &gt; createDescriptor(const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</div><div class="ttdoc">Create a new descriptor.</div><div class="ttdef"><b>Definition</b> Device.cpp:569</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_ae57d77ea4fd291683f97f090c4005900"><div class="ttname"><a href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">Mandrill::Device::createBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Buffer &gt; createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Create a new buffer.</div><div class="ttdef"><b>Definition</b> Device.cpp:559</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_aed0b0b82d0fcb9106f970a8f3eb1b830"><div class="ttname"><a href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">Mandrill::Device::createCamera</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Camera &gt; createCamera(uint32_t framesInFlightCount)</div><div class="ttdoc">Create a new camera.</div><div class="ttdef"><b>Definition</b> Device.cpp:564</div></div>
-<div class="ttc" id="aclassMandrill_1_1Device_html_af98bbf2baa2e47f38854130688f83470"><div class="ttname"><a href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">Mandrill::Device::getProperties</a></div><div class="ttdeci">MANDRILL_API DeviceProperties getProperties() const</div><div class="ttdoc">Get device and physical device properties.</div><div class="ttdef"><b>Definition</b> Device.h:91</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_a9eeb85d2d99854da4c5c080ee2c4834f"><div class="ttname"><a href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">Mandrill::Device::getWindow</a></div><div class="ttdeci">MANDRILL_API GLFWwindow * getWindow() const</div><div class="ttdoc">Get the window that the device is bound to.</div><div class="ttdef"><b>Definition</b> Device.h:99</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_aa29da1889ceb8a261d9e265f3bf1cdd2"><div class="ttname"><a href="classMandrill_1_1Device.html#aa29da1889ceb8a261d9e265f3bf1cdd2">Mandrill::Device::getCommandPool</a></div><div class="ttdeci">MANDRILL_API VkCommandPool getCommandPool() const</div><div class="ttdoc">Get the command pool.</div><div class="ttdef"><b>Definition</b> Device.h:117</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_aacb32843af581be3fa55cfe3fa6d06f5"><div class="ttname"><a href="classMandrill_1_1Device.html#aacb32843af581be3fa55cfe3fa6d06f5">Mandrill::Device::createPass</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Pass &gt; createPass(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)</div><div class="ttdoc">Create a pass with explicit color and depth attachments.</div><div class="ttdef"><b>Definition</b> Device.cpp:568</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_ad2f825009e45e3432532aa9671944ff7"><div class="ttname"><a href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">Mandrill::Device::getSurface</a></div><div class="ttdeci">MANDRILL_API VkSurfaceKHR getSurface() const</div><div class="ttdoc">Get the presentation surface of the application.</div><div class="ttdef"><b>Definition</b> Device.h:108</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_ad54ed2eedf3b6f89462cf1a7c23e3fa2"><div class="ttname"><a href="classMandrill_1_1Device.html#ad54ed2eedf3b6f89462cf1a7c23e3fa2">Mandrill::Device::createTextureFromImage</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Texture &gt; createTextureFromImage(ptr&lt; Image &gt; pImage, bool mipmaps=false)</div><div class="ttdoc">Create a texture from an existing image.</div><div class="ttdef"><b>Definition</b> Device.cpp:622</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_add6654c463a2a2f114093b2661f5d191"><div class="ttname"><a href="classMandrill_1_1Device.html#add6654c463a2a2f114093b2661f5d191">Mandrill::Device::createDescriptor</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Descriptor &gt; createDescriptor(const std::vector&lt; DescriptorDesc &gt; &amp;desc, VkDescriptorSetLayout layout)</div><div class="ttdoc">Create a new descriptor.</div><div class="ttdef"><b>Definition</b> Device.cpp:547</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_ae57d77ea4fd291683f97f090c4005900"><div class="ttname"><a href="classMandrill_1_1Device.html#ae57d77ea4fd291683f97f090c4005900">Mandrill::Device::createBuffer</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Buffer &gt; createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)</div><div class="ttdoc">Create a new buffer.</div><div class="ttdef"><b>Definition</b> Device.cpp:537</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_aed0b0b82d0fcb9106f970a8f3eb1b830"><div class="ttname"><a href="classMandrill_1_1Device.html#aed0b0b82d0fcb9106f970a8f3eb1b830">Mandrill::Device::createCamera</a></div><div class="ttdeci">MANDRILL_API ptr&lt; Camera &gt; createCamera(uint32_t framesInFlightCount)</div><div class="ttdoc">Create a new camera.</div><div class="ttdef"><b>Definition</b> Device.cpp:542</div></div>
+<div class="ttc" id="aclassMandrill_1_1Device_html_af98bbf2baa2e47f38854130688f83470"><div class="ttname"><a href="classMandrill_1_1Device.html#af98bbf2baa2e47f38854130688f83470">Mandrill::Device::getProperties</a></div><div class="ttdeci">MANDRILL_API DeviceProperties getProperties() const</div><div class="ttdoc">Get device and physical device properties.</div><div class="ttdef"><b>Definition</b> Device.h:90</div></div>
 <div class="ttc" id="astructMandrill_1_1PipelineDesc_html"><div class="ttname"><a href="structMandrill_1_1PipelineDesc.html">Mandrill::PipelineDesc</a></div><div class="ttdoc">Configuration structure for creating a pipeline. This stucture will default to common settings if not...</div><div class="ttdef"><b>Definition</b> Pipeline.h:67</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
