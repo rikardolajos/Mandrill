@@ -344,6 +344,10 @@ namespace Mandrill
         /// A buffer block needs an instance name for the scene to find it, since a block declared without one is only
         /// reachable through its block type name. The texture array has to be sized by a specialization constant that
         /// is set to Scene::getTextureCount().
+        ///
+        /// Nothing varies per dispatch the way a node transform varies per draw, so the scene has no bind function of
+        /// its own here. Bind everything, the scene's resources and the application's alike, with a single call to
+        /// Shader::bindResources(cmd, bindPoint) before tracing.
         /// </summary>
         /// <param name="pShader">Shader the scene is traced with, used to attach the resources</param>
         /// <param name="pCamera">Camera whose matrices the scene is traced with</param>
@@ -362,16 +366,6 @@ namespace Mandrill
         ///
         /// </summary>
         MANDRILL_API void syncToDevice();
-
-        /// <summary>
-        /// Bind the sets that hold the scene's ray-tracing resources. Sets that the application put resources in
-        /// itself, such as the image the rays are written to, are not touched and have to be bound separately.
-        /// </summary>
-        /// <param name="cmd">Command buffer to use</param>
-        /// <param name="frameInFlightIndex">Which copy of the per-frame resources to use, the current frame by
-        /// default</param>
-        MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd,
-                                                    uint32_t frameInFlightIndex = kCurrentFrameInFlight);
 
         /// <summary>
         /// Get a reference to a node in the scene.
@@ -546,8 +540,6 @@ namespace Mandrill
         // One entry per distinct shader among the node pipelines, filled in by createDescriptors()
         std::vector<ShaderResources> mShaderResources;
 
-        // Ray tracing has no per-node pipelines, so it is set up against a single shader of its own
-        ptr<Shader> mpRayTracingShader;
         ptr<Buffer> mpMaterialBuffer; // Almost same as mpMaterialParams but for ray tracing
         ptr<Buffer> mpInstanceDataBuffer;
 

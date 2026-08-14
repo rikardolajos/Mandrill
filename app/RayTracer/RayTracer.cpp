@@ -178,9 +178,9 @@ public:
         vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_RAYGEN_BIT_KHR, 0, sizeof pushConstants,
                            &pushConstants);
 
-        // Bind descriptors
-        mpScene->bindRayTracingDescriptors(cmd);
-        mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, 3);
+        // Bind descriptors. Everything is attached to the same shader, the scene's resources and the image the rays
+        // are written to alike, so one call binds all of it.
+        mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
         // Trace rays
         auto rayGenSBT = mpPipeline->getRayGenSBT();

@@ -586,8 +586,6 @@ void Scene::createDescriptorsForShader(ptr<Shader> pShader, ptr<Camera> pCamera)
 void Scene::createRayTracingDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera,
                                         const ptr<AccelerationStructure> pAccelerationStructure)
 {
-    mpRayTracingShader = pShader;
-
     // Get a list of the textures
     std::vector<ptr<Texture>> textures;
     std::transform(mTextures.begin(), mTextures.end(), std::back_inserter(textures),
@@ -633,33 +631,6 @@ void Scene::syncToDevice()
 
     mpVertexBuffer->copyFromHost(vertices.data(), verticesOffset, 0);
     mpIndexBuffer->copyFromHost(indices.data(), indicesOffset, 0);
-}
-
-void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, uint32_t frameInFlightIndex)
-{
-    if (!mpRayTracingShader) {
-        Log::Error("Scene::bindRayTracingDescriptors() - The scene has no resources attached to a shader. Call "
-                   "Scene::createRayTracingDescriptors() first.");
-        return;
-    }
-
-    // Camera matrices, which the shader selects this frame's copy of on its own
-    auto cameraInfo = mpRayTracingShader->getResourceInfo("camera");
-    if (cameraInfo) {
-        mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, cameraInfo->set, frameInFlightIndex);
-    }
-
-    auto sceneInfo = mpRayTracingShader->getResourceInfo("scene");
-    if (sceneInfo) {
-        mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, sceneInfo->set);
-    }
-
-    if (mpEnvironmentMap) {
-        auto environmentInfo = mpRayTracingShader->getResourceInfo("environmentMap");
-        if (environmentInfo) {
-            mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, environmentInfo->set);
-        }
-    }
 }
 
 std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, const std::filesystem::path& materialPath)
