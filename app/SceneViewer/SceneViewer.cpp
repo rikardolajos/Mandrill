@@ -34,8 +34,8 @@ public:
         // Calculate and allocate buffers
         mpScene->compile();
 
-        // Create descriptors
-        mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts());
+        // Attach the scene's resources to the shaders of the pipelines the nodes were given
+        mpScene->createDescriptors(mpCamera);
 
         // Sync to GPU
         mpScene->syncToDevice();
@@ -74,7 +74,6 @@ public:
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
 
         // Start with an empty scene
         mpScene = mpDevice->createScene();
@@ -107,7 +106,7 @@ public:
             // Since we changed samplers, we need to re-create descriptors
             if (!mScenePath.empty()) {
                 mpScene->compile();
-                mpScene->createDescriptors(mPipelines[PIPELINE_FILL]->getShader()->getDescriptorSetLayouts());
+                mpScene->createDescriptors(mpCamera);
                 mpScene->syncToDevice();
             }
         }

@@ -109,15 +109,15 @@ public:
         mpAccelerationStructure =
             mpDevice->createAccelerationStructure(mpScene, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
-        // Create descriptors when layouts are defined
-        mpScene->createRayTracingDescriptors(pShader->getDescriptorSetLayouts(), mpAccelerationStructure);
-
-        // Setup camera
+        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
+        // of them.
         mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createRayTracingDescriptor(VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+
+        // Attach the scene's resources now that the acceleration structure is built
+        mpScene->createRayTracingDescriptors(pShader, mpCamera, mpAccelerationStructure);
 
         // The image the rays are written to
         pShader->setResource("image", mpImage);
@@ -179,7 +179,7 @@ public:
                            &pushConstants);
 
         // Bind descriptors
-        mpScene->bindRayTracingDescriptors(cmd, mpCamera, mpPipeline->getLayout());
+        mpScene->bindRayTracingDescriptors(cmd);
         mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, 3);
 
         // Trace rays

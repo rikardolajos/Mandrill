@@ -3,7 +3,6 @@
 #include "Common.h"
 
 #include "Buffer.h"
-#include "Descriptor.h"
 #include "Device.h"
 #include "DynamicBuffer.h"
 #include "Frustum.h"
@@ -42,19 +41,6 @@ namespace Mandrill
         /// Destructor of camera.
         /// </summary>
         MANDRILL_API ~Camera();
-
-        /// <summary>
-        /// Create the descriptor for the camera, containing the view and projection matrices, and their invertations.
-        /// </summary>
-        /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
-        MANDRILL_API void createDescriptor(VkShaderStageFlags stageFlags);
-
-        /// <summary>
-        /// Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their
-        /// invertations.
-        /// </summary>
-        /// <param name="stageFlags">Which shader stages the camera matrices will be used in</param>
-        MANDRILL_API void createRayTracingDescriptor(VkShaderStageFlags stageFlags);
 
         /// <summary>
         /// Update function to update uniforms, without any user input movement.
@@ -241,25 +227,6 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the descriptor of the camera, containing the view and projection matrices, and their invertations.
-        /// </summary>
-        /// <returns>Descriptor</returns>
-        MANDRILL_API ptr<Descriptor> getDescriptor() const
-        {
-            return mpDescriptor;
-        }
-
-        /// <summary>
-        /// Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their
-        /// invertations.
-        /// </summary>
-        /// <returns>Descriptor</returns>
-        MANDRILL_API ptr<Descriptor> getRayTracingDescriptor() const
-        {
-            return mpRayTracingDescriptor;
-        }
-
-        /// <summary>
         /// Get the buffer containing the camera matrices, with one copy per frame in flight. Attach this to a shader
         /// resource, or use it for custom descriptor creation.
         /// </summary>
@@ -299,9 +266,5 @@ namespace Mandrill
         float mMoveSpeed;
 
         ptr<DynamicBuffer> mpUniforms;
-        ptr<Descriptor> mpDescriptor;
-        ptr<Descriptor> mpRayTracingDescriptor;
-        VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
-        VkDescriptorSetLayout mRayTracingDescriptorSetLayout = VK_NULL_HANDLE;
     };
 } // namespace Mandrill

@@ -4,6 +4,7 @@
 #include "Helpers.h"
 #include "Log.h"
 #include "Pipeline.h"
+#include "Shader.h"
 
 #include "tiny_obj_loader.h"
 #include "tinygltf/tiny_gltf.h"
@@ -45,8 +46,7 @@ void Node::drawMeshes(VkCommandBuffer cmd, const ptr<const Scene> pScene) const
     }
 }
 
-void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<const Scene> pScene,
-                  uint32_t frameInFlightIndex) const
+void Node::render(VkCommandBuffer cmd, const ptr<const Scene> pScene, uint32_t frameInFlightIndex) const
 {
     if (!mVisible || !mpPipeline) {
         return;
@@ -56,28 +56,49 @@ void Node::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, const ptr<cons
 
     mpPipeline->bind(cmd);
 
-    // Bind descriptor set for node transform. The descriptor already covers this node's slot, so the offset only has
-    // to select the copy belonging to this frame in flight.
-    uint32_t nodeDescriptorOffset = pScene->mpTransforms->getOffset(frameInFlightIndex);
+    auto pShader = mpPipeline->getShader();
+
+    // The scene prepares one of these per shader its nodes are rendered with. A node that was moved to a pipeline
+    // whose shader the scene never saw has nothing to bind.
+    const Scene::ShaderResources* pResources = pScene->findShaderResources(pShader.get());
+    if (!pResources) {
+        Log::Error("Node::render() - The scene has no resources attached to this node's shader. Set the pipelines of "
+                   "all nodes before calling Scene::createDescriptors().");
+        return;
+    }
 
     pScene->mpTransforms->copyFromHost(&mTransform, mTransformIndex + frameInFlightIndex);
 
-#ifdef _DEBUG
-    if (!mpDescriptor) {
-        Log::Error("Node::render() - No descriptor set bound to node. When using ray tracing, descriptors are not "
-                   "created until the acceleration structure has been built.");
-        return;
-    }
-#endif
+    // The camera and the environment map are bound here rather than once for the whole scene, since every node can
+    // carry its own pipeline and the resources belong to that pipeline's shader
 
-    mpDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mpPipeline->getLayout(), 1, nodeDescriptorOffset);
+    // Camera matrices, which the shader selects this frame's copy of on its own
+    auto cameraInfo = pShader->getResourceInfo("camera");
+    if (cameraInfo) {
+        pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, cameraInfo->set, frameInFlightIndex);
+    }
+
+    // The whole scene shares one transforms buffer, so the offset has to select both this node's slot and the copy
+    // belonging to this frame in flight
+    auto transformInfo = pShader->getResourceInfo("mesh");
+    if (transformInfo) {
+        uint32_t transformOffset = pScene->mpTransforms->getOffset(mTransformIndex + frameInFlightIndex);
+        pShader->bindResourcesWithOffsets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, transformInfo->set, {transformOffset});
+    }
+
+    if (pScene->mpEnvironmentMap) {
+        auto environmentInfo = pShader->getResourceInfo("environmentMap");
+        if (environmentInfo) {
+            pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, environmentInfo->set);
+        }
+    }
 
     for (auto meshIndex : mMeshIndices) {
         const Mesh& mesh = pScene->mMeshes[meshIndex];
 
-        // Bind descriptor set for material
-        pScene->mMaterials[mesh.materialIndex].pDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                                                 mpPipeline->getLayout(), 2);
+        // Materials keep a prepared set each, so switching material is a single bind
+        pResources->materialDescriptors[mesh.materialIndex]->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                                                  mpPipeline->getLayout(), pResources->materialSet);
 
         // Bind vertex and index buffers
         std::array<VkBuffer, 1> vertexBuffers = {pScene->mpVertexBuffer->getBuffer()};
@@ -127,14 +148,6 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, bool frustumC
 
     frameInFlightIndex = mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
 
-    // Bind descriptor set for camera matrices and environment map
-    pCamera->getDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 0,
-                                   pCamera->getDynamicOffset(frameInFlightIndex));
-
-    if (mpEnvironmentMapDescriptor) {
-        mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, mNodes[0].mpPipeline->getLayout(), 3);
-    }
-
     Frustum cameraFrustum = pCamera->getFrustum(frameInFlightIndex);
     for (auto& node : mNodes) {
         // Cull nodes that are outside of the camera's frustum
@@ -146,7 +159,7 @@ void Scene::render(VkCommandBuffer cmd, const ptr<Camera> pCamera, bool frustumC
             }
         }
 
-        node.render(cmd, pCamera, shared_from_this(), frameInFlightIndex);
+        node.render(cmd, shared_from_this(), frameInFlightIndex);
     }
 }
 
@@ -478,21 +491,79 @@ void Scene::compile()
     }
 }
 
-void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts)
+void Scene::createDescriptors(ptr<Camera> pCamera)
 {
-    // Node transforms. The descriptor covers the node's slot and the dynamic offset picks the frame in flight, so
-    // Node::render() only has to add the offset of a frame.
-    for (auto& node : mNodes) {
-        std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, mpTransforms->getBuffer());
-        desc.back().range = mpTransforms->getElementSize();
-        desc.back().offset = mpTransforms->getOffset(node.mTransformIndex);
+    mShaderResources.clear();
 
-        // Set layout for set 1
-        node.mpDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[1]);
+    if (mNodes.empty()) {
+        return; // Nothing is rendered, so there is nothing to attach the resources to
     }
 
-    // Materials
+    // The shaders to set up are the ones the nodes are rendered with, which is why the pipelines have to be in place
+    // before this is called
+    for (const auto& node : mNodes) {
+        if (!node.mpPipeline) {
+            continue;
+        }
+
+        ptr<Shader> pShader = node.mpPipeline->getShader();
+        if (findShaderResources(pShader.get())) {
+            continue; // Several nodes sharing a shader only need it set up once
+        }
+
+        createDescriptorsForShader(pShader, pCamera);
+    }
+
+    if (mShaderResources.empty()) {
+        Log::Error("Scene::createDescriptors() - No node has a pipeline, so the scene cannot tell which shaders it is "
+                   "rendered with. Call Node::setPipeline() before creating the descriptors.");
+    }
+}
+
+const Scene::ShaderResources* Scene::findShaderResources(const Shader* pShader) const
+{
+    for (const auto& resources : mShaderResources) {
+        if (resources.pShader.get() == pShader) {
+            return &resources;
+        }
+    }
+    return nullptr;
+}
+
+void Scene::createDescriptorsForShader(ptr<Shader> pShader, ptr<Camera> pCamera)
+{
+    // The camera matrices and the node transforms are single buffers that are rebound with an offset, so they are
+    // attached once here. Which set and binding they land in comes from the shader.
+    pShader->setResource("camera", pCamera->getUniformBuffer());
+    pShader->setResource("mesh", mpTransforms->getBuffer(), 0, mpTransforms->getElementSize());
+
+    // Both are dynamic, and they are bound with offsets that have nothing to do with each other, so a set holding
+    // them both could only ever be bound for one of them
+    auto cameraInfo = pShader->getResourceInfo("camera");
+    auto transformInfo = pShader->getResourceInfo("mesh");
+    if (cameraInfo && transformInfo && cameraInfo->set == transformInfo->set) {
+        Log::Error("The camera and the node transforms are both in set {}, but they have to be in separate sets since "
+                   "they are bound with different offsets.",
+                   cameraInfo->set);
+    }
+
+    if (mpEnvironmentMap && pShader->hasResource("environmentMap")) {
+        pShader->setResource("environmentMap", mpEnvironmentMap);
+    }
+
+    // A whole material is bound for every mesh, so the materials keep prepared sets instead of going through the
+    // shader, which only holds one set per set index. Any material binding identifies the set they share.
+    auto materialInfo = pShader->getResourceInfo("diffuseTexture");
+    if (!materialInfo) {
+        Log::Error("Shader has no diffuseTexture, so the scene cannot find which set the materials belong to");
+        return;
+    }
+
+    ShaderResources resources;
+    resources.pShader = pShader;
+    resources.materialSet = materialInfo->set;
+    resources.materialDescriptors.reserve(mMaterials.size());
+
     for (auto& mat : mMaterials) {
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpMaterialParams, mat.paramsOffset,
@@ -503,46 +574,35 @@ void Scene::createDescriptors(const std::vector<VkDescriptorSetLayout>& descript
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.emissionTexturePath]);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.normalTexturePath]);
 
-        // Set layout for set 2
-        mat.pDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[2]);
+        // The descriptor writes the bindings in the order they are described, so the shader has to declare the
+        // material resources in that same order within their set
+        resources.materialDescriptors.push_back(
+            mpDevice->createDescriptor(desc, pShader->getDescriptorSetLayout(resources.materialSet)));
     }
 
-    // Environment map
-    if (mpEnvironmentMap) {
-        std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
-
-        // Set layout for set 3
-        mpEnvironmentMapDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[3]);
-    }
+    mShaderResources.push_back(std::move(resources));
 }
 
-void Scene::createRayTracingDescriptors(const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts,
+void Scene::createRayTracingDescriptors(ptr<Shader> pShader, ptr<Camera> pCamera,
                                         const ptr<AccelerationStructure> pAccelerationStructure)
 {
+    mpRayTracingShader = pShader;
+
     // Get a list of the textures
     std::vector<ptr<Texture>> textures;
     std::transform(mTextures.begin(), mTextures.end(), std::back_inserter(textures),
                    [](const auto& entry) { return entry.second; });
-    ptr<std::vector<ptr<Texture>>> pTextures = make_ptr<std::vector<ptr<Texture>>>(textures);
 
-    std::vector<DescriptorDesc> desc;
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, pAccelerationStructure);
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpVertexBuffer);
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpIndexBuffer);
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpInstanceDataBuffer);
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, mpMaterialBuffer);
-    desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, pTextures, count(textures));
+    pShader->setResource("camera", pCamera->getUniformBuffer());
+    pShader->setResource("scene", pAccelerationStructure);
+    pShader->setResource("vertexBuffer", mpVertexBuffer);
+    pShader->setResource("indexBuffer", mpIndexBuffer);
+    pShader->setResource("instanceDataBuffer", mpInstanceDataBuffer);
+    pShader->setResource("materialBuffer", mpMaterialBuffer);
+    pShader->setResource("textures", textures);
 
-    mpRayTracingDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[1]);
-
-    // Environment map
-    if (mpEnvironmentMap) {
-        std::vector<DescriptorDesc> desc;
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mpEnvironmentMap);
-
-        // Set layout for set 2
-        mpEnvironmentMapDescriptor = mpDevice->createDescriptor(desc, descriptorSetLayouts[2]);
+    if (mpEnvironmentMap && pShader->hasResource("environmentMap")) {
+        pShader->setResource("environmentMap", mpEnvironmentMap);
     }
 }
 
@@ -575,18 +635,30 @@ void Scene::syncToDevice()
     mpIndexBuffer->copyFromHost(indices.data(), indicesOffset, 0);
 }
 
-void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, ptr<Camera> pCamera, VkPipelineLayout layout,
-                                      uint32_t frameInFlightIndex)
+void Scene::bindRayTracingDescriptors(VkCommandBuffer cmd, uint32_t frameInFlightIndex)
 {
-    frameInFlightIndex = mpDevice->resolveFrameInFlightIndex(frameInFlightIndex);
+    if (!mpRayTracingShader) {
+        Log::Error("Scene::bindRayTracingDescriptors() - The scene has no resources attached to a shader. Call "
+                   "Scene::createRayTracingDescriptors() first.");
+        return;
+    }
 
-    pCamera->getRayTracingDescriptor()->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 0,
-                                             pCamera->getDynamicOffset(frameInFlightIndex));
+    // Camera matrices, which the shader selects this frame's copy of on its own
+    auto cameraInfo = mpRayTracingShader->getResourceInfo("camera");
+    if (cameraInfo) {
+        mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, cameraInfo->set, frameInFlightIndex);
+    }
 
-    mpRayTracingDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 1);
+    auto sceneInfo = mpRayTracingShader->getResourceInfo("scene");
+    if (sceneInfo) {
+        mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, sceneInfo->set);
+    }
 
-    if (mpEnvironmentMapDescriptor) {
-        mpEnvironmentMapDescriptor->bind(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, 2);
+    if (mpEnvironmentMap) {
+        auto environmentInfo = mpRayTracingShader->getResourceInfo("environmentMap");
+        if (environmentInfo) {
+            mpRayTracingShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, environmentInfo->set);
+        }
     }
 }
 

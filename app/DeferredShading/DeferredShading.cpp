@@ -150,18 +150,21 @@ public:
         mpScene->getNodes()[nodeIndex].setTransform(glm::scale(glm::vec3(0.01f)));
 
         mpScene->compile();
-        mpScene->createDescriptors(mPipelines[GBUFFER_PASS]->getShader()->getDescriptorSetLayouts());
-        mpScene->syncToDevice();
 
         // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
-        // Setup camera
+        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
+        // of them.
         mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
-        mpCamera->createDescriptor(VK_SHADER_STAGE_VERTEX_BIT);
+
+        // Attach the scene's resources to the shaders of the pipelines the nodes were given, which here is the
+        // G-buffer shader
+        mpScene->createDescriptors(mpCamera);
+        mpScene->syncToDevice();
 
         // Initialize GUI
         App::createGUI(mpDevice, mpResolvePass);
