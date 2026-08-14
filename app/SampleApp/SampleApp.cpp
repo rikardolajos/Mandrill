@@ -95,8 +95,7 @@ public:
         // Uniform for sending model matrix to shaders, with one copy per frame in flight
         mpUniform = mpDevice->createPerFrameBuffer(sizeof(glm::mat4));
 
-        // Attach the resources to the names they have in the shader. Both uniform buffers hold one copy per frame in
-        // flight, which the shader knows about and takes into account when binding them.
+        // Attach the resources to the names they have in the shader
         pShader->setResource("camera", mpCamera->getUniformBuffer());
         pShader->setResource("mesh", mpUniform);
         pShader->setResource("diffuseTexture", mpTexture);
@@ -144,8 +143,7 @@ public:
         // Turn off back-face culling
         vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-        // Bind the resources attached to the shader. Both sets hold a uniform with one copy per frame in flight, and
-        // the frame index is all the shader needs to pick the right one.
+        // Bind the resources attached to the shader
         auto pShader = mpPipeline->getShader();
         pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
         pShader->bindResources(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);

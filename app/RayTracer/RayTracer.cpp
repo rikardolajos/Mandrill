@@ -109,8 +109,7 @@ public:
         mpAccelerationStructure =
             mpDevice->createAccelerationStructure(mpScene, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 
-        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
-        // of them.
+        // Setup camera
         mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -178,8 +177,7 @@ public:
         vkCmdPushConstants(cmd, mpPipeline->getLayout(), VK_SHADER_STAGE_RAYGEN_BIT_KHR, 0, sizeof pushConstants,
                            &pushConstants);
 
-        // Bind descriptors. Everything is attached to the same shader, the scene's resources and the image the rays
-        // are written to alike, so one call binds all of it.
+        // Bind descriptors
         mpPipeline->getShader()->bindResources(cmd, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
         // Trace rays

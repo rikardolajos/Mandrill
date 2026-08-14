@@ -89,8 +89,7 @@ public:
         Helpers::cmdEnd(mpDevice, cmd);
     }
 
-    // Hand the G-buffer attachments to the resolve shader. The order the attachments are created in has to match the
-    // names here, which is the one thing the shader cannot tell us.
+    // Hand the G-buffer attachments to the resolve shader
     void setAttachmentResources()
     {
         auto pShader = mPipelines[RESOLVE_PASS]->getShader();
@@ -154,15 +153,13 @@ public:
         // Activate back-face culling for G-buffer pass
         mPipelines[GBUFFER_PASS]->setCullMode(VK_CULL_MODE_BACK_BIT);
 
-        // Setup camera. It has to exist before the scene attaches its resources, since the camera matrices are one
-        // of them.
+        // Setup camera
         mpCamera = mpDevice->createCamera();
         mpCamera->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Attach the scene's resources to the shaders of the pipelines the nodes were given, which here is the
-        // G-buffer shader
+        // Create descriptors for scene and camera, and sync to device
         mpScene->createDescriptors(mpCamera);
         mpScene->syncToDevice();
 

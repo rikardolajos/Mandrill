@@ -105,8 +105,7 @@ public:
         mpCamera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         mpCamera->setFov(60.0f);
 
-        // Attach the camera uniforms to both shaders. The buffer holds one copy per frame in flight, which the shaders
-        // know about and take into account when binding it.
+        // Attach the camera uniforms to both shaders
         mpEnvironmentMapPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer());
         mpRayMarchingPipeline->getShader()->setResource("camera", mpCamera->getUniformBuffer());
 
@@ -176,9 +175,7 @@ public:
 
         mpPass->begin(cmd, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        // Push constants. The viewport must be the current framebuffer size, since the shaders turn fragment
-        // coordinates into ray directions with it. App::mWidth and mHeight are the initial window size and do not
-        // follow resizing.
+        // Push constants
         VkExtent2D extent = mpSwapchain->getExtent();
 
         glm::vec3 volumeDim(1.0f);
