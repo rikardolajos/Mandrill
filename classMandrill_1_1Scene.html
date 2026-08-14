@@ -146,9 +146,6 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>compile<
 <tr class="memitem:aba588e677211de76531221b7b5a1d42d" id="r_aba588e677211de76531221b7b5a1d42d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">syncToDevice</a> ()</td></tr>
 <tr class="memdesc:aba588e677211de76531221b7b5a1d42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronize buffers to device.  <br /></td></tr>
 <tr class="separator:aba588e677211de76531221b7b5a1d42d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13894770c49b04252f5abce67d8c34ea" id="r_a13894770c49b04252f5abce67d8c34ea"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#a13894770c49b04252f5abce67d8c34ea">bindRayTracingDescriptors</a> (VkCommandBuffer cmd, uint32_t frameInFlightIndex=kCurrentFrameInFlight)</td></tr>
-<tr class="memdesc:a13894770c49b04252f5abce67d8c34ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind the sets that hold the scene's ray-tracing resources. Sets that the application put resources in itself, such as the image the rays are written to, are not touched and have to be bound separately.  <br /></td></tr>
-<tr class="separator:a13894770c49b04252f5abce67d8c34ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb306e7db8f71cb20f51bffe7c1a0069" id="r_acb306e7db8f71cb20f51bffe7c1a0069"><td class="memItemLeft" align="right" valign="top">MANDRILL_API <a class="el" href="classMandrill_1_1Node.html">Node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">getNode</a> (uint32_t nodeIndex)</td></tr>
 <tr class="memdesc:acb306e7db8f71cb20f51bffe7c1a0069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to a node in the scene.  <br /></td></tr>
 <tr class="separator:acb306e7db8f71cb20f51bffe7c1a0069"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -390,43 +387,6 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>compile<
 
 </div>
 </div>
-<a id="a13894770c49b04252f5abce67d8c34ea" name="a13894770c49b04252f5abce67d8c34ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13894770c49b04252f5abce67d8c34ea">&#9670;&#160;</a></span>bindRayTracingDescriptors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::bindRayTracingDescriptors </td>
-          <td>(</td>
-          <td class="paramtype">VkCommandBuffer&#160;</td>
-          <td class="paramname"><em>cmd</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>frameInFlightIndex</em> = <code>kCurrentFrameInFlight</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Bind the sets that hold the scene's ray-tracing resources. Sets that the application put resources in itself, such as the image the rays are written to, are not touched and have to be bound separately. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
-    <tr><td class="paramname">frameInFlightIndex</td><td>Which copy of the per-frame resources to use, the current frame by default</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a60cd7b3950790ea04f0eac9982943b69" name="a60cd7b3950790ea04f0eac9982943b69"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a60cd7b3950790ea04f0eac9982943b69">&#9670;&#160;</a></span>createDescriptors()</h2>
 
@@ -535,6 +495,7 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>compile<
 <td>environmentMap </td><td>Environment map texture </td><td>sampler2D, optional </td></tr>
 </table>
 <p>A buffer block needs an instance name for the scene to find it, since a block declared without one is only reachable through its block type name. The texture array has to be sized by a specialization constant that is set to <a class="el" href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969" title="Get the number of textures in the scene.">Scene::getTextureCount()</a>.</p>
+<p>Nothing varies per dispatch the way a node transform varies per draw, so the scene has no bind function of its own here. Bind everything, the scene's resources and the application's alike, with a single call to <a class="el" href="classMandrill_1_1Shader.html#ac15c098db6d9dfe90d9bcadb70bf1659" title="Bind every descriptor set that has resources attached to it, using the current frame&#39;s copy of any pe...">Shader::bindResources(cmd, bindPoint)</a> before tracing.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pShader</td><td><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> the scene is traced with, used to attach the resources</td></tr>

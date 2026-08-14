@@ -7,7 +7,6 @@ var classMandrill_1_1Scene =
     [ "addMeshFromFile", "classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18", null ],
     [ "addNode", "classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44", null ],
     [ "addNodesFromFile", "classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c", null ],
-    [ "bindRayTracingDescriptors", "classMandrill_1_1Scene.html#a13894770c49b04252f5abce67d8c34ea", null ],
     [ "compile", "classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec", null ],
     [ "createDescriptors", "classMandrill_1_1Scene.html#a60cd7b3950790ea04f0eac9982943b69", null ],
     [ "createRayTracingDescriptors", "classMandrill_1_1Scene.html#a74598545d8b543a9a123fa118dc7639c", null ],
