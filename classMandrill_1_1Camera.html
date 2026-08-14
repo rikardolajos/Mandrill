@@ -113,12 +113,6 @@ Public Member Functions</h2></td></tr>
 MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> ()</td></tr>
 <tr class="memdesc:ad1897942d0ccf91052386388a497349f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor of camera. <br /></td></tr>
 <tr class="separator:ad1897942d0ccf91052386388a497349f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec558d6ced1e0fef3e89576e405ac21b" id="r_aec558d6ced1e0fef3e89576e405ac21b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#aec558d6ced1e0fef3e89576e405ac21b">createDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
-<tr class="memdesc:aec558d6ced1e0fef3e89576e405ac21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
-<tr class="separator:aec558d6ced1e0fef3e89576e405ac21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7ec19766e89b4edd16eece0ddd1e806" id="r_ad7ec19766e89b4edd16eece0ddd1e806"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad7ec19766e89b4edd16eece0ddd1e806">createRayTracingDescriptor</a> (VkShaderStageFlags stageFlags)</td></tr>
-<tr class="memdesc:ad7ec19766e89b4edd16eece0ddd1e806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
-<tr class="separator:ad7ec19766e89b4edd16eece0ddd1e806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5bb5a609ac016b897a4e4574d0b9754" id="r_ad5bb5a609ac016b897a4e4574d0b9754"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad5bb5a609ac016b897a4e4574d0b9754">update</a> (uint32_t frameInFlightIndex=kCurrentFrameInFlight)</td></tr>
 <tr class="memdesc:ad5bb5a609ac016b897a4e4574d0b9754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update function to update uniforms, without any user input movement.  <br /></td></tr>
 <tr class="separator:ad5bb5a609ac016b897a4e4574d0b9754"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,12 +173,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
 <tr class="memitem:ad4544e0c1f7fb7ed87adcc03a4502055" id="r_ad4544e0c1f7fb7ed87adcc03a4502055"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#ad4544e0c1f7fb7ed87adcc03a4502055">getProjectionMatrix</a> (uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</td></tr>
 <tr class="memdesc:ad4544e0c1f7fb7ed87adcc03a4502055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the projection matrix of the camera.  <br /></td></tr>
 <tr class="separator:ad4544e0c1f7fb7ed87adcc03a4502055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfed60c4c1e4f315df70c75aa013b0ca" id="r_adfed60c4c1e4f315df70c75aa013b0ca"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#adfed60c4c1e4f315df70c75aa013b0ca">getDescriptor</a> () const</td></tr>
-<tr class="memdesc:adfed60c4c1e4f315df70c75aa013b0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
-<tr class="separator:adfed60c4c1e4f315df70c75aa013b0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58af72ed9d244f37ca0eb368b1e9d87c" id="r_a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#a58af72ed9d244f37ca0eb368b1e9d87c">getRayTracingDescriptor</a> () const</td></tr>
-<tr class="memdesc:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations.  <br /></td></tr>
-<tr class="separator:a58af72ed9d244f37ca0eb368b1e9d87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af52c97572782a5fb42bb52e08d8a7386" id="r_af52c97572782a5fb42bb52e08d8a7386"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1DynamicBuffer.html">DynamicBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Camera.html#af52c97572782a5fb42bb52e08d8a7386">getUniformBuffer</a> () const</td></tr>
 <tr class="memdesc:af52c97572782a5fb42bb52e08d8a7386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the buffer containing the camera matrices, with one copy per frame in flight. Attach this to a shader resource, or use it for custom descriptor creation.  <br /></td></tr>
 <tr class="separator:af52c97572782a5fb42bb52e08d8a7386"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -253,86 +241,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="aec558d6ced1e0fef3e89576e405ac21b" name="aec558d6ced1e0fef3e89576e405ac21b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec558d6ced1e0fef3e89576e405ac21b">&#9670;&#160;</a></span>createDescriptor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Camera::createDescriptor </td>
-          <td>(</td>
-          <td class="paramtype">VkShaderStageFlags&#160;</td>
-          <td class="paramname"><em>stageFlags</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Create the descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">stageFlags</td><td>Which shader stages the camera matrices will be used in</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ad7ec19766e89b4edd16eece0ddd1e806" name="ad7ec19766e89b4edd16eece0ddd1e806"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7ec19766e89b4edd16eece0ddd1e806">&#9670;&#160;</a></span>createRayTracingDescriptor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Camera::createRayTracingDescriptor </td>
-          <td>(</td>
-          <td class="paramtype">VkShaderStageFlags&#160;</td>
-          <td class="paramname"><em>stageFlags</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Create the ray tracing descriptor for the camera, containing the view and projection matrices, and their invertations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">stageFlags</td><td>Which shader stages the camera matrices will be used in</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="adfed60c4c1e4f315df70c75aa013b0ca" name="adfed60c4c1e4f315df70c75aa013b0ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfed60c4c1e4f315df70c75aa013b0ca">&#9670;&#160;</a></span>getDescriptor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt; Mandrill::Camera::getDescriptor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the descriptor of the camera, containing the view and projection matrices, and their invertations. </p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Descriptor.html" title="Descriptor class for managing Vulkan descriptor sets.">Descriptor</a></dd></dl>
 
 </div>
 </div>
@@ -486,34 +394,6 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Camera</b> (
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Projection matrix</dd></dl>
-
-</div>
-</div>
-<a id="a58af72ed9d244f37ca0eb368b1e9d87c" name="a58af72ed9d244f37ca0eb368b1e9d87c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58af72ed9d244f37ca0eb368b1e9d87c">&#9670;&#160;</a></span>getRayTracingDescriptor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Descriptor.html">Descriptor</a> &gt; Mandrill::Camera::getRayTracingDescriptor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the ray tracing descriptor of the camera, containing the view and projection matrices, and their invertations. </p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Descriptor.html" title="Descriptor class for managing Vulkan descriptor sets.">Descriptor</a></dd></dl>
 
 </div>
 </div>

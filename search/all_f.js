@@ -9,7 +9,7 @@ var searchData=
   ['recreated_6',['recreated',['../classMandrill_1_1Swapchain.html#a2f377538a4be5eec73c1b387fde2f026',1,'Mandrill::Swapchain']]],
   ['reference_7',['API Reference',['../index.html#autotoc_md1',1,'']]],
   ['reload_8',['reload',['../classMandrill_1_1Shader.html#a7d3a2d0c4d1dc1c61338459e9ae09d8c',1,'Mandrill::Shader']]],
-  ['render_9',['render',['../classMandrill_1_1Node.html#ac903d478e4d5d83f09f15ae060ee8725',1,'Mandrill::Node::render()'],['../classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07',1,'Mandrill::Scene::render()'],['../classMandrill_1_1App.html#a2319be39fee607062dd50fea007a882d',1,'Mandrill::App::render()=0']]],
+  ['render_9',['render',['../classMandrill_1_1Node.html#ac618cd9975f1e24c3e8d52ff3733956f',1,'Mandrill::Node::render()'],['../classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07',1,'Mandrill::Scene::render()'],['../classMandrill_1_1App.html#a2319be39fee607062dd50fea007a882d',1,'Mandrill::App::render()=0']]],
   ['rendergui_10',['renderGUI',['../classMandrill_1_1App.html#aac9602b7552b90c4d38b74ca2d0d014f',1,'Mandrill::App']]],
   ['requestscreenshot_11',['requestScreenshot',['../classMandrill_1_1Swapchain.html#a11a163aa43bf72b63879ec0f9f131d49',1,'Mandrill::Swapchain']]],
   ['resolveframeinflightindex_12',['resolveFrameInFlightIndex',['../classMandrill_1_1Device.html#afd35a68b47552a468c2cc39c55b0835e',1,'Mandrill::Device']]],

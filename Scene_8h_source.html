@@ -172,313 +172,328 @@ $(document).ready(function(){initNavTree('Scene_8h_source.html',''); initResizab
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        std::string ambientTexturePath;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        std::string emissionTexturePath;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        std::string normalTexturePath;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        ptr&lt;Descriptor&gt; pDescriptor;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    };</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">struct </span>InstanceData {</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        uint32_t verticesOffset; <span class="comment">// Offset into global vertex buffer</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        uint32_t indicesOffset;  <span class="comment">// Offset into global index buffer</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    };</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">class </span>Scene; <span class="comment">// Forward declare scene so Node can befriend it</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keyword">class </span>Pipeline;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="foldopen" id="foldopen00093" data-start="{" data-end="};">
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html">   93</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Node.html">Node</a></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    {</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Node.html#ad7a34779cad45d997bfd6d3d8043c75f">Node</a>();</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c">~Node</a>();</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">drawMeshes</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;const Scene&gt; pScene) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#ac903d478e4d5d83f09f15ae060ee8725">render</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;Camera&gt; pCamera, <span class="keyword">const</span> ptr&lt;const Scene&gt; pScene,</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        MANDRILL_API AABB <a class="code hl_function" href="classMandrill_1_1Node.html#a702aebccb6d3f8c1adbadcf27b251d2d">getBoundingBox</a>(<span class="keyword">const</span> ptr&lt;const Scene&gt; pScene) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="foldopen" id="foldopen00136" data-start="{" data-end="}">
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">  136</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">addMesh</a>(uint32_t meshIndex)</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        {</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>            mMeshIndices.push_back(meshIndex);</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    };</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keyword">struct </span>InstanceData {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        uint32_t verticesOffset; <span class="comment">// Offset into global vertex buffer</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        uint32_t indicesOffset;  <span class="comment">// Offset into global index buffer</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    };</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">class </span>Scene; <span class="comment">// Forward declare scene so Node can befriend it</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keyword">class </span>Pipeline;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">class </span>Shader;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="foldopen" id="foldopen00092" data-start="{" data-end="};">
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html">   92</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Node.html">Node</a></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    {</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Node.html#ad7a34779cad45d997bfd6d3d8043c75f">Node</a>();</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c">~Node</a>();</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">drawMeshes</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;const Scene&gt; pScene) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#ac618cd9975f1e24c3e8d52ff3733956f">render</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;const Scene&gt; pScene,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        MANDRILL_API AABB <a class="code hl_function" href="classMandrill_1_1Node.html#a702aebccb6d3f8c1adbadcf27b251d2d">getBoundingBox</a>(<span class="keyword">const</span> ptr&lt;const Scene&gt; pScene) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="foldopen" id="foldopen00134" data-start="{" data-end="}">
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">  134</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">addMesh</a>(uint32_t meshIndex)</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        {</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            mMeshIndices.push_back(meshIndex);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        }</div>
 </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
-<div class="foldopen" id="foldopen00145" data-start="{" data-end="}">
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">  145</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">setPipeline</a>(ptr&lt;Pipeline&gt; pPipeline)</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            mpPipeline = pPipeline;</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
+<div class="foldopen" id="foldopen00143" data-start="{" data-end="}">
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">  143</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">setPipeline</a>(ptr&lt;Pipeline&gt; pPipeline)</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        {</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>            mpPipeline = pPipeline;</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        }</div>
 </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
-<div class="foldopen" id="foldopen00154" data-start="{" data-end="}">
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">  154</a></span>        MANDRILL_API glm::mat4 <a class="code hl_function" href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">getTransform</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            <span class="keywordflow">return</span> mTransform;</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        }</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">  152</a></span>        MANDRILL_API glm::mat4 <a class="code hl_function" href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">getTransform</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            <span class="keywordflow">return</span> mTransform;</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        }</div>
 </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
-<div class="foldopen" id="foldopen00163" data-start="{" data-end="}">
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">  163</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">setTransform</a>(glm::mat4 transform)</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        {</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            mTransform = transform;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        }</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="foldopen" id="foldopen00161" data-start="{" data-end="}">
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">  161</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">setTransform</a>(glm::mat4 transform)</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        {</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            mTransform = transform;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        }</div>
 </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="foldopen" id="foldopen00172" data-start="{" data-end="}">
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">  172</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">setVisible</a>(<span class="keywordtype">bool</span> visible)</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        {</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            mVisible = visible;</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        }</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="foldopen" id="foldopen00170" data-start="{" data-end="}">
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">  170</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">setVisible</a>(<span class="keywordtype">bool</span> visible)</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        {</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            mVisible = visible;</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        }</div>
 </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="foldopen" id="foldopen00181" data-start="{" data-end="}">
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">  181</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">getVisible</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>            <span class="keywordflow">return</span> mVisible;</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="foldopen" id="foldopen00179" data-start="{" data-end="}">
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">  179</a></span>        MANDRILL_API <span class="keywordtype">bool</span> <a class="code hl_function" href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">getVisible</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            <span class="keywordflow">return</span> mVisible;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        }</div>
 </div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
-<div class="foldopen" id="foldopen00190" data-start="{" data-end="}">
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">  190</a></span>        MANDRILL_API std::vector&lt;uint32_t&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">getMeshIndices</a>()</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        {</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <span class="keywordflow">return</span> mMeshIndices;</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="foldopen" id="foldopen00188" data-start="{" data-end="}">
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno"><a class="line" href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">  188</a></span>        MANDRILL_API std::vector&lt;uint32_t&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">getMeshIndices</a>()</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">return</span> mMeshIndices;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        }</div>
 </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keyword">friend</span> <a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        <span class="keyword">friend</span> <a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        ptr&lt;Pipeline&gt; mpPipeline;</div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        ptr&lt;Pipeline&gt; mpPipeline;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        std::vector&lt;uint32_t&gt; mMeshIndices;</div>
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        std::vector&lt;uint32_t&gt; mMeshIndices;</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        glm::mat4 mTransform;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <span class="comment">// Index of this node&#39;s first element in the scene transform buffer. The node&#39;s copy for a frame in flight is</span></div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="comment">// that element plus the frame index.</span></div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        uint32_t mTransformIndex;</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        ptr&lt;Descriptor&gt; mpDescriptor;</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        <span class="keywordtype">bool</span> mVisible;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        glm::mat4 mTransform;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        <span class="comment">// Index of this node&#39;s first element in the scene transform buffer. The node&#39;s copy for a frame in flight is</span></div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <span class="comment">// that element plus the frame index.</span></div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        uint32_t mTransformIndex;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordtype">bool</span> mVisible;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        std::vector&lt;Node*&gt; mChildren;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    };</div>
+</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        std::vector&lt;Node*&gt; mChildren;</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    };</div>
+<div class="foldopen" id="foldopen00213" data-start="{" data-end="};">
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html">  213</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a> : <span class="keyword">public</span> std::enable_shared_from_this&lt;Scene&gt;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    {</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>)</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>(ptr&lt;Device&gt; pDevice);</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1">~Scene</a>();</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07">render</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;Camera&gt; pCamera, <span class="keywordtype">bool</span> frustumCulling = <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">addNode</a>();</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        MANDRILL_API std::vector&lt;uint32_t&gt; <a class="code hl_function" href="classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c">addNodesFromFile</a>(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                                                            <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac">addMaterial</a>(Material material);</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364">addMesh</a>(<span class="keyword">const</span> std::vector&lt;Vertex&gt; vertices, <span class="keyword">const</span> std::vector&lt;uint32_t&gt; indices,</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                                      uint32_t materialIndex);</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        MANDRILL_API std::vector&lt;uint32_t&gt; <a class="code hl_function" href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">addMeshFromFile</a>(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                                                           <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec">compile</a>();</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a60cd7b3950790ea04f0eac9982943b69">createDescriptors</a>(ptr&lt;Camera&gt; pCamera);</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a74598545d8b543a9a123fa118dc7639c">createRayTracingDescriptors</a>(ptr&lt;Shader&gt; pShader, ptr&lt;Camera&gt; pCamera,</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>                                                      <span class="keyword">const</span> ptr&lt;AccelerationStructure&gt; pAccelerationStructure);</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">syncToDevice</a>();</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a13894770c49b04252f5abce67d8c34ea">bindRayTracingDescriptors</a>(VkCommandBuffer cmd,</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>                                                    uint32_t frameInFlightIndex = kCurrentFrameInFlight);</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
+<div class="foldopen" id="foldopen00380" data-start="{" data-end="}">
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">  380</a></span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Node.html">Node</a>&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">getNode</a>(uint32_t nodeIndex)</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>        {</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>            <span class="keywordflow">return</span> mNodes[nodeIndex];</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>        }</div>
 </div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
-<div class="foldopen" id="foldopen00216" data-start="{" data-end="};">
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html">  216</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a> : <span class="keyword">public</span> std::enable_shared_from_this&lt;Scene&gt;</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    {</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        MANDRILL_NON_COPYABLE(<a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>)</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span> </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        </div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Scene.html">Scene</a>(ptr&lt;Device&gt; pDevice);</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        MANDRILL_API <a class="code hl_function" href="classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1">~Scene</a>();</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07">render</a>(VkCommandBuffer cmd, <span class="keyword">const</span> ptr&lt;Camera&gt; pCamera, <span class="keywordtype">bool</span> frustumCulling = <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                                 uint32_t frameInFlightIndex = kCurrentFrameInFlight) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">addNode</a>();</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        MANDRILL_API std::vector&lt;uint32_t&gt; <a class="code hl_function" href="classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c">addNodesFromFile</a>(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                                                            <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac">addMaterial</a>(Material material);</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364">addMesh</a>(<span class="keyword">const</span> std::vector&lt;Vertex&gt; vertices, <span class="keyword">const</span> std::vector&lt;uint32_t&gt; indices,</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                                      uint32_t materialIndex);</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        MANDRILL_API std::vector&lt;uint32_t&gt; <a class="code hl_function" href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">addMeshFromFile</a>(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                                                           <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec">compile</a>();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a338cfa63a416f22cd1dbdeb22ab70c31">createDescriptors</a>(<span class="keyword">const</span> std::vector&lt;VkDescriptorSetLayout&gt;&amp; descriptorSetLayouts);</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a4fa0c65d69cb1c406051616cc5f75eb4">createRayTracingDescriptors</a>(<span class="keyword">const</span> std::vector&lt;VkDescriptorSetLayout&gt;&amp; descriptorSetLayouts,</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                                                      <span class="keyword">const</span> ptr&lt;AccelerationStructure&gt; pAccelerationStructure);</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">syncToDevice</a>();</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a5dc4995af6e93919319501a541b8d42c">bindRayTracingDescriptors</a>(VkCommandBuffer cmd, ptr&lt;Camera&gt; pCamera, VkPipelineLayout layout,</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>                                                    uint32_t frameInFlightIndex = kCurrentFrameInFlight);</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span> </div>
-<div class="foldopen" id="foldopen00364" data-start="{" data-end="}">
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">  364</a></span>        MANDRILL_API <a class="code hl_class" href="classMandrill_1_1Node.html">Node</a>&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">getNode</a>(uint32_t nodeIndex)</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>        {</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>            <span class="keywordflow">return</span> mNodes[nodeIndex];</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        }</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span> </div>
+<div class="foldopen" id="foldopen00389" data-start="{" data-end="}">
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">  389</a></span>        MANDRILL_API std::vector&lt;Node&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">getNodes</a>()</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>        {</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>            <span class="keywordflow">return</span> mNodes;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>        }</div>
 </div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span> </div>
-<div class="foldopen" id="foldopen00373" data-start="{" data-end="}">
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">  373</a></span>        MANDRILL_API std::vector&lt;Node&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">getNodes</a>()</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        {</div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>            <span class="keywordflow">return</span> mNodes;</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        }</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
+<div class="foldopen" id="foldopen00398" data-start="{" data-end="}">
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">  398</a></span>        MANDRILL_API std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">getTextures</a>()</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        {</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            <span class="keywordflow">return</span> mTextures;</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>        }</div>
 </div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
-<div class="foldopen" id="foldopen00382" data-start="{" data-end="}">
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">  382</a></span>        MANDRILL_API std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt;&amp; <a class="code hl_function" href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">getTextures</a>()</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>        {</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>            <span class="keywordflow">return</span> mTextures;</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        }</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span> </div>
+<div class="foldopen" id="foldopen00407" data-start="{" data-end="}">
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">  407</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">getVertexCount</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>            <span class="keywordflow">return</span> mVertexCount;</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        }</div>
 </div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span> </div>
-<div class="foldopen" id="foldopen00391" data-start="{" data-end="}">
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">  391</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">getVertexCount</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>            <span class="keywordflow">return</span> mVertexCount;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>        }</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span> </div>
+<div class="foldopen" id="foldopen00416" data-start="{" data-end="}">
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">  416</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">getIndexCount</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>            <span class="keywordflow">return</span> mIndexCount;</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>        }</div>
 </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
-<div class="foldopen" id="foldopen00400" data-start="{" data-end="}">
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">  400</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">getIndexCount</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>            <span class="keywordflow">return</span> mIndexCount;</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>        }</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span> </div>
+<div class="foldopen" id="foldopen00425" data-start="{" data-end="}">
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">  425</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">getMeshCount</a>()</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>        {</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>            <span class="keywordflow">return</span> count(mMeshes);</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>        }</div>
 </div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span> </div>
-<div class="foldopen" id="foldopen00409" data-start="{" data-end="}">
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">  409</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">getMeshCount</a>()</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        {</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>            <span class="keywordflow">return</span> count(mMeshes);</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>        }</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
+<div class="foldopen" id="foldopen00434" data-start="{" data-end="}">
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">  434</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">getMaterialCount</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>            <span class="keywordflow">return</span> count(mMaterials);</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>        }</div>
 </div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span> </div>
-<div class="foldopen" id="foldopen00418" data-start="{" data-end="}">
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">  418</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">getMaterialCount</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>            <span class="keywordflow">return</span> count(mMaterials);</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        }</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span> </div>
+<div class="foldopen" id="foldopen00443" data-start="{" data-end="}">
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">  443</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">getTextureCount</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>            <span class="keywordflow">return</span> count(mTextures);</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>        }</div>
 </div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span> </div>
-<div class="foldopen" id="foldopen00427" data-start="{" data-end="}">
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">  427</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">getTextureCount</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>            <span class="keywordflow">return</span> count(mTextures);</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>        }</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span> </div>
+<div class="foldopen" id="foldopen00453" data-start="{" data-end="}">
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">  453</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">getMeshVertexCount</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>            <span class="keywordflow">return</span> count(mMeshes[meshIndex].vertices);</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>        }</div>
 </div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span> </div>
-<div class="foldopen" id="foldopen00437" data-start="{" data-end="}">
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">  437</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">getMeshVertexCount</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>            <span class="keywordflow">return</span> count(mMeshes[meshIndex].vertices);</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>        }</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span> </div>
+<div class="foldopen" id="foldopen00463" data-start="{" data-end="}">
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">  463</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">getMeshIndexCount</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>            <span class="keywordflow">return</span> count(mMeshes[meshIndex].indices);</div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>        }</div>
 </div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span> </div>
-<div class="foldopen" id="foldopen00447" data-start="{" data-end="}">
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">  447</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">getMeshIndexCount</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>            <span class="keywordflow">return</span> count(mMeshes[meshIndex].indices);</div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>        }</div>
+<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span> </div>
+<div class="foldopen" id="foldopen00473" data-start="{" data-end="}">
+<div class="line"><a id="l00473" name="l00473"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">  473</a></span>        MANDRILL_API VkDeviceAddress <a class="code hl_function" href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">getMeshVertexAddress</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>            <span class="keywordflow">return</span> mpVertexBuffer-&gt;getDeviceAddress() + mMeshes[meshIndex].deviceVerticesOffset;</div>
+<div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>        }</div>
 </div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span> </div>
-<div class="foldopen" id="foldopen00457" data-start="{" data-end="}">
-<div class="line"><a id="l00457" name="l00457"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">  457</a></span>        MANDRILL_API VkDeviceAddress <a class="code hl_function" href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">getMeshVertexAddress</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>            <span class="keywordflow">return</span> mpVertexBuffer-&gt;getDeviceAddress() + mMeshes[meshIndex].deviceVerticesOffset;</div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>        }</div>
+<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span> </div>
+<div class="foldopen" id="foldopen00483" data-start="{" data-end="}">
+<div class="line"><a id="l00483" name="l00483"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">  483</a></span>        MANDRILL_API VkDeviceAddress <a class="code hl_function" href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">getMeshIndexAddress</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>            <span class="keywordflow">return</span> mpIndexBuffer-&gt;getDeviceAddress() + mMeshes[meshIndex].deviceIndicesOffset;</div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>        }</div>
 </div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span> </div>
-<div class="foldopen" id="foldopen00467" data-start="{" data-end="}">
-<div class="line"><a id="l00467" name="l00467"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">  467</a></span>        MANDRILL_API VkDeviceAddress <a class="code hl_function" href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">getMeshIndexAddress</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>            <span class="keywordflow">return</span> mpIndexBuffer-&gt;getDeviceAddress() + mMeshes[meshIndex].deviceIndicesOffset;</div>
-<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        }</div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span> </div>
+<div class="foldopen" id="foldopen00493" data-start="{" data-end="}">
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">  493</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">getMeshMaterialIndex</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>            <span class="keywordflow">return</span> mMeshes[meshIndex].materialIndex;</div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>        }</div>
 </div>
-<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span> </div>
-<div class="foldopen" id="foldopen00477" data-start="{" data-end="}">
-<div class="line"><a id="l00477" name="l00477"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">  477</a></span>        MANDRILL_API uint32_t <a class="code hl_function" href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">getMeshMaterialIndex</a>(uint32_t meshIndex)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>            <span class="keywordflow">return</span> mMeshes[meshIndex].materialIndex;</div>
-<div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>        }</div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span> </div>
+<div class="foldopen" id="foldopen00502" data-start="{" data-end="}">
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">  502</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">setEnvironmentMap</a>(ptr&lt;Texture&gt; pTexture)</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>        {</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>            mpEnvironmentMap = pTexture;</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>        }</div>
 </div>
-<div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span> </div>
-<div class="foldopen" id="foldopen00486" data-start="{" data-end="}">
-<div class="line"><a id="l00486" name="l00486"></a><span class="lineno"><a class="line" href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">  486</a></span>        MANDRILL_API <span class="keywordtype">void</span> <a class="code hl_function" href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">setEnvironmentMap</a>(ptr&lt;Texture&gt; pTexture)</div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        {</div>
-<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>            mpEnvironmentMap = pTexture;</div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>        }</div>
-</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span> </div>
-<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>        <span class="keyword">friend</span> <a class="code hl_class" href="classMandrill_1_1Node.html">Node</a>;</div>
-<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span> </div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>        std::vector&lt;uint32_t&gt; loadFromOBJ(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>                                          <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>        std::vector&lt;uint32_t&gt; loadFromGLTF(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
-<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>        <span class="keywordtype">void</span> addTexture(std::string texturePath);</div>
-<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>        <span class="keywordtype">void</span> addTextureFromMemory(<span class="keyword">const</span> uint8_t* pData, <span class="keywordtype">size_t</span> size, <span class="keyword">const</span> std::string&amp; textureName);</div>
-<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span> </div>
-<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>        ptr&lt;Device&gt; mpDevice;</div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span> </div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>        std::vector&lt;Mesh&gt; mMeshes;</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>        std::vector&lt;Node&gt; mNodes;</div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>        std::vector&lt;Material&gt; mMaterials;</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>        std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt; mTextures;</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>        ptr&lt;Texture&gt; mpEnvironmentMap;</div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>        ptr&lt;Descriptor&gt; mpEnvironmentMapDescriptor;</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span> </div>
-<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>        ptr&lt;Buffer&gt; mpVertexBuffer;</div>
-<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>        ptr&lt;Buffer&gt; mpIndexBuffer;</div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>        <span class="comment">// One transform per node and frame in flight, laid out with the frame index varying fastest</span></div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>        ptr&lt;DynamicBuffer&gt; mpTransforms;</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>        ptr&lt;Buffer&gt; mpMaterialParams;</div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span> </div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>        ptr&lt;Texture&gt; mpMissingTexture;</div>
-<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span> </div>
-<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>        ptr&lt;Descriptor&gt; mpRayTracingDescriptor;</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>        ptr&lt;Buffer&gt; mpMaterialBuffer; <span class="comment">// Almost same as mpMaterialParams but for ray tracing</span></div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>        ptr&lt;Buffer&gt; mpInstanceDataBuffer;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>        <span class="keyword">friend</span> <a class="code hl_class" href="classMandrill_1_1Node.html">Node</a>;</div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span> </div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>        <span class="comment">// What the scene prepared for one of the shaders its nodes are rendered with. Materials are bound as whole</span></div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>        <span class="comment">// sets rather than through the shader, so they have to be allocated against each shader&#39;s own layout.</span></div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>        <span class="keyword">struct </span>ShaderResources {</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>            ptr&lt;Shader&gt; pShader;</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>            uint32_t materialSet = 0;</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>            std::vector&lt;ptr&lt;Descriptor&gt;&gt; materialDescriptors; <span class="comment">// One per material, indexed like mMaterials</span></div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>        };</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span> </div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>        <span class="comment">// Attach the scene&#39;s resources to one shader and prepare its materials</span></div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>        <span class="keywordtype">void</span> createDescriptorsForShader(ptr&lt;Shader&gt; pShader, ptr&lt;Camera&gt; pCamera);</div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span> </div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        uint32_t mVertexCount;</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>        uint32_t mIndexCount;</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>    };</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        <span class="comment">// What was prepared for a shader, or nullptr if the scene never saw it</span></div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>        <span class="keyword">const</span> ShaderResources* findShaderResources(<span class="keyword">const</span> Shader* pShader) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span> </div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        std::vector&lt;uint32_t&gt; loadFromOBJ(<span class="keyword">const</span> std::filesystem::path&amp; path,</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                                          <span class="keyword">const</span> std::filesystem::path&amp; materialPath = <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>        std::vector&lt;uint32_t&gt; loadFromGLTF(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        <span class="keywordtype">void</span> addTexture(std::string texturePath);</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        <span class="keywordtype">void</span> addTextureFromMemory(<span class="keyword">const</span> uint8_t* pData, <span class="keywordtype">size_t</span> size, <span class="keyword">const</span> std::string&amp; textureName);</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span> </div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>        ptr&lt;Device&gt; mpDevice;</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span> </div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        std::vector&lt;Mesh&gt; mMeshes;</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>        std::vector&lt;Node&gt; mNodes;</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>        std::vector&lt;Material&gt; mMaterials;</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>        std::unordered_map&lt;std::string, ptr&lt;Texture&gt;&gt; mTextures;</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        ptr&lt;Texture&gt; mpEnvironmentMap;</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span> </div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        ptr&lt;Buffer&gt; mpVertexBuffer;</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>        ptr&lt;Buffer&gt; mpIndexBuffer;</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>        <span class="comment">// One transform per node and frame in flight, laid out with the frame index varying fastest</span></div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        ptr&lt;DynamicBuffer&gt; mpTransforms;</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>        ptr&lt;Buffer&gt; mpMaterialParams;</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span> </div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        ptr&lt;Texture&gt; mpMissingTexture;</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span> </div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        <span class="comment">// One entry per distinct shader among the node pipelines, filled in by createDescriptors()</span></div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        std::vector&lt;ShaderResources&gt; mShaderResources;</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span> </div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>        <span class="comment">// Ray tracing has no per-node pipelines, so it is set up against a single shader of its own</span></div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>        ptr&lt;Shader&gt; mpRayTracingShader;</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>        ptr&lt;Buffer&gt; mpMaterialBuffer; <span class="comment">// Almost same as mpMaterialParams but for ray tracing</span></div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        ptr&lt;Buffer&gt; mpInstanceDataBuffer;</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span> </div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>        uint32_t mVertexCount;</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>        uint32_t mIndexCount;</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    };</div>
 </div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>}; <span class="comment">// namespace Mandrill</span></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html"><div class="ttname"><a href="classMandrill_1_1Node.html">Mandrill::Node</a></div><div class="ttdoc">Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...</div><div class="ttdef"><b>Definition</b> Scene.h:94</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a104d961fda6e0de1c4dbf1ecd2203d04"><div class="ttname"><a href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">Mandrill::Node::addMesh</a></div><div class="ttdeci">MANDRILL_API void addMesh(uint32_t meshIndex)</div><div class="ttdoc">Add a mesh to the node.</div><div class="ttdef"><b>Definition</b> Scene.h:136</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a506f93ca0c6cb4c47750b2145aadb804"><div class="ttname"><a href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">Mandrill::Node::getTransform</a></div><div class="ttdeci">MANDRILL_API glm::mat4 getTransform() const</div><div class="ttdoc">Get the TRS transform of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:154</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a576d2b2fab46f89119099b1253177bdd"><div class="ttname"><a href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">Mandrill::Node::setTransform</a></div><div class="ttdeci">MANDRILL_API void setTransform(glm::mat4 transform)</div><div class="ttdoc">Set the TRS transform of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:163</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a702aebccb6d3f8c1adbadcf27b251d2d"><div class="ttname"><a href="classMandrill_1_1Node.html#a702aebccb6d3f8c1adbadcf27b251d2d">Mandrill::Node::getBoundingBox</a></div><div class="ttdeci">MANDRILL_API AABB getBoundingBox(const ptr&lt; const Scene &gt; pScene) const</div><div class="ttdoc">Get bounding box of the node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:93</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a974bb88f6cbe9caee5057331776c2df4"><div class="ttname"><a href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">Mandrill::Node::setVisible</a></div><div class="ttdeci">MANDRILL_API void setVisible(bool visible)</div><div class="ttdoc">Set weather the node should be rendered or not.</div><div class="ttdef"><b>Definition</b> Scene.h:172</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_a9bb73284e4d86b32a4395da0b263bd1d"><div class="ttname"><a href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">Mandrill::Node::setPipeline</a></div><div class="ttdeci">MANDRILL_API void setPipeline(ptr&lt; Pipeline &gt; pPipeline)</div><div class="ttdoc">Set pipeline to use when rendering node.</div><div class="ttdef"><b>Definition</b> Scene.h:145</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_aa0840c3cb5c7159be6d992adecd2097c"><div class="ttname"><a href="classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c">Mandrill::Node::~Node</a></div><div class="ttdeci">MANDRILL_API ~Node()</div><div class="ttdoc">Destructor for scene node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:28</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_ac903d478e4d5d83f09f15ae060ee8725"><div class="ttname"><a href="classMandrill_1_1Node.html#ac903d478e4d5d83f09f15ae060ee8725">Mandrill::Node::render</a></div><div class="ttdeci">MANDRILL_API void render(VkCommandBuffer cmd, const ptr&lt; Camera &gt; pCamera, const ptr&lt; const Scene &gt; pScene, uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</div><div class="ttdoc">Render a node in the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:48</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_ad7a34779cad45d997bfd6d3d8043c75f"><div class="ttname"><a href="classMandrill_1_1Node.html#ad7a34779cad45d997bfd6d3d8043c75f">Mandrill::Node::Node</a></div><div class="ttdeci">MANDRILL_API Node()</div><div class="ttdoc">Create a new scene node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:21</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_ae3997a25702e17af4d811187534ed49e"><div class="ttname"><a href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">Mandrill::Node::drawMeshes</a></div><div class="ttdeci">MANDRILL_API void drawMeshes(VkCommandBuffer cmd, const ptr&lt; const Scene &gt; pScene) const</div><div class="ttdoc">Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of Node::rende...</div><div class="ttdef"><b>Definition</b> Scene.cpp:32</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_af86c1bbb699b02b1c2927012357cf3ee"><div class="ttname"><a href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">Mandrill::Node::getVisible</a></div><div class="ttdeci">MANDRILL_API bool getVisible() const</div><div class="ttdoc">Get the visibility of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:181</div></div>
-<div class="ttc" id="aclassMandrill_1_1Node_html_af9b95f0e49341773920064e58804d8a2"><div class="ttname"><a href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">Mandrill::Node::getMeshIndices</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; &amp; getMeshIndices()</div><div class="ttdoc">Get the mesh indices.</div><div class="ttdef"><b>Definition</b> Scene.h:190</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html"><div class="ttname"><a href="classMandrill_1_1Scene.html">Mandrill::Scene</a></div><div class="ttdoc">Scene class that manages a collection of nodes, materials, meshes, and rendering operations.</div><div class="ttdef"><b>Definition</b> Scene.h:217</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a1e701503ed28e0ac2602271aa76d1237"><div class="ttname"><a href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">Mandrill::Scene::getMeshIndexAddress</a></div><div class="ttdeci">MANDRILL_API VkDeviceAddress getMeshIndexAddress(uint32_t meshIndex) const</div><div class="ttdoc">Get the address of a mesh's indices buffer.</div><div class="ttdef"><b>Definition</b> Scene.h:467</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a2715b11db38a70753f26d66b32581e18"><div class="ttname"><a href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">Mandrill::Scene::addMeshFromFile</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; addMeshFromFile(const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</div><div class="ttdoc">Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file.</div><div class="ttdef"><b>Definition</b> Scene.cpp:351</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a338cfa63a416f22cd1dbdeb22ab70c31"><div class="ttname"><a href="classMandrill_1_1Scene.html#a338cfa63a416f22cd1dbdeb22ab70c31">Mandrill::Scene::createDescriptors</a></div><div class="ttdeci">MANDRILL_API void createDescriptors(const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts)</div><div class="ttdoc">Create desciptors for scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:481</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a3b8cec2e32546713915f8c6303c951f1"><div class="ttname"><a href="classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1">Mandrill::Scene::~Scene</a></div><div class="ttdeci">MANDRILL_API ~Scene()</div><div class="ttdoc">Destructor for scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:117</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a3d1a8e850ff9372d000c500013c5cd07"><div class="ttname"><a href="classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07">Mandrill::Scene::render</a></div><div class="ttdeci">MANDRILL_API void render(VkCommandBuffer cmd, const ptr&lt; Camera &gt; pCamera, bool frustumCulling=true, uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</div><div class="ttdoc">Render all the nodes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:121</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a4b329e736e2589d37fab785fba379969"><div class="ttname"><a href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">Mandrill::Scene::getTextureCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getTextureCount() const</div><div class="ttdoc">Get the number of textures in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:427</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a4fa0c65d69cb1c406051616cc5f75eb4"><div class="ttname"><a href="classMandrill_1_1Scene.html#a4fa0c65d69cb1c406051616cc5f75eb4">Mandrill::Scene::createRayTracingDescriptors</a></div><div class="ttdeci">MANDRILL_API void createRayTracingDescriptors(const std::vector&lt; VkDescriptorSetLayout &gt; &amp;descriptorSetLayouts, const ptr&lt; AccelerationStructure &gt; pAccelerationStructure)</div><div class="ttdoc">Create ray-tracing desciptors for scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:520</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a5abc551f256ae0d59509d96d5f7626a7"><div class="ttname"><a href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">Mandrill::Scene::setEnvironmentMap</a></div><div class="ttdeci">MANDRILL_API void setEnvironmentMap(ptr&lt; Texture &gt; pTexture)</div><div class="ttdoc">Set an environment map for the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:486</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a5dc4995af6e93919319501a541b8d42c"><div class="ttname"><a href="classMandrill_1_1Scene.html#a5dc4995af6e93919319501a541b8d42c">Mandrill::Scene::bindRayTracingDescriptors</a></div><div class="ttdeci">MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, ptr&lt; Camera &gt; pCamera, VkPipelineLayout layout, uint32_t frameInFlightIndex=kCurrentFrameInFlight)</div><div class="ttdoc">Bind ray-tracing descriptors.</div><div class="ttdef"><b>Definition</b> Scene.cpp:578</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a5fdf0c2227fb958e7aea078773a52f21"><div class="ttname"><a href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">Mandrill::Scene::getNodes</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; Node &gt; &amp; getNodes()</div><div class="ttdoc">Get the list of all nodes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:373</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a614c3b2be3acf93f0014ffd68dd38aec"><div class="ttname"><a href="classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec">Mandrill::Scene::compile</a></div><div class="ttdeci">MANDRILL_API void compile()</div><div class="ttdoc">Calculate sizes of buffers and allocate resources. Call this after all nodes have been added....</div><div class="ttdef"><b>Definition</b> Scene.cpp:376</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a6b6f635c7ee9dad3cb04cf671caa60b0"><div class="ttname"><a href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">Mandrill::Scene::getMeshMaterialIndex</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshMaterialIndex(uint32_t meshIndex) const</div><div class="ttdoc">Get the matieral index of a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:477</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a724ec94397955d3b296a1a058e4e0b89"><div class="ttname"><a href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">Mandrill::Scene::getIndexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getIndexCount() const</div><div class="ttdoc">Get the number of indices in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:400</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a806c10e985982923506c93bdd1f4a509"><div class="ttname"><a href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">Mandrill::Scene::getMeshVertexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshVertexCount(uint32_t meshIndex) const</div><div class="ttdoc">Get the number of vertices in a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:437</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a82ec0ac8c1bc8cd64d8627d0573d2a44"><div class="ttname"><a href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">Mandrill::Scene::addNode</a></div><div class="ttdeci">MANDRILL_API uint32_t addNode()</div><div class="ttdoc">Add a node to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:153</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_a84813b375bf18cf7576b634e98ec5b85"><div class="ttname"><a href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">Mandrill::Scene::getTextures</a></div><div class="ttdeci">MANDRILL_API std::unordered_map&lt; std::string, ptr&lt; Texture &gt; &gt; &amp; getTextures()</div><div class="ttdoc">Get all textures in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:382</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_aba588e677211de76531221b7b5a1d42d"><div class="ttname"><a href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">Mandrill::Scene::syncToDevice</a></div><div class="ttdeci">MANDRILL_API void syncToDevice()</div><div class="ttdoc">Synchronize buffers to device.</div><div class="ttdef"><b>Definition</b> Scene.cpp:549</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_abc74b98df96c6f835b393c26e31d9fac"><div class="ttname"><a href="classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac">Mandrill::Scene::addMaterial</a></div><div class="ttdeci">MANDRILL_API uint32_t addMaterial(Material material)</div><div class="ttdoc">Add a material to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:284</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_acb306e7db8f71cb20f51bffe7c1a0069"><div class="ttname"><a href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">Mandrill::Scene::getNode</a></div><div class="ttdeci">MANDRILL_API Node &amp; getNode(uint32_t nodeIndex)</div><div class="ttdoc">Get a reference to a node in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:364</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_acf3af028d73c323af9d6d2759a800364"><div class="ttname"><a href="classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364">Mandrill::Scene::addMesh</a></div><div class="ttdeci">MANDRILL_API uint32_t addMesh(const std::vector&lt; Vertex &gt; vertices, const std::vector&lt; uint32_t &gt; indices, uint32_t materialIndex)</div><div class="ttdoc">Add a mesh to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:308</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_ad296c6bca41220e491cd701d648a0939"><div class="ttname"><a href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">Mandrill::Scene::getMeshIndexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshIndexCount(uint32_t meshIndex) const</div><div class="ttdoc">Get the number of indices in a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:447</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_ade29ee1ef1e79e60585d3ac5bfbbf78e"><div class="ttname"><a href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">Mandrill::Scene::getMaterialCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMaterialCount() const</div><div class="ttdoc">Get the number of materials in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:418</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_ae7e6b6192f295bdb9b0c7e3aa77bc54c"><div class="ttname"><a href="classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c">Mandrill::Scene::addNodesFromFile</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; addNodesFromFile(const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</div><div class="ttdoc">Add several nodes to the scene by reading them from an OBJ- or GLTF/GLB-file.</div><div class="ttdef"><b>Definition</b> Scene.cpp:192</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_af0fe625e2f2c3277e5da49b26f45235b"><div class="ttname"><a href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">Mandrill::Scene::getMeshCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshCount()</div><div class="ttdoc">Get the number of meshes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:409</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_afa94c110ecb52ac4681ca92b0295bd31"><div class="ttname"><a href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">Mandrill::Scene::getVertexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getVertexCount() const</div><div class="ttdoc">Get the number of vertices in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:391</div></div>
-<div class="ttc" id="aclassMandrill_1_1Scene_html_afbd0d1d2c5dcce9a4f0192bb5c7d4a2e"><div class="ttname"><a href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">Mandrill::Scene::getMeshVertexAddress</a></div><div class="ttdeci">MANDRILL_API VkDeviceAddress getMeshVertexAddress(uint32_t meshIndex) const</div><div class="ttdoc">Get the address of a mesh's vertices buffer.</div><div class="ttdef"><b>Definition</b> Scene.h:457</div></div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>}; <span class="comment">// namespace Mandrill</span></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html"><div class="ttname"><a href="classMandrill_1_1Node.html">Mandrill::Node</a></div><div class="ttdoc">Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...</div><div class="ttdef"><b>Definition</b> Scene.h:93</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a104d961fda6e0de1c4dbf1ecd2203d04"><div class="ttname"><a href="classMandrill_1_1Node.html#a104d961fda6e0de1c4dbf1ecd2203d04">Mandrill::Node::addMesh</a></div><div class="ttdeci">MANDRILL_API void addMesh(uint32_t meshIndex)</div><div class="ttdoc">Add a mesh to the node.</div><div class="ttdef"><b>Definition</b> Scene.h:134</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a506f93ca0c6cb4c47750b2145aadb804"><div class="ttname"><a href="classMandrill_1_1Node.html#a506f93ca0c6cb4c47750b2145aadb804">Mandrill::Node::getTransform</a></div><div class="ttdeci">MANDRILL_API glm::mat4 getTransform() const</div><div class="ttdoc">Get the TRS transform of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:152</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a576d2b2fab46f89119099b1253177bdd"><div class="ttname"><a href="classMandrill_1_1Node.html#a576d2b2fab46f89119099b1253177bdd">Mandrill::Node::setTransform</a></div><div class="ttdeci">MANDRILL_API void setTransform(glm::mat4 transform)</div><div class="ttdoc">Set the TRS transform of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:161</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a702aebccb6d3f8c1adbadcf27b251d2d"><div class="ttname"><a href="classMandrill_1_1Node.html#a702aebccb6d3f8c1adbadcf27b251d2d">Mandrill::Node::getBoundingBox</a></div><div class="ttdeci">MANDRILL_API AABB getBoundingBox(const ptr&lt; const Scene &gt; pScene) const</div><div class="ttdoc">Get bounding box of the node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:114</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a974bb88f6cbe9caee5057331776c2df4"><div class="ttname"><a href="classMandrill_1_1Node.html#a974bb88f6cbe9caee5057331776c2df4">Mandrill::Node::setVisible</a></div><div class="ttdeci">MANDRILL_API void setVisible(bool visible)</div><div class="ttdoc">Set weather the node should be rendered or not.</div><div class="ttdef"><b>Definition</b> Scene.h:170</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_a9bb73284e4d86b32a4395da0b263bd1d"><div class="ttname"><a href="classMandrill_1_1Node.html#a9bb73284e4d86b32a4395da0b263bd1d">Mandrill::Node::setPipeline</a></div><div class="ttdeci">MANDRILL_API void setPipeline(ptr&lt; Pipeline &gt; pPipeline)</div><div class="ttdoc">Set pipeline to use when rendering node.</div><div class="ttdef"><b>Definition</b> Scene.h:143</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_aa0840c3cb5c7159be6d992adecd2097c"><div class="ttname"><a href="classMandrill_1_1Node.html#aa0840c3cb5c7159be6d992adecd2097c">Mandrill::Node::~Node</a></div><div class="ttdeci">MANDRILL_API ~Node()</div><div class="ttdoc">Destructor for scene node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:29</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_ac618cd9975f1e24c3e8d52ff3733956f"><div class="ttname"><a href="classMandrill_1_1Node.html#ac618cd9975f1e24c3e8d52ff3733956f">Mandrill::Node::render</a></div><div class="ttdeci">MANDRILL_API void render(VkCommandBuffer cmd, const ptr&lt; const Scene &gt; pScene, uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</div><div class="ttdoc">Render a node in the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:49</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_ad7a34779cad45d997bfd6d3d8043c75f"><div class="ttname"><a href="classMandrill_1_1Node.html#ad7a34779cad45d997bfd6d3d8043c75f">Mandrill::Node::Node</a></div><div class="ttdeci">MANDRILL_API Node()</div><div class="ttdoc">Create a new scene node.</div><div class="ttdef"><b>Definition</b> Scene.cpp:22</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_ae3997a25702e17af4d811187534ed49e"><div class="ttname"><a href="classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e">Mandrill::Node::drawMeshes</a></div><div class="ttdeci">MANDRILL_API void drawMeshes(VkCommandBuffer cmd, const ptr&lt; const Scene &gt; pScene) const</div><div class="ttdoc">Bind the vertex and index buffers of the node's meshes and draw them. Use this instead of Node::rende...</div><div class="ttdef"><b>Definition</b> Scene.cpp:33</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_af86c1bbb699b02b1c2927012357cf3ee"><div class="ttname"><a href="classMandrill_1_1Node.html#af86c1bbb699b02b1c2927012357cf3ee">Mandrill::Node::getVisible</a></div><div class="ttdeci">MANDRILL_API bool getVisible() const</div><div class="ttdoc">Get the visibility of the node.</div><div class="ttdef"><b>Definition</b> Scene.h:179</div></div>
+<div class="ttc" id="aclassMandrill_1_1Node_html_af9b95f0e49341773920064e58804d8a2"><div class="ttname"><a href="classMandrill_1_1Node.html#af9b95f0e49341773920064e58804d8a2">Mandrill::Node::getMeshIndices</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; &amp; getMeshIndices()</div><div class="ttdoc">Get the mesh indices.</div><div class="ttdef"><b>Definition</b> Scene.h:188</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html"><div class="ttname"><a href="classMandrill_1_1Scene.html">Mandrill::Scene</a></div><div class="ttdoc">Scene class that manages a collection of nodes, materials, meshes, and rendering operations.</div><div class="ttdef"><b>Definition</b> Scene.h:214</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a13894770c49b04252f5abce67d8c34ea"><div class="ttname"><a href="classMandrill_1_1Scene.html#a13894770c49b04252f5abce67d8c34ea">Mandrill::Scene::bindRayTracingDescriptors</a></div><div class="ttdeci">MANDRILL_API void bindRayTracingDescriptors(VkCommandBuffer cmd, uint32_t frameInFlightIndex=kCurrentFrameInFlight)</div><div class="ttdoc">Bind the sets that hold the scene's ray-tracing resources. Sets that the application put resources in...</div><div class="ttdef"><b>Definition</b> Scene.cpp:638</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a1e701503ed28e0ac2602271aa76d1237"><div class="ttname"><a href="classMandrill_1_1Scene.html#a1e701503ed28e0ac2602271aa76d1237">Mandrill::Scene::getMeshIndexAddress</a></div><div class="ttdeci">MANDRILL_API VkDeviceAddress getMeshIndexAddress(uint32_t meshIndex) const</div><div class="ttdoc">Get the address of a mesh's indices buffer.</div><div class="ttdef"><b>Definition</b> Scene.h:483</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a2715b11db38a70753f26d66b32581e18"><div class="ttname"><a href="classMandrill_1_1Scene.html#a2715b11db38a70753f26d66b32581e18">Mandrill::Scene::addMeshFromFile</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; addMeshFromFile(const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</div><div class="ttdoc">Add several meshes to a scene by reading them from an OBJ- or GLTF/GLB-file.</div><div class="ttdef"><b>Definition</b> Scene.cpp:364</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a3b8cec2e32546713915f8c6303c951f1"><div class="ttname"><a href="classMandrill_1_1Scene.html#a3b8cec2e32546713915f8c6303c951f1">Mandrill::Scene::~Scene</a></div><div class="ttdeci">MANDRILL_API ~Scene()</div><div class="ttdoc">Destructor for scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:138</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a3d1a8e850ff9372d000c500013c5cd07"><div class="ttname"><a href="classMandrill_1_1Scene.html#a3d1a8e850ff9372d000c500013c5cd07">Mandrill::Scene::render</a></div><div class="ttdeci">MANDRILL_API void render(VkCommandBuffer cmd, const ptr&lt; Camera &gt; pCamera, bool frustumCulling=true, uint32_t frameInFlightIndex=kCurrentFrameInFlight) const</div><div class="ttdoc">Render all the nodes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:142</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a4b329e736e2589d37fab785fba379969"><div class="ttname"><a href="classMandrill_1_1Scene.html#a4b329e736e2589d37fab785fba379969">Mandrill::Scene::getTextureCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getTextureCount() const</div><div class="ttdoc">Get the number of textures in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:443</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a5abc551f256ae0d59509d96d5f7626a7"><div class="ttname"><a href="classMandrill_1_1Scene.html#a5abc551f256ae0d59509d96d5f7626a7">Mandrill::Scene::setEnvironmentMap</a></div><div class="ttdeci">MANDRILL_API void setEnvironmentMap(ptr&lt; Texture &gt; pTexture)</div><div class="ttdoc">Set an environment map for the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:502</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a5fdf0c2227fb958e7aea078773a52f21"><div class="ttname"><a href="classMandrill_1_1Scene.html#a5fdf0c2227fb958e7aea078773a52f21">Mandrill::Scene::getNodes</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; Node &gt; &amp; getNodes()</div><div class="ttdoc">Get the list of all nodes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:389</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a60cd7b3950790ea04f0eac9982943b69"><div class="ttname"><a href="classMandrill_1_1Scene.html#a60cd7b3950790ea04f0eac9982943b69">Mandrill::Scene::createDescriptors</a></div><div class="ttdeci">MANDRILL_API void createDescriptors(ptr&lt; Camera &gt; pCamera)</div><div class="ttdoc">Attach the scene's resources to the shaders its nodes are rendered with.</div><div class="ttdef"><b>Definition</b> Scene.cpp:494</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a614c3b2be3acf93f0014ffd68dd38aec"><div class="ttname"><a href="classMandrill_1_1Scene.html#a614c3b2be3acf93f0014ffd68dd38aec">Mandrill::Scene::compile</a></div><div class="ttdeci">MANDRILL_API void compile()</div><div class="ttdoc">Calculate sizes of buffers and allocate resources. Call this after all nodes have been added....</div><div class="ttdef"><b>Definition</b> Scene.cpp:389</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a6b6f635c7ee9dad3cb04cf671caa60b0"><div class="ttname"><a href="classMandrill_1_1Scene.html#a6b6f635c7ee9dad3cb04cf671caa60b0">Mandrill::Scene::getMeshMaterialIndex</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshMaterialIndex(uint32_t meshIndex) const</div><div class="ttdoc">Get the matieral index of a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:493</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a724ec94397955d3b296a1a058e4e0b89"><div class="ttname"><a href="classMandrill_1_1Scene.html#a724ec94397955d3b296a1a058e4e0b89">Mandrill::Scene::getIndexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getIndexCount() const</div><div class="ttdoc">Get the number of indices in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:416</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a74598545d8b543a9a123fa118dc7639c"><div class="ttname"><a href="classMandrill_1_1Scene.html#a74598545d8b543a9a123fa118dc7639c">Mandrill::Scene::createRayTracingDescriptors</a></div><div class="ttdeci">MANDRILL_API void createRayTracingDescriptors(ptr&lt; Shader &gt; pShader, ptr&lt; Camera &gt; pCamera, const ptr&lt; AccelerationStructure &gt; pAccelerationStructure)</div><div class="ttdoc">Attach the scene's resources to a ray-tracing shader.</div><div class="ttdef"><b>Definition</b> Scene.cpp:586</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a806c10e985982923506c93bdd1f4a509"><div class="ttname"><a href="classMandrill_1_1Scene.html#a806c10e985982923506c93bdd1f4a509">Mandrill::Scene::getMeshVertexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshVertexCount(uint32_t meshIndex) const</div><div class="ttdoc">Get the number of vertices in a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:453</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a82ec0ac8c1bc8cd64d8627d0573d2a44"><div class="ttname"><a href="classMandrill_1_1Scene.html#a82ec0ac8c1bc8cd64d8627d0573d2a44">Mandrill::Scene::addNode</a></div><div class="ttdeci">MANDRILL_API uint32_t addNode()</div><div class="ttdoc">Add a node to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:166</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_a84813b375bf18cf7576b634e98ec5b85"><div class="ttname"><a href="classMandrill_1_1Scene.html#a84813b375bf18cf7576b634e98ec5b85">Mandrill::Scene::getTextures</a></div><div class="ttdeci">MANDRILL_API std::unordered_map&lt; std::string, ptr&lt; Texture &gt; &gt; &amp; getTextures()</div><div class="ttdoc">Get all textures in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:398</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_aba588e677211de76531221b7b5a1d42d"><div class="ttname"><a href="classMandrill_1_1Scene.html#aba588e677211de76531221b7b5a1d42d">Mandrill::Scene::syncToDevice</a></div><div class="ttdeci">MANDRILL_API void syncToDevice()</div><div class="ttdoc">Synchronize buffers to device.</div><div class="ttdef"><b>Definition</b> Scene.cpp:609</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_abc74b98df96c6f835b393c26e31d9fac"><div class="ttname"><a href="classMandrill_1_1Scene.html#abc74b98df96c6f835b393c26e31d9fac">Mandrill::Scene::addMaterial</a></div><div class="ttdeci">MANDRILL_API uint32_t addMaterial(Material material)</div><div class="ttdoc">Add a material to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:297</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_acb306e7db8f71cb20f51bffe7c1a0069"><div class="ttname"><a href="classMandrill_1_1Scene.html#acb306e7db8f71cb20f51bffe7c1a0069">Mandrill::Scene::getNode</a></div><div class="ttdeci">MANDRILL_API Node &amp; getNode(uint32_t nodeIndex)</div><div class="ttdoc">Get a reference to a node in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:380</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_acf3af028d73c323af9d6d2759a800364"><div class="ttname"><a href="classMandrill_1_1Scene.html#acf3af028d73c323af9d6d2759a800364">Mandrill::Scene::addMesh</a></div><div class="ttdeci">MANDRILL_API uint32_t addMesh(const std::vector&lt; Vertex &gt; vertices, const std::vector&lt; uint32_t &gt; indices, uint32_t materialIndex)</div><div class="ttdoc">Add a mesh to the scene.</div><div class="ttdef"><b>Definition</b> Scene.cpp:321</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_ad296c6bca41220e491cd701d648a0939"><div class="ttname"><a href="classMandrill_1_1Scene.html#ad296c6bca41220e491cd701d648a0939">Mandrill::Scene::getMeshIndexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshIndexCount(uint32_t meshIndex) const</div><div class="ttdoc">Get the number of indices in a mesh.</div><div class="ttdef"><b>Definition</b> Scene.h:463</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_ade29ee1ef1e79e60585d3ac5bfbbf78e"><div class="ttname"><a href="classMandrill_1_1Scene.html#ade29ee1ef1e79e60585d3ac5bfbbf78e">Mandrill::Scene::getMaterialCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMaterialCount() const</div><div class="ttdoc">Get the number of materials in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:434</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_ae7e6b6192f295bdb9b0c7e3aa77bc54c"><div class="ttname"><a href="classMandrill_1_1Scene.html#ae7e6b6192f295bdb9b0c7e3aa77bc54c">Mandrill::Scene::addNodesFromFile</a></div><div class="ttdeci">MANDRILL_API std::vector&lt; uint32_t &gt; addNodesFromFile(const std::filesystem::path &amp;path, const std::filesystem::path &amp;materialPath=&quot;&quot;)</div><div class="ttdoc">Add several nodes to the scene by reading them from an OBJ- or GLTF/GLB-file.</div><div class="ttdef"><b>Definition</b> Scene.cpp:205</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_af0fe625e2f2c3277e5da49b26f45235b"><div class="ttname"><a href="classMandrill_1_1Scene.html#af0fe625e2f2c3277e5da49b26f45235b">Mandrill::Scene::getMeshCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getMeshCount()</div><div class="ttdoc">Get the number of meshes in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:425</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_afa94c110ecb52ac4681ca92b0295bd31"><div class="ttname"><a href="classMandrill_1_1Scene.html#afa94c110ecb52ac4681ca92b0295bd31">Mandrill::Scene::getVertexCount</a></div><div class="ttdeci">MANDRILL_API uint32_t getVertexCount() const</div><div class="ttdoc">Get the number of vertices in the scene.</div><div class="ttdef"><b>Definition</b> Scene.h:407</div></div>
+<div class="ttc" id="aclassMandrill_1_1Scene_html_afbd0d1d2c5dcce9a4f0192bb5c7d4a2e"><div class="ttname"><a href="classMandrill_1_1Scene.html#afbd0d1d2c5dcce9a4f0192bb5c7d4a2e">Mandrill::Scene::getMeshVertexAddress</a></div><div class="ttdeci">MANDRILL_API VkDeviceAddress getMeshVertexAddress(uint32_t meshIndex) const</div><div class="ttdoc">Get the address of a mesh's vertices buffer.</div><div class="ttdef"><b>Definition</b> Scene.h:473</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
