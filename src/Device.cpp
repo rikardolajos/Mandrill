@@ -11,6 +11,7 @@
 #include "Pass.h"
 #include "Pipeline.h"
 #include "RayTracingPipeline.h"
+#include "RenderGraph.h"
 #include "Scene.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -607,6 +608,11 @@ ptr<Pipeline> Device::createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const
 ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader, const RayTracingPipelineDesc& desc)
 {
     return make_ptr<RayTracingPipeline>(shared_from_this(), pShader, desc);
+}
+
+ptr<RenderGraph> Device::createRenderGraph()
+{
+    return make_ptr<RenderGraph>(shared_from_this());
 }
 
 ptr<Scene> Device::createScene()

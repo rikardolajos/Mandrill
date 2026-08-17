@@ -17,6 +17,7 @@ namespace Mandrill
     class Pipeline;
     struct RayTracingPipelineDesc;
     class RayTracingPipeline;
+    class RenderGraph;
     class Sampler;
     struct ShaderDesc;
     class Shader;
@@ -345,6 +346,12 @@ namespace Mandrill
         /// <returns>A new ray-tracing pipeline</returns>
         MANDRILL_API ptr<RayTracingPipeline> createRayTracingPipeline(ptr<Shader> pShader,
                                                                       const RayTracingPipelineDesc& desc);
+
+        /// <summary>
+        /// Create a new render graph.
+        /// </summary>
+        /// <returns>A new render graph</returns>
+        MANDRILL_API ptr<RenderGraph> createRenderGraph();
 
         /// <summary>
         /// Create a new scene.
