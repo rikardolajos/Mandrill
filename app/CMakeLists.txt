@@ -1,5 +1,6 @@
 add_subdirectory(DeferredShading)
 add_subdirectory(RayTracer)
+add_subdirectory(RenderGraph)
 add_subdirectory(SampleApp)
 add_subdirectory(SceneViewer)
 add_subdirectory(SDF)
