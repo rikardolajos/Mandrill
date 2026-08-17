@@ -8,7 +8,7 @@ target_sources(RenderGraph
 add_shaders(RenderGraph
 	"GBuffer.vert"
 	"GBuffer.frag"
-	"FullScreen.vert"
+	"Fullscreen.vert"
 	"Lighting.frag"
 	"Blur.frag"
 	"Composite.frag"
