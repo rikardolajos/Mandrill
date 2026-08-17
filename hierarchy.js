@@ -18,6 +18,7 @@ var hierarchy =
       [ "Mandrill::RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html", null ]
     ] ],
     [ "Mandrill::PipelineDesc", "structMandrill_1_1PipelineDesc.html", null ],
+    [ "Mandrill::RenderGraph", "classMandrill_1_1RenderGraph.html", null ],
     [ "Mandrill::Shader::ResourceInfo", "structMandrill_1_1Shader_1_1ResourceInfo.html", null ],
     [ "Mandrill::Scene", "classMandrill_1_1Scene.html", null ],
     [ "Mandrill::Shader", "classMandrill_1_1Shader.html", null ],

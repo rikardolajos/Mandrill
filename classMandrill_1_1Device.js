@@ -15,6 +15,7 @@ var classMandrill_1_1Device =
     [ "createPerFrameBuffer", "classMandrill_1_1Device.html#ad2d5070cc8c54c6e419060dae9b2533c", null ],
     [ "createPipeline", "classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62", null ],
     [ "createRayTracingPipeline", "classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd", null ],
+    [ "createRenderGraph", "classMandrill_1_1Device.html#a5af22218dd1180e806e32be906deedd6", null ],
     [ "createScene", "classMandrill_1_1Device.html#a8a72ce7b4a1610eef8fe28dd86a07f08", null ],
     [ "createShader", "classMandrill_1_1Device.html#a42372a30f593de4d78fbac6927a4ec27", null ],
     [ "createSwapchain", "classMandrill_1_1Device.html#a6da2c9a413ca0d8f5bc736f64c2b97ac", null ],
