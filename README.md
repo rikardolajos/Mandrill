@@ -170,7 +170,7 @@ This ray tracer app shows how this functionality can be used.
 
 ### VolumeViewer
 
-This application implements a basic ray marcher for rendering of volumetric entities.
+This application implements a path tracer for rendering of volumetric entities.
 **(Requires OpenVDB, see below.)**
 
 ## OpenVDB
