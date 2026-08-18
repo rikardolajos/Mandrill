@@ -8,6 +8,7 @@ var classMandrill_1_1Shader =
     [ "bindResourcesWithOffsets", "classMandrill_1_1Shader.html#a43f073192379685c8ea060ed2318bfd3", null ],
     [ "getDescriptorSetLayout", "classMandrill_1_1Shader.html#ab76dcdb010b19b5a96bfbc30a84b4476", null ],
     [ "getDescriptorSetLayouts", "classMandrill_1_1Shader.html#a761b955eb7735ea9abd41abdd6685658", null ],
+    [ "getLocalSize", "classMandrill_1_1Shader.html#abf2118bc397b21961cec537448f878b1", null ],
     [ "getModules", "classMandrill_1_1Shader.html#aaa118cffbe1952109a2a3af0d87658ab", null ],
     [ "getPipelineLayout", "classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a", null ],
     [ "getPushConstantRanges", "classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1", null ],

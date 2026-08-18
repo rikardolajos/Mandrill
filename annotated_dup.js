@@ -5,6 +5,8 @@ var annotated_dup =
       [ "App", "classMandrill_1_1App.html", "classMandrill_1_1App" ],
       [ "Buffer", "classMandrill_1_1Buffer.html", "classMandrill_1_1Buffer" ],
       [ "Camera", "classMandrill_1_1Camera.html", "classMandrill_1_1Camera" ],
+      [ "ComputePipeline", "classMandrill_1_1ComputePipeline.html", "classMandrill_1_1ComputePipeline" ],
+      [ "ComputePipelineDesc", "structMandrill_1_1ComputePipelineDesc.html", "structMandrill_1_1ComputePipelineDesc" ],
       [ "Descriptor", "classMandrill_1_1Descriptor.html", "classMandrill_1_1Descriptor" ],
       [ "Device", "classMandrill_1_1Device.html", "classMandrill_1_1Device" ],
       [ "DynamicBuffer", "classMandrill_1_1DynamicBuffer.html", "classMandrill_1_1DynamicBuffer" ],

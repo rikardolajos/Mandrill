@@ -5,5 +5,5 @@ var searchData=
   ['warning_2',['Warning',['../classMandrill_1_1Log.html#ad59f1b752f0e2802cef50ecd62dfcacc',1,'Mandrill::Log']]],
   ['windows_3',['Windows',['../index.html#autotoc_md3',1,'']]],
   ['with_20mandrill_20as_20submodule_4',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
-  ['write_5',['write',['../classMandrill_1_1RayTracingPipeline.html#aaa770f605ca8c1262779c1b872ee4507',1,'Mandrill::RayTracingPipeline']]]
+  ['write_5',['write',['../classMandrill_1_1ComputePipeline.html#a94300e74831771c54888f50a6c104aeb',1,'Mandrill::ComputePipeline::write()'],['../classMandrill_1_1RayTracingPipeline.html#aaa770f605ca8c1262779c1b872ee4507',1,'Mandrill::RayTracingPipeline::write()']]]
 ];

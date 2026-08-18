@@ -200,6 +200,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a8f8e0c3e643ba9f83456fe0004f08a62" id="r_a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Pipeline.html">Pipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a8f8e0c3e643ba9f83456fe0004f08a62">createPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Pass.html">Pass</a> &gt; pPass, ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const <a class="el" href="structMandrill_1_1PipelineDesc.html">PipelineDesc</a> &amp;desc)</td></tr>
 <tr class="memdesc:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new pipeline.  <br /></td></tr>
 <tr class="separator:a8f8e0c3e643ba9f83456fe0004f08a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7346c396df93327dbfe9f6487c11f5ae" id="r_a7346c396df93327dbfe9f6487c11f5ae"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1ComputePipeline.html">ComputePipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a7346c396df93327dbfe9f6487c11f5ae">createComputePipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const <a class="el" href="structMandrill_1_1ComputePipelineDesc.html">ComputePipelineDesc</a> &amp;desc)</td></tr>
+<tr class="memdesc:a7346c396df93327dbfe9f6487c11f5ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new compute pipeline.  <br /></td></tr>
+<tr class="separator:a7346c396df93327dbfe9f6487c11f5ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5983cdc34f15dc641865618476750bcd" id="r_a5983cdc34f15dc641865618476750bcd"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1RayTracingPipeline.html">RayTracingPipeline</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5983cdc34f15dc641865618476750bcd">createRayTracingPipeline</a> (ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt; pShader, const RayTracingPipelineDesc &amp;desc)</td></tr>
 <tr class="memdesc:a5983cdc34f15dc641865618476750bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new ray tracing pipeline.  <br /></td></tr>
 <tr class="separator:a5983cdc34f15dc641865618476750bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -392,6 +395,44 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></
 
 <p>Create a new camera. </p>
 <dl class="section return"><dt>Returns</dt><dd>A new camera</dd></dl>
+
+</div>
+</div>
+<a id="a7346c396df93327dbfe9f6487c11f5ae" name="a7346c396df93327dbfe9f6487c11f5ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7346c396df93327dbfe9f6487c11f5ae">&#9670;&#160;</a></span>createComputePipeline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptr&lt; <a class="el" href="classMandrill_1_1ComputePipeline.html">ComputePipeline</a> &gt; Device::createComputePipeline </td>
+          <td>(</td>
+          <td class="paramtype">ptr&lt; <a class="el" href="classMandrill_1_1Shader.html">Shader</a> &gt;&#160;</td>
+          <td class="paramname"><em>pShader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structMandrill_1_1ComputePipelineDesc.html">ComputePipelineDesc</a> &amp;&#160;</td>
+          <td class="paramname"><em>desc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new compute pipeline. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pShader</td><td><a class="el" href="classMandrill_1_1Shader.html" title="Shader class that abstracts the handling of Vulkan shaders. This class manages shader modules and hot...">Shader</a> to use, holding a compute stage</td></tr>
+    <tr><td class="paramname">desc</td><td>Description of pipeline</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new compute pipeline</dd></dl>
 
 </div>
 </div>

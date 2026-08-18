@@ -124,6 +124,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a4576dad7e5bfe226758ffb518d26aa91" id="r_a4576dad7e5bfe226758ffb518d26aa91"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a4576dad7e5bfe226758ffb518d26aa91">imageBarrier</a> (VkCommandBuffer cmd, VkImage image, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageSubresourceRange *pSubresourceRange=nullptr)</td></tr>
 <tr class="memdesc:a4576dad7e5bfe226758ffb518d26aa91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an image barrier with layout transition.  <br /></td></tr>
 <tr class="separator:a4576dad7e5bfe226758ffb518d26aa91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15ecaa34658107c3c308cf5fb3d4eb5d" id="r_a15ecaa34658107c3c308cf5fb3d4eb5d"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#a15ecaa34658107c3c308cf5fb3d4eb5d">bufferBarrier</a> (VkCommandBuffer cmd, VkBuffer buffer, VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess, VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess, VkDeviceSize offset=0, VkDeviceSize size=VK_WHOLE_SIZE)</td></tr>
+<tr class="memdesc:a15ecaa34658107c3c308cf5fb3d4eb5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a buffer barrier. Use this to order accesses to a buffer that is written by one stage and read by another, such as a storage buffer that a compute shader updates before a vertex shader reads it.  <br /></td></tr>
+<tr class="separator:a15ecaa34658107c3c308cf5fb3d4eb5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afeb16769b4ce1fb34b0fa16722ff4ba5" id="r_afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="memItemLeft" align="right" valign="top">static MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Helpers.html#afeb16769b4ce1fb34b0fa16722ff4ba5">copyBufferToImage</a> (VkCommandBuffer cmd, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)</td></tr>
 <tr class="memdesc:afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a buffer to an image.  <br /></td></tr>
 <tr class="separator:afeb16769b4ce1fb34b0fa16722ff4ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,6 +186,93 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Aligned value</dd></dl>
+
+</div>
+</div>
+<a id="a15ecaa34658107c3c308cf5fb3d4eb5d" name="a15ecaa34658107c3c308cf5fb3d4eb5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15ecaa34658107c3c308cf5fb3d4eb5d">&#9670;&#160;</a></span>bufferBarrier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MANDRILL_API void Mandrill::Helpers::bufferBarrier </td>
+          <td>(</td>
+          <td class="paramtype">VkCommandBuffer&#160;</td>
+          <td class="paramname"><em>cmd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkBuffer&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkPipelineStageFlags2&#160;</td>
+          <td class="paramname"><em>srcStage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkAccessFlags2&#160;</td>
+          <td class="paramname"><em>srcAccess</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkPipelineStageFlags2&#160;</td>
+          <td class="paramname"><em>dstStage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkAccessFlags2&#160;</td>
+          <td class="paramname"><em>dstAccess</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VkDeviceSize&#160;</td>
+          <td class="paramname"><em>size</em> = <code>VK_WHOLE_SIZE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a buffer barrier. Use this to order accesses to a buffer that is written by one stage and read by another, such as a storage buffer that a compute shader updates before a vertex shader reads it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>Command buffer to use</td></tr>
+    <tr><td class="paramname">buffer</td><td><a class="el" href="classMandrill_1_1Buffer.html" title="Buffer class for managing Vulkan buffers. This class handles the creation and destruction of buffers,...">Buffer</a> to place the barrier on</td></tr>
+    <tr><td class="paramname">srcStage</td><td>Stage the barrier has to wait for</td></tr>
+    <tr><td class="paramname">srcAccess</td><td>Type of access the barrier has to wait for</td></tr>
+    <tr><td class="paramname">dstStage</td><td>Stage when the barrier has to be finished</td></tr>
+    <tr><td class="paramname">dstAccess</td><td>Type of access the barrier must be ready for when finished</td></tr>
+    <tr><td class="paramname">offset</td><td>Offset into the buffer</td></tr>
+    <tr><td class="paramname">size</td><td>Range of the buffer to cover</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

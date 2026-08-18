@@ -4,6 +4,7 @@ var hierarchy =
     [ "Mandrill::App", "classMandrill_1_1App.html", null ],
     [ "Mandrill::Buffer", "classMandrill_1_1Buffer.html", null ],
     [ "Mandrill::Camera", "classMandrill_1_1Camera.html", null ],
+    [ "Mandrill::ComputePipelineDesc", "structMandrill_1_1ComputePipelineDesc.html", null ],
     [ "Mandrill::Descriptor", "classMandrill_1_1Descriptor.html", null ],
     [ "Mandrill::Device", "classMandrill_1_1Device.html", null ],
     [ "Mandrill::DynamicBuffer", "classMandrill_1_1DynamicBuffer.html", null ],
@@ -15,6 +16,7 @@ var hierarchy =
     [ "Mandrill::Node", "classMandrill_1_1Node.html", null ],
     [ "Mandrill::Pass", "classMandrill_1_1Pass.html", null ],
     [ "Mandrill::Pipeline", "classMandrill_1_1Pipeline.html", [
+      [ "Mandrill::ComputePipeline", "classMandrill_1_1ComputePipeline.html", null ],
       [ "Mandrill::RayTracingPipeline", "classMandrill_1_1RayTracingPipeline.html", null ]
     ] ],
     [ "Mandrill::PipelineDesc", "structMandrill_1_1PipelineDesc.html", null ],

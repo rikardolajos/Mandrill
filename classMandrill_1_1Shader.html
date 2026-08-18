@@ -172,6 +172,9 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 <tr class="memitem:a3ddb1089630ab8cc39297ddf07cfaad1" id="r_a3ddb1089630ab8cc39297ddf07cfaad1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API const std::vector&lt; VkPushConstantRange &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a3ddb1089630ab8cc39297ddf07cfaad1">getPushConstantRanges</a> () const</td></tr>
 <tr class="memdesc:a3ddb1089630ab8cc39297ddf07cfaad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the push constant ranges.  <br /></td></tr>
 <tr class="separator:a3ddb1089630ab8cc39297ddf07cfaad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2118bc397b21961cec537448f878b1" id="r_abf2118bc397b21961cec537448f878b1"><td class="memItemLeft" align="right" valign="top">MANDRILL_API glm::uvec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#abf2118bc397b21961cec537448f878b1">getLocalSize</a> () const</td></tr>
+<tr class="memdesc:abf2118bc397b21961cec537448f878b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the local workgroup size of the compute stage, as reflected from the SPIR-V.  <br /></td></tr>
+<tr class="separator:abf2118bc397b21961cec537448f878b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4647edd2f83e6c0483942795e121f43a" id="r_a4647edd2f83e6c0483942795e121f43a"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkPipelineLayout&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Shader.html#a4647edd2f83e6c0483942795e121f43a">getPipelineLayout</a> () const</td></tr>
 <tr class="memdesc:a4647edd2f83e6c0483942795e121f43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get tthe pipeline layout.  <br /></td></tr>
 <tr class="separator:a4647edd2f83e6c0483942795e121f43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -413,6 +416,26 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>reload</
 
 <p>Get the descriptor set layouts. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of descriptor set layouts</dd></dl>
+
+</div>
+</div>
+<a id="abf2118bc397b21961cec537448f878b1" name="abf2118bc397b21961cec537448f878b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf2118bc397b21961cec537448f878b1">&#9670;&#160;</a></span>getLocalSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::uvec3 Shader::getLocalSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the local workgroup size of the compute stage, as reflected from the SPIR-V. </p>
+<dl class="section return"><dt>Returns</dt><dd>Local workgroup size, or (1, 1, 1) if the shader has no compute stage</dd></dl>
 
 </div>
 </div>

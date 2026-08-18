@@ -14,6 +14,8 @@ var searchData=
   ['destroygui_11',['destroyGUI',['../classMandrill_1_1App.html#ae1f85a1abcf91f6ea4a070b7b4aaf5c3',1,'Mandrill::App']]],
   ['destroypipeline_12',['destroyPipeline',['../classMandrill_1_1Pipeline.html#a01fc1d24a99e5149cb06765d4b503254',1,'Mandrill::Pipeline']]],
   ['device_13',['device',['../classMandrill_1_1Device.html',1,'Mandrill::Device'],['../classMandrill_1_1Device.html#afdd3d9e8957f1f36297babd726e679ba',1,'Mandrill::Device::Device()']]],
-  ['drawmeshes_14',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]],
-  ['dynamicbuffer_15',['dynamicbuffer',['../classMandrill_1_1DynamicBuffer.html',1,'Mandrill::DynamicBuffer'],['../classMandrill_1_1DynamicBuffer.html#a562c76ae8d268caa90610f10b7c60acd',1,'Mandrill::DynamicBuffer::DynamicBuffer()']]]
+  ['dispatch_14',['dispatch',['../classMandrill_1_1ComputePipeline.html#a3b912bd50b4f0022dd490229040b2735',1,'Mandrill::ComputePipeline']]],
+  ['dispatchgroups_15',['dispatchGroups',['../classMandrill_1_1ComputePipeline.html#af1b4dd20072d863d12395722c8a816f2',1,'Mandrill::ComputePipeline']]],
+  ['drawmeshes_16',['drawMeshes',['../classMandrill_1_1Node.html#ae3997a25702e17af4d811187534ed49e',1,'Mandrill::Node']]],
+  ['dynamicbuffer_17',['dynamicbuffer',['../classMandrill_1_1DynamicBuffer.html',1,'Mandrill::DynamicBuffer'],['../classMandrill_1_1DynamicBuffer.html#a562c76ae8d268caa90610f10b7c60acd',1,'Mandrill::DynamicBuffer::DynamicBuffer()']]]
 ];
