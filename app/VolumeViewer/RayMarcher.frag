@@ -290,38 +290,57 @@ bool intersectVolume(vec3 o, vec3 d, out float tEnter, out float tExit)
     return tExit > tEnter;
 }
 
-// Sample a free-flight distance by marching until the accumulated optical depth reaches
-// -log(1 - xi). Returns the scattering distance, or -1.0 if the ray escapes the volume.
-float sampleScatterDistance(vec3 o, vec3 d, float tEnter, float tExit)
+// Sample a free-flight distance by marching until the accumulated optical depth reaches -log(1 - xi). Returns the
+// scattering distance, or a negative value if the ray did not scatter. The density sampled at t is taken to hold
+// over the step that starts there, so the sample covers [t, t + STEP_SIZE].
+//
+// exhausted is set when the march ran out of steps while still inside the volume. The ray neither scattered nor
+// left, so the caller must not treat it as having reached the environment.
+float sampleScatterDistance(vec3 o, vec3 d, float tEnter, float tExit, out bool exhausted)
 {
+    exhausted = false;
+
     float tauTarget = -log(max(1.0 - rand(), 1e-7));
     float tau = 0.0;
     float t = tEnter + rand() * STEP_SIZE;
-    for (int i = 0; i < MAX_STEPS && t < tExit; i++) {
+    for (int i = 0; i < MAX_STEPS; i++) {
+        if (t >= tExit) {
+            return -1.0;
+        }
+
         float sigma = densityAt(o + t * d);
         tau += sigma * STEP_SIZE;
         if (tau >= tauTarget) {
-            // Pull back to where the target optical depth was reached within the last step
+            // The target was passed somewhere inside the step that ends at t + STEP_SIZE, so walk back from its end
             float overshoot = (tau - tauTarget) / max(sigma, 1e-6);
-            return t - min(overshoot, STEP_SIZE);
+            return t + STEP_SIZE - min(overshoot, STEP_SIZE);
         }
         t += STEP_SIZE;
     }
+
+    exhausted = true;
     return -1.0;
 }
 
+// Transmittance along a shadow ray. Returns zero if the march runs out of steps before leaving the volume, since
+// the part that was never marched could contain any amount of medium and assuming it is empty would leak light.
 float transmittance(vec3 o, vec3 d, float tEnter, float tExit)
 {
     float tau = 0.0;
     float t = tEnter + 0.5 * STEP_SIZE;
-    for (int i = 0; i < MAX_STEPS && t < tExit; i++) {
+    for (int i = 0; i < MAX_STEPS; i++) {
+        if (t >= tExit) {
+            return exp(-tau);
+        }
+
         tau += densityAt(o + t * d) * STEP_SIZE;
         if (tau > TAU_CUTOFF) {
             return 0.0;
         }
         t += STEP_SIZE;
     }
-    return exp(-tau);
+
+    return 0.0;
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -332,8 +351,10 @@ float phaseEval(float cosTheta)
 {
     if ((pc.flags & FLAG_HG_PHASE) != 0u) {
         float g = pc.phaseG;
-        float denom = 1.0 + g * g - 2.0 * g * cosTheta;
-        return (1.0 - g * g) / (4.0 * M_PI * denom * sqrt(max(denom, 1e-4)));
+        // The floor has to apply to the whole denominator, not just the square root, or this stops being exactly
+        // the density that sampleHGCos() draws from and the MIS weights no longer match the sampling
+        float denom = max(1.0 + g * g - 2.0 * g * cosTheta, 1e-4);
+        return (1.0 - g * g) / (4.0 * M_PI * denom * sqrt(denom));
     }
     return 1.0 / (4.0 * M_PI);
 }
@@ -423,11 +444,15 @@ vec3 tracePath(vec3 origin, vec3 dir, out bool truncated)
             break;
         }
 
-        float tScatter = sampleScatterDistance(o, d, tEnter, tExit);
+        bool exhausted;
+        float tScatter = sampleScatterDistance(o, d, tEnter, tExit, exhausted);
         if (tScatter < 0.0) {
-            if (escapeWeight > 0.0) {
+            // A ray that ran out of steps is still inside the volume, so it has not reached the environment and
+            // must not collect any of it
+            if (escapeWeight > 0.0 && !exhausted) {
                 radiance += escapeWeight * throughput * environmentRadiance(dir);
             }
+            truncated = truncated || exhausted;
             break;
         }
 
