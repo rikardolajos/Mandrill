@@ -8,6 +8,8 @@ namespace Mandrill
     class AccelerationStructure;
     class Buffer;
     class Camera;
+    struct ComputePipelineDesc;
+    class ComputePipeline;
     struct DescriptorDesc;
     class Descriptor;
     class DynamicBuffer;
@@ -337,6 +339,14 @@ namespace Mandrill
         /// <param name="desc">Description of pipeline</param>
         /// <returns>A new pipeline</returns>
         MANDRILL_API ptr<Pipeline> createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc);
+
+        /// <summary>
+        /// Create a new compute pipeline.
+        /// </summary>
+        /// <param name="pShader">Shader to use, holding a compute stage</param>
+        /// <param name="desc">Description of pipeline</param>
+        /// <returns>A new compute pipeline</returns>
+        MANDRILL_API ptr<ComputePipeline> createComputePipeline(ptr<Shader> pShader, const ComputePipelineDesc& desc);
 
         /// <summary>
         /// Create a new ray tracing pipeline.

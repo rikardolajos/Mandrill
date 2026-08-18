@@ -4,6 +4,7 @@
 #include "App.h"
 #include "Buffer.h"
 #include "Camera.h"
+#include "ComputePipeline.h"
 #include "Descriptor.h"
 #include "Device.h"
 #include "DynamicBuffer.h"

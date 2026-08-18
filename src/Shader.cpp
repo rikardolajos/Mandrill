@@ -544,6 +544,35 @@ void Shader::createShader()
     Check::Vk(vkCreatePipelineLayout(mpDevice->getDevice(), &ci, nullptr, &mPipelineLayout));
 }
 
+glm::uvec3 Shader::getLocalSize() const
+{
+    for (size_t i = 0; i < mReflections.size(); i++) {
+        if (!mReflections[i] || mStageFlags[i] != VK_SHADER_STAGE_COMPUTE_BIT) {
+            continue;
+        }
+
+        const SpvReflectShaderModule& module = mReflections[i]->GetShaderModule();
+        for (uint32_t j = 0; j < module.entry_point_count; j++) {
+            const SpvReflectEntryPoint& entryPoint = module.entry_points[j];
+            if (mEntries[i] != entryPoint.name) {
+                continue;
+            }
+
+            // A local size given by specialization constants is not known to the reflection, and would come back as
+            // zero. Report it rather than handing back a size that cannot be divided by.
+            if (entryPoint.local_size.x == 0 || entryPoint.local_size.y == 0 || entryPoint.local_size.z == 0) {
+                Log::Error("Local size of {} could not be reflected. Declare it with literal values in the shader.",
+                           mSrcFilenames[i].string());
+                return glm::uvec3(1);
+            }
+
+            return glm::uvec3(entryPoint.local_size.x, entryPoint.local_size.y, entryPoint.local_size.z);
+        }
+    }
+
+    return glm::uvec3(1);
+}
+
 const Shader::ResourceInfo* Shader::resolveResource(const std::string& name, const char* kind,
                                                     std::initializer_list<VkDescriptorType> allowed)
 {

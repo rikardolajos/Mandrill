@@ -2,6 +2,7 @@
 
 #include "AccelerationStructure.h"
 #include "Buffer.h"
+#include "ComputePipeline.h"
 #include "Descriptor.h"
 #include "DynamicBuffer.h"
 #include "Error.h"
@@ -430,6 +431,7 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
                 .independentBlend = VK_TRUE,
                 .fillModeNonSolid = VK_TRUE,
                 .wideLines = VK_TRUE,
+                .largePoints = VK_TRUE,
                 .samplerAnisotropy = VK_TRUE,
                 .vertexPipelineStoresAndAtomics = VK_TRUE,
                 .fragmentStoresAndAtomics = VK_TRUE,
@@ -603,6 +605,11 @@ ptr<Pass> Device::createPass(VkExtent2D extent, std::vector<VkFormat> formats, b
 ptr<Pipeline> Device::createPipeline(ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc)
 {
     return make_ptr<Pipeline>(shared_from_this(), pPass, pShader, desc);
+}
+
+ptr<ComputePipeline> Device::createComputePipeline(ptr<Shader> pShader, const ComputePipelineDesc& desc)
+{
+    return make_ptr<ComputePipeline>(shared_from_this(), pShader, desc);
 }
 
 ptr<RayTracingPipeline> Device::createRayTracingPipeline(ptr<Shader> pShader, const RayTracingPipelineDesc& desc)

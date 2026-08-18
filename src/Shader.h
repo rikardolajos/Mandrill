@@ -249,6 +249,12 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Get the local workgroup size of the compute stage, as reflected from the SPIR-V.
+        /// </summary>
+        /// <returns>Local workgroup size, or (1, 1, 1) if the shader has no compute stage</returns>
+        MANDRILL_API glm::uvec3 getLocalSize() const;
+
+        /// <summary>
         /// Get tthe pipeline layout.
         /// </summary>
         /// <returns>Pipeline layout</returns>

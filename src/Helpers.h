@@ -189,6 +189,45 @@ namespace Mandrill
         }
 
         /// <summary>
+        /// Create a buffer barrier. Use this to order accesses to a buffer that is written by one stage and read by
+        /// another, such as a storage buffer that a compute shader updates before a vertex shader reads it.
+        /// </summary>
+        /// <param name="cmd">Command buffer to use</param>
+        /// <param name="buffer">Buffer to place the barrier on</param>
+        /// <param name="srcStage">Stage the barrier has to wait for</param>
+        /// <param name="srcAccess">Type of access the barrier has to wait for</param>
+        /// <param name="dstStage">Stage when the barrier has to be finished</param>
+        /// <param name="dstAccess">Type of access the barrier must be ready for when finished</param>
+        /// <param name="offset">Offset into the buffer</param>
+        /// <param name="size">Range of the buffer to cover</param>
+        MANDRILL_API inline static void bufferBarrier(VkCommandBuffer cmd, VkBuffer buffer,
+                                                      VkPipelineStageFlags2 srcStage, VkAccessFlags2 srcAccess,
+                                                      VkPipelineStageFlags2 dstStage, VkAccessFlags2 dstAccess,
+                                                      VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE)
+        {
+            VkBufferMemoryBarrier2 barrier = {
+                .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
+                .srcStageMask = srcStage,
+                .srcAccessMask = srcAccess,
+                .dstStageMask = dstStage,
+                .dstAccessMask = dstAccess,
+                .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                .buffer = buffer,
+                .offset = offset,
+                .size = size,
+            };
+
+            VkDependencyInfo dependencyInfo = {
+                .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+                .bufferMemoryBarrierCount = 1,
+                .pBufferMemoryBarriers = &barrier,
+            };
+
+            vkCmdPipelineBarrier2(cmd, &dependencyInfo);
+        }
+
+        /// <summary>
         /// Copy a buffer to an image.
         /// </summary>
         /// <param name="cmd">Command buffer to use</param>
