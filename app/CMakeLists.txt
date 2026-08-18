@@ -1,3 +1,4 @@
+add_subdirectory(ComputeParticles)
 add_subdirectory(DeferredShading)
 add_subdirectory(RayTracer)
 add_subdirectory(RenderGraph)

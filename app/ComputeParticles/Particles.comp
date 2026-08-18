@@ -1,0 +1,46 @@
+#version 460
+
+// One workgroup covers this many particles. The dispatch is given in particles, and ComputePipeline rounds the count
+// up to whole workgroups, so the invocations past the end are guarded against below.
+layout(local_size_x = 256) in;
+
+struct Particle {
+    vec4 position; // xyz = position, w unused
+    vec4 velocity; // xyz = velocity, w unused
+};
+
+layout(std430, set = 0, binding = 0) buffer Particles {
+    Particle particles[];
+};
+
+layout(push_constant) uniform PushConstant {
+    vec3 attractor;
+    float strength;
+    float delta;
+    float damping;
+    uint particleCount;
+} pushConstant;
+
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+
+    // The particle count is rarely a multiple of the local size, so the last workgroup runs past the end
+    if (index >= pushConstant.particleCount) {
+        return;
+    }
+
+    Particle particle = particles[index];
+
+    // Pull towards the attractor with an inverse square law, softened so that the force stays finite at the center
+    vec3 toAttractor = pushConstant.attractor - particle.position.xyz;
+    float distanceSquared = dot(toAttractor, toAttractor) + 0.5;
+    vec3 acceleration = pushConstant.strength * toAttractor * inversesqrt(distanceSquared) / distanceSquared;
+
+    // Damping as a rate rather than a per-frame factor, so the motion does not depend on the framerate
+    float dampingFactor = exp(-pushConstant.damping * pushConstant.delta);
+
+    particle.velocity.xyz = (particle.velocity.xyz + acceleration * pushConstant.delta) * dampingFactor;
+    particle.position.xyz += particle.velocity.xyz * pushConstant.delta;
+
+    particles[index] = particle;
+}

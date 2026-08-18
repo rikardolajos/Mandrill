@@ -157,6 +157,12 @@ The scene has a predetermined set of descritors that are used for rendering mate
 This application implements a basic signed distance field (SDF) renderer.
 Rendering is done using a fullscreen triangle pair, and the SDF is sampled in the fragment shader.
 
+### ComputeParticles
+
+This application shows how to use a compute shader with the `ComputePipeline.cpp` abstraction.
+A compute shader advances a particle simulation in a storage buffer, and a graphics pipeline then draws the same buffer as additively blended point sprites, reading the positions by vertex index instead of through a vertex buffer.
+The particle state never leaves the device after it has been seeded, so the buffer is shared between the two pipelines and ordered with buffer barriers rather than copied per frame.
+
 ### RayTracer
 
 Mandrill abstracts some of the ray tracing handling as well (pipeline, shader binding table, and acceleration structure creation).
