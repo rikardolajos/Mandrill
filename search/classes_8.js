@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['node_0',['Node',['../classMandrill_1_1Node.html',1,'Mandrill']]]
+  ['mlp_0',['MLP',['../classMandrill_1_1MLP.html',1,'Mandrill']]],
+  ['mlplocations_1',['MLPLocations',['../structMandrill_1_1MLPLocations.html',1,'Mandrill']]]
 ];

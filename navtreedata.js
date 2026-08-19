@@ -36,10 +36,11 @@ var NAVTREE =
       [ "SceneViewer", "index.html#autotoc_md8", null ],
       [ "SDF", "index.html#autotoc_md9", null ],
       [ "ComputeParticles", "index.html#autotoc_md10", null ],
-      [ "RayTracer", "index.html#autotoc_md11", null ],
-      [ "VolumeViewer", "index.html#autotoc_md12", null ]
+      [ "NeuralNetwork", "index.html#autotoc_md11", null ],
+      [ "RayTracer", "index.html#autotoc_md12", null ],
+      [ "VolumeViewer", "index.html#autotoc_md13", null ]
     ] ],
-    [ "OpenVDB", "index.html#autotoc_md13", null ],
+    [ "OpenVDB", "index.html#autotoc_md14", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", null ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -67,7 +68,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8h_source.html",
-"classMandrill_1_1Pipeline.html#acacb8f33e38a3b864094078a5f38ac63"
+"classMandrill_1_1Pipeline.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

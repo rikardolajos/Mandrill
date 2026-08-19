@@ -23,5 +23,6 @@ var searchData=
   ['apps_20',['Apps',['../index.html#autotoc_md6',1,'']]],
   ['as_20submodule_21',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
   ['at_22',['at',['../classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459',1,'Mandrill::DynamicBuffer']]],
-  ['attributedescriptions_23',['attributeDescriptions',['../structMandrill_1_1PipelineDesc.html#ac450aa20425e4997c3b8256b8e1d13a1',1,'Mandrill::PipelineDesc']]]
+  ['attachto_23',['attachTo',['../classMandrill_1_1MLP.html#ac8992535165a08c02796df7279d96714',1,'Mandrill::MLP']]],
+  ['attributedescriptions_24',['attributeDescriptions',['../structMandrill_1_1PipelineDesc.html#ac450aa20425e4997c3b8256b8e1d13a1',1,'Mandrill::PipelineDesc']]]
 ];

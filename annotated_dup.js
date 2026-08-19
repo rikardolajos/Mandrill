@@ -15,6 +15,8 @@ var annotated_dup =
       [ "Image", "classMandrill_1_1Image.html", "classMandrill_1_1Image" ],
       [ "Layout", "classMandrill_1_1Layout.html", "classMandrill_1_1Layout" ],
       [ "Log", "classMandrill_1_1Log.html", "classMandrill_1_1Log" ],
+      [ "MLP", "classMandrill_1_1MLP.html", "classMandrill_1_1MLP" ],
+      [ "MLPLocations", "structMandrill_1_1MLPLocations.html", "structMandrill_1_1MLPLocations" ],
       [ "Node", "classMandrill_1_1Node.html", "classMandrill_1_1Node" ],
       [ "Pass", "classMandrill_1_1Pass.html", "classMandrill_1_1Pass" ],
       [ "Pipeline", "classMandrill_1_1Pipeline.html", "classMandrill_1_1Pipeline" ],

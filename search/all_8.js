@@ -4,5 +4,6 @@ var searchData=
   ['imagebarrier_1',['imageBarrier',['../classMandrill_1_1Helpers.html#a4576dad7e5bfe226758ffb518d26aa91',1,'Mandrill::Helpers']]],
   ['info_2',['Info',['../classMandrill_1_1Log.html#ac7c00e6882720e47c83d808b8db127f1',1,'Mandrill::Log']]],
   ['ismousecaptured_3',['isMouseCaptured',['../classMandrill_1_1Camera.html#a686a40e98216fa2e93f6b810d4b35991',1,'Mandrill::Camera']]],
-  ['isperframe_4',['isPerFrame',['../classMandrill_1_1DynamicBuffer.html#ab8f6936f55d3d2c5e0ed2a8d461e9d82',1,'Mandrill::DynamicBuffer']]]
+  ['isperframe_4',['isPerFrame',['../classMandrill_1_1DynamicBuffer.html#ab8f6936f55d3d2c5e0ed2a8d461e9d82',1,'Mandrill::DynamicBuffer']]],
+  ['isvalid_5',['isValid',['../classMandrill_1_1MLP.html#af213402c44b45ef3d02d87baca5c9859',1,'Mandrill::MLP']]]
 ];

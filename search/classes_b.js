@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['scene_0',['Scene',['../classMandrill_1_1Scene.html',1,'Mandrill']]],
-  ['shader_1',['Shader',['../classMandrill_1_1Shader.html',1,'Mandrill']]],
-  ['swapchain_2',['Swapchain',['../classMandrill_1_1Swapchain.html',1,'Mandrill']]]
+  ['raytracingpipeline_0',['RayTracingPipeline',['../classMandrill_1_1RayTracingPipeline.html',1,'Mandrill']]],
+  ['rendergraph_1',['RenderGraph',['../classMandrill_1_1RenderGraph.html',1,'Mandrill']]],
+  ['resourceinfo_2',['ResourceInfo',['../structMandrill_1_1Shader_1_1ResourceInfo.html',1,'Mandrill::Shader']]]
 ];

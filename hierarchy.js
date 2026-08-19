@@ -13,6 +13,8 @@ var hierarchy =
     [ "Mandrill::Image", "classMandrill_1_1Image.html", null ],
     [ "Mandrill::Layout", "classMandrill_1_1Layout.html", null ],
     [ "Mandrill::Log", "classMandrill_1_1Log.html", null ],
+    [ "Mandrill::MLP", "classMandrill_1_1MLP.html", null ],
+    [ "Mandrill::MLPLocations", "structMandrill_1_1MLPLocations.html", null ],
     [ "Mandrill::Node", "classMandrill_1_1Node.html", null ],
     [ "Mandrill::Pass", "classMandrill_1_1Pass.html", null ],
     [ "Mandrill::Pipeline", "classMandrill_1_1Pipeline.html", [
