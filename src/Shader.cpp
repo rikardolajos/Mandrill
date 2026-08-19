@@ -237,11 +237,11 @@ static ptr<spv_reflect::ShaderModule> createReflections(const std::vector<uint32
 }
 
 // Should only be used for uint32_t specialization constants to get the array length
-static uint32_t getSpecializationConstant(const std::vector<VkSpecializationInfo*>& specializationInfos,
+static uint32_t getSpecializationConstant(const std::vector<const VkSpecializationInfo*>& specializationInfos,
                                           uint32_t constantId)
 {
     uint32_t value = 0xffffffff;
-    for (VkSpecializationInfo* pInfo : specializationInfos) {
+    for (const VkSpecializationInfo* pInfo : specializationInfos) {
         if (pInfo == nullptr) {
             continue;
         }

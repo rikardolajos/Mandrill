@@ -15,6 +15,7 @@
 #include "Image.h"
 #include "Layout.h"
 #include "Log.h"
+#include "MLP.h"
 #include "Pass.h"
 #include "Pipeline.h"
 #include "RayTracingPipeline.h"

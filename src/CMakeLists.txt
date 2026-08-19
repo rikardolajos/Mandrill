@@ -32,6 +32,8 @@ add_library(Mandrill SHARED
 	"Log.cpp"
 	"Log.h"
 	"Mandrill.h"
+	"MLP.cpp"
+	"MLP.h"
 	"Pass.cpp"
 	"Pass.h"
 	"Pipeline.cpp"

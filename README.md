@@ -163,6 +163,14 @@ This application shows how to use a compute shader with the `ComputePipeline.cpp
 A compute shader advances a particle simulation in a storage buffer, and a graphics pipeline then draws the same buffer as additively blended point sprites, reading the positions by vertex index instead of through a vertex buffer.
 The particle state never leaves the device after it has been seeded, so the buffer is shared between the two pipelines and ordered with buffer barriers rather than copied per frame.
 
+### NeuralNetwork
+
+This application evaluates a small multi-layer perceptron per pixel with cooperative vector instructions (`VK_NV_cooperative_vector`), using the `MLP.cpp` abstraction.
+The network is a neural image field: it was trained to map a 2D coordinate to a colour, so running it over a fullscreen triangle reproduces the image it was fitted to, and the app can show it next to the original.
+`MLP.cpp` reads the weights from file, converts them to the layout the hardware infers from, and describes the shape of the network to the shader through specialization constants, so the shader does not have to be changed when the network is.
+Train a network with `python app/NeuralNetwork/train.py`, which needs PyTorch, NumPy and Pillow.
+**(Requires a device with cooperative vector support.)**
+
 ### RayTracer
 
 Mandrill abstracts some of the ray tracing handling as well (pipeline, shader binding table, and acceleration structure creation).

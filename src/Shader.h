@@ -27,7 +27,7 @@ namespace Mandrill
         /// <summary>
         /// Optional specialization info constants
         /// </summary>
-        VkSpecializationInfo* pSpecializationInfo;
+        const VkSpecializationInfo* pSpecializationInfo;
 
         /// <summary>
         /// Shader description constructor, used to create a shader module.
@@ -37,7 +37,7 @@ namespace Mandrill
         /// <param name="stageFlags">Shader stage</param>
         /// <param name="pSpecializationInfo">Optional setup for specialization constants</param>
         MANDRILL_API ShaderDesc(std::filesystem::path filename, std::string entry, VkShaderStageFlagBits stageFlags,
-                                VkSpecializationInfo* pSpecializationInfo = nullptr)
+                                const VkSpecializationInfo* pSpecializationInfo = nullptr)
             : filename(filename), entry(entry), stageFlags(stageFlags), pSpecializationInfo(pSpecializationInfo)
         {
         }
@@ -306,7 +306,7 @@ namespace Mandrill
         std::vector<std::string> mEntries;
         std::vector<std::filesystem::path> mSrcFilenames;
         std::vector<VkShaderStageFlagBits> mStageFlags;
-        std::vector<VkSpecializationInfo*> mSpecializationInfos;
+        std::vector<const VkSpecializationInfo*> mSpecializationInfos;
 
         std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts; // One per set
         // Bindings of each set that are of a dynamic type, in ascending binding order, which is the order Vulkan
