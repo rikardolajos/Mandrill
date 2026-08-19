@@ -65,6 +65,9 @@ namespace Mandrill
         /// <summary> Version of the file format that this class reads </summary>
         static constexpr uint32_t kFileVersion = 1;
 
+        /// <summary> How many specialization constants the network is described to the shader through </summary>
+        static constexpr uint32_t kSpecializationConstantCount = 4;
+
         /// <summary>
         /// Load a network from file. Check isValid() before using it, a network that failed to load leaves the object
         /// empty rather than throwing.
@@ -140,8 +143,10 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get how many neurons each hidden layer has. Every hidden layer is the same width, which is what lets the
-        /// shader run them in a loop.
+        /// Get how many neurons the first layer produces. For the plain stack that the shader's mlpForward() runs,
+        /// where every hidden layer is the same width, this is the width of all of them, which is what lets the
+        /// shader run them in a loop. A network shaped differently loads with a warning and this is only its first
+        /// layer's output width.
         /// </summary>
         /// <returns>Width of a hidden layer</returns>
         MANDRILL_API uint32_t getHiddenWidth() const
@@ -150,9 +155,13 @@ namespace Mandrill
         }
 
         /// <summary>
-        /// Get the specialization constants that describe the network to the shader. The constant IDs are, in order,
-        /// input count, output count, layer count and hidden width, which is what app/NeuralNetwork/MLP.glsl
-        /// declares.
+        /// Get the specialization constants that describe the network to the shader, as constant IDs 0 to 3. They
+        /// are, in order, input count, output count, layer count and hidden width, which is what
+        /// app/NeuralNetwork/MLP.glsl declares.
+        ///
+        /// This covers a shader whose only specialization constants are the ones describing the network. A shader
+        /// that has constants of its own needs all of them in the one VkSpecializationInfo it is created with, so
+        /// build that with appendSpecializationConstants() instead.
         ///
         /// The returned pointer stays valid for the lifetime of the MLP.
         /// </summary>
@@ -161,6 +170,24 @@ namespace Mandrill
         {
             return isValid() ? &mSpecializationInfo : nullptr;
         }
+
+        /// <summary>
+        /// Add the constants that describe the network to a set of specialization constants that is being built up,
+        /// so that an application with constants of its own can put all of them in the one VkSpecializationInfo a
+        /// shader takes.
+        ///
+        /// The network takes kSpecializationConstantCount consecutive IDs starting at firstConstantId. The shader has
+        /// to declare them at the same IDs, which is what MLP_FIRST_CONSTANT_ID in MLP.glsl is for: define it to the
+        /// same value before including that file.
+        ///
+        /// Every specialization constant is one 32-bit word, so an application's own constants go in the same vector,
+        /// bit cast if they are floats.
+        /// </summary>
+        /// <param name="mapEntries">Map entries to append to, to be pointed at by pMapEntries</param>
+        /// <param name="values">Constant values to append to, to be pointed at by pData</param>
+        /// <param name="firstConstantId">ID the first of the network's constants gets</param>
+        MANDRILL_API void appendSpecializationConstants(std::vector<VkSpecializationMapEntry>& mapEntries,
+                                                        std::vector<uint32_t>& values, uint32_t firstConstantId) const;
 
     private:
         // One layer as it was read from file, before it is converted and packed into the parameter buffer
@@ -172,6 +199,7 @@ namespace Mandrill
         };
 
         bool readFile(const std::filesystem::path& path, std::vector<Layer>& layers);
+        void warnUnlessPlainStack(const std::filesystem::path& path, const std::vector<Layer>& layers) const;
         void createBuffers(const std::vector<Layer>& layers);
         void setupSpecializationConstants();
 
@@ -200,8 +228,8 @@ namespace Mandrill
         std::string mResourceName;
 
         // Kept alive because the specialization info points into them
-        std::array<uint32_t, 4> mSpecializationConstants = {};
-        std::array<VkSpecializationMapEntry, 4> mSpecializationMapEntries = {};
+        std::array<uint32_t, kSpecializationConstantCount> mSpecializationConstants = {};
+        std::array<VkSpecializationMapEntry, kSpecializationConstantCount> mSpecializationMapEntries = {};
         VkSpecializationInfo mSpecializationInfo = {};
     };
 } // namespace Mandrill

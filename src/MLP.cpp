@@ -69,10 +69,8 @@ bool MLP::readFile(const std::filesystem::path& path, std::vector<Layer>& layers
 
     uint32_t layerCount = readUint();
 
-    // The shader runs the hidden layers in a loop between an input layer and an output layer, so it takes at least
-    // two layers to have a network it can evaluate
-    if (layerCount < 2) {
-        Log::Error("{} has {} layers, at least 2 are needed", path.string(), layerCount);
+    if (layerCount == 0) {
+        Log::Error("{} holds no layers", path.string());
         return false;
     }
 
@@ -101,26 +99,44 @@ bool MLP::readFile(const std::filesystem::path& path, std::vector<Layer>& layers
             Log::Error("Layer {} of {} has {} outputs but {} biases", i, path.string(), layer.outputs, biasCount);
             return false;
         }
-
-        if (i > 0 && layer.inputs != layers[i - 1].outputs) {
-            Log::Error("Layer {} of {} takes {} inputs but the previous layer produces {} outputs", i, path.string(),
-                       layer.inputs, layers[i - 1].outputs);
-            return false;
-        }
     }
 
-    // The shader evaluates the hidden layers in a loop, on a cooperative vector of one fixed width, so the network
-    // has to keep the same width all the way through
-    uint32_t hiddenWidth = layers.front().outputs;
-    for (uint32_t i = 1; i < layerCount - 1; i++) {
-        if (layers[i].outputs != hiddenWidth) {
-            Log::Error("Hidden layer {} of {} is {} neurons wide, expected {} as in the first layer", i, path.string(),
-                       layers[i].outputs, hiddenWidth);
-            return false;
-        }
-    }
+    warnUnlessPlainStack(path, layers);
 
     return true;
+}
+
+void MLP::warnUnlessPlainStack(const std::filesystem::path& path, const std::vector<Layer>& layers) const
+{
+    // Nothing in this class depends on how the layers are wired together, it packs and converts them the same way
+    // whatever the topology is. The mlpForward() that comes with the framework does depend on it: it runs the hidden
+    // layers in a loop, on a cooperative vector of one fixed width, so a network shaped differently is loaded but
+    // needs a forward pass written for it.
+    static constexpr const char* kNote =
+        "the mlpForward() in MLP.glsl evaluates a plain stack of equally wide hidden layers, so this network needs a "
+        "forward pass of its own";
+
+    if (layers.size() < 2) {
+        Log::Warning("{} has a single layer, {}", path.string(), kNote);
+        return;
+    }
+
+    for (uint32_t i = 1; i < count(layers); i++) {
+        if (layers[i].inputs != layers[i - 1].outputs) {
+            Log::Warning("Layer {} of {} takes {} inputs while the previous layer produces {} outputs, {}", i,
+                         path.string(), layers[i].inputs, layers[i - 1].outputs, kNote);
+            return;
+        }
+    }
+
+    uint32_t hiddenWidth = layers.front().outputs;
+    for (uint32_t i = 1; i < count(layers) - 1; i++) {
+        if (layers[i].outputs != hiddenWidth) {
+            Log::Warning("Hidden layer {} of {} is {} neurons wide while the first layer is {}, {}", i, path.string(),
+                         layers[i].outputs, hiddenWidth, kNote);
+            return;
+        }
+    }
 }
 
 void MLP::createBuffers(const std::vector<Layer>& layers)
@@ -208,6 +224,26 @@ void MLP::setupSpecializationConstants()
         .dataSize = mSpecializationConstants.size() * sizeof(uint32_t),
         .pData = mSpecializationConstants.data(),
     };
+}
+
+void MLP::appendSpecializationConstants(std::vector<VkSpecializationMapEntry>& mapEntries,
+                                        std::vector<uint32_t>& values, uint32_t firstConstantId) const
+{
+    if (!isValid()) {
+        Log::Error("MLP::appendSpecializationConstants() - No network has been loaded");
+        return;
+    }
+
+    for (uint32_t i = 0; i < kSpecializationConstantCount; i++) {
+        // The offset has to be taken before the value is appended, it is where this value is about to land
+        mapEntries.push_back({
+            .constantID = firstConstantId + i,
+            .offset = count(values) * static_cast<uint32_t>(sizeof(uint32_t)),
+            .size = sizeof(uint32_t),
+        });
+
+        values.push_back(mSpecializationConstants[i]);
+    }
 }
 
 size_t MLP::coopVecQuerySize(uint32_t rows, uint32_t columns) const

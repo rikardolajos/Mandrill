@@ -7,6 +7,9 @@
  *
  * The network is described through specialization constants that the MLP class fills in from the file it loaded, so
  * this code does not have to be changed when the network does. Create the shader with MLP::getSpecializationInfo().
+ * A shader that has specialization constants of its own defines MLP_FIRST_CONSTANT_ID before including this file, to
+ * move the network's constants past them, and builds one combined VkSpecializationInfo with
+ * MLP::appendSpecializationConstants().
  *
  * The shader that includes this file decides what the inputs and the outputs mean, and applies whatever encoding the
  * network was trained with. Declare the block holding the network somewhere in the including shader:
@@ -39,11 +42,19 @@
 // Weights, biases and the vectors flowing between the layers are all half precision
 #define MLP_COMPONENT_TYPE gl_ComponentTypeFloat16NV
 
-// Description of the loaded network, filled in by MLP::getSpecializationInfo()
-layout(constant_id = 0) const int MLP_INPUT_COUNT = 2;
-layout(constant_id = 1) const int MLP_OUTPUT_COUNT = 3;
-layout(constant_id = 2) const int MLP_LAYER_COUNT = 4;
-layout(constant_id = 3) const int MLP_HIDDEN_WIDTH = 64;
+// Where the constants describing the network start. Define this before including this file to move them out of the
+// way of the including shader's own specialization constants, and pass the same value to
+// MLP::appendSpecializationConstants().
+#ifndef MLP_FIRST_CONSTANT_ID
+#define MLP_FIRST_CONSTANT_ID 0
+#endif
+
+// Description of the loaded network, filled in by MLP::getSpecializationInfo() or
+// MLP::appendSpecializationConstants()
+layout(constant_id = MLP_FIRST_CONSTANT_ID + 0) const int MLP_INPUT_COUNT = 2;
+layout(constant_id = MLP_FIRST_CONSTANT_ID + 1) const int MLP_OUTPUT_COUNT = 3;
+layout(constant_id = MLP_FIRST_CONSTANT_ID + 2) const int MLP_LAYER_COUNT = 4;
+layout(constant_id = MLP_FIRST_CONSTANT_ID + 3) const int MLP_HIDDEN_WIDTH = 64;
 
 // GLSL has no typedef, so the vectors that go in and out of the network are reached through these
 #define MLPInput coopvecNV<float16_t, MLP_INPUT_COUNT>
