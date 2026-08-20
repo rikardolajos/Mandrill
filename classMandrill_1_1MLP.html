@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.2.1</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;2026.8.0</span>
    </div>
   </td>
  </tr>
@@ -136,11 +136,14 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~MLP</b> ()</
 <tr class="memdesc:a878fced9e8c4a83c8a880d73b940f996"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get how many layers the network has, counting the input and the output layer.  <br /></td></tr>
 <tr class="separator:a878fced9e8c4a83c8a880d73b940f996"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac99b7397e4d03a6a682d4e943da858f4" id="r_ac99b7397e4d03a6a682d4e943da858f4"><td class="memItemLeft" align="right" valign="top">MANDRILL_API uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1MLP.html#ac99b7397e4d03a6a682d4e943da858f4">getHiddenWidth</a> () const</td></tr>
-<tr class="memdesc:ac99b7397e4d03a6a682d4e943da858f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get how many neurons each hidden layer has. Every hidden layer is the same width, which is what lets the shader run them in a loop.  <br /></td></tr>
+<tr class="memdesc:ac99b7397e4d03a6a682d4e943da858f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get how many neurons the first layer produces. For the plain stack that the shader's mlpForward() runs, where every hidden layer is the same width, this is the width of all of them, which is what lets the shader run them in a loop. A network shaped differently loads with a warning and this is only its first layer's output width.  <br /></td></tr>
 <tr class="separator:ac99b7397e4d03a6a682d4e943da858f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a081031f4ee2fef66d7a7a582e29c075d" id="r_a081031f4ee2fef66d7a7a582e29c075d"><td class="memItemLeft" align="right" valign="top">MANDRILL_API const VkSpecializationInfo *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1MLP.html#a081031f4ee2fef66d7a7a582e29c075d">getSpecializationInfo</a> () const</td></tr>
-<tr class="memdesc:a081031f4ee2fef66d7a7a582e29c075d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the specialization constants that describe the network to the shader. The constant IDs are, in order, input count, output count, layer count and hidden width, which is what app/NeuralNetwork/MLP.glsl declares.  <br /></td></tr>
+<tr class="memdesc:a081031f4ee2fef66d7a7a582e29c075d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the specialization constants that describe the network to the shader, as constant IDs 0 to 3. They are, in order, input count, output count, layer count and hidden width, which is what app/NeuralNetwork/MLP.glsl declares.  <br /></td></tr>
 <tr class="separator:a081031f4ee2fef66d7a7a582e29c075d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfbe2de7a7edfa83493b09a5309b1c0b" id="r_adfbe2de7a7edfa83493b09a5309b1c0b"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1MLP.html#adfbe2de7a7edfa83493b09a5309b1c0b">appendSpecializationConstants</a> (std::vector&lt; VkSpecializationMapEntry &gt; &amp;mapEntries, std::vector&lt; uint32_t &gt; &amp;values, uint32_t firstConstantId) const</td></tr>
+<tr class="memdesc:adfbe2de7a7edfa83493b09a5309b1c0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the constants that describe the network to a set of specialization constants that is being built up, so that an application with constants of its own can put all of them in the one VkSpecializationInfo a shader takes.  <br /></td></tr>
+<tr class="separator:adfbe2de7a7edfa83493b09a5309b1c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -148,11 +151,15 @@ Static Public Attributes</h2></td></tr>
 static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>kFileVersion</b> = 1</td></tr>
 <tr class="memdesc:a2ee73e381d4dfe3d4c457677a9c38f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version of the file format that this class reads. <br /></td></tr>
 <tr class="separator:a2ee73e381d4dfe3d4c457677a9c38f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc66db296017bc869223025a6daadac" id="r_afcc66db296017bc869223025a6daadac"><td class="memItemLeft" align="right" valign="top"><a id="afcc66db296017bc869223025a6daadac" name="afcc66db296017bc869223025a6daadac"></a>
+static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>kSpecializationConstantCount</b> = 4</td></tr>
+<tr class="memdesc:afcc66db296017bc869223025a6daadac"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many specialization constants the network is described to the shader through. <br /></td></tr>
+<tr class="separator:afcc66db296017bc869223025a6daadac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A multi-layer perceptron that is evaluated in a shader with cooperative vector instructions (VK_NV_cooperative_vector). </p>
 <p>The class only deals with the network itself: it reads the weights and biases from a file, converts them to the half-precision inferencing-optimal layout the hardware wants, and puts them in device buffers. What the inputs and the outputs of the network mean, and whether the inputs are encoded in some way before they reach it, is entirely up to the shader that runs the inference. See app/NeuralNetwork for an example, along with the GLSL side of this class in app/NeuralNetwork/MLP.glsl.</p>
-<p>The network is described to the shader through specialization constants, so the shader can be written once and compiled for whichever network was loaded. <a class="el" href="classMandrill_1_1Pass.html" title="Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan....">Pass</a> <a class="el" href="classMandrill_1_1MLP.html#a081031f4ee2fef66d7a7a582e29c075d" title="Get the specialization constants that describe the network to the shader. The constant IDs are,...">getSpecializationInfo()</a> when creating the shader.</p>
+<p>The network is described to the shader through specialization constants, so the shader can be written once and compiled for whichever network was loaded. <a class="el" href="classMandrill_1_1Pass.html" title="Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan....">Pass</a> <a class="el" href="classMandrill_1_1MLP.html#a081031f4ee2fef66d7a7a582e29c075d" title="Get the specialization constants that describe the network to the shader, as constant IDs 0 to 3....">getSpecializationInfo()</a> when creating the shader.</p>
 <p>The file format is a flat binary that app/NeuralNetwork/train.py writes:</p>
 <p><code> uint32 version, kFileVersion uint32 layerCount for each layer: uint32 outputs, rows of the weight matrix uint32 inputs, columns of the weight matrix float[outputs*inputs] weights, row major uint32 biasCount, equal to outputs float[biasCount] biases </code></p>
 <p>This is the order PyTorch enumerates the parameters of a Sequential of Linear layers in, so writing it out is a matter of dumping named_parameters() as they come. </p>
@@ -195,6 +202,52 @@ static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="adfbe2de7a7edfa83493b09a5309b1c0b" name="adfbe2de7a7edfa83493b09a5309b1c0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfbe2de7a7edfa83493b09a5309b1c0b">&#9670;&#160;</a></span>appendSpecializationConstants()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MLP::appendSpecializationConstants </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; VkSpecializationMapEntry &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapEntries</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>firstConstantId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add the constants that describe the network to a set of specialization constants that is being built up, so that an application with constants of its own can put all of them in the one VkSpecializationInfo a shader takes. </p>
+<p>The network takes kSpecializationConstantCount consecutive IDs starting at firstConstantId. The shader has to declare them at the same IDs, which is what MLP_FIRST_CONSTANT_ID in MLP.glsl is for: define it to the same value before including that file.</p>
+<p>Every specialization constant is one 32-bit word, so an application's own constants go in the same vector, bit cast if they are floats.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mapEntries</td><td>Map entries to append to, to be pointed at by pMapEntries</td></tr>
+    <tr><td class="paramname">values</td><td>Constant values to append to, to be pointed at by pData</td></tr>
+    <tr><td class="paramname">firstConstantId</td><td>ID the first of the network's constants gets</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ac8992535165a08c02796df7279d96714" name="ac8992535165a08c02796df7279d96714"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac8992535165a08c02796df7279d96714">&#9670;&#160;</a></span>attachTo()</h2>
 
@@ -292,7 +345,7 @@ static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>
 </table>
 </div><div class="memdoc">
 
-<p>Get how many neurons each hidden layer has. Every hidden layer is the same width, which is what lets the shader run them in a loop. </p>
+<p>Get how many neurons the first layer produces. For the plain stack that the shader's mlpForward() runs, where every hidden layer is the same width, this is the width of all of them, which is what lets the shader run them in a loop. A network shaped differently loads with a warning and this is only its first layer's output width. </p>
 <dl class="section return"><dt>Returns</dt><dd>Width of a hidden layer</dd></dl>
 
 </div>
@@ -432,7 +485,8 @@ static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>
 </table>
 </div><div class="memdoc">
 
-<p>Get the specialization constants that describe the network to the shader. The constant IDs are, in order, input count, output count, layer count and hidden width, which is what app/NeuralNetwork/MLP.glsl declares. </p>
+<p>Get the specialization constants that describe the network to the shader, as constant IDs 0 to 3. They are, in order, input count, output count, layer count and hidden width, which is what app/NeuralNetwork/MLP.glsl declares. </p>
+<p>This covers a shader whose only specialization constants are the ones describing the network. A shader that has constants of its own needs all of them in the one VkSpecializationInfo it is created with, so build that with <a class="el" href="classMandrill_1_1MLP.html#adfbe2de7a7edfa83493b09a5309b1c0b" title="Add the constants that describe the network to a set of specialization constants that is being built ...">appendSpecializationConstants()</a> instead.</p>
 <p>The returned pointer stays valid for the lifetime of the <a class="el" href="classMandrill_1_1MLP.html" title="A multi-layer perceptron that is evaluated in a shader with cooperative vector instructions (VK_NV_co...">MLP</a>.</p>
 <dl class="section return"><dt>Returns</dt><dd>Specialization info to pass to ShaderDesc, or nullptr if no network was loaded</dd></dl>
 

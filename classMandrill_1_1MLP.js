@@ -2,6 +2,7 @@ var classMandrill_1_1MLP =
 [
     [ "MLP", "classMandrill_1_1MLP.html#a7fba12f6897af04a3fcfda05e86b79c9", null ],
     [ "~MLP", "classMandrill_1_1MLP.html#a56225921399a54b0741e3d0778cf3026", null ],
+    [ "appendSpecializationConstants", "classMandrill_1_1MLP.html#adfbe2de7a7edfa83493b09a5309b1c0b", null ],
     [ "attachTo", "classMandrill_1_1MLP.html#ac8992535165a08c02796df7279d96714", null ],
     [ "bind", "classMandrill_1_1MLP.html#a2a09483e1507c12b335db9fd13055a65", null ],
     [ "getHiddenWidth", "classMandrill_1_1MLP.html#ac99b7397e4d03a6a682d4e943da858f4", null ],

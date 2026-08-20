@@ -17,12 +17,13 @@ var searchData=
   ['api_20reference_14',['API Reference',['../index.html#autotoc_md1',1,'']]],
   ['app_15',['app',['../classMandrill_1_1App.html',1,'Mandrill::App'],['../classMandrill_1_1App.html#af094ff59ebaf7aea013ea752ba9070f9',1,'Mandrill::App::App(const std::string &amp;title, uint32_t width=1280, uint32_t height=720)']]],
   ['appcursorposcallback_16',['appCursorPosCallback',['../classMandrill_1_1App.html#ada74f8132a06ca5997d509ca615a1dea',1,'Mandrill::App']]],
-  ['appgui_17',['appGUI',['../classMandrill_1_1App.html#a33d6beea3d8f84354a65d1aa30c7b79e',1,'Mandrill::App']]],
-  ['appkeycallback_18',['appKeyCallback',['../classMandrill_1_1App.html#ae3c5d5b0a80e66407a8bd7d63e0912ad',1,'Mandrill::App']]],
-  ['appmousebuttoncallback_19',['appMouseButtonCallback',['../classMandrill_1_1App.html#aa889cfe105c6c1f781b62472268cc648',1,'Mandrill::App']]],
-  ['apps_20',['Apps',['../index.html#autotoc_md6',1,'']]],
-  ['as_20submodule_21',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
-  ['at_22',['at',['../classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459',1,'Mandrill::DynamicBuffer']]],
-  ['attachto_23',['attachTo',['../classMandrill_1_1MLP.html#ac8992535165a08c02796df7279d96714',1,'Mandrill::MLP']]],
-  ['attributedescriptions_24',['attributeDescriptions',['../structMandrill_1_1PipelineDesc.html#ac450aa20425e4997c3b8256b8e1d13a1',1,'Mandrill::PipelineDesc']]]
+  ['appendspecializationconstants_17',['appendSpecializationConstants',['../classMandrill_1_1MLP.html#adfbe2de7a7edfa83493b09a5309b1c0b',1,'Mandrill::MLP']]],
+  ['appgui_18',['appGUI',['../classMandrill_1_1App.html#a33d6beea3d8f84354a65d1aa30c7b79e',1,'Mandrill::App']]],
+  ['appkeycallback_19',['appKeyCallback',['../classMandrill_1_1App.html#ae3c5d5b0a80e66407a8bd7d63e0912ad',1,'Mandrill::App']]],
+  ['appmousebuttoncallback_20',['appMouseButtonCallback',['../classMandrill_1_1App.html#aa889cfe105c6c1f781b62472268cc648',1,'Mandrill::App']]],
+  ['apps_21',['Apps',['../index.html#autotoc_md6',1,'']]],
+  ['as_20submodule_22',['Setting up a new project with Mandrill as submodule',['../index.html#autotoc_md5',1,'']]],
+  ['at_23',['at',['../classMandrill_1_1DynamicBuffer.html#abfa6bfcc3ab0ad66641e430ec896f459',1,'Mandrill::DynamicBuffer']]],
+  ['attachto_24',['attachTo',['../classMandrill_1_1MLP.html#ac8992535165a08c02796df7279d96714',1,'Mandrill::MLP']]],
+  ['attributedescriptions_25',['attributeDescriptions',['../structMandrill_1_1PipelineDesc.html#ac450aa20425e4997c3b8256b8e1d13a1',1,'Mandrill::PipelineDesc']]]
 ];
