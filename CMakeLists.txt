@@ -14,7 +14,7 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-project("Mandrill" VERSION 2026.2.1)
+project("Mandrill" VERSION 2026.8.0)
 
 # Whether sample apps should be built or not
 option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)
