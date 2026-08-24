@@ -72,6 +72,15 @@ namespace Mandrill
                                           VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_MAX_ENUM);
 
         /// <summary>
+        /// Save the image to a PNG file. The image is blitted to a host-visible staging image first, so it has to be
+        /// single-sampled, created with VK_IMAGE_USAGE_TRANSFER_SRC_BIT, and left in
+        /// VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, which is where Pass::end() leaves the output of a pass. This is how
+        /// a headless application gets its rendering out, in place of the screenshots App takes from the swapchain.
+        /// </summary>
+        /// <param name="path">File to write to</param>
+        MANDRILL_API void saveToPNG(const std::filesystem::path& path) const;
+
+        /// <summary>
         /// Get the VkImage handle.
         /// </summary>
         /// <returns>VkImage handle</returns>

@@ -145,6 +145,18 @@ The applications provided in this repository can be found in the `app` folder, a
 This is a minimal app, with rendering of a single textured billboard.
 Custom vertex and index buffers are used to draw the mesh, and the Mandrill descriptor abstraction is used. 
 
+### HeadlessSample
+
+This is SampleApp rendered without a window.
+Passing `nullptr` instead of a window to `Device` gives a headless device: no surface is created, the swapchain extension is left out and GLFW is never initialized, so the app runs where no display is available.
+Since there is nothing to present to, the app does not inherit `App` at all – it owns its own render loop built on `Helpers::cmdBegin()` and `Helpers::cmdEnd()`, and the resolution and format come from the `Pass` rather than from a swapchain.
+The last frame is written to `HeadlessSample.png` with `Image::saveToPNG()`, which is what takes the place of the screenshots `App` grabs from the swapchain.
+Resolution and frame count can be given on the command line:
+
+	./HeadlessSample.bin 1920 1080 120
+
+(On Windows, run `HeadlessSample.exe` instead.)
+
 ### SceneViewer
 
 The scene viewer uses the `Scene.cpp` scene abstraction that allows for loading meshes from Wavefront OBJ files.

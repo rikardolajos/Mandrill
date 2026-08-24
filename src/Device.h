@@ -46,7 +46,9 @@ namespace Mandrill
         /// <summary>
         /// Device that abstracts the physical and logical device, and their features and properties.
         /// </summary>
-        /// <param name="pWindow">GLFW window to create render context for</param>
+        /// <param name="pWindow">GLFW window to create render context for. Pass nullptr to get a headless
+        /// device, which has no surface and no swapchain, and renders into its own images instead of
+        /// presenting</param>
         /// <param name="extensions">Extra device extensions to activate</param>
         /// <param name="pFeatures">Pointer to a pNext-chain of features to link with when creating device, can be
         /// nullptr in which case a set of required default features will be used</param> <param
@@ -102,16 +104,26 @@ namespace Mandrill
         /// <summary>
         /// Get the window that the device is bound to.
         /// </summary>
-        /// <returns>A GLFWwindow pointer</returns>
+        /// <returns>A GLFWwindow pointer, or nullptr if the device is headless</returns>
         MANDRILL_API GLFWwindow* getWindow() const
         {
             return mpWindow;
         }
 
         /// <summary>
+        /// Check if the device was created without a window. A headless device has no surface and no swapchain, so
+        /// an application has to drive it with a loop of its own and read the rendered images back itself.
+        /// </summary>
+        /// <returns>True if the device is headless, otherwise false</returns>
+        MANDRILL_API bool isHeadless() const
+        {
+            return mpWindow == nullptr;
+        }
+
+        /// <summary>
         /// Get the presentation surface of the application.
         /// </summary>
-        /// <returns>The current VkSurfaceKHR</returns>
+        /// <returns>The current VkSurfaceKHR, or VK_NULL_HANDLE if the device is headless</returns>
         MANDRILL_API VkSurfaceKHR getSurface() const
         {
             return mSurface;
@@ -377,9 +389,10 @@ namespace Mandrill
         MANDRILL_API ptr<Shader> createShader(const std::vector<ShaderDesc>& desc);
 
         /// <summary>
-        /// Create a new swapchain. How many frames it keeps in flight is decided by the device.
+        /// Create a new swapchain. How many frames it keeps in flight is decided by the device. A headless device
+        /// has nothing to present to, so it cannot create one.
         /// </summary>
-        /// <returns>A new swapchain</returns>
+        /// <returns>A new swapchain, or nullptr if the device is headless</returns>
         MANDRILL_API ptr<Swapchain> createSwapchain();
 
         /// <summary>
@@ -445,7 +458,7 @@ namespace Mandrill
         VkInstance mInstance;
         VkPhysicalDevice mPhysicalDevice;
         VkDevice mDevice;
-        VkSurfaceKHR mSurface;
+        VkSurfaceKHR mSurface = VK_NULL_HANDLE;
 
         DeviceProperties mProperties;
 

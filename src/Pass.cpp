@@ -274,8 +274,9 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
     }
 
     if (sampleCount != VK_SAMPLE_COUNT_1_BIT) {
+        // Resolving requires the resolve attachment to have the same format as the attachment being resolved
         mpResolveAttachment = make_ptr<Image>(mpDevice, mExtent.width, mExtent.height, 1, 1, VK_SAMPLE_COUNT_1_BIT,
-                                              VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+                                              mFormats[0], VK_IMAGE_TILING_OPTIMAL,
                                               VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 

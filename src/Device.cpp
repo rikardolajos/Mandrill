@@ -173,19 +173,24 @@ void Device::createInstance()
     };
 
     uint32_t n;
-    glfwGetRequiredInstanceExtensions(&n);
-    const char** tmp = glfwGetRequiredInstanceExtensions(&n);
+    std::vector<const char*> extensions;
 
-    if (!tmp) {
-        Log::Error("No Vulkan instance extensions found for GLFW.");
-        Check::GLFW();
-    }
+    // A headless device presents to nothing, so it needs no surface extensions from GLFW (and GLFW does not even
+    // have to be initialized)
+    if (!isHeadless()) {
+        const char** tmp = glfwGetRequiredInstanceExtensions(&n);
 
-    std::vector<const char*> extensions(tmp, tmp + n);
+        if (!tmp) {
+            Log::Error("No Vulkan instance extensions found for GLFW.");
+            Check::GLFW();
+        }
 
-    Log::Debug("GLFW required instance extensions ({}):", n);
-    for (auto& e : extensions) {
-        Log::Debug(" * {}", e);
+        extensions.assign(tmp, tmp + n);
+
+        Log::Debug("GLFW required instance extensions ({}):", n);
+        for (auto& e : extensions) {
+            Log::Debug(" * {}", e);
+        }
     }
 
     VkInstanceCreateInfo ci = {
@@ -299,12 +304,14 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
         return std::numeric_limits<uint32_t>::max();
     }
 
-    // Check that the selected queue family supports PRESENT
-    VkBool32 supported;
-    Check::Vk(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &supported));
-    if (!supported) {
-        Log::Error("Selected queue family does not support PRESENT");
-        return std::numeric_limits<uint32_t>::max();
+    // Check that the selected queue family supports PRESENT, unless the device is headless and has no surface
+    if (surface) {
+        VkBool32 supported;
+        Check::Vk(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &supported));
+        if (!supported) {
+            Log::Error("Selected queue family does not support PRESENT");
+            return std::numeric_limits<uint32_t>::max();
+        }
     }
 
     return index;
@@ -313,10 +320,6 @@ static uint32_t getQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkSurfaceKH
 void Device::createDevice(const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures2* pFeatures,
                           uint32_t physicalDeviceIndex)
 {
-    std::array baseExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-    };
-
     std::vector<const char*> raytracingExtensions = {
         VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
         VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
@@ -324,7 +327,10 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
     };
 
     std::vector<const char*> deviceExtensions;
-    deviceExtensions.insert(deviceExtensions.end(), baseExtensions.begin(), baseExtensions.end());
+    // A headless device has no swapchain to present through
+    if (!isHeadless()) {
+        deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+    }
     deviceExtensions.insert(deviceExtensions.end(), extensions.begin(), extensions.end());
 
     // Iterate all physical devices
@@ -511,6 +517,11 @@ void Device::createCommandPool()
 
 void Device::createSurface()
 {
+    // A headless device has no window to present to
+    if (isHeadless()) {
+        return;
+    }
+
     Check::Vk(glfwCreateWindowSurface(mInstance, mpWindow, nullptr, &mSurface));
 }
 
@@ -634,6 +645,11 @@ ptr<Shader> Device::createShader(const std::vector<ShaderDesc>& desc)
 
 ptr<Swapchain> Device::createSwapchain()
 {
+    if (isHeadless()) {
+        Log::Error("A headless device has no surface and can not create a swapchain");
+        return nullptr;
+    }
+
     return make_ptr<Swapchain>(shared_from_this());
 }
 

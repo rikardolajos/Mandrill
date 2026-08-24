@@ -125,6 +125,73 @@ Image::~Image()
     vkDestroyImage(mpDevice->getDevice(), mImage, nullptr);
 }
 
+void Image::saveToPNG(const std::filesystem::path& path) const
+{
+    if (!(mUsage & VK_IMAGE_USAGE_TRANSFER_SRC_BIT)) {
+        Log::Error("Unable to save an image that was not created with VK_IMAGE_USAGE_TRANSFER_SRC_BIT");
+        return;
+    }
+
+    // Blit into a linear host-visible image, which also converts whatever format the image has into the one that is
+    // written to file
+    auto pStage = make_ptr<Image>(mpDevice, mWidth, mHeight, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
+                                  VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+    VkCommandBuffer cmd = Helpers::cmdBegin(mpDevice);
+
+    Helpers::imageBarrier(cmd, pStage->getImage(), VK_PIPELINE_STAGE_2_NONE, VK_ACCESS_2_NONE,
+                          VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    VkImageSubresourceLayers subresourceLayers = {
+        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+        .mipLevel = 0,
+        .baseArrayLayer = 0,
+        .layerCount = 1,
+    };
+
+    int32_t width = static_cast<int32_t>(mWidth);
+    int32_t height = static_cast<int32_t>(mHeight);
+
+    VkImageBlit2 region = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
+        .srcSubresource = subresourceLayers,
+        .srcOffsets = {{0, 0, 0}, {width, height, 1}},
+        .dstSubresource = subresourceLayers,
+        .dstOffsets = {{0, 0, 0}, {width, height, 1}},
+    };
+
+    VkBlitImageInfo2 blitImageInfo = {
+        .sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2,
+        .srcImage = mImage,
+        .srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        .dstImage = pStage->getImage(),
+        .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        .regionCount = 1,
+        .pRegions = &region,
+        .filter = VK_FILTER_NEAREST,
+    };
+
+    vkCmdBlitImage2(cmd, &blitImageInfo);
+
+    // Make the blit visible to the host
+    Helpers::imageBarrier(cmd, pStage->getImage(), VK_PIPELINE_STAGE_2_BLIT_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
+                          VK_PIPELINE_STAGE_2_HOST_BIT, VK_ACCESS_2_HOST_READ_BIT,
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL);
+
+    // This waits for the queue to go idle, so the staged pixels are readable once it returns
+    Helpers::cmdEnd(mpDevice, cmd);
+
+    if (!stbi_write_png(path.string().c_str(), width, height, 4, pStage->getHostMap(),
+                        static_cast<int>(pStage->getPitch()))) {
+        Log::Error("Failed to save image to {}", path.string());
+        return;
+    }
+
+    Log::Info("Image saved to {}", std::filesystem::absolute(path).string());
+}
+
 void Image::createImageView(VkImageAspectFlags aspectFlags, VkImageViewType viewType)
 {
     if (mImageView) {
