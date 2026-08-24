@@ -36,6 +36,7 @@ var classMandrill_1_1Device =
     [ "getSurface", "classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7", null ],
     [ "getVsync", "classMandrill_1_1Device.html#a343ac488bcc2d3f6f94b3447f39c1e49", null ],
     [ "getWindow", "classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f", null ],
+    [ "isHeadless", "classMandrill_1_1Device.html#a35c8732b904afdb7b1349d91508603af", null ],
     [ "resolveFrameInFlightIndex", "classMandrill_1_1Device.html#afd35a68b47552a468c2cc39c55b0835e", null ],
     [ "setVsync", "classMandrill_1_1Device.html#a0ccdd441444ce4c29dbbcb7d15dba646", null ],
     [ "supportsRayTracing", "classMandrill_1_1Device.html#a5a406dd9143cf34f67001964573cc6fd", null ]

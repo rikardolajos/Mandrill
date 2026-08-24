@@ -16,5 +16,6 @@ var classMandrill_1_1Image =
     [ "getProperties", "classMandrill_1_1Image.html#a6ee6de76b6c7ffbf9181d41188ba5d54", null ],
     [ "getUsage", "classMandrill_1_1Image.html#a7524de6c7e8c395d5bbf7d776732be40", null ],
     [ "getWidth", "classMandrill_1_1Image.html#aedffe56ef9b9a82c257b8f7808b0e536", null ],
+    [ "saveToPNG", "classMandrill_1_1Image.html#a7b051bc73aace63632b39c7a3984a9a2", null ],
     [ "setImageView", "classMandrill_1_1Image.html#a98efa1338bf3ff4730abaeff78220ff2", null ]
 ];

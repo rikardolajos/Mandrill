@@ -119,6 +119,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Image</b> ()
 <tr class="memitem:a05736420db26db44ef7095caeae038e3" id="r_a05736420db26db44ef7095caeae038e3"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#a05736420db26db44ef7095caeae038e3">createImageView</a> (VkImageAspectFlags aspectFlags, VkImageViewType viewType=VK_IMAGE_VIEW_TYPE_MAX_ENUM)</td></tr>
 <tr class="memdesc:a05736420db26db44ef7095caeae038e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a default image view for <a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> object.  <br /></td></tr>
 <tr class="separator:a05736420db26db44ef7095caeae038e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b051bc73aace63632b39c7a3984a9a2" id="r_a7b051bc73aace63632b39c7a3984a9a2"><td class="memItemLeft" align="right" valign="top">MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#a7b051bc73aace63632b39c7a3984a9a2">saveToPNG</a> (const std::filesystem::path &amp;path) const</td></tr>
+<tr class="memdesc:a7b051bc73aace63632b39c7a3984a9a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the image to a PNG file. The image is blitted to a host-visible staging image first, so it has to be single-sampled, created with VK_IMAGE_USAGE_TRANSFER_SRC_BIT, and left in VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, which is where <a class="el" href="classMandrill_1_1Pass.html#a9a45a4f8bfe284b1e9f7551b07ec6b0d" title="End a pass.">Pass::end()</a> leaves the output of a pass. This is how a headless application gets its rendering out, in place of the screenshots <a class="el" href="classMandrill_1_1App.html" title="Base class for a Mandrill application. This class provides the basic functionality to create a window...">App</a> takes from the swapchain.  <br /></td></tr>
+<tr class="separator:a7b051bc73aace63632b39c7a3984a9a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5f84e8992b00140708f0e354bf878cf" id="r_ab5f84e8992b00140708f0e354bf878cf"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkImage&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Image.html#ab5f84e8992b00140708f0e354bf878cf">getImage</a> () const</td></tr>
 <tr class="memdesc:ab5f84e8992b00140708f0e354bf878cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the VkImage handle.  <br /></td></tr>
 <tr class="separator:ab5f84e8992b00140708f0e354bf878cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -740,6 +743,32 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Image</b> ()
 
 <p>Get the width of the image. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classMandrill_1_1Image.html" title="Image class for managing Vulkan images. This class handles the creation and destruction of images,...">Image</a> width</dd></dl>
+
+</div>
+</div>
+<a id="a7b051bc73aace63632b39c7a3984a9a2" name="a7b051bc73aace63632b39c7a3984a9a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b051bc73aace63632b39c7a3984a9a2">&#9670;&#160;</a></span>saveToPNG()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Image::saveToPNG </td>
+          <td>(</td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save the image to a PNG file. The image is blitted to a host-visible staging image first, so it has to be single-sampled, created with VK_IMAGE_USAGE_TRANSFER_SRC_BIT, and left in VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, which is where <a class="el" href="classMandrill_1_1Pass.html#a9a45a4f8bfe284b1e9f7551b07ec6b0d" title="End a pass.">Pass::end()</a> leaves the output of a pass. This is how a headless application gets its rendering out, in place of the screenshots <a class="el" href="classMandrill_1_1App.html" title="Base class for a Mandrill application. This class provides the basic functionality to create a window...">App</a> takes from the swapchain. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>File to write to</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

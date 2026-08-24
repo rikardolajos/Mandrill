@@ -33,14 +33,15 @@ var NAVTREE =
     [ "Setting up a new project with Mandrill as submodule", "index.html#autotoc_md5", null ],
     [ "Apps", "index.html#autotoc_md6", [
       [ "SampleApp", "index.html#autotoc_md7", null ],
-      [ "SceneViewer", "index.html#autotoc_md8", null ],
-      [ "SDF", "index.html#autotoc_md9", null ],
-      [ "ComputeParticles", "index.html#autotoc_md10", null ],
-      [ "NeuralNetwork", "index.html#autotoc_md11", null ],
-      [ "RayTracer", "index.html#autotoc_md12", null ],
-      [ "VolumeViewer", "index.html#autotoc_md13", null ]
+      [ "HeadlessSample", "index.html#autotoc_md8", null ],
+      [ "SceneViewer", "index.html#autotoc_md9", null ],
+      [ "SDF", "index.html#autotoc_md10", null ],
+      [ "ComputeParticles", "index.html#autotoc_md11", null ],
+      [ "NeuralNetwork", "index.html#autotoc_md12", null ],
+      [ "RayTracer", "index.html#autotoc_md13", null ],
+      [ "VolumeViewer", "index.html#autotoc_md14", null ]
     ] ],
-    [ "OpenVDB", "index.html#autotoc_md14", null ],
+    [ "OpenVDB", "index.html#autotoc_md15", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", null ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -68,7 +69,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8h_source.html",
-"classMandrill_1_1Pass.html#ae40a8f2842435d5f2c40970bdda57e99"
+"classMandrill_1_1Pass.html#ac9faaa61feb8f6f1e57b266679482595"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

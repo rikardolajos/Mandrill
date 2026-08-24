@@ -131,6 +131,9 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memitem:a9eeb85d2d99854da4c5c080ee2c4834f" id="r_a9eeb85d2d99854da4c5c080ee2c4834f"><td class="memItemLeft" align="right" valign="top">MANDRILL_API GLFWwindow *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a9eeb85d2d99854da4c5c080ee2c4834f">getWindow</a> () const</td></tr>
 <tr class="memdesc:a9eeb85d2d99854da4c5c080ee2c4834f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the window that the device is bound to.  <br /></td></tr>
 <tr class="separator:a9eeb85d2d99854da4c5c080ee2c4834f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35c8732b904afdb7b1349d91508603af" id="r_a35c8732b904afdb7b1349d91508603af"><td class="memItemLeft" align="right" valign="top">MANDRILL_API bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a35c8732b904afdb7b1349d91508603af">isHeadless</a> () const</td></tr>
+<tr class="memdesc:a35c8732b904afdb7b1349d91508603af"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the device was created without a window. A headless device has no surface and no swapchain, so an application has to drive it with a loop of its own and read the rendered images back itself.  <br /></td></tr>
+<tr class="separator:a35c8732b904afdb7b1349d91508603af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2f825009e45e3432532aa9671944ff7" id="r_ad2f825009e45e3432532aa9671944ff7"><td class="memItemLeft" align="right" valign="top">MANDRILL_API VkSurfaceKHR&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#ad2f825009e45e3432532aa9671944ff7">getSurface</a> () const</td></tr>
 <tr class="memdesc:ad2f825009e45e3432532aa9671944ff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the presentation surface of the application.  <br /></td></tr>
 <tr class="separator:ad2f825009e45e3432532aa9671944ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,7 +219,7 @@ MANDRILL_API&#160;</td><td class="memItemRight" valign="bottom"><b>~Device</b> (
 <tr class="memdesc:a42372a30f593de4d78fbac6927a4ec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new shader.  <br /></td></tr>
 <tr class="separator:a42372a30f593de4d78fbac6927a4ec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6da2c9a413ca0d8f5bc736f64c2b97ac" id="r_a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Swapchain.html">Swapchain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a6da2c9a413ca0d8f5bc736f64c2b97ac">createSwapchain</a> ()</td></tr>
-<tr class="memdesc:a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain. How many frames it keeps in flight is decided by the device.  <br /></td></tr>
+<tr class="memdesc:a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new swapchain. How many frames it keeps in flight is decided by the device. A headless device has nothing to present to, so it cannot create one.  <br /></td></tr>
 <tr class="separator:a6da2c9a413ca0d8f5bc736f64c2b97ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bde5d20fd6e42b0fe49463dd11be333" id="r_a5bde5d20fd6e42b0fe49463dd11be333"><td class="memItemLeft" align="right" valign="top">MANDRILL_API ptr&lt; <a class="el" href="classMandrill_1_1Texture.html">Texture</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMandrill_1_1Device.html#a5bde5d20fd6e42b0fe49463dd11be333">createTextureFromFile</a> (TextureType type, VkFormat format, const std::filesystem::path &amp;path, bool mipmaps=false)</td></tr>
 <tr class="memdesc:a5bde5d20fd6e42b0fe49463dd11be333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new texture from a file.  <br /></td></tr>
@@ -284,7 +287,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></
 <p><a class="el" href="classMandrill_1_1Device.html" title="Device class abstracting the physical and logical Vulkan device, as well as handling extensions and f...">Device</a> that abstracts the physical and logical device, and their features and properties. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pWindow</td><td>GLFW window to create render context for</td></tr>
+    <tr><td class="paramname">pWindow</td><td>GLFW window to create render context for. <a class="el" href="classMandrill_1_1Pass.html" title="Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan....">Pass</a> nullptr to get a headless device, which has no surface and no swapchain, and renders into its own images instead of presenting</td></tr>
     <tr><td class="paramname">extensions</td><td>Extra device extensions to activate</td></tr>
     <tr><td class="paramname">pFeatures</td><td>Pointer to a pNext-chain of features to link with when creating device, can be nullptr in which case a set of required default features will be used</td></tr>
     <tr><td class="paramname">physicalDeviceIndex</td><td>Physical device to use. If not set, the first discrete device is used, or device 0.</td></tr>
@@ -1052,8 +1055,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></
       </table>
 </div><div class="memdoc">
 
-<p>Create a new swapchain. How many frames it keeps in flight is decided by the device. </p>
-<dl class="section return"><dt>Returns</dt><dd>A new swapchain</dd></dl>
+<p>Create a new swapchain. How many frames it keeps in flight is decided by the device. A headless device has nothing to present to, so it cannot create one. </p>
+<dl class="section return"><dt>Returns</dt><dd>A new swapchain, or nullptr if the device is headless</dd></dl>
 
 </div>
 </div>
@@ -1523,7 +1526,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></
 </div><div class="memdoc">
 
 <p>Get the presentation surface of the application. </p>
-<dl class="section return"><dt>Returns</dt><dd>The current VkSurfaceKHR</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The current VkSurfaceKHR, or VK_NULL_HANDLE if the device is headless</dd></dl>
 
 </div>
 </div>
@@ -1579,7 +1582,35 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Swapchain</b></td></
 </div><div class="memdoc">
 
 <p>Get the window that the device is bound to. </p>
-<dl class="section return"><dt>Returns</dt><dd>A GLFWwindow pointer</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A GLFWwindow pointer, or nullptr if the device is headless</dd></dl>
+
+</div>
+</div>
+<a id="a35c8732b904afdb7b1349d91508603af" name="a35c8732b904afdb7b1349d91508603af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35c8732b904afdb7b1349d91508603af">&#9670;&#160;</a></span>isHeadless()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MANDRILL_API bool Mandrill::Device::isHeadless </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceMandrill_1_1Check.html" title="Namespace with error checking functions for Mandrill.">Check</a> if the device was created without a window. A headless device has no surface and no swapchain, so an application has to drive it with a loop of its own and read the rendered images back itself. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if the device is headless, otherwise false</dd></dl>
 
 </div>
 </div>
