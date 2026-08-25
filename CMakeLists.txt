@@ -14,7 +14,14 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-project("Mandrill" VERSION 2026.8.1)
+# Get the Mandrill version from git tags, or fallback to 1.0.0 if not available
+set(MANDRILL_VERSION_FALLBACK "1.0.0")
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/MandrillVersion.cmake)
+mandrill_version(${CMAKE_CURRENT_LIST_DIR} MANDRILL_VERSION MANDRILL_VERSION_STRING)
+
+project("Mandrill" VERSION ${MANDRILL_VERSION})
+
+message(STATUS "Mandrill version: ${MANDRILL_VERSION_STRING}")
 
 # Whether sample apps should be built or not
 option(MANDRILL_EXCLUDE_APPS "Exclude apps from build" OFF)

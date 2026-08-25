@@ -22,7 +22,7 @@ static void errorCallback(int errorCode, const char* pDescription)
 
 App::App(const std::string& title, uint32_t width, uint32_t height) : mWidth(width), mHeight(height)
 {
-    Log::Info("=== Mandrill {}.{}.{} ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR, MANDRILL_VERSION_PATCH);
+    Log::Info("=== Mandrill {} ===", MANDRILL_VERSION_STRING);
 
     Log::Info("Initializing GLFW");
     initGLFW(title, width, height);
@@ -406,8 +406,7 @@ void App::baseGUI(ptr<Device> pDevice, ptr<Swapchain> pSwapchain, std::vector<pt
         glfwGetWindowSize(mpWindow, &width, &height);
         ImGui::SetNextWindowPos(ImVec2(0.5f * width, 0.5f * height), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         if (ImGui::Begin("About", &mShowAbout, flags)) {
-            ImGui::Text("%s v%d.%d.%d", MANDRILL_NAME, MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR,
-                        MANDRILL_VERSION_PATCH);
+            ImGui::Text("%s v%s", MANDRILL_NAME, MANDRILL_VERSION_STRING);
             ImGui::Text(
                 "This is an education and research graphics framework based on Vulkan, written and used at Lund "
                 "University.");

@@ -75,6 +75,9 @@
 #ifndef MANDRILL_VERSION_PATCH
 #error "Missing patch version number"
 #endif
+#ifndef MANDRILL_VERSION_STRING
+#error "Missing version string"
+#endif
 
 // Platform
 #define MANDRILL_PLATFORM_WINDOWS 1

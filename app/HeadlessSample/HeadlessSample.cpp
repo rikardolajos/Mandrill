@@ -63,8 +63,7 @@ public:
 
     HeadlessSample(uint32_t width, uint32_t height)
     {
-        Log::Info("=== Mandrill {}.{}.{} (headless) ===", MANDRILL_VERSION_MAJOR, MANDRILL_VERSION_MINOR,
-                  MANDRILL_VERSION_PATCH);
+        Log::Info("=== Mandrill {} (headless) ===", MANDRILL_VERSION_STRING);
 
         // Create a Vulkan instance and device. Passing no window gives a headless device: no surface is created, the
         // swapchain extension is left out, and GLFW is never initialized. Nothing is presented, so frames are never
