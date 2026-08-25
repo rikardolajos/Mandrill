@@ -435,6 +435,8 @@ void Device::createDevice(const std::vector<const char*>& extensions, VkPhysical
         .features =
             {
                 .independentBlend = VK_TRUE,
+                .geometryShader = VK_TRUE,
+                .tessellationShader = VK_TRUE,
                 .fillModeNonSolid = VK_TRUE,
                 .wideLines = VK_TRUE,
                 .largePoints = VK_TRUE,
