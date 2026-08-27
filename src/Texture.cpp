@@ -85,13 +85,7 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
         openvdb::io::File file(path.string());
         file.open();
 
-        Log::Debug("Grids in volume:");
-        for (auto iter = file.beginName(); iter != file.endName(); ++iter) {
-            Log::Debug("\t{}", *iter);
-        }
-
-        auto found = std::find_if(file.beginName(), file.endName(), [](const auto& grid) { return grid == "density"; });
-        if (found == file.endName()) {
+        if (!file.hasGrid("density")) {
             Log::Error("Density grid not found in volume");
         }
 
