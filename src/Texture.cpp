@@ -82,6 +82,9 @@ Texture::Texture(ptr<Device> pDevice, TextureType type, VkFormat format, const s
     }
     case TextureType::Texture3D: {
 #ifdef MANDRILL_USE_OPENVDB
+        // For headless mode, this needs to be called before any OpenVDB functions are used
+        openvdb::initialize();
+
         openvdb::io::File file(path.string());
         file.open();
 
