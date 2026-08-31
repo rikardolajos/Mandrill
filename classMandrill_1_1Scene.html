@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-3-gefc7a46</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-4-gbd4eea9</span>
    </div>
   </td>
  </tr>
@@ -414,22 +414,22 @@ MANDRILL_API void&#160;</td><td class="memItemRight" valign="bottom"><b>compile<
 <tr>
 <td>mesh </td><td><a class="el" href="classMandrill_1_1Node.html" title="Scene node class for managing a single node in a scene graph. This class can hold meshes and transfor...">Node</a> model matrix (mat4) </td><td>uniform block named *Dynamic </td></tr>
 <tr>
-<td>materialParams </td><td>Material parameters (struct MaterialParams) </td><td>uniform block </td></tr>
+<td>materialParams </td><td>Material parameters (struct <a class="el" href="structMandrill_1_1MaterialParams.html" title="Material parameters on glTF&#39;s metallic-roughness basis, which is what both loaders convert into....">MaterialParams</a>) </td><td>uniform block </td></tr>
 <tr>
-<td>diffuseTexture </td><td>Material diffuse texture </td><td>sampler2D </td></tr>
+<td>baseColorTexture </td><td>Material base color texture </td><td>sampler2D </td></tr>
 <tr>
-<td>specularTexture </td><td>Material specular texture </td><td>sampler2D </td></tr>
+<td>metallicRoughnessTexture </td><td>Material metallic (blue) and roughness (green) texture </td><td>sampler2D </td></tr>
 <tr>
-<td>ambientTexture </td><td>Material ambient texture </td><td>sampler2D </td></tr>
+<td>occlusionTexture </td><td>Material ambient occlusion texture (red) </td><td>sampler2D </td></tr>
 <tr>
-<td>emissionTexture </td><td>Material emission texture </td><td>sampler2D </td></tr>
+<td>emissiveTexture </td><td>Material emissive texture </td><td>sampler2D </td></tr>
 <tr>
 <td>normalTexture </td><td>Material normal texture </td><td>sampler2D </td></tr>
 <tr>
 <td>environmentMap </td><td>Environment map texture </td><td>sampler2D, optional </td></tr>
 </table>
 <p>The camera and the node transforms live in one buffer each that is rebound with a dynamic offset, which is why their blocks have to be named with a *Dynamic suffix. They are bound with different offsets, so they have to be in separate sets.</p>
-<p>A whole material is bound in one go for every mesh, so the material resources all have to share one set, declared in the order they are listed above. That set is found from diffuseTexture.</p>
+<p>A whole material is bound in one go for every mesh, so the material resources all have to share one set, declared in the order they are listed above. That set is found from baseColorTexture.</p>
 <p>Only the environment map is optional. A shader that does not declare it simply renders without one.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

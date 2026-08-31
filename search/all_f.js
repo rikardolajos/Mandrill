@@ -15,5 +15,6 @@ var searchData=
   ['requestscreenshot_12',['requestScreenshot',['../classMandrill_1_1Swapchain.html#a11a163aa43bf72b63879ec0f9f131d49',1,'Mandrill::Swapchain']]],
   ['resolveframeinflightindex_13',['resolveFrameInFlightIndex',['../classMandrill_1_1Device.html#afd35a68b47552a468c2cc39c55b0835e',1,'Mandrill::Device']]],
   ['resourceinfo_14',['ResourceInfo',['../structMandrill_1_1Shader_1_1ResourceInfo.html',1,'Mandrill::Shader']]],
-  ['run_15',['run',['../classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1',1,'Mandrill::App']]]
+  ['roughness_15',['roughness',['../structMandrill_1_1MaterialParams.html#a4857b86a81abddfd114782c99f16c8cb',1,'Mandrill::MaterialParams']]],
+  ['run_16',['run',['../classMandrill_1_1App.html#ae09dc71078b64c56c673b1ad1d25b5d1',1,'Mandrill::App']]]
 ];

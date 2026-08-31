@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['weightoffsets_0',['weightOffsets',['../structMandrill_1_1MLPLocations.html#a432bb604efd1485f212b4ae1f38dc992',1,'Mandrill::MLPLocations']]]
+  ['occlusionstrength_0',['occlusionStrength',['../structMandrill_1_1MaterialParams.html#ab6ef26d25028ce6af0cecda4f965df42',1,'Mandrill::MaterialParams']]]
 ];
