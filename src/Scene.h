@@ -45,35 +45,77 @@ namespace Mandrill
         AABB boundingBox{};
     };
 
-    struct alignas(16) MaterialParams {
-        glm::vec3 diffuse;
-        float shininess;
-        glm::vec3 specular;
-        float indexOfRefraction;
-        glm::vec3 ambient;
-        float opacity;
-        glm::vec3 emission;
-        uint32_t hasTexture;
+    /// <summary>
+    /// How the alpha of a material is meant to be interpreted, matching glTF's material.alphaMode.
+    /// </summary>
+    enum class AlphaMode : uint32_t {
+        Opaque = 0,
+        Mask = 1,
+        Blend = 2,
     };
 
+    /// <summary>
+    /// Bits in MaterialParams::hasTexture, listed in the order the material textures are bound.
+    /// </summary>
+    enum class MaterialTextureBit : uint32_t {
+        BaseColor = 1 << 0,
+        MetallicRoughness = 1 << 1,
+        Occlusion = 1 << 2,
+        Emissive = 1 << 3,
+        Normal = 1 << 4,
+    };
+
+    /// <summary>
+    /// Material parameters on glTF's metallic-roughness basis, which is what both loaders convert into. The factors
+    /// multiply their corresponding texture where one is present, as in glTF.
+    ///
+    /// The defaults are glTF's own, so a material only has to set what the file actually authored.
+    ///
+    /// Note that the base color and emissive textures still load into a UNORM format, so what a shader samples from
+    /// them is sRGB encoded rather than the linear value this basis calls for. Correcting that means encoding on
+    /// output as well, since the swapchain is UNORM too.
+    /// </summary>
+    struct alignas(16) MaterialParams {
+        glm::vec3 baseColor{1.0f};     ///< Diffuse reflectance where dielectric, specular colour where metallic
+        float alpha{1.0f};             ///< Opacity, interpreted according to alphaMode
+        float metallic{1.0f};          ///< 0 for a dielectric, 1 for a metal
+        float roughness{1.0f};         ///< Perceptual roughness, squared to get the GGX roughness
+        float normalScale{1.0f};       ///< Scale applied to the tangent-space X and Y of the normal texture
+        float occlusionStrength{1.0f}; ///< How far the occlusion texture is allowed to darken indirect light
+        glm::vec3 emission{0.0f};      ///< Emitted radiance
+        float emissiveStrength{1.0f};  ///< Multiplier on emission, letting it exceed one
+        float indexOfRefraction{1.5f}; ///< Refractive index, which also sets the specular reflectance at normal
+                                       ///< incidence
+        float transmission{0.0f};      ///< Fraction of the surface that refracts rather than diffusely reflects
+        float alphaCutoff{0.5f};       ///< Alpha below which a Mask material is discarded
+        uint32_t alphaMode{static_cast<uint32_t>(AlphaMode::Opaque)}; ///< One of AlphaMode
+        uint32_t hasTexture{0};                                       ///< Bitmask of MaterialTextureBit
+    };
+
+    // Indices into the scene's global texture array, for the shaders that address textures bindlessly
     struct alignas(16) MaterialDevice {
         MaterialParams params;
-        uint32_t diffuseTextureIndex;
-        uint32_t specularTextureIndex;
-        uint32_t ambientTextureIndex;
-        uint32_t emissionTextureIndex;
+        uint32_t baseColorTextureIndex;
+        uint32_t metallicRoughnessTextureIndex;
+        uint32_t occlusionTextureIndex;
+        uint32_t emissiveTextureIndex;
         uint32_t normalTextureIndex;
     };
+
+    // The shaders declare both of these by hand, so their layout has to stay what std140 and std430 make of them
+    static_assert(sizeof(MaterialParams) == 80);
+    static_assert(offsetof(MaterialParams, emission) == 32);
+    static_assert(sizeof(MaterialDevice) == 112);
 
     struct Material {
         MaterialParams params{};
         MaterialParams* paramsDevice{}; // This is set during Scene::compile()
         VkDeviceSize paramsOffset{};    // This is set during Scene::compile()
 
-        std::string diffuseTexturePath;
-        std::string specularTexturePath;
-        std::string ambientTexturePath;
-        std::string emissionTexturePath;
+        std::string baseColorTexturePath;
+        std::string metallicRoughnessTexturePath;
+        std::string occlusionTexturePath;
+        std::string emissiveTexturePath;
         std::string normalTexturePath;
     };
 
@@ -303,10 +345,10 @@ namespace Mandrill
         /// <tr><td> camera <td> Camera matrices (struct CameraMatrices) <td> uniform block named *Dynamic
         /// <tr><td> mesh <td> Node model matrix (mat4) <td> uniform block named *Dynamic
         /// <tr><td> materialParams <td> Material parameters (struct MaterialParams) <td> uniform block
-        /// <tr><td> diffuseTexture <td> Material diffuse texture <td> sampler2D
-        /// <tr><td> specularTexture <td> Material specular texture <td> sampler2D
-        /// <tr><td> ambientTexture <td> Material ambient texture <td> sampler2D
-        /// <tr><td> emissionTexture <td> Material emission texture <td> sampler2D
+        /// <tr><td> baseColorTexture <td> Material base color texture <td> sampler2D
+        /// <tr><td> metallicRoughnessTexture <td> Material metallic (blue) and roughness (green) texture <td> sampler2D
+        /// <tr><td> occlusionTexture <td> Material ambient occlusion texture (red) <td> sampler2D
+        /// <tr><td> emissiveTexture <td> Material emissive texture <td> sampler2D
         /// <tr><td> normalTexture <td> Material normal texture <td> sampler2D
         /// <tr><td> environmentMap <td> Environment map texture <td> sampler2D, optional
         /// </table>
@@ -316,7 +358,7 @@ namespace Mandrill
         /// have to be in separate sets.
         ///
         /// A whole material is bound in one go for every mesh, so the material resources all have to share one set,
-        /// declared in the order they are listed above. That set is found from diffuseTexture.
+        /// declared in the order they are listed above. That set is found from baseColorTexture.
         ///
         /// Only the environment map is optional. A shader that does not declare it simply renders without one.
         /// </summary>
