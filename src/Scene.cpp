@@ -628,6 +628,76 @@ void Scene::syncToDevice()
     mpIndexBuffer->copyFromHost(indices.data(), indicesOffset, 0);
 }
 
+// Build an arbitrary orthonormal frame around a normal, for vertices whose tangent the UVs could not supply
+static void fallbackTangentFrame(const glm::vec3& normal, glm::vec3& tangent, glm::vec3& binormal)
+{
+    const glm::vec3 axis = std::abs(normal.x) < 0.9f ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
+    tangent = glm::normalize(glm::cross(axis, normal));
+    binormal = glm::cross(normal, tangent);
+}
+
+// Derive a tangent frame from the UV parameterisation, accumulating over every triangle that shares a vertex before
+// orthonormalising once per vertex. The accumulation is the point: a frame computed per triangle and written to its
+// three corners is faceted, and on an indexed mesh the last triangle to touch a vertex simply overwrites the rest.
+//
+// Vertices are not split where a UV island mirrors, so a frame on such a seam is the average of two opposed
+// handednesses. Matching a DCC tool exactly there needs MikkTSpace, which the glTF specification names and which
+// splits those vertices.
+static void generateTangents(Mesh& mesh)
+{
+    std::vector<glm::vec3> tangents(mesh.vertices.size(), glm::vec3(0.0f));
+    std::vector<glm::vec3> binormals(mesh.vertices.size(), glm::vec3(0.0f));
+
+    for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3) {
+        const uint32_t i0 = mesh.indices[i + 0];
+        const uint32_t i1 = mesh.indices[i + 1];
+        const uint32_t i2 = mesh.indices[i + 2];
+
+        const glm::vec3 e1 = mesh.vertices[i1].position - mesh.vertices[i0].position;
+        const glm::vec3 e2 = mesh.vertices[i2].position - mesh.vertices[i0].position;
+
+        const glm::vec2 duv1 = mesh.vertices[i1].texcoord - mesh.vertices[i0].texcoord;
+        const glm::vec2 duv2 = mesh.vertices[i2].texcoord - mesh.vertices[i0].texcoord;
+
+        // A triangle that is degenerate in UV space says nothing about where U runs, and dividing by its determinant
+        // would spread infinities over every vertex it touches
+        const float determinant = duv1.x * duv2.y - duv2.x * duv1.y;
+        if (std::abs(determinant) < 1e-12f) {
+            continue;
+        }
+
+        const float r = 1.0f / determinant;
+        const glm::vec3 tangent = (e1 * duv2.y - e2 * duv1.y) * r;
+        const glm::vec3 binormal = (e2 * duv1.x - e1 * duv2.x) * r;
+
+        // Left unnormalised, which weights each triangle by how much surface it covers per unit of UV
+        for (uint32_t index : {i0, i1, i2}) {
+            tangents[index] += tangent;
+            binormals[index] += binormal;
+        }
+    }
+
+    for (size_t i = 0; i < mesh.vertices.size(); i++) {
+        Vertex& vertex = mesh.vertices[i];
+
+        const float normalLength = glm::length(vertex.normal);
+        const glm::vec3 normal = normalLength > 0.0f ? vertex.normal / normalLength : glm::vec3(0.0f, 0.0f, 1.0f);
+
+        // Gram-Schmidt against the normal, which is also what reconciles the frame with a normal that was smoothed
+        const glm::vec3 tangent = tangents[i] - normal * glm::dot(normal, tangents[i]);
+        if (glm::length(tangent) < 1e-8f) {
+            fallbackTangentFrame(normal, vertex.tangent, vertex.binormal);
+            continue;
+        }
+
+        vertex.tangent = glm::normalize(tangent);
+
+        // Where a UV island is mirrored the frame is left-handed, which only the binormal can carry
+        const float handedness = glm::dot(glm::cross(normal, vertex.tangent), binormals[i]) < 0.0f ? -1.0f : 1.0f;
+        vertex.binormal = glm::cross(normal, vertex.tangent) * handedness;
+    }
+}
+
 static float perceivedBrightness(const glm::vec3& color)
 {
     return std::sqrt(0.299f * color.r * color.r + 0.587f * color.g * color.g + 0.114f * color.b * color.b);
@@ -715,40 +785,9 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
         }
     }
 
-    // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
-            Vertex& v0 = mesh.vertices[j + 0];
-            Vertex& v1 = mesh.vertices[j + 1];
-            Vertex& v2 = mesh.vertices[j + 2];
-
-            glm::vec3 e1 = v1.position - v0.position;
-            glm::vec3 e2 = v2.position - v0.position;
-
-            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
-            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
-
-            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
-
-            glm::vec3 t =
-                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
-                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
-            glm::vec3 b =
-                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
-                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
-
-            mesh.vertices[j + 0].tangent = t;
-            mesh.vertices[j + 1].tangent = t;
-            mesh.vertices[j + 2].tangent = t;
-
-            mesh.vertices[j + 0].binormal = b;
-            mesh.vertices[j + 1].binormal = b;
-            mesh.vertices[j + 2].binormal = b;
-        }
-    }
-
-    // Remove duplicates
+    // Remove duplicates. This runs before the tangent frames are generated, both because welding is what lets a
+    // vertex see all the triangles that share it, and because a frame differing between two otherwise identical
+    // vertices would stop them from welding at all.
     for (uint32_t i = 0; i < count(newMeshIndices); i++) {
         Mesh& mesh = mMeshes[newMeshIndices.at(i)];
         std::unordered_map<Vertex, uint32_t> uniqueVertices;
@@ -769,6 +808,11 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
 
         mesh.vertices = newVertices;
         mesh.indices = newIndices;
+    }
+
+    // An OBJ carries no tangents of its own, so they always have to be derived
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
+        generateTangents(mMeshes[newMeshIndices.at(i)]);
     }
 
     // Load materials
@@ -964,6 +1008,26 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
                 }
             }
 
+            bool hasTangents = false;
+            if (primitive.attributes.count("TANGENT") > 0) {
+                const auto& accessor = model.accessors[primitive.attributes.at("TANGENT")];
+                const auto& bufferView = model.bufferViews[accessor.bufferView];
+                const auto& buffer = model.buffers[bufferView.buffer];
+                const float* tangents =
+                    reinterpret_cast<const float*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
+                for (size_t i = 0; i < accessor.count; i++) {
+                    Vertex& vertex = newMesh.vertices[i];
+                    vertex.tangent = glm::vec3(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2]);
+
+                    // glTF puts the handedness of the frame in the tangent's w. It applies to the binormal as the
+                    // file parameterises V, and V was flipped above, which reverses the direction the binormal runs
+                    // in and so the sign it needs here.
+                    const float handedness = -tangents[i * 4 + 3];
+                    vertex.binormal = glm::cross(vertex.normal, vertex.tangent) * handedness;
+                }
+                hasTangents = true;
+            }
+
             // Get indices
             std::vector<uint32_t> indices;
             if (primitive.indices >= 0) {
@@ -991,42 +1055,13 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
             // Material index. A primitive without a material uses the scene default, which sits at index 0.
             newMesh.materialIndex = primitive.material < 0 ? 0 : count(mMaterials) + primitive.material;
 
+            if (!hasTangents) {
+                generateTangents(newMesh);
+            }
+
             // And push the new mesh
             mMeshes.push_back(newMesh);
             newMeshIndices.push_back(count(mMeshes) - 1);
-        }
-    }
-
-    // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
-            Vertex& v0 = mesh.vertices[mesh.indices[j + 0]];
-            Vertex& v1 = mesh.vertices[mesh.indices[j + 1]];
-            Vertex& v2 = mesh.vertices[mesh.indices[j + 2]];
-
-            glm::vec3 e1 = v1.position - v0.position;
-            glm::vec3 e2 = v2.position - v0.position;
-
-            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
-            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
-
-            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
-
-            glm::vec3 t =
-                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
-                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
-            glm::vec3 b =
-                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
-                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
-
-            mesh.vertices[mesh.indices[j + 0]].tangent = t;
-            mesh.vertices[mesh.indices[j + 1]].tangent = t;
-            mesh.vertices[mesh.indices[j + 2]].tangent = t;
-
-            mesh.vertices[mesh.indices[j + 0]].binormal = b;
-            mesh.vertices[mesh.indices[j + 1]].binormal = b;
-            mesh.vertices[mesh.indices[j + 2]].binormal = b;
         }
     }
 
