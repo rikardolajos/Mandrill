@@ -188,9 +188,8 @@ public:
 
             ImGui::Text("Scene: %s", mScenePath.string().c_str());
             const char* renderModes[] = {
-                "Diffuse",  "Specular",  "Ambient",
-                "Emission", "Shininess", "Index of refraction",
-                "Opacity",  "Normal",    "Texture coordinates",
+                "Base color",          "Metallic", "Roughness", "Occlusion",           "Emissive",
+                "Index of refraction", "Alpha",    "Normal",    "Texture coordinates",
             };
             ImGui::Combo("Render mode", &mRenderMode, renderModes, IM_ARRAYSIZE(renderModes));
             const char* frontFace[] = {"Counter clockwise", "Clockwise"};

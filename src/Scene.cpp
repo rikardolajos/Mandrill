@@ -11,14 +11,6 @@
 
 using namespace Mandrill;
 
-enum class MaterialTextureBit : uint32_t {
-    Diffuse = 1 << 0,
-    Specular = 1 << 1,
-    Ambient = 1 << 2,
-    Emission = 1 << 3,
-    Normal = 1 << 4,
-};
-
 Node::Node()
 {
     mTransform = glm::identity<glm::mat4>();
@@ -132,7 +124,12 @@ Scene::Scene(ptr<Device> pDevice) : mpDevice(pDevice), mVertexCount(0), mIndexCo
     mpMissingTexture = pDevice->createTextureFromBuffer(TextureType::Texture2D, VK_FORMAT_R8G8B8A8_UNORM, data, width,
                                                         height, depth, bytesPerPixel);
     mTextures.insert(std::make_pair("", mpMissingTexture));
-    mMaterials.push_back({});
+
+    // Default material. glTF defaults a material to fully metallic, which is a poor stand-in for one that was never
+    // authored at all, so make the fallback a rough dielectric instead.
+    Material defaultMaterial;
+    defaultMaterial.params.metallic = 0.0f;
+    mMaterials.push_back(defaultMaterial);
 }
 
 Scene::~Scene()
@@ -296,22 +293,22 @@ std::vector<uint32_t> Scene::addNodesFromFile(const std::filesystem::path& path,
 
 uint32_t Scene::addMaterial(Material material)
 {
-    auto setTexture = [this](std::unordered_map<std::string, ptr<Texture>>& loadedTextures, std::string texturePath,
-                             MaterialTextureBit bit, ptr<Texture> pMissingTexture) {
-        if (!texturePath.empty()) {
-            addTexture(texturePath);
-        } else {
-            loadedTextures.insert(std::make_pair(texturePath, pMissingTexture));
+    auto setTexture = [this, &material](const std::string& texturePath, MaterialTextureBit bit) {
+        if (texturePath.empty()) {
+            mTextures.insert(std::make_pair(texturePath, mpMissingTexture));
+            return;
         }
+        addTexture(texturePath);
+        material.params.hasTexture |= static_cast<uint32_t>(bit);
     };
 
     material.params.hasTexture = 0;
 
-    setTexture(mTextures, material.diffuseTexturePath, MaterialTextureBit::Diffuse, mpMissingTexture);
-    setTexture(mTextures, material.specularTexturePath, MaterialTextureBit::Specular, mpMissingTexture);
-    setTexture(mTextures, material.ambientTexturePath, MaterialTextureBit::Ambient, mpMissingTexture);
-    setTexture(mTextures, material.emissionTexturePath, MaterialTextureBit::Emission, mpMissingTexture);
-    setTexture(mTextures, material.normalTexturePath, MaterialTextureBit::Normal, mpMissingTexture);
+    setTexture(material.baseColorTexturePath, MaterialTextureBit::BaseColor);
+    setTexture(material.metallicRoughnessTexturePath, MaterialTextureBit::MetallicRoughness);
+    setTexture(material.occlusionTexturePath, MaterialTextureBit::Occlusion);
+    setTexture(material.emissiveTexturePath, MaterialTextureBit::Emissive);
+    setTexture(material.normalTexturePath, MaterialTextureBit::Normal);
 
     mMaterials.push_back(material);
 
@@ -457,16 +454,14 @@ void Scene::compile()
     MaterialDevice* materials = static_cast<MaterialDevice*>(mpMaterialBuffer->getHostMap());
     for (uint32_t i = 0; i < count(mMaterials); i++) {
         materials[i].params = mMaterials[i].params;
-        materials[i].diffuseTextureIndex =
-            static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].diffuseTexturePath)));
-        materials[i].specularTextureIndex =
-            static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].specularTexturePath)));
-        materials[i].ambientTextureIndex =
-            static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].ambientTexturePath)));
-        materials[i].emissionTextureIndex =
-            static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].emissionTexturePath)));
-        materials[i].normalTextureIndex =
-            static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(mMaterials[i].normalTexturePath)));
+        auto textureIndex = [this](const std::string& texturePath) {
+            return static_cast<uint32_t>(std::distance(mTextures.begin(), mTextures.find(texturePath)));
+        };
+        materials[i].baseColorTextureIndex = textureIndex(mMaterials[i].baseColorTexturePath);
+        materials[i].metallicRoughnessTextureIndex = textureIndex(mMaterials[i].metallicRoughnessTexturePath);
+        materials[i].occlusionTextureIndex = textureIndex(mMaterials[i].occlusionTexturePath);
+        materials[i].emissiveTextureIndex = textureIndex(mMaterials[i].emissiveTexturePath);
+        materials[i].normalTextureIndex = textureIndex(mMaterials[i].normalTexturePath);
     }
 
     VkDeviceSize instanceDataBufferSize = sizeof(InstanceData) * mMeshes.size();
@@ -553,9 +548,9 @@ void Scene::createDescriptorsForShader(ptr<Shader> pShader, ptr<Camera> pCamera)
 
     // A whole material is bound for every mesh, so the materials keep prepared sets instead of going through the
     // shader, which only holds one set per set index. Any material binding identifies the set they share.
-    auto materialInfo = pShader->getResourceInfo("diffuseTexture");
+    auto materialInfo = pShader->getResourceInfo("baseColorTexture");
     if (!materialInfo) {
-        Log::Error("Shader has no diffuseTexture, so the scene cannot find which set the materials belong to");
+        Log::Error("Shader has no baseColorTexture, so the scene cannot find which set the materials belong to");
         return;
     }
 
@@ -568,10 +563,10 @@ void Scene::createDescriptorsForShader(ptr<Shader> pShader, ptr<Camera> pCamera)
         std::vector<DescriptorDesc> desc;
         desc.emplace_back(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, mpMaterialParams, mat.paramsOffset,
                           sizeof(MaterialParams));
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.diffuseTexturePath]);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.specularTexturePath]);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.ambientTexturePath]);
-        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.emissionTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.baseColorTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.metallicRoughnessTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.occlusionTexturePath]);
+        desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.emissiveTexturePath]);
         desc.emplace_back(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, mTextures[mat.normalTexturePath]);
 
         // The descriptor writes the bindings in the order they are described, so the shader has to declare the
@@ -631,6 +626,81 @@ void Scene::syncToDevice()
 
     mpVertexBuffer->copyFromHost(vertices.data(), verticesOffset, 0);
     mpIndexBuffer->copyFromHost(indices.data(), indicesOffset, 0);
+}
+
+// Build an arbitrary orthonormal frame around a normal, for vertices whose tangent the UVs could not supply
+static void fallbackTangentFrame(const glm::vec3& normal, glm::vec3& tangent, glm::vec3& binormal)
+{
+    const glm::vec3 axis = std::abs(normal.x) < 0.9f ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
+    tangent = glm::normalize(glm::cross(axis, normal));
+    binormal = glm::cross(normal, tangent);
+}
+
+// Derive a tangent frame from the UV parameterisation, accumulating over every triangle that shares a vertex before
+// orthonormalising once per vertex. The accumulation is the point: a frame computed per triangle and written to its
+// three corners is faceted, and on an indexed mesh the last triangle to touch a vertex simply overwrites the rest.
+//
+// Vertices are not split where a UV island mirrors, so a frame on such a seam is the average of two opposed
+// handednesses. Matching a DCC tool exactly there needs MikkTSpace, which the glTF specification names and which
+// splits those vertices.
+static void generateTangents(Mesh& mesh)
+{
+    std::vector<glm::vec3> tangents(mesh.vertices.size(), glm::vec3(0.0f));
+    std::vector<glm::vec3> binormals(mesh.vertices.size(), glm::vec3(0.0f));
+
+    for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3) {
+        const uint32_t i0 = mesh.indices[i + 0];
+        const uint32_t i1 = mesh.indices[i + 1];
+        const uint32_t i2 = mesh.indices[i + 2];
+
+        const glm::vec3 e1 = mesh.vertices[i1].position - mesh.vertices[i0].position;
+        const glm::vec3 e2 = mesh.vertices[i2].position - mesh.vertices[i0].position;
+
+        const glm::vec2 duv1 = mesh.vertices[i1].texcoord - mesh.vertices[i0].texcoord;
+        const glm::vec2 duv2 = mesh.vertices[i2].texcoord - mesh.vertices[i0].texcoord;
+
+        // A triangle that is degenerate in UV space says nothing about where U runs, and dividing by its determinant
+        // would spread infinities over every vertex it touches
+        const float determinant = duv1.x * duv2.y - duv2.x * duv1.y;
+        if (std::abs(determinant) < 1e-12f) {
+            continue;
+        }
+
+        const float r = 1.0f / determinant;
+        const glm::vec3 tangent = (e1 * duv2.y - e2 * duv1.y) * r;
+        const glm::vec3 binormal = (e2 * duv1.x - e1 * duv2.x) * r;
+
+        // Left unnormalised, which weights each triangle by how much surface it covers per unit of UV
+        for (uint32_t index : {i0, i1, i2}) {
+            tangents[index] += tangent;
+            binormals[index] += binormal;
+        }
+    }
+
+    for (size_t i = 0; i < mesh.vertices.size(); i++) {
+        Vertex& vertex = mesh.vertices[i];
+
+        const float normalLength = glm::length(vertex.normal);
+        const glm::vec3 normal = normalLength > 0.0f ? vertex.normal / normalLength : glm::vec3(0.0f, 0.0f, 1.0f);
+
+        // Gram-Schmidt against the normal, which is also what reconciles the frame with a normal that was smoothed
+        const glm::vec3 tangent = tangents[i] - normal * glm::dot(normal, tangents[i]);
+        if (glm::length(tangent) < 1e-8f) {
+            fallbackTangentFrame(normal, vertex.tangent, vertex.binormal);
+            continue;
+        }
+
+        vertex.tangent = glm::normalize(tangent);
+
+        // Where a UV island is mirrored the frame is left-handed, which only the binormal can carry
+        const float handedness = glm::dot(glm::cross(normal, vertex.tangent), binormals[i]) < 0.0f ? -1.0f : 1.0f;
+        vertex.binormal = glm::cross(normal, vertex.tangent) * handedness;
+    }
+}
+
+static float perceivedBrightness(const glm::vec3& color)
+{
+    return std::sqrt(0.299f * color.r * color.r + 0.587f * color.g * color.g + 0.114f * color.b * color.b);
 }
 
 std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, const std::filesystem::path& materialPath)
@@ -701,7 +771,7 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
                 uint32_t meshIndex = matIDToMeshIndex.at(materialIndex);
                 shapeMesh[meshIndex].vertices.push_back(vert);
                 shapeMesh[meshIndex].indices.push_back(indices[meshIndex]);
-                shapeMesh[meshIndex].materialIndex = count(mMaterials) + materialIndex;
+                shapeMesh[meshIndex].materialIndex = materialIndex < 0 ? 0 : count(mMaterials) + materialIndex;
                 shapeMesh[meshIndex].boundingBox.expand(vert.position);
                 indices[meshIndex] += 1;
             }
@@ -715,40 +785,9 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
         }
     }
 
-    // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
-            Vertex& v0 = mesh.vertices[j + 0];
-            Vertex& v1 = mesh.vertices[j + 1];
-            Vertex& v2 = mesh.vertices[j + 2];
-
-            glm::vec3 e1 = v1.position - v0.position;
-            glm::vec3 e2 = v2.position - v0.position;
-
-            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
-            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
-
-            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
-
-            glm::vec3 t =
-                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
-                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
-            glm::vec3 b =
-                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
-                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
-
-            mesh.vertices[j + 0].tangent = t;
-            mesh.vertices[j + 1].tangent = t;
-            mesh.vertices[j + 2].tangent = t;
-
-            mesh.vertices[j + 0].binormal = b;
-            mesh.vertices[j + 1].binormal = b;
-            mesh.vertices[j + 2].binormal = b;
-        }
-    }
-
-    // Remove duplicates
+    // Remove duplicates. This runs before the tangent frames are generated, both because welding is what lets a
+    // vertex see all the triangles that share it, and because a frame differing between two otherwise identical
+    // vertices would stop them from welding at all.
     for (uint32_t i = 0; i < count(newMeshIndices); i++) {
         Mesh& mesh = mMeshes[newMeshIndices.at(i)];
         std::unordered_map<Vertex, uint32_t> uniqueVertices;
@@ -771,60 +810,107 @@ std::vector<uint32_t> Scene::loadFromOBJ(const std::filesystem::path& path, cons
         mesh.indices = newIndices;
     }
 
+    // An OBJ carries no tangents of its own, so they always have to be derived
+    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
+        generateTangents(mMeshes[newMeshIndices.at(i)]);
+    }
+
     // Load materials
     for (auto& material : materials) {
         Material mat;
-        mat.params.diffuse.r = material.diffuse[0];
-        mat.params.diffuse.g = material.diffuse[1];
-        mat.params.diffuse.b = material.diffuse[2];
 
-        mat.params.specular.r = material.specular[0];
-        mat.params.specular.g = material.specular[1];
-        mat.params.specular.b = material.specular[2];
+        // tinyobjloader defaults the PBR extension fields to zero and does not report whether the file authored them,
+        // so take any non-default value as the extension having been used.
+        const bool pbrExtension = material.roughness > 0.0f || material.metallic > 0.0f ||
+                                  !material.roughness_texname.empty() || !material.metallic_texname.empty();
 
-        mat.params.ambient.r = material.ambient[0];
-        mat.params.ambient.g = material.ambient[1];
-        mat.params.ambient.b = material.ambient[2];
+        glm::vec3 diffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2]);
+        const glm::vec3 specular(material.specular[0], material.specular[1], material.specular[2]);
+        glm::vec3 emission(material.emission[0], material.emission[1], material.emission[2]);
+        float metallic = material.metallic;
+        float roughness = material.roughness;
 
-        mat.params.emission.r = material.emission[0];
-        mat.params.emission.g = material.emission[1];
-        mat.params.emission.b = material.emission[2];
+        // An MTL leaves a factor out when its map is meant to be used as it is, and tinyobjloader reports that
+        // omission as zero. glTF multiplies factor by texture, so carrying the zero through would black the map out;
+        // the factor the file means in that case is one.
+        if (!material.diffuse_texname.empty() && diffuse == glm::vec3(0.0f)) {
+            diffuse = glm::vec3(1.0f);
+        }
+        if (!material.emissive_texname.empty() && emission == glm::vec3(0.0f)) {
+            emission = glm::vec3(1.0f);
+        }
+        if (!material.metallic_texname.empty() && metallic == 0.0f) {
+            metallic = 1.0f;
+        }
+        if (!material.roughness_texname.empty() && roughness == 0.0f) {
+            roughness = 1.0f;
+        }
 
-        mat.params.shininess = material.shininess;
-        mat.params.indexOfRefraction = material.ior;
-        mat.params.opacity = material.dissolve;
+        if (pbrExtension) {
+            mat.params.baseColor = diffuse;
+            mat.params.metallic = metallic;
+            mat.params.roughness = roughness;
+        } else {
+            // MTL has no metallic parameter, and Ks cannot stand in for one in general: it is a Phong highlight colour
+            // that exporters routinely leave at a meaningless default such as 1 1 1, and reading that as a reflectance
+            // turns every such surface into a mirror and throws Kd away. The one case where the file is unambiguous is
+            // a metal authored the way metals have to be in MTL, with Kd left at black so that the whole response
+            // comes from Ks.
+            const float diffuseBrightness = perceivedBrightness(diffuse);
+            const float specularBrightness = perceivedBrightness(specular);
+            const bool metal = specularBrightness > 0.1f && diffuseBrightness < 0.1f * specularBrightness;
 
-        auto setTexture = [this, &path, &materialPath](std::unordered_map<std::string, ptr<Texture>>& loadedTextures,
-                                                       const std::string& textureName, ptr<Texture> pMissingTexture,
-                                                       std::string& textureKey) {
-            if (!textureName.empty()) {
-                auto fullPath =
-                    std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
-                textureKey = fullPath.string();
-                addTexture(textureKey);
-                return true;
+            mat.params.baseColor = metal ? specular : diffuse;
+            mat.params.metallic = metal ? 1.0f : 0.0f;
+
+            // Ns is a Blinn-Phong exponent, and this is the usual fit of one to a GGX roughness
+            mat.params.roughness = std::clamp(std::sqrt(2.0f / (material.shininess + 2.0f)), 0.0f, 1.0f);
+        }
+
+        mat.params.alpha = material.dissolve;
+        mat.params.emission = emission;
+
+        // Ni is only meaningful from 1 upwards, and MTL files that never set it leave it there
+        mat.params.indexOfRefraction = material.ior > 1.0f ? material.ior : 1.5f;
+
+        auto setTexture = [this, &path, &materialPath, &mat](const std::string& textureName, MaterialTextureBit bit,
+                                                             std::string& textureKey) {
+            if (textureName.empty()) {
+                mTextures.insert(std::make_pair(textureName, mpMissingTexture));
+                return;
             }
 
-            loadedTextures.insert(std::make_pair(textureName, pMissingTexture));
-            return false;
+            auto fullPath = std::filesystem::canonical(path.parent_path() / materialPath.relative_path() / textureName);
+            textureKey = fullPath.string();
+            addTexture(textureKey);
+            mat.params.hasTexture |= static_cast<uint32_t>(bit);
         };
 
         mat.params.hasTexture = 0;
 
-        if (setTexture(mTextures, material.diffuse_texname, mpMissingTexture, mat.diffuseTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Diffuse);
+        setTexture(material.diffuse_texname, MaterialTextureBit::BaseColor, mat.baseColorTexturePath);
+
+        // MTL keeps roughness and metallic in separate maps while glTF packs them into the green and blue channels of
+        // one. A grayscale map_Pr lands in the green channel correctly on its own, but a separate map_Pm cannot follow
+        // it into the blue channel without combining the two images. map_Ks is no substitute, being a specular colour
+        // rather than either channel, and has already been folded into the factors above.
+        setTexture(material.roughness_texname, MaterialTextureBit::MetallicRoughness, mat.metallicRoughnessTexturePath);
+        if (!material.metallic_texname.empty() && material.metallic_texname != material.roughness_texname) {
+            Log::Warning("Material {}: map_Pm ({}) is in an image of its own and cannot be packed with map_Pr, so the "
+                         "metallic factor is used instead",
+                         material.name, material.metallic_texname);
         }
-        if (setTexture(mTextures, material.specular_texname, mpMissingTexture, mat.specularTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Specular);
-        }
-        if (setTexture(mTextures, material.ambient_texname, mpMissingTexture, mat.ambientTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Ambient);
-        }
-        if (setTexture(mTextures, material.emissive_texname, mpMissingTexture, mat.emissionTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Emission);
-        }
-        if (setTexture(mTextures, material.normal_texname, mpMissingTexture, mat.normalTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Normal);
+
+        setTexture(material.ambient_texname, MaterialTextureBit::Occlusion, mat.occlusionTexturePath);
+        setTexture(material.emissive_texname, MaterialTextureBit::Emissive, mat.emissiveTexturePath);
+        setTexture(material.normal_texname, MaterialTextureBit::Normal, mat.normalTexturePath);
+
+        // MTL has no alpha mode. A dissolve below one asks for blending, and a base color texture that carries alpha is
+        // conventionally a cutout, which is how OBJ foliage and fences are authored.
+        if (material.dissolve < 1.0f) {
+            mat.params.alphaMode = static_cast<uint32_t>(AlphaMode::Blend);
+        } else if (mat.params.hasTexture & static_cast<uint32_t>(MaterialTextureBit::BaseColor)) {
+            mat.params.alphaMode = static_cast<uint32_t>(AlphaMode::Mask);
         }
 
         mMaterials.push_back(mat);
@@ -922,6 +1008,26 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
                 }
             }
 
+            bool hasTangents = false;
+            if (primitive.attributes.count("TANGENT") > 0) {
+                const auto& accessor = model.accessors[primitive.attributes.at("TANGENT")];
+                const auto& bufferView = model.bufferViews[accessor.bufferView];
+                const auto& buffer = model.buffers[bufferView.buffer];
+                const float* tangents =
+                    reinterpret_cast<const float*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
+                for (size_t i = 0; i < accessor.count; i++) {
+                    Vertex& vertex = newMesh.vertices[i];
+                    vertex.tangent = glm::vec3(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2]);
+
+                    // glTF puts the handedness of the frame in the tangent's w. It applies to the binormal as the
+                    // file parameterises V, and V was flipped above, which reverses the direction the binormal runs
+                    // in and so the sign it needs here.
+                    const float handedness = -tangents[i * 4 + 3];
+                    vertex.binormal = glm::cross(vertex.normal, vertex.tangent) * handedness;
+                }
+                hasTangents = true;
+            }
+
             // Get indices
             std::vector<uint32_t> indices;
             if (primitive.indices >= 0) {
@@ -946,8 +1052,12 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
             }
             newMesh.indices.insert(newMesh.indices.end(), indices.begin(), indices.end());
 
-            // Material index
-            newMesh.materialIndex = count(mMaterials) + primitive.material;
+            // Material index. A primitive without a material uses the scene default, which sits at index 0.
+            newMesh.materialIndex = primitive.material < 0 ? 0 : count(mMaterials) + primitive.material;
+
+            if (!hasTangents) {
+                generateTangents(newMesh);
+            }
 
             // And push the new mesh
             mMeshes.push_back(newMesh);
@@ -955,74 +1065,50 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
         }
     }
 
-    // Calculate tangent space for each face (triangle)
-    for (uint32_t i = 0; i < count(newMeshIndices); i++) {
-        Mesh& mesh = mMeshes[newMeshIndices.at(i)];
-        for (uint32_t j = 0; j < count(mesh.indices); j += 3) {
-            Vertex& v0 = mesh.vertices[mesh.indices[j + 0]];
-            Vertex& v1 = mesh.vertices[mesh.indices[j + 1]];
-            Vertex& v2 = mesh.vertices[mesh.indices[j + 2]];
-
-            glm::vec3 e1 = v1.position - v0.position;
-            glm::vec3 e2 = v2.position - v0.position;
-
-            glm::vec2 duv1 = v1.texcoord - v0.texcoord;
-            glm::vec2 duv2 = v2.texcoord - v0.texcoord;
-
-            float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
-
-            glm::vec3 t =
-                glm::normalize(glm::vec3(f * (duv2.y * e1.x - duv1.y * e2.x), f * (duv2.y * e1.y - duv1.y * e2.y),
-                                         f * (duv2.y * e1.z - duv1.y * e2.z)));
-            glm::vec3 b =
-                glm::normalize(glm::vec3(f * (-duv2.x * e1.x + duv1.x * e2.x), f * (-duv2.x * e1.y + duv1.x * e2.y),
-                                         f * (-duv2.x * e1.z + duv1.x * e2.z)));
-
-            mesh.vertices[mesh.indices[j + 0]].tangent = t;
-            mesh.vertices[mesh.indices[j + 1]].tangent = t;
-            mesh.vertices[mesh.indices[j + 2]].tangent = t;
-
-            mesh.vertices[mesh.indices[j + 0]].binormal = b;
-            mesh.vertices[mesh.indices[j + 1]].binormal = b;
-            mesh.vertices[mesh.indices[j + 2]].binormal = b;
-        }
-    }
-
-    // Helper to get extension values
+    // Helper to get extension values, falling back to what the extension defines the value to be when absent
     auto getExtensionValue = [](const tinygltf::Material& material, const std::string& extensionName,
-                                const std::string& key) -> double {
+                                const std::string& key, double fallback) -> double {
         if (material.extensions.find(extensionName) != material.extensions.end()) {
             const auto& extension = material.extensions.at(extensionName);
             if (extension.IsObject() && extension.Has(key)) {
                 return extension.Get(key).Get<double>();
             }
         }
-        return 0.0;
+        return fallback;
     };
 
     // Load materials
     for (auto& material : model.materials) {
         Material mat;
-        mat.params.diffuse.r = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[0]);
-        mat.params.diffuse.g = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[1]);
-        mat.params.diffuse.b = static_cast<float>(material.pbrMetallicRoughness.baseColorFactor[2]);
+        const auto& pbr = material.pbrMetallicRoughness;
 
-        mat.params.specular.r = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
-        mat.params.specular.g = static_cast<float>(material.pbrMetallicRoughness.roughnessFactor);
-        mat.params.specular.b = 0.0f;
+        mat.params.baseColor.r = static_cast<float>(pbr.baseColorFactor[0]);
+        mat.params.baseColor.g = static_cast<float>(pbr.baseColorFactor[1]);
+        mat.params.baseColor.b = static_cast<float>(pbr.baseColorFactor[2]);
+        mat.params.alpha = static_cast<float>(pbr.baseColorFactor[3]);
 
-        mat.params.ambient.r = 0.0f;
-        mat.params.ambient.g = 0.0f;
-        mat.params.ambient.b = 0.0f;
+        mat.params.metallic = static_cast<float>(pbr.metallicFactor);
+        mat.params.roughness = static_cast<float>(pbr.roughnessFactor);
+
+        mat.params.normalScale = static_cast<float>(material.normalTexture.scale);
+        mat.params.occlusionStrength = static_cast<float>(material.occlusionTexture.strength);
 
         mat.params.emission.r = static_cast<float>(material.emissiveFactor[0]);
         mat.params.emission.g = static_cast<float>(material.emissiveFactor[1]);
         mat.params.emission.b = static_cast<float>(material.emissiveFactor[2]);
+        mat.params.emissiveStrength =
+            static_cast<float>(getExtensionValue(material, "KHR_materials_emissive_strength", "emissiveStrength", 1.0));
 
-        mat.params.shininess = static_cast<float>(material.pbrMetallicRoughness.metallicFactor);
-        mat.params.indexOfRefraction = static_cast<float>(getExtensionValue(material, "KHR_materials_ior", "ior"));
-        mat.params.opacity =
-            1.0f - static_cast<float>(getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor"));
+        mat.params.indexOfRefraction = static_cast<float>(getExtensionValue(material, "KHR_materials_ior", "ior", 1.5));
+        mat.params.transmission =
+            static_cast<float>(getExtensionValue(material, "KHR_materials_transmission", "transmissionFactor", 0.0));
+
+        mat.params.alphaCutoff = static_cast<float>(material.alphaCutoff);
+        if (material.alphaMode == "MASK") {
+            mat.params.alphaMode = static_cast<uint32_t>(AlphaMode::Mask);
+        } else if (material.alphaMode == "BLEND") {
+            mat.params.alphaMode = static_cast<uint32_t>(AlphaMode::Blend);
+        }
 
         // Captured by reference, the model in particular: copying it would deep copy every buffer in the file, once
         // per material
@@ -1060,19 +1146,18 @@ std::vector<uint32_t> Scene::loadFromGLTF(const std::filesystem::path& path)
 
         mat.params.hasTexture = 0;
 
-        if (setTexture(mTextures, material.pbrMetallicRoughness.baseColorTexture.index, mpMissingTexture,
-                       mat.diffuseTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Diffuse);
+        if (setTexture(mTextures, pbr.baseColorTexture.index, mpMissingTexture, mat.baseColorTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::BaseColor);
         }
-        if (setTexture(mTextures, material.pbrMetallicRoughness.metallicRoughnessTexture.index, mpMissingTexture,
-                       mat.specularTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Specular);
+        if (setTexture(mTextures, pbr.metallicRoughnessTexture.index, mpMissingTexture,
+                       mat.metallicRoughnessTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::MetallicRoughness);
         }
-        if (setTexture(mTextures, material.occlusionTexture.index, mpMissingTexture, mat.ambientTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Ambient);
+        if (setTexture(mTextures, material.occlusionTexture.index, mpMissingTexture, mat.occlusionTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Occlusion);
         }
-        if (setTexture(mTextures, material.emissiveTexture.index, mpMissingTexture, mat.emissionTexturePath)) {
-            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Emission);
+        if (setTexture(mTextures, material.emissiveTexture.index, mpMissingTexture, mat.emissiveTexturePath)) {
+            mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Emissive);
         }
         if (setTexture(mTextures, material.normalTexture.index, mpMissingTexture, mat.normalTexturePath)) {
             mat.params.hasTexture |= static_cast<uint32_t>(MaterialTextureBit::Normal);

@@ -12,34 +12,44 @@ layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outAlbedo;
 
 layout(set = 2, binding = 0) uniform MaterialParams {
-    vec3 diffuse;
-    float shininess;
-    vec3 specular;
-    float indexOfRefraction;
-    vec3 ambient;
-    float opacity;
+    vec3 baseColor;
+    float alpha;
+    float metallic;
+    float roughness;
+    float normalScale;
+    float occlusionStrength;
     vec3 emission;
+    float emissiveStrength;
+    float indexOfRefraction;
+    float transmission;
+    float alphaCutoff;
+    uint alphaMode;
     uint hasTexture;
 } materialParams;
 
-layout(set = 2, binding = 1) uniform sampler2D diffuseTexture;
-layout(set = 2, binding = 2) uniform sampler2D specularTexture;
-layout(set = 2, binding = 3) uniform sampler2D ambientTexture;
-layout(set = 2, binding = 4) uniform sampler2D emissionTexture;
+layout(set = 2, binding = 1) uniform sampler2D baseColorTexture;
+layout(set = 2, binding = 2) uniform sampler2D metallicRoughnessTexture;
+layout(set = 2, binding = 3) uniform sampler2D occlusionTexture;
+layout(set = 2, binding = 4) uniform sampler2D emissiveTexture;
 layout(set = 2, binding = 5) uniform sampler2D normalTexture;
 
-const uint DIFFUSE_TEXTURE_BIT  = 1 << 0;
-const uint SPECULAR_TEXTURE_BIT = 1 << 1;
-const uint AMBIENT_TEXTURE_BIT = 1 << 2;
-const uint EMISSION_TEXTURE_BIT = 1 << 3;
+const uint BASE_COLOR_TEXTURE_BIT = 1 << 0;
+const uint METALLIC_ROUGHNESS_TEXTURE_BIT = 1 << 1;
+const uint OCCLUSION_TEXTURE_BIT = 1 << 2;
+const uint EMISSIVE_TEXTURE_BIT = 1 << 3;
 const uint NORMAL_TEXTURE_BIT = 1 << 4;
 
+const uint ALPHA_MODE_MASK = 1;
+
 void main() {
-    // Discard transparent parts
-    if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
-        if (texture(diffuseTexture, inTexCoord).a < 0.5) {
-            discard;
-        }
+    vec4 baseColor = vec4(materialParams.baseColor, materialParams.alpha);
+    if ((materialParams.hasTexture & BASE_COLOR_TEXTURE_BIT) != 0) {
+        baseColor *= texture(baseColorTexture, inTexCoord);
+    }
+
+    // Discard cutout parts
+    if (materialParams.alphaMode == ALPHA_MODE_MASK && baseColor.a < materialParams.alphaCutoff) {
+        discard;
     }
 
     outPosition = vec4(inWorldPos, 1.0);
@@ -47,15 +57,12 @@ void main() {
     if ((materialParams.hasTexture & NORMAL_TEXTURE_BIT) != 0) {
         mat3 TBN = mat3(normalize(inTangent), normalize(inBinormal), normalize(inNormal));
         vec3 normal = texture(normalTexture, inTexCoord).rgb * 2.0 - 1.0;
+        normal.xy *= materialParams.normalScale;
         normal.y *= -1.0; // Normal map for Sponza is in DirectX convention, flip it
         outNormal.xyz = normalize(inNormalMatrix * TBN * normal);
     } else {
         outNormal = vec4(inNormalMatrix * inNormal, 1.0);
     }
 
-    if ((materialParams.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
-        outAlbedo = texture(diffuseTexture, inTexCoord);
-    } else {
-        outAlbedo = vec4(materialParams.diffuse, 1.0);
-    }
+    outAlbedo = baseColor;
 }

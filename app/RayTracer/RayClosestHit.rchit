@@ -36,29 +36,34 @@ layout(set = 1, binding = 3, std430) readonly buffer InstanceDataBuffer {
 	InstanceData instanceDatas[MESH_COUNT];
 } instanceDataBuffer;
 
-const uint DIFFUSE_TEXTURE_BIT = 1 << 0;
-const uint SPECULAR_TEXTURE_BIT = 1 << 1;
-const uint AMBIENT_TEXTURE_BIT = 1 << 2;
-const uint EMISSION_TEXTURE_BIT = 1 << 3;
+const uint BASE_COLOR_TEXTURE_BIT = 1 << 0;
+const uint METALLIC_ROUGHNESS_TEXTURE_BIT = 1 << 1;
+const uint OCCLUSION_TEXTURE_BIT = 1 << 2;
+const uint EMISSIVE_TEXTURE_BIT = 1 << 3;
 const uint NORMAL_TEXTURE_BIT = 1 << 4;
 
 struct MaterialParams {
-    vec3 diffuse;
-    float shininess;
-    vec3 specular;
-    float indexOfRefraction;
-    vec3 ambient;
-    float opacity;
+    vec3 baseColor;
+    float alpha;
+    float metallic;
+    float roughness;
+    float normalScale;
+    float occlusionStrength;
     vec3 emission;
+    float emissiveStrength;
+    float indexOfRefraction;
+    float transmission;
+    float alphaCutoff;
+    uint alphaMode;
     uint hasTexture;
 };
 
 struct Material {
     MaterialParams params;
-    uint diffuseTextureIndex;
-    uint specularTextureIndex;
-    uint ambientTextureIndex;
-    uint emissionTextureIndex;
+    uint baseColorTextureIndex;
+    uint metallicRoughnessTextureIndex;
+    uint occlusionTextureIndex;
+    uint emissiveTextureIndex;
     uint normalTextureIndex;
     uint _padding0;  // To enforce same size and alignment as host
     uint _padding1;
@@ -94,15 +99,16 @@ void main()
 
     vec2 uv = v0.texcoord * bary.x + v1.texcoord * bary.y + v2.texcoord * bary.z;
 
-    rayPayload.color = material.params.diffuse;
-    if ((material.params.hasTexture & DIFFUSE_TEXTURE_BIT) != 0) {
-        rayPayload.color = texture(textures[material.diffuseTextureIndex], uv).rgb;
+    rayPayload.color = material.params.baseColor;
+    if ((material.params.hasTexture & BASE_COLOR_TEXTURE_BIT) != 0) {
+        rayPayload.color *= texture(textures[material.baseColorTextureIndex], uv).rgb;
     }
 
     vec3 N = normalize(v0.normal * bary.x + v1.normal * bary.y + v2.normal * bary.z);
     rayPayload.normal = N;
     if ((material.params.hasTexture & NORMAL_TEXTURE_BIT) != 0) {
         vec3 normal = texture(textures[material.normalTextureIndex], uv).rgb * 2.0 - 1.0;
+        normal.xy *= material.params.normalScale;
 
         vec3 T = normalize(v0.tangent * bary.x + v1.tangent * bary.y + v2.tangent * bary.z);
         vec3 B = normalize(v0.binormal * bary.x + v1.binormal * bary.y + v2.binormal * bary.z);
