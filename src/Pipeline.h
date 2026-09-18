@@ -230,6 +230,17 @@ namespace Mandrill
         /// </summary>
         VkLogicOp logicOp = VK_LOGIC_OP_COPY;
 
+
+        // Dynamic state //
+
+        /// <summary>
+        /// Dynamic states in addition to the ones every pipeline has (cull mode, front face, viewport, scissor and line
+        /// width). For example VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR, which is then set per draw with
+        /// vkCmdSetFragmentShadingRateKHR. The device must have been created with the extension and feature a state
+        /// belongs to. Defaults to none.
+        /// </summary>
+        std::vector<VkDynamicState> dynamicStates;
+
         /// <summary>
         /// Constructor for pipeline description.
         /// </summary>

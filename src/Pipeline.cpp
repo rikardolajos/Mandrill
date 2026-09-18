@@ -3,6 +3,8 @@
 #include "Error.h"
 #include "Helpers.h"
 
+#include <algorithm>
+
 using namespace Mandrill;
 
 Pipeline::Pipeline(ptr<Device> pDevice, ptr<Pass> pPass, ptr<Shader> pShader, const PipelineDesc& desc)
@@ -71,6 +73,12 @@ void Pipeline::createPipeline()
         VK_DYNAMIC_STATE_CULL_MODE, VK_DYNAMIC_STATE_FRONT_FACE, VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,   VK_DYNAMIC_STATE_LINE_WIDTH,
     };
+    // The ones the description asks for on top, each only once: a state listed twice is invalid usage
+    for (VkDynamicState state : mDesc.dynamicStates) {
+        if (std::find(dynamicStates.begin(), dynamicStates.end(), state) == dynamicStates.end()) {
+            dynamicStates.push_back(state);
+        }
+    }
 
     VkPipelineDynamicStateCreateInfo dynamicState = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
