@@ -181,7 +181,7 @@ namespace Mandrill
         /// <returns>Sample count</returns>
         MANDRILL_API VkSampleCountFlagBits getSampleCount() const
         {
-            return mpResolveAttachment ? mpDevice->getSampleCount() : VK_SAMPLE_COUNT_1_BIT;
+            return mSampleCount;
         }
 
     private:
@@ -199,5 +199,9 @@ namespace Mandrill
         std::vector<ptr<Image>> mColorAttachments;
         ptr<Image> mpDepthAttachment;
         ptr<Image> mpResolveAttachment;
+
+        /// The count the implicit attachments were created with, which is not necessarily the device's maximum.
+        /// Explicit passes do not resolve and report one sample.
+        VkSampleCountFlagBits mSampleCount = VK_SAMPLE_COUNT_1_BIT;
     };
 } // namespace Mandrill

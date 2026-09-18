@@ -255,6 +255,7 @@ void Pass::createImplicitPass(bool depthAttachment, VkSampleCountFlagBits sample
     VkFormat depthFormat = Helpers::findDepthFormat(mpDevice);
 
     mColorAttachments.clear();
+    mSampleCount = sampleCount;
 
     for (auto format : mFormats) {
         VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
