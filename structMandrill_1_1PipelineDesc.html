@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-5-g28144b4</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-8-g8c8ac52</span>
    </div>
   </td>
  </tr>
@@ -216,6 +216,10 @@ VkBool32&#160;</td><td class="memItemRight" valign="bottom"><b>logicOpEnable</b>
 VkLogicOp&#160;</td><td class="memItemRight" valign="bottom"><b>logicOp</b> = VK_LOGIC_OP_COPY</td></tr>
 <tr class="memdesc:ac9e4f33ff13ce24fd4721c066029887d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logic operation. Defaults to COPY. <br /></td></tr>
 <tr class="separator:ac9e4f33ff13ce24fd4721c066029887d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a959acf9fca2196ff16249dd682640f54" id="r_a959acf9fca2196ff16249dd682640f54"><td class="memItemLeft" align="right" valign="top"><a id="a959acf9fca2196ff16249dd682640f54" name="a959acf9fca2196ff16249dd682640f54"></a>
+std::vector&lt; VkDynamicState &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicStates</b></td></tr>
+<tr class="memdesc:a959acf9fca2196ff16249dd682640f54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dynamic states in addition to the ones every pipeline has (cull mode, front face, viewport, scissor and line width). For example VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR, which is then set per draw with vkCmdSetFragmentShadingRateKHR. The device must have been created with the extension and feature a state belongs to. Defaults to none. <br /></td></tr>
+<tr class="separator:a959acf9fca2196ff16249dd682640f54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Configuration structure for creating a pipeline. This stucture will default to common settings if not specified. </p>

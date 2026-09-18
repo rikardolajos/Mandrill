@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-5-g28144b4</span>
+   <div id="projectname">Mandrill<span id="projectnumber">&#160;1.0.0-8-g8c8ac52</span>
    </div>
   </td>
  </tr>
@@ -183,7 +183,7 @@ $(document).ready(function(){initNavTree('Pass_8h_source.html',''); initResizabl
 <div class="foldopen" id="foldopen00182" data-start="{" data-end="}">
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno"><a class="line" href="classMandrill_1_1Pass.html#ad9d8a565d026e7fbeec4de874a5bf547">  182</a></span>        MANDRILL_API VkSampleCountFlagBits <a class="code hl_function" href="classMandrill_1_1Pass.html#ad9d8a565d026e7fbeec4de874a5bf547">getSampleCount</a>()<span class="keyword"> const</span></div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            <span class="keywordflow">return</span> mpResolveAttachment ? mpDevice-&gt;getSampleCount() : VK_SAMPLE_COUNT_1_BIT;</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            <span class="keywordflow">return</span> mSampleCount;</div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        }</div>
 </div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
@@ -202,9 +202,11 @@ $(document).ready(function(){initNavTree('Pass_8h_source.html',''); initResizabl
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        std::vector&lt;ptr&lt;Image&gt;&gt; mColorAttachments;</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        ptr&lt;Image&gt; mpDepthAttachment;</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        ptr&lt;Image&gt; mpResolveAttachment;</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    };</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        VkSampleCountFlagBits mSampleCount = VK_SAMPLE_COUNT_1_BIT;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    };</div>
 </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>} <span class="comment">// namespace Mandrill</span></div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>} <span class="comment">// namespace Mandrill</span></div>
 <div class="ttc" id="aclassMandrill_1_1Pass_html"><div class="ttname"><a href="classMandrill_1_1Pass.html">Mandrill::Pass</a></div><div class="ttdoc">Pass class that abstracts the use of dynamic rendering (no render passes) in Vulkan....</div><div class="ttdef"><b>Definition</b> Pass.h:17</div></div>
 <div class="ttc" id="aclassMandrill_1_1Pass_html_a25650a3c52c664da52e9169e64ef37c5"><div class="ttname"><a href="classMandrill_1_1Pass.html#a25650a3c52c664da52e9169e64ef37c5">Mandrill::Pass::transitionForRendering</a></div><div class="ttdeci">MANDRILL_API void transitionForRendering(VkCommandBuffer cmd, ptr&lt; Image &gt; pImage) const</div><div class="ttdoc">Transition an image for rendering. Call before begin() in an explicit pass.</div><div class="ttdef"><b>Definition</b> Pass.cpp:32</div></div>
 <div class="ttc" id="aclassMandrill_1_1Pass_html_a32efe67ccc2f031a8e77591545abda59"><div class="ttname"><a href="classMandrill_1_1Pass.html#a32efe67ccc2f031a8e77591545abda59">Mandrill::Pass::update</a></div><div class="ttdeci">MANDRILL_API void update(std::vector&lt; ptr&lt; Image &gt; &gt; colorAttachments, ptr&lt; Image &gt; pDepthAttachment)</div><div class="ttdoc">Update an explicit pass with new attachments. Typically call on swapchain recreation.</div><div class="ttdef"><b>Definition</b> Pass.cpp:196</div></div>

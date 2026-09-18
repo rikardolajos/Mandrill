@@ -15,6 +15,7 @@ var structMandrill_1_1PipelineDesc =
     [ "depthCompareOp", "structMandrill_1_1PipelineDesc.html#ad799dcc5eb46e28a9cbd4cce101762ea", null ],
     [ "depthTestEnable", "structMandrill_1_1PipelineDesc.html#a0ddbae73e45da9a426875d77a663f21d", null ],
     [ "depthWriteEnable", "structMandrill_1_1PipelineDesc.html#a1e34e04ff873e88113b3763f3b80299c", null ],
+    [ "dynamicStates", "structMandrill_1_1PipelineDesc.html#a959acf9fca2196ff16249dd682640f54", null ],
     [ "logicOp", "structMandrill_1_1PipelineDesc.html#ac9e4f33ff13ce24fd4721c066029887d", null ],
     [ "logicOpEnable", "structMandrill_1_1PipelineDesc.html#a6986bf311e94f99f538ccb4c43e066ad", null ],
     [ "maxDepthBounds", "structMandrill_1_1PipelineDesc.html#a55734d9f05ec41c1f8eeef144572959d", null ],
