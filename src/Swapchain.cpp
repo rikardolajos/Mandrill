@@ -85,13 +85,15 @@ void Swapchain::recreate()
 {
     Log::Debug("Recreating swapchain");
 
-    // Handle minimization
+    // Handle minimization. Only wait for events while there is no framebuffer: waiting unconditionally blocks a
+    // recreate that no input event triggered (a vsync change made by the app itself) until the next event arrives.
     int width = 0;
     int height = 0;
-    do {
-        glfwGetFramebufferSize(mpDevice->getWindow(), &width, &height);
+    glfwGetFramebufferSize(mpDevice->getWindow(), &width, &height);
+    while (width == 0 || height == 0) {
         glfwWaitEvents();
-    } while (width == 0 || height == 0);
+        glfwGetFramebufferSize(mpDevice->getWindow(), &width, &height);
+    }
 
     uint32_t framesInFlight = count(mInFlightFences);
     destroyDescriptor();
