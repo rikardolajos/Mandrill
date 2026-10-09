@@ -36,8 +36,15 @@ class ShaderIncluder : public shaderc::CompileOptions::IncluderInterface
         std::filesystem::path srcPath(requestingSource);
         std::filesystem::path incPath = srcPath.parent_path() / std::filesystem::path(requestedSource);
 
-        const std::string name = std::string(requestedSource);
-        const std::string contents = ReadFile(incPath.string());
+        std::string name;
+        std::string contents;
+        if (std::filesystem::exists(incPath)) {
+            name = incPath.string();
+            contents = ReadFile(name);
+        } else {
+            Log::Warning("ShaderIncluder::ReadFile Could not open shader file '{0}'", incPath.string());
+            contents = "cannot find " + incPath.string();
+        }
 
         auto container = new std::array<std::string, 2>;
         (*container)[0] = name;
